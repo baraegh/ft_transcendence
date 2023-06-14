@@ -1,0 +1,300 @@
+/* chat page and itd compenent style  */
+.chat-page
+{
+    box-sizing: border-box;
+
+    width: 80%;
+    height: 80%;
+
+    border: 2px solid var(--secondary-color);
+    box-shadow: 8px 8px 0px var(--secondary-color);
+    border-radius: 20px;
+    display: flex;
+
+}
+
+.chat-history-list
+{
+    border-right: 1px solid var(--secondary-color);
+    width: 40%; 
+    max-width: 300px;
+    min-width: 300px;
+    display: grid;
+    grid-template-rows: 70px auto;
+}
+
+.chat-list-header
+{   
+    border-bottom: 1px solid var(--secondary-color);
+    padding-left: 4%;
+    padding-right: 4%;
+}
+
+.list-scroll
+{
+    overflow: auto;
+}
+
+.title-options
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-options
+{
+    margin: 3% 0 0 0;
+}
+
+.filter-search
+{
+    position: relative;
+    margin: 2% 0 4% 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter
+{
+    padding: 3px;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    border-radius: 2px;
+    font-size: 10px;
+}
+
+.caret
+{
+    margin-left: 4px;
+}
+
+.search
+{
+    display: contents;
+}
+
+.search-input
+{
+    width: 50%;
+    font-size: 10px;
+    padding: 3px;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    border-radius: 2px;
+    padding-right: 15px;
+}
+
+.search-input:focus
+{
+    box-shadow: none;
+}
+
+.search-icon
+{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+input[type="search"]::-webkit-search-cancel-button
+{
+    -webkit-appearance: none;
+}
+
+.item
+{
+    display: grid;
+    align-items: center;
+    grid-template-columns: 50px 140px auto;
+    cursor: pointer;
+    
+    border: 2px solid var(--secondary-color);
+    box-shadow: 4px 4px 0px var(--secondary-color);
+    border-radius: 5px;
+    margin: 5%;
+    
+}
+
+.item.selected
+{
+    box-shadow: none;
+    background-color: #E5E5E5;
+}
+
+.item:hover
+{
+    box-shadow: none;
+}
+
+.item img, .friend-card img
+{
+    border: 1px solid var(--secondary-color);
+    width: 40px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+.item div
+{
+    padding-left: 2px;
+}
+
+.item-last-message
+{
+    margin-top: 4px;
+}
+
+.item-time
+{
+    margin-top: auto;
+    margin-bottom: 5px;
+    font-family: 'Mplus 1p ExtraBold';
+    font-size: 9px;
+}
+
+.chat-area
+{
+    background-color: var(--primary-color);
+    min-width: 500px;
+    flex-grow: 1;
+}
+
+.chat-area-default
+{
+    font-family: 'Mouse Memoirs';
+    font-size: 64px;
+    letter-spacing: 0.2em;
+    color: #AAAAAA;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-area-default p
+{
+    text-align: center;
+    max-width: 500px;
+}
+
+.friends-list
+{
+    border-left: 1px solid var(--secondary-color);
+    width: 40%; 
+    max-width: 250px;
+    min-width: 250px;
+    display: grid;
+    grid-template-rows: 70px auto;
+
+    min-width: min-content;
+    min-height: max-content;
+}
+
+.friends-list-header
+{
+    border-bottom: 1px solid var(--secondary-color);
+    padding-left: 4%;
+    padding-right: 4%;
+}
+
+.friend-card
+{
+    display: flex;
+    margin: 5%;
+}
+
+.friend-card p
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 4%;
+
+    font-family: 'MPLUS 1p regular';
+}
+
+.filter:hover,
+input[type="search"]:hover, 
+.item:hover,
+.friend-card img:hover
+{
+    box-shadow: none;
+}
+
+/* Fonts */
+.title-options p
+{
+    font-family: 'Mouse Memoirs';
+    font-size: 18px;
+    line-height: 85%;
+    letter-spacing: 0.2em;
+}
+
+.filter button, .search input, .DropMenu-item
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 13px;
+}
+
+.item .item-username-group
+{
+    font-family: 'Mouse Memoirs';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 86.5%;
+}
+
+.item .item-last-message
+{
+    font-family: 'Mplus 1p regular';
+    font-size: 12px;
+    line-height: 86.5%;
+}
+
+.item-username-group-status-circle
+{
+    display: flex;
+}
+
+.status-circle
+{
+    width: 4px;
+    height: 6px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+.online
+{
+    background-color: var(--secondary-color);
+}
+
+.offline
+{
+    background-color: white;
+}
+
+/* TO BE EDITED: scroll bar */
+/* ::-webkit-scrollbar
+{
+    width: 7px;
+}
+
+::-webkit-scrollbar-track
+{
+    width: 5px;
+    background-color: black;
+}
+::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 15px;
+} */

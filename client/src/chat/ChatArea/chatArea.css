@@ -1,0 +1,789 @@
+.chat-area-container
+{
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+}
+
+.chat-area-header
+{
+    background-color: white;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.user-card
+{
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.user-card img
+{
+    border: 1px solid var(--secondary-color);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+.user-card p
+{
+    margin-left: 5px;
+}
+
+.user-card-username
+{
+    font-family: "Mouse Memoirs";
+    /* line-height: 86.5%; */
+    font-size: 15px;
+}
+
+.user-card-status
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 11px;
+}
+
+.challenge-setting
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.challenge-btn
+{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+
+    width: 100px;
+    cursor: pointer;
+    
+    border: 2px solid var(--secondary-color);
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    border-radius: 5px;
+    margin: 10px 15px;
+    padding: 5px 10px;
+
+    font-family: 'Mouse Memoirs';
+    font-size: 16px;
+    /* line-height: 86.5%; */
+    letter-spacing: 0.2em;
+}
+
+.challenge-btn:hover
+{
+    box-shadow: none;
+}
+
+.chat-area-input
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 10px 0;
+
+    position: relative;
+}
+
+.chat-area-input-text
+{
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    width: 90%;
+    padding: 3px 30px 3px 6px;
+}
+
+
+.chat-area-send-btn
+{
+    position: absolute;
+    left: 94.5%;
+}
+
+.chat-area-send-btn:hover
+{
+    padding-left: 2px;
+}
+
+.three-square
+{
+    display: flex;
+    position: absolute;
+    right:  94%;
+}
+
+.square
+{
+    width: 5px;
+    height: 5px;
+    background-color: var(--secondary-color);
+    margin: 1px;
+}
+
+.chat-area-messages
+{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.chat-area-msg-me-container
+{
+    display: grid;
+
+    justify-content: right;
+    margin: 10px 20px;
+
+    /* max-width: 500px; */
+}
+
+.chat-area-message
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 12px;
+    max-width: 400px;
+    word-wrap: break-word;
+}
+
+.msg-of-me
+{
+    color: white;
+    background-color: var(--secondary-color);
+    padding: 5px;
+
+    border: 2px solid #252525;
+    border-radius: 5px;
+}
+
+.chat-time
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 8px;
+}
+
+.time-of-me
+{
+    text-align: right;
+}
+
+.chat-area-msg-other
+{
+    display: grid;
+
+    position: relative;
+    margin: 10px 20px;
+}
+
+.msg-of-other-username-msg
+{
+    width: fit-content;
+    background-color: white;
+
+    padding: 0 5px 5px 10px;
+
+    border: 2px solid #252525;
+    border-radius: 5px;
+    margin-left: 7.5px;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.msg-of-other-username-msg::after
+{
+    content: "";
+    position: absolute;
+    width: 17px;
+    height: 11px;
+    background-color: var(--secondary-color);
+    bottom: -7.5px;
+    left: -5.3px;
+    border-top: 2.5px solid var(--secondary-color);
+    border-right: 2.5px solid var(--secondary-color);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.msg-of-other-time-img
+{
+    display: flex;
+    align-items: center;
+
+    position: absolute;
+    left: 1px;
+    bottom: -18px;
+    z-index: 1;
+}
+
+.msg-of-other-username
+{
+    font-family: 'Mouse Memoirs';
+}
+
+.chat-area-msg-other img
+{
+    border: 1px solid var(--secondary-color);
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+
+    outline: 2px solid #E5E5E5;
+}
+
+.chat-area-profile
+{
+    border-left: 1px solid var(--secondary-color);
+    width: 250px;
+    display: grid;
+    grid-template-rows: 200px auto;
+    /* justify-content: space-between; */
+}
+
+.chat-area-profile-about
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-bottom: 0.5px solid var(--secondary-color);
+    padding-bottom: 5px;
+}
+
+.chat-area-profile-about img
+{
+    border: 1px solid var(--secondary-color);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+.CA-profile-about-xMark
+{
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 10px;
+}
+
+.CA-profile-about-xMark p
+{
+    font-family: 'Mouse Memoirs';
+    letter-spacing: 0.2em;
+    font-size: 20px;
+}
+
+.chat-area-profile-content
+{
+    overflow-y: auto;
+}
+
+.CA-profile-about-status
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 13px;
+}
+
+.CA-profile-about-username
+{
+    font-family: 'Mouse Memoirs';
+    font-size: 24px;
+}
+
+.chat-area-profile-status
+{
+    display: flex;
+    flex-direction: column;
+
+    border-bottom: 0.5px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+.CA-profile-status-header, 
+.CA-profile-achievements-header,
+.CA-profile-ranking-header
+{
+    margin: 10px;
+    font-family: 'MPLUS 1p regular';
+    font-size: 14px;
+}
+
+.CA-profile-status-wins-losses
+{
+    display: flex;
+    width: 95%;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+.CA-profile-status-wins-losses p
+{
+    padding: 2px 6px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    text-align: center;
+
+    font-family: 'MPLUS 1p regular';
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.chat-area-profile-achievements
+{
+    display: flex;
+    flex-direction: column;
+
+    border-bottom: 0.5px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+.chat-area-profile-ranking
+{
+    display: grid;
+}
+
+.Ranking
+{
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.Ranking-1, .Ranking-2, .Ranking-3
+{
+    display: flex;
+
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.Ranking-1-number, .Ranking-2-number, .Ranking-3-number
+{
+    display: flex;
+    border-right: 1px solid var(--secondary-color);
+    padding: 5px;
+    text-align: center;
+    align-items: center;
+
+    font-family: 'MPLUS 1p regular';
+}
+
+.Ranking-1-number
+{
+    font-family: 'MPLUS 1p Bold';
+    font-size: 20px;
+}
+
+.Ranking-1-img-username, .Ranking-2-img-username, .Ranking-3-img-username
+{
+    display: flex;
+    border-right: 1px solid var(--secondary-color);
+    text-align: center;
+    align-items: center;
+    font-family: 'Mouse Memoirs';
+    padding: 3px;
+}
+
+
+.Ranking-1 img
+{
+    border: 1px solid var(--secondary-color);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+.Ranking-1-stat, .Ranking-2-stat, .Ranking-3-stat
+{
+    text-align: center;
+    align-items: center;
+    font-family: 'Mouse Memoirs';
+    padding: 3px;
+}
+
+.Ranking-2, .Ranking-3
+{
+    font-size: 15px;
+}
+
+.Ranking-2 img, .Ranking-3 img
+{
+    border: 1px solid var(--secondary-color);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+/* GROUP STYLE */
+
+.chat-area-group
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    width: 225px; /* to be edited*/
+    padding: 10px;
+    border-left: 1px solid var(--secondary-color);
+
+    /* position: relative; */
+}
+
+.chat-area-group-search
+{
+    position: relative;
+}
+
+.chat-area-group-search .search-input
+{
+    width: 100%;
+}
+
+.chat-area-group-members
+{
+    display: grid;
+    overflow: auto;
+    /* position: relative;  */
+}
+
+.chat-area-group-members-list
+{
+    display: grid;
+    overflow-y: auto;
+}
+
+.chat-area-group-owner, .chat-area-group-members
+{
+    margin-top: 10px;
+}
+
+.chat-area-group-owner .header, .chat-area-group-members .header
+{
+    font-family: 'Mouse Memoirs';
+    letter-spacing: 0.2em;
+    font-size: 17px;
+    color: var(--secondary-color);
+}
+
+.chat-area-group-settings-invite
+{
+    margin: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-area-group-settings-invite button
+{
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    box-shadow: 4px 4px 0px var(--secondary-color);
+    
+    padding: 5px;
+    width: 100%;
+    margin-top: 10px;
+    
+    text-align: center;
+    font-family: 'Mouse Memoirs';
+    font-size: 25px;
+    letter-spacing: 0.04em;
+}
+
+.chat-area-group-settings-invite button:hover
+{
+    box-shadow: none;
+}
+
+.chat-area-group-settings-btn p, 
+.chat-area-group-invite-btn p
+{
+    padding-right: 5px;
+    display: inline;
+}
+
+.chat-area-group-members-list .friend-card
+{
+    margin: 5px;
+}
+
+.user-card-img-username
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5px 5px 5px;
+    font-family: 'Mplus 1p regular';
+}
+
+.user-card-img-username img
+{
+    border: 1px solid var(--secondary-color);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 4px 4px 5px 4px;
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+/* USER CARD DROP MENU STYLE */
+
+.user-card-popover-content .user-card-img-username
+{
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.user-card-win,
+.user-card-loses
+{
+    border-bottom: 1px solid var(--secondary-color);
+    text-align: center;
+
+    font-family: 'Mplus 1p regular';
+    font-size: 13px;
+    padding: 2px;
+}
+
+.user-card-btn
+{
+    display: flex;
+    justify-content: space-between;
+    padding: 2px;
+}
+
+.user-card-btn button
+{
+    border: 1px solid #252525;
+    border-radius: 5px;
+    box-shadow: 2px 2px var(--secondary-color);
+    margin: 5px;
+    padding: 1px 5px;
+    width: 100%;
+
+    font-family: 'Mouse Memoirs';
+    letter-spacing: 0.05em;
+}
+
+.user-card-btn button:hover
+{
+    box-shadow: none;
+}
+
+.dialog-mute-group-dropmenu
+{
+    border: 1px solid var(--secondary-color);
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    border-radius: 5px;
+    width: 100%;
+
+    display: grid;
+    margin: 20px 5px;
+
+    /* position: relative; */
+}
+
+.dialog-mute-group-dropmenu .DropMenuTrigger-items
+{
+    font-family: 'MPLUS 1p Bold';
+    font-size: 15px;
+    padding: 0 5px;
+}
+
+.dialog-mute-group-dropmenu .DropMenu-content
+{
+    display: flex;
+    width: 450px;
+
+    margin-top: 3px;
+    margin-left: 0;
+}
+
+.dialog-mute-group-dropmenu .DropMenu-item
+{
+    font-family: 'MPLUS 1p Bold';
+    font-size: 15px;
+    width: 440px;
+}
+
+/* CHAT SETTINGS STYLE */
+
+.chat-group-settings
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-group-settings-header
+{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 10px;
+}
+
+.chat-group-settings-grouName
+{
+    text-align: center;
+    font-family: 'Mouse Memoirs';
+    letter-spacing: 0.04em;
+    font-size: 24px;
+}
+
+.chat-group-settings-content
+{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-around; */
+    overflow-y: auto;
+    height: 100%;
+}
+
+.chat-group-settings-group,
+.chat-group-settings-users
+{
+    border: 2px solid var(--secondary-color);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.chat-group-settings-group .group-privacy-type
+{
+    justify-content: start;
+}
+
+.chat-group-settings-group .group-privacy-item
+{
+    margin-right: 10px;
+}
+
+.chat-group-settings-edit
+{
+    display: flex;
+    justify-content: end;
+}
+
+.chat-group-settings-edit button
+{
+    border: 1px solid var(--secondary-color);
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    border-radius: 5px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+.chat-group-settings-edit button:hover
+{
+    box-shadow: none;
+}
+
+.chat-group-settings-users p
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.chat-group-settings-users-list
+{
+    border: 2px solid #000000;
+    border-radius: 5px;
+    
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 150px;
+}
+
+.chat-group-settings-owner
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-group-settings-owner-btn
+{
+    display: flex;
+    justify-content: space-around;
+    width: 20%;
+}
+
+.chat-group-settings-owner-btn button
+{
+    font-family: 'Mouse Memoirs';
+    text-align: center;
+    letter-spacing: 0.04em;
+
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    box-shadow: 2px 2px var(--secondary-color);
+    padding: 3px 15px;
+}
+
+.chat-group-settings-owner-btn button:hover
+{
+    box-shadow: none;
+}
+
+.chat-group-settings-admins
+{
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+}
+
+.chat-group-settings-clear-delete
+{
+    display: flex;
+    align-items: center;
+}
+
+.chat-group-settings-clear-delete button
+{
+    font-family: 'Mouse Memoirs';
+    text-align: center;
+    letter-spacing: 0.115em;
+
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    box-shadow: 2px 2px var(--secondary-color);
+    padding: 3px 15px;
+    margin-top: 5px;
+    font-size: 20px;
+}
+
+.chat-group-settings-clear-delete button:hover
+{
+    box-shadow: none;
+}
+
+.chat-group-settings-clear-delete .delete
+{
+    margin-left: 30px;
+}

@@ -1,0 +1,365 @@
+.DialogOverlay 
+{
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.DialogContent
+{
+  background-color: white;
+
+  border: 1.5px solid #000000;
+  border-radius: 8px;
+
+  position: fixed;
+  
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 90vw;
+  max-width: 450px;
+  max-height: 450px;
+  min-width: 450px;
+
+  padding: 0 20px 5px 20px;
+
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.DialogContent:focus 
+{
+  outline: none;
+}
+
+.DialogTitle-container
+{
+  margin: 0 -20px 0 -20px;
+  border-bottom: 1px solid var(--secondary-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px 0 10px;
+}
+
+.DialogTitle
+{
+  margin: 3px 0 3px 0;
+  font-family: 'Mplus 1p regular';
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 86.5%;
+  color: var(--secondary-color);
+}
+
+.IconButton {
+  height: 25px;
+  width: 25px;
+}
+
+.new-chat-search
+{
+  position: relative;
+  margin: 2% 18px 2% 4px;
+}
+
+.new-chat-search .search-input
+{
+  width: 100%;
+}
+
+.new-chat-items
+{
+  display: grid;
+  overflow: auto;
+  margin: 0 -20px 0 -20px;
+}
+
+.new-chat-items .item 
+{
+  margin: 1% 25px;
+}
+
+.dialog-label {
+  margin-top: 10px;
+}
+
+.dialog-input
+{
+  width: 97%;
+  background: var(--thired-color);
+  border-radius: 9px;
+  padding: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: text;
+
+  font-family: 'MPLUS 1p regular';
+  font-size: 12px;
+  /* color: #8D8D8D; */
+}
+
+.private-key-input
+{
+  margin-top: 0px; 
+}
+
+.browse-image-div
+{
+  display: flex;
+  align-items: center;
+  width: 98%;
+  justify-content: space-between;
+}
+
+.browse-image-input
+{
+  width: 89%;
+  background: var(--thired-color);
+  border-radius: 9px;
+  padding: 6px;
+  margin: 10px 5px 10px 0;
+
+  font-family: 'MPLUS 1p regular';
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.browse-image-label
+{
+  border: 1px solid var(--secondary-color);
+  box-shadow: 2px 2px 0px var(--secondary-color);
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 4px;
+
+  font-family: 'Mouse Memoirs';
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+
+.browse-image-label:hover
+{
+  box-shadow: none;
+}
+
+.group-privacy-type
+{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.group-privacy-item
+{
+  border: 1.5px solid var(--secondary-color);
+  border-radius: 5px;
+  padding: 5px 10px 5px 10px;
+  text-align: center;
+}
+
+.group-privacy-item label
+ {
+  position: relative;
+  padding-left: 10px;
+  cursor: pointer;
+
+  font-family: 'MPLUS 1p regular';
+  font-size: 14px;
+}
+
+.group-privacy-item input
+{
+  appearance: none;
+
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+
+  border: 2px solid var(--secondary-color);
+  transition: 0.2s all linear;
+}
+
+.group-privacy-item input:checked
+{
+  border: 5px solid black;
+}
+
+.dialog-process-btn
+{
+  display: flex;
+  justify-content: space-between;
+  margin: 0 -20px 0 -20px;
+  border-top: 1px solid var(--secondary-color);
+}
+
+.dialog-invite
+{
+  display: flex;
+  justify-content: right;
+  margin: 0 -20px 0 -20px;
+  border-top: 1px solid var(--secondary-color);
+}
+
+.next-btn, .previous-btn, .send-btn
+{
+  border: 1px solid var(--secondary-color);
+  box-shadow: 2px 2px 0px var(--secondary-color);
+  border-radius: 5px;
+  margin: 5px;
+  padding: 4px 15px;
+  margin-right: 10px;
+
+  font-family: 'Mouse Memoirs';
+  font-size: 15px;
+  letter-spacing: 0.1em;
+}
+
+.next-btn:hover, .previous-btn:hover, .send-btn:hover
+{
+  box-shadow: none;
+}
+
+.cancel-btn
+{
+  margin: 10px;
+  font-family: 'Mouse Memoirs';
+  font-size: 15px;
+  letter-spacing: 0.1em;
+}
+
+.dialog-success
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  margin: 20px;
+}
+
+.dialog-success-text
+{
+  margin: 10px;
+  font-family: 'MPLUS 1p ExtraBold';
+  font-size: 25px;
+}
+
+
+.create-group-search
+{
+  position: relative;
+  margin: 2% 18px 2% 4px;
+}
+
+.create-group-search .search-input
+{
+  width: 100%;
+}
+
+.create-group-items
+{
+  display: grid;
+  overflow: auto;
+  margin: 0 -20px 0 -20px;
+}
+
+.create-group-items .item 
+{
+  margin: 1% 25px;
+  box-shadow: none;
+}
+
+.dialog-checkbox
+{
+  display: flex;
+  justify-content: right;
+  margin-right: 10px;
+}
+
+.dialog-checkbox input
+{
+  appearance: none;
+
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid var(--secondary-color);
+  transition: 0.2s all linear;
+
+  cursor: pointer;
+}
+
+.dialog-checkbox input:checked {
+  background-color: var(--secondary-color);
+}
+
+.dialog-MPLUS-font
+{
+  font-family: 'MPLUS 1p regular';
+  font-size: 13px;
+}
+
+/* LEAVE-REMOVE-MUTE GROUP DIALOG STYLE */
+
+.dialog-leave-group,
+.dialog-remove-group,
+.dialog-mute-group
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog-leave-group p,
+.dialog-remove-group p,
+.dialog-mute-group p
+{
+  font-family: 'Mplus 1p bold';
+  font-size: 22px;
+  text-align: center;
+}
+
+.dialog-leave-group-cancel-yes,
+.dialog-remove-group-cancel-yes,
+.dialog-mute-group-cancel-yes
+{
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  margin: 10px;
+}
+
+.dialog-leave-group-cancel-yes button,
+.dialog-remove-group-cancel-yes button,
+.dialog-mute-group-cancel-yes button
+{
+  font-family: 'Mouse Memoirs';
+  font-size: 15px;
+  letter-spacing: 0.2em;
+}
+
+.dialog-leave-group-yes-btn,
+.dialog-remove-group-yes-btn,
+.dialog-mute-group-yes-btn
+{
+  border: 1px solid var(--secondary-color);
+  border-radius: 7px;
+  box-shadow: 2px 2px 0px var(--secondary-color);
+  padding: 2px 15px;
+}
+
+.dialog-leave-group-yes-btn:hover,
+.dialog-remove-group-yes-btn:hover,
+.dialog-mute-group-yes-btn:hover
+{
+  box-shadow: none;
+}

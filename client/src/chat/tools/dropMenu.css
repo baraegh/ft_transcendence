@@ -1,0 +1,42 @@
+.DropMenu-content
+{
+    margin-top: 5px;
+    margin-left: 10px;
+    background-color: white;
+    width: 100px;
+    z-index: 2;
+}
+
+.DropMenu-item
+{
+    padding: 1px 5px 1px 5px ;
+    border: 1px solid var(--secondary-color);
+    border-radius: 2px;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+}
+
+.DropMenu-item:hover
+{
+    box-shadow: 2px 2px 0px var(--secondary-color);
+}
+
+.triger-without-shadow
+{
+    box-shadow: none;
+}
+
+.DropMenuTrigger-items
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.DropMenu-item
+{
+    font-family: 'MPLUS 1p regular';
+    font-size: 13px;
+}

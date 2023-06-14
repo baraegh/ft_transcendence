@@ -1,0 +1,132 @@
+:root {
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  /* line-height: 1.5; */
+  /* font-weight: 400; */
+
+  /* color-scheme: light dark; */
+  /* color: rgba(255, 255, 255, 0.87); */
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  --primary-color: #E5E5E5;
+  --secondary-color: #252525;
+  --thired-color: #D9D9D9;
+
+  background-color: white;
+}
+
+@font-face
+{
+  font-family: 'Mouse Memoirs';
+  src: url('./fonts/mouse-memoirs/MouseMemoirs-Regular.ttf') format('truetype');
+
+  /* font-family: 'MPLUS 1p bold';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Bold.ttf') format('truetype');
+
+  font-family: 'MPLUS 1p medium';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Medium.ttf') format('truetype');
+
+  font-family: 'MPLUS 1p regular';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Regular.ttf') format('truetype');
+
+  font-family: 'MPLUS 1p thin';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Thin.ttf') format('truetype'); */
+}
+
+@font-face 
+{
+  font-family: 'MPLUS 1p ExtraBold';
+  src: url('./fonts/m-plus-1p/MPLUS1p-ExtraBold.ttf') format('truetype');
+}
+
+@font-face 
+{
+  font-family: 'MPLUS 1p Bold';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MPLUS 1p regular';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Regular.ttf') format('truetype');
+}
+
+body {
+  margin: 0;
+  display: flex;
+
+  place-items: center;
+}
+
+/* h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+} */
+
+/* button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+} */
+/* button:hover {
+  border-color: #646cff;
+} */
+/* button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+} */
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
+
+button
+{
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+
+  cursor: pointer;
+}
+
+input
+{
+  /* all: unset; */
+  outline: none;
+  animation: none;
+  transform: none;
+  border: none;
+}
+
+input[type='file']
+{
+  text-indent: -86px;
+}
+
+p
+{
+  margin: 0;
+}
+
+input[type="radio"] {
+  /* display: none; */
+}
