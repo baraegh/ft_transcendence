@@ -1,0 +1,17 @@
+_json: {
+    id: 90498,
+    email: 'brmohamm@student.1337.ma',
+    login: 'brmohamm',
+    first_name: 'Mohammed',
+    last_name: 'Brighli',
+    usual_full_name: 'Mohammed Brighli',
+    usual_first_name: null,
+    url: 'https://api.intra.42.fr/v2/users/brmohamm',
+    phone: 'hidden',
+    displayname: 'Mohammed Brighli',
+    kind: 'student',
+    image: {
+      link: 'https://cdn.intra.42.fr/users/43a0c860ec59fd992226a7dfb151af7e/brmohamm.jpg',
+      versions: [Object]
+    }
+}
