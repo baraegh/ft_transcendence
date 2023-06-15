@@ -10,4 +10,6 @@ import { FortyTwoStrategy } from "./42_auth/strategy/42.strategy";
     controllers : [AuthController],
     providers: [AuthService,JwtStrategy,RtStrategy,FortyTwoStrategy]
 })
-export class AuthModule{}
+export class AuthModule{
+    
+}

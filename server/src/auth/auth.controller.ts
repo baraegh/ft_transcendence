@@ -12,7 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Token } from './types';
-import { Jwt_refresh_Guard } from './guard';
+import { JwtGuard, Jwt_refresh_Guard } from './guard';
 import { GetUser, Public } from './decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
@@ -51,7 +51,7 @@ export class AuthController {
       sameSite: 'none',
       secure: true,
     });
-    res.end();
+    res.redirect('http://localhost:5173/home/');
   }
 
   @Public()
@@ -59,17 +59,32 @@ export class AuthController {
   @Post('refresh')
   @ApiBearerAuth()
   @UseGuards(Jwt_refresh_Guard)
-  refreshToken(@Req() req: Request): Promise<Token> {
-    console.log(req);
+  async refreshToken(@Res() res:Response,@Req() req: Request) {
     const user = req.user;
-    return this.authService.refreshToken(user['sub'], user['refreshToken']);
+    const token = await this.authService.refreshToken(user['sub'], user['refreshToken']);
+    res.clearCookie('acces_token');
+    res.clearCookie('refresh_token');
+    res.cookie('acces_token',token.acces_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+    res.cookie('refresh_token', token.refresh_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+    res.end();
   }
 
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @Post('logout')
-  logoutlocal(@Req() req: Request) {
+  logoutlocal(@Res() res: Response, @Req() req: Request) {
     const user = req.user;
-    return this.authService.logoutlocal(user['id']);
+    res.clearCookie('acces_token');
+    res.clearCookie('refresh_token');
+    this.authService.logoutlocal(user['id']);
+    res.end();
   }
 }

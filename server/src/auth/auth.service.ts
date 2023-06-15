@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, Req } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Token } from './types';
 import { AuthDto_42 } from './42_auth/dtos';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -72,6 +73,7 @@ export class AuthService {
     const tokens = await this.signToken(user.id, user.email);
     await this.updateRthash(user.id, tokens.refresh_token);
     return tokens;
+    
   }
 
   async updateRthash(UserID: number, rt: string): Promise<void> {

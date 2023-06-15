@@ -9,7 +9,7 @@ import PopoverComp from "../tools/popover";
 import { Dialog } from "../tools/Dialog";
 import "./chatArea.css"
 
-import Image from '/Users/eel-ghan/Desktop/work_space/ft_transcendence_chat/src/chat/barae.jpg';
+import Image from '../barae.jpg';
 
 const settingsList = ['Profile', 'Delete', 'Block'];
 
