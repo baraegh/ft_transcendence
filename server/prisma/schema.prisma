@@ -54,9 +54,10 @@ model Friendship {
   user   User   @relation("Friendship_User", fields: [userID], references: [id])
   friend User   @relation("Friendship_Friend", fields: [friendID], references: [id])
 
-  blocked     Boolean
-  isRequested Boolean
-  isFriend    Boolean
+  blocked     Boolean @default(false) 
+  isRequested Boolean @default(false) 
+  isFriend    Boolean @default(false) 
+  requestAccepted Boolean  @default(false) 
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -73,6 +74,7 @@ model Participants {
   role      Role    @default(USER)
   blocked   Boolean @default(false)
   mut       Mut     @default(NAN)
+  
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

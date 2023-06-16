@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guard';
 import { Midlewareofcookies } from './midleware/midleware.middleware';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Midlewareofcookies } from './midleware/midleware.middleware';
     AuthModule,
     UserModule,
     PrismaModule,
+    FriendsModule,
   ],
   providers: [
     {

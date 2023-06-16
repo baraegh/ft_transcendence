@@ -41,7 +41,7 @@ export class AuthController {
     const is_exist: boolean = await this.authService.checkeUser(dto_42.id);
     if (!is_exist) token = await this.authService.signuplocal(dto_42);
     else token = await this.authService.signinlocal(dto_42);
-    res.cookie('acces_token', token.acces_token, {
+    res.cookie('access_token', token.access_token, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -62,9 +62,9 @@ export class AuthController {
   async refreshToken(@Res() res:Response,@Req() req: Request) {
     const user = req.user;
     const token = await this.authService.refreshToken(user['sub'], user['refreshToken']);
-    res.clearCookie('acces_token');
+    res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    res.cookie('acces_token',token.acces_token, {
+    res.cookie('access_token',token.access_token, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -82,7 +82,7 @@ export class AuthController {
   @Post('logout')
   logoutlocal(@Res() res: Response, @Req() req: Request) {
     const user = req.user;
-    res.clearCookie('acces_token');
+    res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     this.authService.logoutlocal(user['id']);
     res.end();

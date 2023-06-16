@@ -20,7 +20,7 @@ SwaggerModule.setup('api', app, document);
   }));
   app.enableCors({
     origin: 'http://localhost:5173',
-    methods: ['POST', 'PUT', 'DELETE', 'GET'],
+    methods: ['POST', 'PUT', 'DELETE', 'GET', 'PATCH'],
     credentials: true,
   });
   app.use(cookieParser());

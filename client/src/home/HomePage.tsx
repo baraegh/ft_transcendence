@@ -8,6 +8,41 @@ const HomePage: React.FC = () => {
     " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
   );
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  const SendFriendRequest = () =>{
+    const requestData = {
+      receiverId: 98782, // User ID of the receiver
+    };
+    axios
+  .post('http://localhost:3000/friends/send-friend-request', requestData, {
+    headers: {
+      'Content-Type': 'application/json',
+    },withCredentials: true, 
+  })
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  }
+  const AcceptdFriendRequest = () =>{
+    const requestData = {
+      receiverId: 90498, // User ID of the receiver
+    };
+    axios
+  .patch('http://localhost:3000/friends/accept-friend-request', requestData, {
+    headers: {
+      'Content-Type': 'application/json',
+    },withCredentials: true, 
+  })
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  }
+
   const handleLogout = () => {
     axios
       .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
@@ -25,11 +60,27 @@ const HomePage: React.FC = () => {
   };
   const fetchdata = () => {
     axios
-      .get("http://localhost:3000/users/me", { withCredentials: true })
+      .get("http://localhost:3000/user/me", { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           setLogo(response.data.image);
           setLogin("Welcome " + response.data.username );
+        } else {
+          throw new Error("Request failed");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        navigate("/");
+      });
+  };
+
+  const userFefriends = () => {
+    axios
+      .get("http://localhost:3000/user/friends", { withCredentials: true })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(response);
         } else {
           throw new Error("Request failed");
         }
@@ -87,6 +138,45 @@ const HomePage: React.FC = () => {
         }}
       >
         Chat
+      </button>
+      <button
+        onClick={ SendFriendRequest}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        Send Friend Request
+      </button>
+      <button
+        onClick={ AcceptdFriendRequest}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        Accept Friend Request
+      </button>
+      <button
+        onClick={ userFefriends}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        All Friends
       </button>
     </div>
   );
