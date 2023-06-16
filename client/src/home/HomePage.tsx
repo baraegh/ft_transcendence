@@ -43,6 +43,23 @@ const HomePage: React.FC = () => {
   });
   }
 
+  const joinchatwithfriend = () => {
+    const requestData = {
+      receiverId: 98782, // User ID of barae
+    };
+    axios
+  .post('http://localhost:3000/chat/join', requestData, {
+    headers: {
+      'Content-Type': 'application/json',
+    },withCredentials: true, 
+  })
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  };
   const handleLogout = () => {
     axios
       .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
@@ -177,6 +194,19 @@ const HomePage: React.FC = () => {
         }}
       >
         All Friends
+      </button>
+      <button
+        onClick={ joinchatwithfriend}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        join chat with barae
       </button>
     </div>
   );

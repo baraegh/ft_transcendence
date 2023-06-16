@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guard';
 import { Midlewareofcookies } from './midleware/midleware.middleware';
 import { FriendsModule } from './friends/friends.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FriendsModule } from './friends/friends.module';
     UserModule,
     PrismaModule,
     FriendsModule,
+    ChatModule,
   ],
   providers: [
     {
