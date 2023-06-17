@@ -7,6 +7,7 @@ export class FriendsService {
   constructor(private prisma: PrismaService) {}
 
   async sendFriendRequest(senderId, receiverId) {
+    if (senderId == receiverId) throw new ForbiddenException('same person');
     const existingUser = await this.prisma.user.findUnique({
       where: { id: receiverId },
     });
@@ -23,8 +24,9 @@ export class FriendsService {
     });
     return friendshipRequest;
   }
-  async  acceptFriendRequest(senderId, receiverId) {
+  async acceptFriendRequest(senderId, receiverId) {
     // Find the friendship request
+    if (senderId == receiverId) throw new ForbiddenException('same person');
     const friendshipRequest = await this.prisma.friendship.findFirst({
       where: {
         userID: receiverId,
@@ -38,11 +40,11 @@ export class FriendsService {
     }
     const acceptedFriendshipRequest = await this.prisma.friendship.update({
       where: { id: friendshipRequest.id },
-      data: { requestAccepted: true, isFriend: true,isRequested: false, },
+      data: { requestAccepted: true, isFriend: true, isRequested: false },
     });
     await this.prisma.friendship.create({
       data: {
-        userID:senderId ,
+        userID: senderId,
         friendID: receiverId,
         isRequested: false,
         requestAccepted: true,
@@ -51,8 +53,4 @@ export class FriendsService {
     });
     return acceptedFriendshipRequest;
   }
-
-
-  
 }
-

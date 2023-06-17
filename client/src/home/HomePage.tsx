@@ -8,9 +8,28 @@ const HomePage: React.FC = () => {
     " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
   );
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  const sendmsg = () =>{
+    const requestData = {
+      channelID: 'dc5f6d35-5c28-498b-9012-f1af63c7b7ea', // User ID of barae
+      content:"hi"
+
+    };
+    axios
+  .post('http://localhost:3000/chat/sendMsg', requestData, {
+    headers: {
+      'Content-Type': 'application/json',
+    },withCredentials: true, 
+  })
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error(error);
+  });
+  }
   const SendFriendRequest = () =>{
     const requestData = {
-      receiverId: 98782, // User ID of the receiver
+      receiverId: 98782, // User ID of barae
     };
     axios
   .post('http://localhost:3000/friends/send-friend-request', requestData, {
@@ -27,7 +46,7 @@ const HomePage: React.FC = () => {
   }
   const AcceptdFriendRequest = () =>{
     const requestData = {
-      receiverId: 90498, // User ID of the receiver
+      receiverId: 90498, // User ID of von
     };
     axios
   .patch('http://localhost:3000/friends/accept-friend-request', requestData, {
@@ -167,7 +186,7 @@ const HomePage: React.FC = () => {
           cursor: "pointer",
         }}
       >
-        Send Friend Request
+        Send Friend Request to barae
       </button>
       <button
         onClick={ AcceptdFriendRequest}
@@ -180,7 +199,7 @@ const HomePage: React.FC = () => {
           cursor: "pointer",
         }}
       >
-        Accept Friend Request
+        Accept Friend Request for von
       </button>
       <button
         onClick={ userFefriends}
@@ -207,6 +226,19 @@ const HomePage: React.FC = () => {
         }}
       >
         join chat with barae
+      </button>
+      <button
+        onClick={ sendmsg}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        send msg
       </button>
     </div>
   );
