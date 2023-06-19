@@ -1,52 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FilterBtn, Search } from "../tools/filterSearchSettings";
-
-import Image from '../barae.jpg';
-
-const array = [
-    {id: 0, img:Image, username:"BARAE"}, 
-    {id: 1, img: Image, username:"BARAE"},
-    {id: 2, img: Image, username:"BARAE"},
-    {id: 3, img: Image, username:"BARAE"},
-    {id: 4, img: Image, username:"BARAE"},
-    {id: 5, img: Image, username:"BARAE"},
-    {id: 6, img: Image, username:"BARAE"},
-    {id: 7, img: Image, username:"BARAE"},
-    {id: 8, img: Image, username:"BARAE"},
-    {id: 9, img: Image, username:"BARAE"},
-    {id: 10, img: Image, username:"BARAE"},
-    {id: 11, img: Image, username:"BARAE"},
-    {id: 12, img: Image, username:"BARAE"},
-    {id: 13, img: Image, username:"BARAE"},
-    {id: 14, img: Image, username:"BARAE"},
-    {id: 15, img: Image, username:"BARAE"},
-    {id: 16, img: Image, username:"BARAE"},
-    {id: 17, img: Image, username:"BARAE"},
-    {id: 18, img: Image, username:"BARAE"},
-    {id: 19, img: Image, username:"BARAE"},
-    {id: 20, img: Image, username:"BARAE"},
-    {id: 21, img: Image, username:"BARAE"},
-    {id: 22, img: Image, username:"BARAE"},
-    {id: 23, img: Image, username:"BARAE"},
-    {id: 24, img: Image, username:"BARAE"},
-    {id: 25, img: Image, username:"BARAE"},
-    {id: 26, img: Image, username:"BARAE"},
-    {id: 27, img: Image, username:"BARAE"},
-    {id: 28, img: Image, username:"BARAE"},
-    {id: 29, img: Image, username:"BARAE"},
-    {id: 30, img: Image, username:"BARAE"},
-    {id: 31, img: Image, username:"BARAE"},
-    {id: 32, img: Image, username:"BARAE"},
-    {id: 33, img: Image, username:"BARAE"},
-    {id: 34, img: Image, username:"BARAE"},
-    {id: 35, img: Image, username:"BARAE"},
-    {id: 36, img: Image, username:"BARAE"},
-    {id: 37, img: Image, username:"BARAE"},
-    {id: 38, img: Image, username:"BARAE"},
-    {id: 39, img: Image, username:"BARAE"},
-
-
-];
+import { ImageFilter } from 'react-image-filter';
+import Axios from "axios";
 
 export const FriendCard = (props : {img: string, username:string}) => {
 
@@ -60,8 +15,34 @@ export const FriendCard = (props : {img: string, username:string}) => {
 
 const filterList = ['All Friends', 'Online', 'Block', 'Pending'];
 
+type freindDataType = {
+    id: number,
+    username: string,
+    image: string
+}
+
 export const FriendList = () => {
-    const friendsList = array.map(e => <FriendCard key={e.id} img={e.img} username={e.username}/>);
+
+    const [friendListArray, setFriendListArray] = useState< freindDataType[] | null>(null);
+
+    useEffect(() => {
+       Axios.get('http://localhost:3000/user/friends', { withCredentials: true })
+            .then((response) => {
+                    setFriendListArray(response.data);
+            })
+            .catch((error) => {
+                    console.log(error);
+                }
+            );
+    }, []);
+
+    let friendsList =   friendListArray? 
+                            friendListArray.map(friend => 
+                                    <FriendCard 
+                                        key={friend.id} 
+                                        img={friend.image} 
+                                        username={friend.username}/>)
+                        : <p>NO FRIENDS</p>;
 
     return (
         <div className="friends-list">
@@ -75,7 +56,7 @@ export const FriendList = () => {
                 </div>
             </div>
             <div className="list-scroll">
-                {friendsList}
+                {friendListArray? friendsList: <p>Loading...</p>}
             </div>
         </div>
     );

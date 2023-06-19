@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import ChatHistoryList from "./chatHistory/chatHistoryList";
 import { FriendList } from "./chatFriendList/friendList";
-import {
-  ChatArea,
-  ChatAreaProfile,
-  ChatAreaGroup,
-  ChatGroupSettings,
-} from "./ChatArea/charArea";
+import { ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from "./ChatArea/charArea";
 import "./chat.css";
 
 import Image from "./barae.jpg";
@@ -176,23 +171,26 @@ export function Chat() {
   const [chatId, setChatId] = useState<number | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
-  const navigate = useNavigate();
-  const fetchdata = () => {
-    axios
-      .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
-      .then((response) => {
-        if (response.status === 200) {
-          console.log("done");
-        } else {
-          throw new Error("Request failed");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        navigate("/");
-      });
-  };
-  fetchdata();
+
+  // const navigate = useNavigate();
+  // const fetchdata = () => {
+  //   axios
+  //     .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
+  //     .then((response) => {
+  //       if (response.status === 200) {
+  //         console.log("done");
+  //       } else {
+  //         throw new Error("Request failed");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       navigate("/");
+  //     });
+  // };
+  // fetchdata();
+
+
   return (
     <div className="chat-page">
       {!isChatSettingOpen ? (
