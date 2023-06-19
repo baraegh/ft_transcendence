@@ -99,10 +99,10 @@ enum Mut {
 // Channel model
 model Channel {
   id       String         @id @default(uuid())
-  owner    User           @relation(fields: [ownerId], references: [id])
-  ownerId  Int
-  type     Type @default(PRIVATE)
-  name     String
+  owner    User?          @relation(fields: [ownerId], references: [id])
+  ownerId  Int?
+  type     Type @default(PERSONEL)
+  name     String?        @unique
   hash     String?
   image    String?
   chanelID Participants[]
@@ -117,12 +117,13 @@ enum Type {
   PRIVATE
   PROTECTED
   PUBLIC
+  PERSONEL
 }
 
 // Messages model
 model Messages {
   id        String   @id @default(uuid())
-  channelID String   @unique
+  channelID String   
   userId    Int
   user    User     @relation(fields: [userId], references: [id])
   channel   Channel  @relation(fields: [channelID], references: [id])
