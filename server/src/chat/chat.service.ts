@@ -8,6 +8,7 @@ import {
 import { Prisma, Type } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CREATEGROUPSDTO } from './dto/msg.dto';
+import * as argon from 'argon2';
 
 @Injectable()
 export class ChatService {
@@ -15,14 +16,17 @@ export class ChatService {
 
   /*********************************************************/
   async joinchatwithFriend(senderId, receiverId) {
+
     const existingUser = await this.prisma.user.findUnique({
       where: { id: receiverId },
     });
+    console.log('existingUser',existingUser);
     if (!existingUser) {
       throw new ForbiddenException('The Friend Not Exist');
     }
-    const finde_same_channel = this.findPersonalChannelId(senderId, receiverId);
-    if (finde_same_channel != null) return finde_same_channel;
+    const finde_same_channel = await this.findPersonalChannelId(senderId, receiverId);
+    console.log('finde_same_channel',finde_same_channel);
+    if (finde_same_channel) return finde_same_channel;
     const createChanell = await this.prisma.channel.create({
       data: {
         ownerId: null,
@@ -40,6 +44,7 @@ export class ChatService {
         },
       ],
     });
+    console.log('createChanell.id',createChanell.id);
     return createChanell.id;
   }
 
@@ -79,6 +84,10 @@ export class ChatService {
 
   /*********************************************************/
   async CreateGroup(ownerId, dto: CREATEGROUPSDTO) {
+    if(dto.hash){
+      const hash = await argon.hash(dto.hash);
+      dto.hash = hash;
+    }
     const pars = new CREATEGROUPSDTO();
     const existingUser = await this.prisma.user.findUnique({
       where: { id: ownerId },
@@ -86,6 +95,7 @@ export class ChatService {
     if (!existingUser) {
       throw new NotFoundException('The user Not Exist');
     }
+    
     try {
       const createChannel = await this.prisma.channel.create({
         data: {

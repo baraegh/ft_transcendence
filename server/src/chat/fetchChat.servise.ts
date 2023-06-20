@@ -8,22 +8,27 @@ import {
 import { Prisma, Type } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CREATEGROUPSDTO, FETCHMSG } from './dto/msg.dto';
-import { ChannelGroupInfoDTO, ChannelInfoDTO, PersonelChannelInfoDTO } from './dto';
+import { ABOUTDTO, ABOUTREQUESTDTO, ChannelGroupInfoDTO, ChannelInfoDTO, PersonelChannelInfoDTO, SHOWCHATDTO } from './dto';
+import * as argon from 'argon2';
 
 @Injectable()
 export class FetchChatService {
   constructor(private prisma: PrismaService) {}
 
-  async ShowAllMsgsOfChannel(channelID: string): Promise<FETCHMSG[]> {
+  async ShowAllMsgsOfChannel(dto: SHOWCHATDTO): Promise<FETCHMSG[]> {
     const findChannel = await this.prisma.channel.findUnique({
-      where: { id: channelID },
+      where: { id: dto.channelId },
     });
     if (!findChannel) {
       throw new NotFoundException('channel not found');
     }
+    if(dto.password){
+      const rtMatches = await argon.verify(findChannel.hash, dto.password);
+      if (!rtMatches) throw new ForbiddenException('Acces Denied');
+    }
     const messages = await this.prisma.messages.findMany({
       where: {
-        channelID,
+        channelID: dto.channelId,
       },
       select: {
         content: true,
@@ -36,6 +41,12 @@ export class FetchChatService {
 
   /******************************************** */
   async ShowAllChannelsOfUser(userId): Promise<ChannelInfoDTO[]> {
+    const finduser = await this.prisma.user.findFirst({
+      where:{id :userId}
+    })
+    if(!userId){
+      throw new NotFoundException('user not found');
+    }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
       where: {
         userID: userId,
@@ -149,6 +160,12 @@ export class FetchChatService {
 
   //***************************************** */
   async ShowGroupChannelsOfUser(userId): Promise<ChannelGroupInfoDTO[]> {
+    const finduser = await this.prisma.user.findFirst({
+      where:{id :userId}
+    })
+    if(!userId){
+      throw new NotFoundException('user not found');
+    }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
       where: {
         userID: userId,
@@ -193,6 +210,12 @@ export class FetchChatService {
   }
     /******************************************** */
     async ShowPersonelChannelsOfUser(userId): Promise<PersonelChannelInfoDTO[]> {
+      const finduser = await this.prisma.user.findFirst({
+        where:{id :userId}
+      })
+      if(!userId){
+        throw new NotFoundException('user not found');
+      }
       const channelsWithOtherUser = await this.prisma.participants.findMany({
         where: {
           userID: userId,
@@ -254,4 +277,22 @@ export class FetchChatService {
     
       return PersonelchannelData; 
     }
+     /******************************************** */
+     async AboutFriend(friendId:number): Promise<ABOUTDTO>{
+      const finduser = await this.prisma.user.findFirst({
+        where: { id: friendId },
+        select: {
+          username: true, 
+          gameWon: true,
+          gameLost:true,
+          achievements:true,
+          updatedAt:true,
+        },
+      });
+      if(!finduser){
+        throw new NotFoundException('user not found');
+      }
+      return finduser;
+
+     }
 }

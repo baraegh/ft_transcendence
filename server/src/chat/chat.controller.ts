@@ -20,7 +20,7 @@ import { Request } from 'express';
 import { JwtGuard } from 'src/auth/guard';
 import { FRIEND_REQ } from 'src/friends/dtos';
 import { ChatService } from './chat.service';
-import { CREATEGROUPSDTO, ChannelGroupInfoDTO, ChannelInfoDTO, FETCHMSG, MSGDTO, PersonelChannelInfoDTO } from './dto';
+import { ABOUTDTO, ABOUTREQUESTDTO, CREATEGROUPSDTO, ChannelGroupInfoDTO, ChannelInfoDTO, FETCHMSG, MSGDTO, PersonelChannelInfoDTO, SHOWCHATDTO } from './dto';
 import { HttpStatusCode } from 'axios';
 import { FetchChatService } from './fetchChat.servise';
 
@@ -44,11 +44,8 @@ export class ChatController {
   async joinchat(@Req() req: Request, @Body() body: FRIEND_REQ) {
     const senderId = req.user['id'];
     const receiverId = body.receiverId;
-    try {
-      return await this.chat.joinchatwithFriend(senderId, receiverId);
-    } catch (error) {
-      console.error('Failed to join chat:', error);
-    }
+    return await this.chat.joinchatwithFriend(senderId, receiverId);
+
   }
 
   @HttpCode(HttpStatus.OK)
@@ -76,8 +73,8 @@ export class ChatController {
   })
 
   @Get('all-msg')
-  async ShowAllMsgsOfChannel(@Body() channelId: { channelId: string }):Promise<FETCHMSG[]> {
-    return await this.fetshchat.ShowAllMsgsOfChannel(channelId.channelId);
+  async ShowAllMsgsOfChannel(@Body() dto: SHOWCHATDTO):Promise<FETCHMSG[]> {
+    return await this.fetshchat.ShowAllMsgsOfChannel(dto);
   }
 
 
@@ -113,5 +110,18 @@ export class ChatController {
   async ShowPersonelChannelsOfUser(@Req() req: Request):Promise<PersonelChannelInfoDTO[]>{
     const userID = req.user['id'];
     return await this.fetshchat.ShowPersonelChannelsOfUser(userID);
+  }
+
+
+  @ApiOperation({ summary: 'get about friend in chat'})
+  @ApiResponse({
+    description: 'Returns an  array of all Personel channels ordered with time',
+    type:[ABOUTDTO]
+  })
+  @ApiBody({   type:ABOUTREQUESTDTO, // Example class representing the request body
+  required: true, }) // Add this line
+  @Get('aboutfriend')
+  async AboutFriend(@Body() dto:ABOUTREQUESTDTO): Promise<ABOUTDTO>{
+    return await this.fetshchat.AboutFriend(dto.friendId);
   }
 }
