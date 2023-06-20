@@ -34,7 +34,7 @@ import {
 import { HttpStatusCode } from 'axios';
 import { FetchChatService } from './fetchChat.servise';
 import { OWNERDTO } from './dto/owner.dto';
-import { ChatOwnerService } from './chatOwner.service';
+import { ChatOwnerService } from './owner/chatOwner.service';
 
 @ApiBearerAuth()
 @ApiTags('chat')
