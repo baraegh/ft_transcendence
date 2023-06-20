@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 export class LastMessage {
   @ApiProperty()
   messageId: string;
@@ -64,7 +65,7 @@ export class PersonelChannelInfoDTO {
   @ApiProperty()
   channelId: string;
 
-  @ApiProperty({ type: 'string', example : 'PERSONEL' })
+  @ApiProperty({ type: 'string', example: 'PERSONEL' })
   type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
 
   @ApiProperty()
@@ -81,4 +82,39 @@ export class PersonelChannelInfoDTO {
 
   @ApiProperty({ nullable: true })
   lastMessage?: LastMessage;
+}
+
+export class SHOWCHATDTO {
+  @ApiProperty()
+  @IsString()
+  channelId: string;
+
+  @ApiProperty({ nullable: true })
+  @IsString()
+  password?: string;
+}
+export class ABOUTREQUESTDTO {
+  @ApiProperty()
+  @IsNumber()
+  friendId: number;
+}
+export class ABOUTDTO {
+  @ApiProperty()
+  @IsString()
+  username: string;
+
+  @ApiProperty({ nullable: true })
+  @IsNumber()
+  gameWon?: number;
+
+  @ApiProperty({ nullable: true })
+  @IsNumber()
+  gameLost?: number;
+
+  @ApiProperty({ nullable: true })
+  achievements?: string[];
+
+  @ApiProperty()
+  @IsDate()
+  updatedAt: Date;
 }
