@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FilterBtn, Search, Settings } from "../tools/filterSearchSettings";
 import '../chat';
 import Image from '../barae.jpg';
+import { friendDataType } from "../chatFriendList/friendList";
 
 const filterList = ['All chats', 'Friends', 'Groups'];
 const settingsList = ['New Chat', 'Create Group', 'Invite'];

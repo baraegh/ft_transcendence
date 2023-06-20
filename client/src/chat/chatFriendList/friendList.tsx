@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { FilterBtn, Search } from "../tools/filterSearchSettings";
-import { ImageFilter } from 'react-image-filter';
 import Axios from "axios";
+import axios from "axios";
 
-export const FriendCard = (props : {img: string, username:string}) => {
+export const FriendCard = (props : {id: number, img: string, username:string}) => {
+
+    const handleOnclick = () => {
+        console.log(props.id);
+        // Axios.post(`http://localhost:3000/chat/join-friend/`, { withCredentials: true, receiverId: props.id})
+        //     .then((response) => {
+        //         console.log(response.data);
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     }
+        // );
+    }
 
     return (
-            <div className="friend-card">
-                <img src={props.img} alt={props.username + 'image'}/>
+            <div className="friend-card" onClick={handleOnclick}>
+                <img src={props.img} alt={props.username + " profile's image"}/>
                 <p>{props.username}</p>
             </div>
     );
@@ -15,18 +27,16 @@ export const FriendCard = (props : {img: string, username:string}) => {
 
 const filterList = ['All Friends', 'Online', 'Block', 'Pending'];
 
-type freindDataType = {
+export type friendDataType = {
     id: number,
     username: string,
     image: string
 }
 
 export const FriendList = () => {
-
-    const [friendListArray, setFriendListArray] = useState< freindDataType[] | null>(null);
-
+    const [friendListArray, setFriendListArray] = useState<friendDataType[] | null>(null);
     useEffect(() => {
-       Axios.get('http://localhost:3000/user/friends', { withCredentials: true })
+        Axios.get('http://localhost:3000/user/friends', { withCredentials: true })
             .then((response) => {
                     setFriendListArray(response.data);
             })
@@ -40,6 +50,7 @@ export const FriendList = () => {
                             friendListArray.map(friend => 
                                     <FriendCard 
                                         key={friend.id} 
+                                        id={friend.id}
                                         img={friend.image} 
                                         username={friend.username}/>)
                         : <p>NO FRIENDS</p>;

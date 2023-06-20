@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatHistoryList from "./chatHistory/chatHistoryList";
 import { FriendList } from "./chatFriendList/friendList";
 import { ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from "./ChatArea/charArea";
 import "./chat.css";
+import Axios from "axios";
 
 import Image from "./barae.jpg";
 import axios from "axios";
@@ -166,6 +167,12 @@ const chatArray: chatType = [
   { chatId: 26, chat: generateArrayOfMsg(100), type: "normal" },
   { chatId: 27, chat: generateArrayOfMsg(100), type: "normal" },
 ];
+
+type freindDataType = {
+  id: number,
+  username: string,
+  image: string
+}
 
 export function Chat() {
   const [chatId, setChatId] = useState<number | null>(null);
