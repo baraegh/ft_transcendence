@@ -8,21 +8,35 @@ import {
 import { Prisma, Type } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CREATEGROUPSDTO, FETCHMSG } from './dto/msg.dto';
-import { ABOUTDTO, ABOUTREQUESTDTO, ChannelGroupInfoDTO, ChannelInfoDTO, PersonelChannelInfoDTO, SHOWCHATDTO } from './dto';
+import {
+  ABOUTDTO,
+  ChannelGroupInfoDTO,
+  ChannelInfoDTO,
+  PersonelChannelInfoDTO,
+  SHOWCHATDTO,
+} from './dto';
 import * as argon from 'argon2';
 
 @Injectable()
 export class FetchChatService {
   constructor(private prisma: PrismaService) {}
 
-  async ShowAllMsgsOfChannel(dto: SHOWCHATDTO): Promise<FETCHMSG[]> {
+  async ShowAllMsgsOfChannel(userid, dto: SHOWCHATDTO): Promise<FETCHMSG[]> {
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelId },
     });
     if (!findChannel) {
       throw new NotFoundException('channel not found');
     }
-    if(dto.password){
+    const findinparticepents = await this.prisma.participants.findFirst({
+      where: { channelID: dto.channelId, userID: userid },
+    });
+    if (!findinparticepents) {
+      throw new NotFoundException('not found in Participants');
+    }
+    if (findinparticepents.mut != 'NAN')
+      throw new ForbiddenException('you are muted from this channel');
+    if (dto.password) {
       const rtMatches = await argon.verify(findChannel.hash, dto.password);
       if (!rtMatches) throw new ForbiddenException('Acces Denied');
     }
@@ -31,8 +45,14 @@ export class FetchChatService {
         channelID: dto.channelId,
       },
       select: {
+        userId: true,
         content: true,
         timeSend: true,
+        user: {
+          select: {
+            image: true,
+          },
+        },
       },
     });
     messages.sort((a, b) => a.timeSend.getTime() - b.timeSend.getTime());
@@ -42,9 +62,9 @@ export class FetchChatService {
   /******************************************** */
   async ShowAllChannelsOfUser(userId): Promise<ChannelInfoDTO[]> {
     const finduser = await this.prisma.user.findFirst({
-      where:{id :userId}
-    })
-    if(!userId){
+      where: { id: userId },
+    });
+    if (!userId) {
       throw new NotFoundException('user not found');
     }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
@@ -52,39 +72,41 @@ export class FetchChatService {
         userID: userId,
         channel: {
           type: {
-            not: Type.PERSONEL
-          }
-        }
+            not: Type.PERSONEL,
+          },
+        },
       },
       include: {
         channel: {
           include: {
             messages: {
               orderBy: {
-                timeSend: 'desc'
+                timeSend: 'desc',
               },
-              take: 1
-            }
-          }
-        }
-      }
+              take: 1,
+            },
+          },
+        },
+      },
     });
 
-    const channelData = channelsWithLastMessage.map(participant => {
+    const channelData = channelsWithLastMessage.map((participant) => {
       const channel = participant.channel;
       const lastMessage = channel?.messages[0];
       return {
         channelId: channel?.id,
         type: channel.type,
-        updatedAt:channel.updatedAt,
+        updatedAt: channel.updatedAt,
         channelName: channel?.name,
         channelImage: channel?.image,
-        lastMessage: lastMessage ? {
-          messageId: lastMessage.id,
-          content: lastMessage.content,
-          timeSent: lastMessage.timeSend,
-          senderId: lastMessage.userId
-        } : null
+        lastMessage: lastMessage
+          ? {
+              messageId: lastMessage.id,
+              content: lastMessage.content,
+              timeSent: lastMessage.timeSend,
+              senderId: lastMessage.userId,
+            }
+          : null,
       };
     });
 
@@ -92,7 +114,7 @@ export class FetchChatService {
       where: {
         userID: userId,
         channel: {
-          type: Type.PERSONEL
+          type: Type.PERSONEL,
         },
       },
       include: {
@@ -132,7 +154,7 @@ export class FetchChatService {
       return {
         channelId: channel.id,
         type: channel.type,
-        updatedAt:channel.updatedAt,
+        updatedAt: channel.updatedAt,
         otherUserId: otherUser?.id,
         otherUserName: otherUser?.username,
         otherUserImage: otherUser?.image,
@@ -150,20 +172,24 @@ export class FetchChatService {
 
     // Sort the combinedData array by the last message sent and last update
     const sortedData = combinedData.sort((a, b) => {
-      const aTime = a.lastMessage ? new Date(a.lastMessage.timeSent) : new Date(a.updatedAt);
-      const bTime = b.lastMessage ? new Date(b.lastMessage.timeSent) : new Date(b.updatedAt);
+      const aTime = a.lastMessage
+        ? new Date(a.lastMessage.timeSent)
+        : new Date(a.updatedAt);
+      const bTime = b.lastMessage
+        ? new Date(b.lastMessage.timeSent)
+        : new Date(b.updatedAt);
       return bTime.getTime() - aTime.getTime();
     });
-  
-    return sortedData; 
+
+    return sortedData;
   }
 
   //***************************************** */
   async ShowGroupChannelsOfUser(userId): Promise<ChannelGroupInfoDTO[]> {
     const finduser = await this.prisma.user.findFirst({
-      where:{id :userId}
-    })
-    if(!userId){
+      where: { id: userId },
+    });
+    if (!userId) {
       throw new NotFoundException('user not found');
     }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
@@ -171,128 +197,129 @@ export class FetchChatService {
         userID: userId,
         channel: {
           type: {
-            not: Type.PERSONEL
-          }
-        }
+            not: Type.PERSONEL,
+          },
+        },
       },
       include: {
         channel: {
           include: {
             messages: {
               orderBy: {
-                timeSend: 'desc'
+                timeSend: 'desc',
               },
-              take: 1
-            }
-          }
-        }
-      }
+              take: 1,
+            },
+          },
+        },
+      },
     });
 
-    const channelData = channelsWithLastMessage.map(participant => {
+    const channelData = channelsWithLastMessage.map((participant) => {
       const channel = participant.channel;
       const lastMessage = channel?.messages[0];
       return {
         channelId: channel?.id,
         type: channel.type,
-        updatedAt:channel.updatedAt,
+        updatedAt: channel.updatedAt,
         channelName: channel?.name,
         channelImage: channel?.image,
-        lastMessage: lastMessage ? {
-          messageId: lastMessage.id,
-          content: lastMessage.content,
-          timeSent: lastMessage.timeSend,
-          senderId: lastMessage.userId
-        } : null
+        lastMessage: lastMessage
+          ? {
+              messageId: lastMessage.id,
+              content: lastMessage.content,
+              timeSent: lastMessage.timeSend,
+              senderId: lastMessage.userId,
+            }
+          : null,
       };
     });
-    return channelData; 
+    return channelData;
   }
-    /******************************************** */
-    async ShowPersonelChannelsOfUser(userId): Promise<PersonelChannelInfoDTO[]> {
-      const finduser = await this.prisma.user.findFirst({
-        where:{id :userId}
-      })
-      if(!userId){
-        throw new NotFoundException('user not found');
-      }
-      const channelsWithOtherUser = await this.prisma.participants.findMany({
-        where: {
-          userID: userId,
-          channel: {
-            type: Type.PERSONEL
-          },
+  /******************************************** */
+  async ShowPersonelChannelsOfUser(userId): Promise<PersonelChannelInfoDTO[]> {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+    if (!userId) {
+      throw new NotFoundException('user not found');
+    }
+    const channelsWithOtherUser = await this.prisma.participants.findMany({
+      where: {
+        userID: userId,
+        channel: {
+          type: Type.PERSONEL,
         },
-        include: {
-          channel: {
-            include: {
-              chanelID: {
-                select: {
-                  userID: true,
-                  user: {
-                    select: {
-                      id: true,
-                      username: true,
-                      image: true,
-                    },
+      },
+      include: {
+        channel: {
+          include: {
+            chanelID: {
+              select: {
+                userID: true,
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                    image: true,
                   },
                 },
               },
-              messages: {
-                take: 1,
-                orderBy: {
-                  timeSend: 'desc',
-                },
+            },
+            messages: {
+              take: 1,
+              orderBy: {
+                timeSend: 'desc',
               },
             },
           },
         },
-      });
-  
-      const PersonelchannelData = channelsWithOtherUser.map((participant) => {
-        const channel = participant.channel;
-        const otherParticipant = channel.chanelID.find(
-          (part) => part.userID !== userId,
-        );
-        const otherUser = otherParticipant?.user;
-        const lastMessage = channel.messages[0];
-  
-        return {
-          channelId: channel.id,
-          type: channel.type,
-          updatedAt:channel.updatedAt,
-          otherUserId: otherUser.id,
-          otherUserName: otherUser.username,
-          otherUserImage: otherUser.image,
-          lastMessage: lastMessage
-            ? {
-                messageId: lastMessage.id,
-                content: lastMessage.content,
-                timeSent: lastMessage.timeSend,
-                senderId: lastMessage.userId,
-              }
-            : null,
-        };
-      });
-    
-      return PersonelchannelData; 
-    }
-     /******************************************** */
-     async AboutFriend(friendId:number): Promise<ABOUTDTO>{
-      const finduser = await this.prisma.user.findFirst({
-        where: { id: friendId },
-        select: {
-          username: true, 
-          gameWon: true,
-          gameLost:true,
-          achievements:true,
-          updatedAt:true,
-        },
-      });
-      if(!finduser){
-        throw new NotFoundException('user not found');
-      }
-      return finduser;
+      },
+    });
 
-     }
+    const PersonelchannelData = channelsWithOtherUser.map((participant) => {
+      const channel = participant.channel;
+      const otherParticipant = channel.chanelID.find(
+        (part) => part.userID !== userId,
+      );
+      const otherUser = otherParticipant?.user;
+      const lastMessage = channel.messages[0];
+
+      return {
+        channelId: channel.id,
+        type: channel.type,
+        updatedAt: channel.updatedAt,
+        otherUserId: otherUser.id,
+        otherUserName: otherUser.username,
+        otherUserImage: otherUser.image,
+        lastMessage: lastMessage
+          ? {
+              messageId: lastMessage.id,
+              content: lastMessage.content,
+              timeSent: lastMessage.timeSend,
+              senderId: lastMessage.userId,
+            }
+          : null,
+      };
+    });
+
+    return PersonelchannelData;
+  }
+  /******************************************** */
+  async AboutFriend(friendId: number): Promise<ABOUTDTO> {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: friendId },
+      select: {
+        username: true,
+        gameWon: true,
+        gameLost: true,
+        achievements: true,
+        updatedAt: true,
+      },
+    });
+    if (!finduser) {
+      throw new NotFoundException('user not found');
+    }
+    return finduser;
+  }
 }

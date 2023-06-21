@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 export class LastMessage {
   @ApiProperty()
   messageId: string;
@@ -24,20 +24,26 @@ export class ChannelInfoDTO {
   updatedAt: Date;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   otherUserId?: number;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   otherUserName?: string;
   @ApiProperty({ nullable: true })
+  @IsOptional()
   otherUserImage?: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   channelName?: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   channelImage?: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   lastMessage?: LastMessage;
 }
 
@@ -52,12 +58,15 @@ export class ChannelGroupInfoDTO {
   updatedAt: Date;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   channelName?: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   channelImage?: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   lastMessage?: LastMessage;
 }
 
@@ -81,6 +90,7 @@ export class PersonelChannelInfoDTO {
   otherUserImage: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   lastMessage?: LastMessage;
 }
 
@@ -90,28 +100,28 @@ export class SHOWCHATDTO {
   channelId: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   @IsString()
   password?: string;
 }
-export class ABOUTREQUESTDTO {
-  @ApiProperty()
-  @IsNumber()
-  friendId: number;
-}
+
 export class ABOUTDTO {
   @ApiProperty()
   @IsString()
   username: string;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   @IsNumber()
   gameWon?: number;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   @IsNumber()
   gameLost?: number;
 
   @ApiProperty({ nullable: true })
+  @IsOptional()
   achievements?: string[];
 
   @ApiProperty()
