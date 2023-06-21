@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 // import DSTeam from './discoverTeam'
 import LoginPage from "./loginPage";
 import FA from './2FA'
-
+import DSTeam from './discoverTeam'
 function App()
 {
-  return(<FA/>);
+  return(<LoginPage/>);
 }
 
 export default App;
