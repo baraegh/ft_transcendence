@@ -6,7 +6,6 @@ import "./chat.css";
 import Axios from "axios";
 
 import Image from "./barae.jpg";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 type msgListType = {
@@ -80,7 +79,7 @@ const arrayOfMsg00: msgListType = [
   { id: 53, sender: "me", msg: "test 1test 1test 1test 1test 1", time: "time" },
 ];
 
-type chatType = { chatId: number; chat: msgListType; type: string }[];
+type chatArrayType = { chatId: number; chat: msgListType; type: string }[];
 
 /* SCRIPT TO GENERATE RANDOM DATA */
 type msgType = {
@@ -137,7 +136,7 @@ const generateArrayOfMsg = (count: number): msgType[] => {
 generateArrayOfMsg(100);
 /* END OF SCRIPT */
 
-const chatArray: chatType = [
+const chatArray: chatArrayType = [
   { chatId: 0, chat: generateArrayOfMsg(10), type: "group" },
   { chatId: 1, chat: generateArrayOfMsg(100), type: "normal" },
   { chatId: 2, chat: generateArrayOfMsg(20), type: "normal" },
@@ -168,34 +167,43 @@ const chatArray: chatType = [
   { chatId: 27, chat: generateArrayOfMsg(100), type: "normal" },
 ];
 
-type freindDataType = {
-  id: number,
-  username: string,
-  image: string
-}
-
 export function Chat() {
-  const [chatId, setChatId] = useState<number | null>(null);
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatType, setChatType] = useState<string | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
 
-  // const navigate = useNavigate();
-  // const fetchdata = () => {
-  //   axios
-  //     .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         console.log("done");
-  //       } else {
-  //         throw new Error("Request failed");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       navigate("/");
-  //     });
-  // };
-  // fetchdata();
+  const navigate = useNavigate();
+  const fetchdata = () => {
+    Axios
+      .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error("Request failed");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        navigate("/");
+      });
+  };
+  fetchdata();
+
+  useEffect(() => {
+    console.log(`chatId: ${chatId}`);
+    if (!chatId)
+      return ;
+    Axios.get("http://localhost:3000/chat/all-msg/", {withCredentials: true, channelId: chatId})
+        .then((response) => {
+            console.log('here');
+            console.log(response.data);
+          }
+        )
+        .catch((error) => {
+            console.log(error);
+          }
+        );
+  },[chatId]);
 
 
   return (
@@ -204,28 +212,31 @@ export function Chat() {
         <>
           <ChatHistoryList
             setChatId={setChatId}
+            setChatType={setChatType}
             setIsProfileOpen={setIsProfileOpen}
           />
           <div className="chat-area">
-            {chatId === 0 || chatId !== null ? (
-              <ChatArea
-                ListOfMsg={chatArray[chatId].chat}
-                setIsProfileOpen={setIsProfileOpen}
-                type={chatArray[chatId].type}
-              />
+            {chatId !== null ? (
+              // <ChatArea
+              //   chatId={chatId}
+              //   setIsProfileOpen={setIsProfileOpen}
+              //   // type={chatType? chatType: 'PERSONEL'}
+              // />
+              <p>chatArea</p>
             ) : (
               <div className="chat-area-default">
                 <p>Getting no message is also a message</p>
               </div>
             )}
           </div>
-          {chatId !== null && chatArray[chatId].type === "group" ? (
+
+          {/* {chatId !== null && chatType === "group" ? (
             <ChatAreaGroup setIsChatSettingOpen={setIsChatSettingOpen} />
           ) : isProfileOpen ? (
             <ChatAreaProfile setIsProfileOpen={setIsProfileOpen} />
-          ) : (
+          ) : ( */}
             <FriendList />
-          )}
+          {/* )} */}
         </>
       ) : (
         <ChatGroupSettings setIsChatSettingOpen={setIsChatSettingOpen} />

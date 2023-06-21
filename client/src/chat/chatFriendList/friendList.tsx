@@ -1,24 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { FilterBtn, Search } from "../tools/filterSearchSettings";
 import Axios from "axios";
-import axios from "axios";
 
 export const FriendCard = (props : {id: number, img: string, username:string}) => {
 
-    const handleOnclick = () => {
-        console.log(props.id);
-        // Axios.post(`http://localhost:3000/chat/join-friend/`, { withCredentials: true, receiverId: props.id})
-        //     .then((response) => {
-        //         console.log(response.data);
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     }
-        // );
-    }
-
     return (
-            <div className="friend-card" onClick={handleOnclick}>
+            <div className="friend-card">
                 <img src={props.img} alt={props.username + " profile's image"}/>
                 <p>{props.username}</p>
             </div>
@@ -67,7 +54,7 @@ export const FriendList = () => {
                 </div>
             </div>
             <div className="list-scroll">
-                {friendListArray? friendsList: <p>Loading...</p>}
+                {friendsList}
             </div>
         </div>
     );

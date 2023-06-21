@@ -4,28 +4,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCircleCheck, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons' ;
 import { Search } from './filterSearchSettings';
 import DropMenu from './DropMenu';
-
-import Image from '../barae.jpg';
+import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
+import Axios from 'axios';
 
-interface DialogProps
-{
-    title?: string;
-    closeDialog?: () => void;
-}
+import Image from '../barae.jpg'; // TO BE DELETED
 
-interface User 
+type UserProps =
 {
-    id: number,
-    userName: string,
-    status: string,
-    img: string
-    description: string
-}
-interface UserProps
-{
-    user: User,
-    checkbox?: boolean
+    user: friendDataType,
+    checkbox?: boolean,
+    setChat?: (chatId: string, type: string)=> void,
+    closeDialog?:       () => void,
 }
 
 const allUsers = [
@@ -78,22 +68,42 @@ const allUsers = [
 
 ];
 
-const UsersList = ({user, checkbox = false}: UserProps) => {
+const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) => {
     const [isChecked, setIsChecked] = useState(false);
 
     const handleOnClickCheckBox = () => {
         setIsChecked(!isChecked);
+
+        Axios.post(`http://localhost:3000/chat/join-friend`,
+                { receiverId: user.id },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                })
+            .then((response) => {
+                console.log(`channel id: ${response.data}`);
+                if (setChat )
+                    setChat(response.data, 'PERSONEL');
+                if (closeDialog)
+                    closeDialog();
+            })
+            .catch((error) => {
+                console.log(error);
+            }
+            );
     }
 
     return (
         <div className="item" onClick={handleOnClickCheckBox}>
-            <img src={user.img} alt={user.description}/>
+            <img src={user.image} alt={`${user.username} image`}/>
             <div>
                 <div className='item-username-group-status-circle'>
-                    <p className="item-username-group">{user.userName}</p>
+                    <p className="item-username-group">{user.username}</p>
                     <div className='status-circle online'></div>
                 </div>
-                <p className="item-last-message">{user.status}</p>
+                <p className="item-last-message">online || offline</p>
             </div>
             {checkbox && (
                 <div className='dialog-checkbox' >
@@ -108,16 +118,38 @@ const UsersList = ({user, checkbox = false}: UserProps) => {
     );
 }
 
-const NewChat = () => {
+type NewChatProps = {
+    setChat?: (chatId: string, type: string)=> void,
+    closeDialog?:       () => void,
+}
+
+const NewChat = ({setChat, closeDialog} : NewChatProps) => {
+    const [friendList, setFriendList] = useState<friendDataType[] | null>(null);
+
+    useEffect(()=>{
+        Axios.get('http://localhost:3000/user/friends', { withCredentials: true })
+        .then((response) => {
+            setFriendList(response.data);
+            
+        })
+        .catch((error) => {
+                console.log(error);
+            }
+        );
+    }, [friendList]);
 
     return (
         <>
             <div key="new-chat-search" className='new-chat-search'>
-            <Search />
+                <Search />
             </div>
             <div    key="new-chat-items" 
                     className='new-chat-items'>
-                        {allUsers.map(user => <UsersList key={user.id} user={user} />)}
+                        {
+                            friendList? friendList.map(user => <UsersCard key={user.id} user={user} 
+                                setChat={setChat} closeDialog={closeDialog} />) 
+                            : <p>NO FRIENDS</p>
+                        }
             </div>
         </>
     );
@@ -428,63 +460,59 @@ const DeleteGroup = ({closeDialog} : DialogProps) => {
     );
 }
 
-const dialogContent = {
-    newChat: NewChat,
-    createGroup: CreateGroup,
-    invite: Invite,
-    leaveGroup: LeaveGroup,
-    removeMember: RemoveMember,
-    muteMember: MuteMember,
-    addAdmin: AddAdmin,
-    clearChat: ClearChat,
-    deleteGroup: DeleteGroup
-};
-
-export function Dialog({title, closeDialog} : DialogProps): JSX.Element | null
+type DialogProps =
 {
-    let ItemComponent; // 'New Chat', 'Create Group', 'Invite', 'Leave Group'
+    title?: string;
+    closeDialog?: () => void;
+    setChat?: (chatId: string, type: string)=> void,
+}
+
+export function Dialog({title, closeDialog, setChat} : DialogProps)
+{
+    // 'New Chat', 'Create Group', 'Invite', 'Leave Group'...
+    let ItemComponent :React.ComponentType = () => <p>Invalid Choise</p>;
 
     switch(title)
     {
         case 'New Chat':
-            ItemComponent = dialogContent.newChat;
+            ItemComponent = () => <NewChat setChat={setChat} closeDialog={closeDialog} />;
             break;
         
-        case 'Create Group':
-            ItemComponent = dialogContent.createGroup;
-            break;
+        // case 'Create Group':
+        //     ItemComponent = dialogContent.createGroup;
+        //     break;
 
-        case 'Invite':
-            ItemComponent = dialogContent.invite;
-            break;
+        // case 'Invite':
+        //     ItemComponent = dialogContent.invite;
+        //     break;
 
-        case 'Leave Group':
-            ItemComponent = dialogContent.leaveGroup;
-            break;
+        // case 'Leave Group':
+        //     ItemComponent = dialogContent.leaveGroup;
+        //     break;
         
-        case 'Remove Member':
-            ItemComponent = dialogContent.removeMember;
-            break;
+        // case 'Remove Member':
+        //     ItemComponent = dialogContent.removeMember;
+        //     break;
         
-        case 'Mute Member':
-            ItemComponent = dialogContent.muteMember;
-            break;
+        // case 'Mute Member':
+        //     ItemComponent = dialogContent.muteMember;
+        //     break;
         
-        case 'Add Admin':
-            ItemComponent = dialogContent.addAdmin;
-            break;
+        // case 'Add Admin':
+        //     ItemComponent = dialogContent.addAdmin;
+        //     break;
 
-        case 'Clear Chat':
-            ItemComponent = dialogContent.clearChat;
-            break;
+        // case 'Clear Chat':
+        //     ItemComponent = dialogContent.clearChat;
+        //     break;
 
-        case 'Delete Group':
-            ItemComponent = dialogContent.deleteGroup;
-            break;
+        // case 'Delete Group':
+        //     ItemComponent = dialogContent.deleteGroup;
+        //     break;
         
         default:
             // item not on the list
-            return null;
+            break;
     }
     
     return (
@@ -500,7 +528,7 @@ export function Dialog({title, closeDialog} : DialogProps): JSX.Element | null
                                 </button>
                             </radixDialog.Close>
                         </div>
-                        <ItemComponent closeDialog={closeDialog} />
+                        <ItemComponent />
                     </radixDialog.Content>
                 </radixDialog.Portal>
             </radixDialog.Root>

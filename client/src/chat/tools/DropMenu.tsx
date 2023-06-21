@@ -13,10 +13,14 @@ type DropMenuProps =
   settings?:          boolean,
   size?:              string,
   triggerIconSize?:   string,
-  setIsProfileOpen?:  (isOpen: boolean) => void
+  setIsProfileOpen?:  (isOpen: boolean) => void,
+  setChat?: (chatId: string, type: string)=> void,
 }
 
-const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, size='14px', triggerIconSize='9px', setIsProfileOpen} : DropMenuProps) => {
+const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, 
+                  size='14px', triggerIconSize='9px', setIsProfileOpen,
+                  setChat} : DropMenuProps) => {
+
     const [selectedDropMenu, setSelectedDropMenu] = useState(list[0]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [Item, setItem] = useState('');
@@ -81,7 +85,7 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, size='14
           </Dropdown.Content>
         </Dropdown.Root>
         {
-          isDialogOpen && <Dialog title={Item} closeDialog={closeDialog} />
+          isDialogOpen && <Dialog title={Item} closeDialog={closeDialog} setChat={setChat} />
         }
       </>
     );

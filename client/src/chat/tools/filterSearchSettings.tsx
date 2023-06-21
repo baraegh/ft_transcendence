@@ -3,13 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons' ;
 import DropMenu from './DropMenu';
 
-interface Props
-{
-    list: string[];
-    size?: string,
-    setIsProfileOpen?: (isOpen: boolean) => void
-}
-
 export function Search()
 {
     return(
@@ -25,7 +18,11 @@ export function Search()
     );
 }
 
-export function FilterBtn({list} : Props)
+type FilterBtnProps = {
+    list: string[];
+}
+
+export function FilterBtn({list} : FilterBtnProps)
 {
     const [hasShadow, setHasShadow] = useState(true);
 
@@ -40,11 +37,21 @@ export function FilterBtn({list} : Props)
     );
 }
 
-export function Settings({list, size='14px', setIsProfileOpen} : Props)
+type SettingsProps =
+{
+    list: string[];
+    size?: string,
+    setIsProfileOpen?:  (isOpen: boolean) => void
+    setChat: (chatId: string, type: string)=> void,
+}
+
+export function Settings({list, size='14px', setIsProfileOpen, setChat} : SettingsProps)
 {
     return (
         <div className="chat-settings">
-            <DropMenu setIsProfileOpen={setIsProfileOpen} list={list} defaultValue={false} settings={true} size={size}/>
+            <DropMenu setIsProfileOpen={setIsProfileOpen} list={list} 
+                defaultValue={false} settings={true} size={size}
+                setChat={setChat}/>
         </div>
     );
 }
