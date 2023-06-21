@@ -88,15 +88,21 @@ transition: opacity .2s, visibility .2s;
   border-radius: 30px;
   box-shadow: 12px 10px 0px 0px black;
   transition: filter 0.5s;
+  text-align: center;
+  
 }
   
 .meetTheTeamImage1:hover
 {
+  position: relative;
+  display: inline-block;
   filter: grayscale(100%) blur(5px);
+  display: block;
 }
 .meetTheTeamImage2:hover
 {
   filter: grayscale(100%) blur(5px);
+  display: block;
 }
 .meetTheTeamImage3:hover
 {
@@ -107,21 +113,31 @@ transition: opacity .2s, visibility .2s;
   filter: grayscale(80%) blur(5px);
 }
 
-.img1Text
-{
-  position: absolute;
-  top: 500%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: none;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 10px;
-  text-align: center;
+.meetTheTeamImages img {
+  display: block;
+  height: auto;
 }
 
-/* .img1Text:hover
+.textName1 {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+  top: 50%;
+  left: 6.8%;
+  color: white;
+  transform: translate(-50%, 50%);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.meetTheTeamImage1:hover + .textName1 {
+  opacity: 1;
+  z-index: 1;
+}
+
+.dercription1
 {
-  background-color: green;
-  display: block;
-} */
+  display: none;
+}
+
+
+

@@ -29,7 +29,6 @@ function getActualWindowDientions() {
     return (windowDimensions);
   }
   
-  
   function DSTeam(): JSX.Element {
   
     let a = 11;
@@ -231,11 +230,13 @@ function getActualWindowDientions() {
       <p style={meetTheTeamH3}> the creative minds who brought out site to life !</p>
       <div style={meetTheTeamLine}></div>
       <div className="meetTheTeamImages">
+        <div>
       <img src={me}  className="meetTheTeamImage1"/>
-      <p className="img__description">This image looks super neat.</p>
-      <img src={me}  className="meetTheTeamImage1"/>
-      <img src={me}  className="meetTheTeamImage1"/>
-      <img src={me} className="meetTheTeamImage1" />
+          <p className="textName1">Riad mney<br />
+        </p>
+      <p className="dercription1">fhfhfhfhfhfhfhfhfhff</p>
+    </div>
+  
       </div>
     </div>
     <br/>

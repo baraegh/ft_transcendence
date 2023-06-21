@@ -6,9 +6,6 @@ import './style.css'
 import './discoverTeam.css'
 import './loginPage.css'
 
-
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+function loginPage(): JSX.Element {
+    return (<h1>EEEEEEEE</h1>);
+}
