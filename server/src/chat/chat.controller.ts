@@ -27,9 +27,13 @@ import {
   ChannelGroupInfoDTO,
   ChannelInfoDTO,
   FETCHMSG,
+  INVETUSERDTO,
+  JOINGROUPDTO,
+  JOINGROUPRTURNDTO,
   MSGDTO,
   PersonelChannelInfoDTO,
   SHOWCHATDTO,
+  SHOW_MEMBERS_OFGROUP,
 } from './dto';
 import { HttpStatusCode } from 'axios';
 import { FetchChatService } from './fetchChat.servise';
@@ -42,10 +46,7 @@ import { ChatOwnerService } from './owner/chatOwner.service';
 @Controller('chat')
 @ApiResponse({ status: 200, description: 'Successful response' })
 export class ChatController {
-  constructor(
-    private chat: ChatService,
-    private fetshchat: FetchChatService,
-  ) {}
+  constructor(private chat: ChatService, private fetshchat: FetchChatService) {}
 
   @ApiOperation({ summary: 'make channel with friend if not exist' })
   @ApiResponse({
@@ -58,6 +59,29 @@ export class ChatController {
     const senderId = req.user['id'];
     const receiverId = body.receiverId;
     return await this.chat.joinchatwithFriend(senderId, receiverId);
+  }
+
+
+  @ApiOperation({ summary: 'when user wanna join to group' })
+  @ApiResponse({
+    type:[JOINGROUPRTURNDTO],
+  })
+  @HttpCode(HttpStatus.OK)
+  @Post('join-group')
+  async joingroup(@Req() req: Request, @Body() body: JOINGROUPDTO):Promise<JOINGROUPRTURNDTO> {
+    const userid = req.user['id'];
+    return await this.chat.joingroup(userid, body);
+  }
+
+  @ApiOperation({ summary: 'when other admin or owner add member' })
+  @ApiResponse({
+    type:[JOINGROUPRTURNDTO],
+  })
+  @HttpCode(HttpStatus.OK)
+  @Post('invite-user')
+  async invitegroup(@Req() req: Request, @Body() body: INVETUSERDTO):Promise<JOINGROUPRTURNDTO> {
+    const userid = req.user['id'];
+    return await this.chat.invite_user(userid, body);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -137,39 +161,42 @@ export class ChatController {
     return await this.fetshchat.ShowPersonelChannelsOfUser(userID);
   }
 
-  // @ApiOperation({
-  //   summary: 'get about friend in chat , i wiil implement ranking later',
-  // })
-  // @ApiResponse({
-  //   description: 'Returns an  array of all Personel channels ordered with time',
-  //   type: [ABOUTDTO],
-  // })
-  // @ApiBody({
-  //   type: ABOUTREQUESTDTO, // Example class representing the request body
-  //   required: true,
-  // }) // Add this line
-  // @Get('aboutfriend')
-  // async AboutFriend(@Body() dto: ABOUTREQUESTDTO): Promise<ABOUTDTO> {
-  //   return await this.fetshchat.AboutFriend(dto.friendId);
-  // }
+  @ApiOperation({
+    summary: 'get about friend in chat , i wiil implement ranking later',
+  })
+  @ApiResponse({
+    description: 'Returns an  array of all Personel channels ordered with time',
+    type: [ABOUTDTO],
+  })
+  @ApiParam({
+    name: 'friendId',
+    description: 'The ID of the friend you want to get information about',
+    type: 'number',
+    required: true,
+  })
+  @Get('aboutfriend/:friendId')
+  async AboutFriend(@Req() req: Request): Promise<ABOUTDTO> {
+    const friendId = Number(req.params['friendId']);
+    return await this.fetshchat.AboutFriend(friendId);
+  }
 
   @ApiOperation({
-      summary: 'get about friend in chat , i wiil implement ranking later',
-    })
-    @ApiResponse({
-      description: 'Returns an  array of all Personel channels ordered with time',
-      type: [ABOUTDTO],
-    })
-    @ApiParam({
-      name: 'friendId',
-      description: 'The ID of the friend you want to get information about',
-      type: 'number',
-      required: true,
-    })
-    @Get('aboutfriend/:friendId')
-    async AboutFriend(@Req() req:Request): Promise<ABOUTDTO> {
-      const friendId = Number(req.params['friendId']);
-      return await this.fetshchat.AboutFriend(friendId);
-    }
-
+    summary: 'get all group members',
+  })
+  @ApiResponse({
+    description: 'Returns an  array of all Members : owner,admin,user',
+    type: [SHOW_MEMBERS_OFGROUP],
+  })
+  @ApiParam({
+    name: 'channelId',
+    description: 'The ID of the channel you want to get information about',
+    type: 'string',
+    required: true,
+  })
+  @Get('show-members/:channelId')
+  async ShowMembersOfGroup(@Req() req: Request): Promise<SHOW_MEMBERS_OFGROUP> {
+    const channelId = String(req.params['channelId']);
+    const userID = req.user['id'];
+    return await this.fetshchat.ShowMembersOfGroup(userID, channelId);
+  }
 }

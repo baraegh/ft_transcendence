@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
 export class LastMessage {
   @ApiProperty()
   messageId: string;
@@ -74,7 +74,7 @@ export class PersonelChannelInfoDTO {
   @ApiProperty()
   channelId: string;
 
-  @ApiProperty({ type: 'string', example: 'PERSONEL' })
+  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED', 'PERSONEL'] })
   type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
 
   @ApiProperty()
@@ -98,11 +98,6 @@ export class SHOWCHATDTO {
   @ApiProperty()
   @IsString()
   channelId: string;
-
-  @ApiProperty({ nullable: true })
-  @IsOptional()
-  @IsString()
-  password?: string;
 }
 
 export class ABOUTDTO {
@@ -128,3 +123,70 @@ export class ABOUTDTO {
   @IsDate()
   updatedAt: Date;
 }
+
+
+
+export class data {
+  @ApiProperty()
+  @IsString()
+  username: string;
+
+  @ApiProperty()
+  @IsString()
+  image: string;
+
+  @ApiProperty()
+  @IsNumber()
+  id: number;
+}
+
+export class SHOW_MEMBERS_OFGROUP {
+  @ApiProperty()
+  owner: data;
+
+  @ApiProperty()
+  admins: data[];
+
+  @ApiProperty()
+  users:data[]
+}
+
+export class JOINGROUPDTO{
+  @ApiProperty()
+  @IsString()
+  channelId: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  password?:string
+}
+
+export class JOINGROUPRTURNDTO{
+  @ApiProperty()
+  @IsString()
+  id:string;
+
+  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED', 'PERSONEL'] })
+  type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
+
+  @ApiProperty()
+  @IsString()
+  name:string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  image?:string;
+}
+
+
+export class INVETUSERDTO{
+  @ApiProperty()
+  @IsString()
+  channelId: string;
+
+  @ApiProperty()
+  @IsNumber()
+  otheruserid:number
+}
+

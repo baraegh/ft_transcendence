@@ -6,37 +6,63 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class FriendsService {
   constructor(private prisma: PrismaService) {}
 
-  async sendFriendRequest(senderId, receiverId) {
-    if (senderId == receiverId) throw new ForbiddenException('same person');
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id: receiverId },
+  async sendFriendRequest(userid, friendId) {
+    if (userid == friendId) throw new ForbiddenException('same person');
+    let existingUser = await this.prisma.user.findUnique({
+      where: { id: friendId },
     });
     if (!existingUser) {
       throw new ForbiddenException('The Friend Not Exist');
     }
+     existingUser = await this.prisma.user.findUnique({
+      where: { id: userid },
+    });
+    if (!existingUser) {
+      throw new ForbiddenException('The Friend Not Exist');
+    }
+    const chekiffriend = await this.prisma.friendship.findFirst({
+      where: { userID: friendId, friendID: userid },
+    });
+    if (chekiffriend) {
+      if (chekiffriend.isFriend == true)
+        throw new ForbiddenException('friend request allredy accepted ');
+      throw new ForbiddenException('request allredy send it ');
+    }
     const friendshipRequest = await this.prisma.friendship.create({
       data: {
-        userID: senderId,
-        friendID: receiverId,
+        userID: friendId,
+        friendID: userid,
         isRequested: true,
         requestAccepted: false,
       },
     });
     return friendshipRequest;
   }
-  async acceptFriendRequest(senderId, receiverId) {
+  async acceptFriendRequest(userid, friendId) {
     // Find the friendship request
-    if (senderId == receiverId) throw new ForbiddenException('same person');
+    if (userid == friendId) throw new ForbiddenException('same person');
+    let existingUser = await this.prisma.user.findUnique({
+      where: { id: friendId },
+    });
+    if (!existingUser) {
+      throw new ForbiddenException('The Friend Not Exist');
+    }
+     existingUser = await this.prisma.user.findUnique({
+      where: { id: userid },
+    });
+    if (!existingUser) {
+      throw new ForbiddenException('The Friend Not Exist');
+    }
     const friendshipRequest = await this.prisma.friendship.findFirst({
       where: {
-        userID: receiverId,
-        friendID: senderId,
+        userID: userid ,
+        friendID: friendId,
         isRequested: true,
         requestAccepted: false,
       },
     });
     if (!friendshipRequest) {
-      throw new Error('Friendship request not found.');
+      throw new ForbiddenException('Friendship request not found.');
     }
     const acceptedFriendshipRequest = await this.prisma.friendship.update({
       where: { id: friendshipRequest.id },
@@ -44,8 +70,8 @@ export class FriendsService {
     });
     await this.prisma.friendship.create({
       data: {
-        userID: senderId,
-        friendID: receiverId,
+        userID: friendId,
+        friendID: userid,
         isRequested: false,
         requestAccepted: true,
         isFriend: true,
