@@ -13,6 +13,7 @@ import { JwtGuard } from './auth/guard';
 import { Midlewareofcookies } from './midleware/midleware.middleware';
 import { FriendsModule } from './friends/friends.module';
 import { ChatModule } from './chat/chat.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ChatModule } from './chat/chat.module';
     PrismaModule,
     FriendsModule,
     ChatModule,
+    ProfileModule
   ],
   providers: [
     {

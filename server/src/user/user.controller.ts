@@ -8,7 +8,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { USerService } from './user.servive';
+import { USerService } from './user.service';
 import { Request } from 'express';
 import { USERDTO, USERINFODTO, USER_FRIEN_DTO } from './dto';
 import { promises } from 'dns';
