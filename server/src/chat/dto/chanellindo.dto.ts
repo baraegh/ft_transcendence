@@ -190,3 +190,39 @@ export class INVETUSERDTO{
   otheruserid:number
 }
 
+
+export class SHOWUSERS{
+  @ApiProperty()
+  @IsNumber()
+  id : number;
+  
+  @ApiProperty()
+  @IsString()
+  username:string;
+
+  @ApiProperty()
+  @IsString()
+  image:string;
+  
+
+}
+
+
+
+export class SHOWGROUPS{
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty({ enum: ['PROTECTED', 'PUBLIC'] })
+  type: 'PUBLIC' | 'PRIVATE' | 'PROTECTED' | 'PERSONEL';
+
+  @ApiProperty()
+  @IsString()
+  name: string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  image?: string;
+
+}
+

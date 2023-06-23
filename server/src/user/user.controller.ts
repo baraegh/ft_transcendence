@@ -10,7 +10,8 @@ import {
 } from '@nestjs/swagger';
 import { USerService } from './user.servive';
 import { Request } from 'express';
-import { USERDTO } from './dto';
+import { USERDTO, USERINFODTO } from './dto';
+import { promises } from 'dns';
 
 @ApiBearerAuth()
 @ApiTags('User')
@@ -19,8 +20,21 @@ import { USERDTO } from './dto';
 @ApiResponse({ status: 200, description: 'Successful response' })
 export class UserController {
   constructor(private user: USerService) {}
+
+
+  @ApiOperation({
+    summary: 'git user data',
+  })
+  @ApiResponse({
+    type: USERINFODTO,
+  })
   @Get('me')
-  getMe(@GetUser() user: User) {
+  getMe(@GetUser() user: any):Promise<USERINFODTO> {
+   delete  user.email;
+   delete  user.hashedRT;
+   delete  user.createdAt;
+   delete  user.updatedAt;
+
     return user;
   }
 

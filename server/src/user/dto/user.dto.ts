@@ -14,3 +14,28 @@ export class USERDTO {
   @IsNotEmpty()
   image: string;
 }
+
+export class USERINFODTO{
+  @ApiProperty()
+  id: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  username: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  image: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  gameWon: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  gameLost: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  achievements: string[];
+}
