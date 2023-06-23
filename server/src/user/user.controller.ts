@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { USerService } from './user.servive';
 import { Request } from 'express';
-import { USERDTO, USERINFODTO } from './dto';
+import { USERDTO, USERINFODTO, USER_FRIEN_DTO } from './dto';
 import { promises } from 'dns';
 
 @ApiBearerAuth()
@@ -43,11 +43,10 @@ export class UserController {
   })
   @ApiResponse({
     description: 'Returns aray of users ',
-    type: USERDTO,
+    type: USER_FRIEN_DTO,
   })
-  
   @Get('friends')
-  async findUserFriends(@Req() req: Request): Promise<USERDTO[]> {
+  async findUserFriends(@Req() req: Request): Promise<USER_FRIEN_DTO[]> {
     const userId = req.user['id'];
     const user = await this.user.findUserFriends(userId);
     return user;

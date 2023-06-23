@@ -243,6 +243,6 @@ export class ChatController {
   })
   @Get('show-all-groups')
   async show_Groups(@Req() req: Request): Promise<SHOWGROUPS[]> {
-    return await this.fetshchat.show_Groups(req.user['id']);
+    return await this.fetshchat.show_Groups(req.user['id']); 
   }
 }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CHATFRIENDDTO } from './chatfried.dto';
+import { BLOCK_FRIEND_DTO, CHATFRIENDDTO } from './chatfried.dto';
 
 @Injectable()
 export class ChatFriendService {
@@ -38,5 +38,73 @@ export class ChatFriendService {
       });
       if (!deletechat) throw new NotFoundException('error on delete');
     }
+  }
+
+  async block_user(userId: number, FriendId : number) {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+    if (!finduser) {
+      throw new NotFoundException('user not found');
+    }
+
+    const findOtheruser = await this.prisma.user.findUnique({
+      where: { id: FriendId },
+    });
+    if (!findOtheruser) {
+      throw new NotFoundException('user not found');
+    }
+
+    const fetchUsers = await this.prisma.friendship.findFirst({
+      where: {
+        userID: userId,
+        friendID: FriendId,
+      },
+    });
+    if (!fetchUsers) throw new NotFoundException('Not Your Friend');
+    if(fetchUsers.blocked === true)
+    throw new NotFoundException('Is blocked');
+    await this.prisma.friendship.update({
+      where: {
+       id:fetchUsers.id,
+      },
+      data:{
+        blocked: true
+      }
+    })
+  }
+
+  async unblock_user(userId: number, FriendId : number) {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+    if (!finduser) {
+      throw new NotFoundException('user not found');
+    }
+
+    const findOtheruser = await this.prisma.user.findUnique({
+      where: { id: FriendId },
+    });
+    if (!findOtheruser) {
+      throw new NotFoundException('user not found');
+    }
+
+    const fetchUsers = await this.prisma.friendship.findFirst({
+      where: {
+        userID: userId,
+        friendID: FriendId,
+      },
+    });
+    if (!fetchUsers) throw new NotFoundException('Not Your Friend');
+    if(fetchUsers.blocked === false)
+    throw new NotFoundException('Is Unblock');
+    await this.prisma.friendship.update({
+      where: {
+       id:fetchUsers.id,
+      },
+      data:{
+        blocked: false
+      }
+    })
   }
 }
