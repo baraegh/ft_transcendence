@@ -14,6 +14,7 @@ import { Midlewareofcookies } from './midleware/midleware.middleware';
 import { FriendsModule } from './friends/friends.module';
 import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ProfileModule } from './profile/profile.module';
     PrismaModule,
     FriendsModule,
     ChatModule,
-    ProfileModule
+    ProfileModule,
+    GameModule
   ],
   providers: [
     {

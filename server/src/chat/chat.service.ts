@@ -257,14 +257,15 @@ export class ChatService {
         name: dto.name,
       },
     });
-    const imageName = `${createChannel.id}${fileExtension}`;
-    let imagePath = `uploads/${imageName}`;
-    const stream = createWriteStream(imagePath);
-    stream.write(file.buffer);
-    stream.end();
-    imagePath = `${localhostUrl}/uploads/${imageName}`;
-    dto.image = imagePath;
-
+    if(file){
+      const imageName = `${createChannel.id}${fileExtension}`;
+      let imagePath = `uploads/${imageName}`;
+      const stream = createWriteStream(imagePath);
+      stream.write(file.buffer);
+      stream.end();
+      imagePath = `${localhostUrl}/uploads/${imageName}`;
+      dto.image = imagePath;  
+    }
     const updatechannel = await this.prisma.channel.update({
       where: { id: createChannel.id },
       data: {

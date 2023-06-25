@@ -28,6 +28,7 @@ export class ChatOwnerService {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
+
     if (!finduser) throw new NotFoundException('user not found');
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelid },

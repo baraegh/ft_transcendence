@@ -118,7 +118,7 @@ export class ChatController {
     type:RETUR_OF_CHANNEL_DTO
   })
   @UseInterceptors(FileInterceptor('image'))
-  @Post('create-goupe')
+  @Post('create-group')
   async CreateGroup(
     @Req() req: Request,
     @Body() body: CREATEGROUPSDTO,
