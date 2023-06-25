@@ -330,7 +330,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
             members: [''],
         });
     
-    const checkNameInput: (groupName: string)=>boolean = (groupName) =>
+    const checkNameInput = async (groupName : string): Promise<boolean> =>
     {
         if (GroupData.name === '')
             return true;
@@ -339,45 +339,49 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         if (!(trimmedString.length > 0))
             return true;
         
+        
         Axios.get(`http://localhost:3000/chat/NameGroupExist/${groupName}`,
                 {withCredentials: true})
             .then((response) => {
-                return (response.data);
+                console.log(response.data);
+                if (response.data)
+                    return (response.data);
             })
             .catch((error) => {
                 console.log(error);
             })
-
+    
         return false;
     }
 
-    const handleNext = () => {
-        if (checkNameInput(GroupData.name))
-        {
-            setNameWarn(true);
-            return;
-        }
+    const handleNext =  () => {
+        checkNameInput(GroupData.name)
+            .then((isNameInputInvalid) => {
+                console.log('isNameInputInvalid: ', isNameInputInvalid);
+                if (isNameInputInvalid)
+                    setNameWarn(true);
+                else if (numberOfDailog <= 2)
+                {
+                    setNumberOfDailog(++numberOfDailog);
+                    switch (numberOfDailog) {
+                        case 1:
+                            setShowFirstDialog(false);
+                            setShowSecondtDialog(true);
+                            setShowThirdDialog(false);      
+                            break;
+                        
+                        case 2:
+                            setShowFirstDialog(false);
+                            setShowSecondtDialog(false);
+                            setShowThirdDialog(true);
+                            break;
+        
+                        default:
+                            break;
+                    }
+                }
+            })
 
-        if (numberOfDailog <= 2)
-        {
-            setNumberOfDailog(++numberOfDailog);
-            switch (numberOfDailog) {
-                case 1:
-                    setShowFirstDialog(false);
-                    setShowSecondtDialog(true);
-                    setShowThirdDialog(false);      
-                    break;
-                
-                case 2:
-                    setShowFirstDialog(false);
-                    setShowSecondtDialog(false);
-                    setShowThirdDialog(true);
-                    break;
-
-                default:
-                    break;
-            }
-        }
     }
 
     const handlePrevious = () => {
