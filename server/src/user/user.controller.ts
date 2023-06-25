@@ -8,9 +8,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { USerService } from './user.servive';
+import { USerService } from './user.service';
 import { Request } from 'express';
-import { USERDTO } from './dto';
+import { USERDTO, USERINFODTO, USER_FRIEN_DTO } from './dto';
+import { promises } from 'dns';
 
 @ApiBearerAuth()
 @ApiTags('User')
@@ -19,8 +20,21 @@ import { USERDTO } from './dto';
 @ApiResponse({ status: 200, description: 'Successful response' })
 export class UserController {
   constructor(private user: USerService) {}
+
+
+  @ApiOperation({
+    summary: 'git user data',
+  })
+  @ApiResponse({
+    type: USERINFODTO,
+  })
   @Get('me')
-  getMe(@GetUser() user: User) {
+  getMe(@GetUser() user: any):Promise<USERINFODTO> {
+   delete  user.email;
+   delete  user.hashedRT;
+   delete  user.createdAt;
+   delete  user.updatedAt;
+
     return user;
   }
 
@@ -29,11 +43,10 @@ export class UserController {
   })
   @ApiResponse({
     description: 'Returns aray of users ',
-    type: USERDTO,
+    type: USER_FRIEN_DTO,
   })
-  
   @Get('friends')
-  async findUserFriends(@Req() req: Request): Promise<USERDTO[]> {
+  async findUserFriends(@Req() req: Request): Promise<USER_FRIEN_DTO[]> {
     const userId = req.user['id'];
     const user = await this.user.findUserFriends(userId);
     return user;

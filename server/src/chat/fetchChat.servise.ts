@@ -14,6 +14,9 @@ import {
   ChannelInfoDTO,
   PersonelChannelInfoDTO,
   SHOWCHATDTO,
+  SHOWGROUPS,
+  SHOWUSERS,
+  SHOW_MEMBERS_OFGROUP,
 } from './dto';
 import * as argon from 'argon2';
 
@@ -36,10 +39,6 @@ export class FetchChatService {
     }
     if (findinparticepents.mut != 'NAN')
       throw new ForbiddenException('you are muted from this channel');
-    if (dto.password) {
-      const rtMatches = await argon.verify(findChannel.hash, dto.password);
-      if (!rtMatches) throw new ForbiddenException('Acces Denied');
-    }
     const messages = await this.prisma.messages.findMany({
       where: {
         channelID: dto.channelId,
@@ -189,7 +188,7 @@ export class FetchChatService {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
-    if (!userId) {
+    if (!finduser) {
       throw new NotFoundException('user not found');
     }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
@@ -321,5 +320,118 @@ export class FetchChatService {
       throw new NotFoundException('user not found');
     }
     return finduser;
+  }
+  /******************************************** */
+
+  async ShowMembersOfGroup(
+    userID: number,
+    channelId: string,
+  ): Promise<SHOW_MEMBERS_OFGROUP> {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userID },
+    });
+    if (!finduser) {
+      throw new NotFoundException('user not found');
+    }
+    const owner = await this.prisma.channel.findUnique({
+      where: { id: channelId },
+      include: {
+        owner: {
+          select: {
+            username: true,
+            image: true,
+            id: true,
+          },
+        },
+      },
+    });
+    if (!owner) {
+      throw new NotFoundException('channel not found');
+    }
+    const findinparticepents = await this.prisma.participants.findFirst({
+      where: { channelID: channelId, userID },
+    });
+    if (!findinparticepents) {
+      throw new NotFoundException('not found in Participants');
+    }
+    const participants = await this.prisma.participants.findMany({
+      where: { channelID: channelId },
+      include: {
+        user: {
+          select: {
+            username: true,
+            image: true,
+            id: true,
+          },
+        },
+      },
+    });
+
+    const admins = participants
+      .filter((participant) => participant.role === 'ADMIN')
+      .map(({ user }) => user);
+
+    const users = participants
+      .filter(
+        (participant) =>
+          participant.role === 'USER' && owner.ownerId != participant.userID,
+      )
+      .map(({ user }) => user);
+
+    return {
+      owner: {
+        ...owner.owner,
+      },
+      admins,
+      users,
+    };
+  }
+
+  async show_users(userId: number): Promise<SHOWUSERS[]> {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+    if (!finduser) {
+      throw new NotFoundException('user not found');
+    }
+
+    const fetchUsers = await this.prisma.user.findMany({
+      where: {
+        NOT: [{ id: userId }, { friendshipUser2: { some: { blocked: true } } }],
+      },
+      select: {
+        id: true,
+        username: true,
+        image: true,
+      },
+    });
+
+    return fetchUsers;
+  }
+
+  async show_Groups(userId: number): Promise<SHOWGROUPS[]> {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+    if (!finduser) {
+      throw new NotFoundException('user not found');
+    }
+
+    const fetchGroups = await this.prisma.channel.findMany({
+      where: {
+        NOT: {
+          type: {
+            in: ['PRIVATE', 'PERSONEL'],
+          },
+        },
+      },
+      select: {
+        id: true,
+        type: true,
+        name: true,
+        image: true,
+      },
+    });
+    return fetchGroups;
   }
 }

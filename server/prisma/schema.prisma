@@ -18,6 +18,8 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   achievements String[]
+  twoFactorAuthenticationSecret String?
+  isTwoFactorAuthenticationEnabled  Boolean @default(false) 
 
   matchHistoriesUser1 Match_History[] @relation("Match_History_User1")
   matchHistoriesUser2 Match_History[] @relation("Match_History_User2")
@@ -39,6 +41,8 @@ model Match_History {
   user2Id Int
   user1   User   @relation("Match_History_User1", fields: [user1Id], references: [id])
   user2   User   @relation("Match_History_User2", fields: [user2Id], references: [id])
+
+  game_end Boolean @default(false)
 
   createdAt    DateTime @default(now())
   user1P Int
