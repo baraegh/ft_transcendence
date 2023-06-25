@@ -48,12 +48,13 @@ export class CREATEGROUPSDTO {
   @ApiProperty({ description: 'must be array of sring of id' })
   @IsNotEmpty()
   @IsString()
-  members: string;
+  members: string[];
 
-   parsedMembers(members: string) : number[] {
-    if (members.trim() !== '') {
-      return members.split(',').map(Number);
+  parsedMembers(members: string[]): number[] {
+    if (Array.isArray(members)) {
+      return members.map((member) => Number(member));
     }
+    return [];
   }
 }
 

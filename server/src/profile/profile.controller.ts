@@ -16,7 +16,7 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
 import { ProfileService } from './profile.service';
 import { Request } from 'express';
-import { Edite_Profile_DTO } from './profile.dto';
+import { Edite_Profile_DTO, MATCH_HISTORY_DTO } from './profile.dto';
 import { Multer } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
@@ -48,7 +48,20 @@ export class ProfileController {
     const localhostUrl = `${req.protocol}://${req.get('host')}`;
     return await this.profile.edite_profile(localhostUrl, userid, dto, file);
   }
+
+
+  @ApiResponse({
+    type:MATCH_HISTORY_DTO
+  })
+  @Get("match-history")
+  async matchHistory(@Req() req:Request):Promise<MATCH_HISTORY_DTO[]>{
+    return await this.profile.matchHistory(req.user['id']);
+  }
+
+
 }
+
+
 
 /*******************************/
 @ApiBearerAuth()

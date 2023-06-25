@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CREAT_GAME_DTO{
 
@@ -30,4 +30,35 @@ export class RETURN_OF_CREAT_GAME_DTO{
 
     @ApiProperty({description:'point of other user'})
     user2P: number;
+}
+
+
+export class EDIT_GAME_DTO{
+
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    GameId:string
+
+
+    @ApiProperty({description:'point of user'})
+    @IsNumber()
+    @IsNotEmpty()
+    user1P: number;
+
+    @ApiProperty({description:'point of other user'})
+    @IsNumber()
+    @IsNotEmpty()
+    user2P: number;
+
+
+}
+
+
+export class END_GAME_DTO{
+
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    GameId:string
 }
