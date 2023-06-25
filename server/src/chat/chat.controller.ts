@@ -4,6 +4,8 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
+  Param,
   Post,
   Req,
   UploadedFile,
@@ -45,6 +47,7 @@ import { FetchChatService } from './fetchChat.servise';
 import { OWNERDTO } from './dto/owner.dto';
 import { ChatOwnerService } from './owner/chatOwner.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @ApiBearerAuth()
 @ApiTags('chat')
@@ -52,7 +55,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('chat')
 @ApiResponse({ status: 200, description: 'Successful response' })
 export class ChatController {
-  constructor(private chat: ChatService, private fetshchat: FetchChatService) {}
+  constructor(
+    private chat: ChatService,
+    private fetshchat: FetchChatService,
+    private prisma: PrismaService,
+  ) {}
 
   @ApiOperation({ summary: 'make channel with friend if not exist' })
   @ApiResponse({
@@ -115,7 +122,7 @@ export class ChatController {
   })
   @ApiResponse({
     description: 'Returns id of channel ',
-    type:RETUR_OF_CHANNEL_DTO
+    type: RETUR_OF_CHANNEL_DTO,
   })
   @UseInterceptors(FileInterceptor('image'))
   @Post('create-group')
@@ -123,10 +130,37 @@ export class ChatController {
     @Req() req: Request,
     @Body() body: CREATEGROUPSDTO,
     @UploadedFile() file: Express.Multer.File,
-  ):Promise<RETUR_OF_CHANNEL_DTO>  {
+  ): Promise<RETUR_OF_CHANNEL_DTO> {
     const ownerId = req.user['id'];
-     const localhostUrl = `${req.protocol}://${req.get('host')}`;
-    return await this.chat.CreateGroup(ownerId, body,file,localhostUrl);
+    const localhostUrl = `${req.protocol}://${req.get('host')}`;
+    return await this.chat.CreateGroup(ownerId, body, file, localhostUrl);
+  }
+
+  @ApiParam({
+    name: 'name',
+    description: 'the name of group is unique or not',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    description: 'true or false',
+  })
+  @Get('NameGroupExist/:name')
+  async NameGroupExist(@Req() req: Request, @Param('name') name: string) {
+    const userid = req.user['id'];
+    const userixist = await this.prisma.user.findMany({
+      where: {
+        id: userid,
+      },
+    });
+    if(!userixist) throw new NotFoundException('user not found');
+    const findenameunique = await this.prisma.channel.findUnique({
+      where: {
+        name: name,
+      },
+    });
+    if (findenameunique) return true;
+    else return false;
   }
 
   @ApiOperation({ summary: 'get msg  ' })
