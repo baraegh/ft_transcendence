@@ -42,7 +42,7 @@ type SettingsProps =
     list: string[];
     size?: string,
     setIsProfileOpen?:  (isOpen: boolean) => void
-    setChat: (chatId: string, type: string)=> void,
+    setChat?: (chatId: string, chatImage: string, chatName: string, chatType: string) => void
 }
 
 export function Settings({list, size='14px', setIsProfileOpen, setChat} : SettingsProps)

@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
+import Axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faKhanda, faXmark, faGear} from '@fortawesome/free-solid-svg-icons';
 import {SendOutlined} from '@ant-design/icons';
@@ -11,28 +12,33 @@ import "./chatArea.css"
 
 import Image from '../barae.jpg';
 
+type msgCard = {userId: number, content: string, timeSend: string, image?: string}
+export type msgListType = msgCard[];
+
 const settingsList = ['Profile', 'Delete', 'Block'];
 
 type chatAreaHeaderProps =
 {
-    type:               string,
+    type:               string | null,
+    chatImage:          string | null,
+    chatName:          string | null,
     setIsProfileOpen:   (isopen: boolean) => void;
 }
 
-const ChatAreaHeader = ({setIsProfileOpen, type} : chatAreaHeaderProps) => {
+const ChatAreaHeader = ({setIsProfileOpen, type, chatImage, chatName} : chatAreaHeaderProps) => {
 
     return (
         <div className='chat-area-header'>
             <div className="user-card">
-                <img src={Image} alt='description'/>
+                <img src={chatImage? chatImage: 'deafault image'} alt={`${chatName} image`}/>
                 <div>
-                    <p className="user-card-username">username</p>
+                    <p className="user-card-username">{chatName}</p>
                     <p className="user-card-status">active</p>
                 </div>
             </div>
             <div className="challenge-setting">
                 {
-                    (type !== 'group') ?
+                    (type === 'PERSONEL') ?
                         <button className="challenge-btn">
                             <p>Challenge</p>
                             <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
@@ -74,18 +80,8 @@ const ChatAreaInput = () => {
     );
 }
 
-type msgList = {id: number, sender: string, msg: string, time: string, image?: string}[];
-
-type msgCard = {id:number, sender: string, msg: string, time: string, image?: string}
-
 type msgCardProps = {
     msg: msgCard,
-}
-
-type ChatAreaProps = {
-    ListOfMsg:          msgList,
-    type:               string,
-    setIsProfileOpen:   (isOpen: boolean) => void,
 }
 
 const MsgCardMe = ({msg} : msgCardProps) => 
@@ -93,8 +89,8 @@ const MsgCardMe = ({msg} : msgCardProps) =>
     return (
         <div className="chat-area-msg-me-container">
             <div className="chat-area-msg-me">
-                <p className="chat-area-message msg-of-me">{msg.msg}</p>
-                <p className="chat-time time-of-me">{msg.time}</p>
+                <p className="chat-area-message msg-of-me">{msg.content}</p>
+                <p className="chat-time time-of-me">{msg.timeSend}</p>
             </div>
         </div>
     );
@@ -105,12 +101,12 @@ const MsgCardOther = ({msg} : msgCardProps) =>
     return (
         <div className="chat-area-msg-other">
             <div className="msg-of-other-username-msg">
-                <p className="msg-of-other-username">{msg.sender}</p>
-                <p className="chat-area-message">{msg.msg}</p>
+                <p className="msg-of-other-username">'msg.sender'</p>
+                <p className="chat-area-message">{msg.content}</p>
             </div>
             <div className="msg-of-other-time-img">
                 <img src={msg.image} alt="description..."/>
-                <p className="chat-time">{msg.time}</p>
+                <p className="chat-time">{msg.timeSend}</p>
             </div>
         </div>
     );
@@ -118,19 +114,29 @@ const MsgCardOther = ({msg} : msgCardProps) =>
 
 type chatAreaMessagesProps =
 {
-    ListOfMsg: msgList,
+    ListOfMsg: msgListType | null,
 }
 
 const ChatAreaMessages = ({ListOfMsg} : chatAreaMessagesProps) => {
+    const [myId, setMyId] = useState<number | null>(null);
 
-    const msgCard = ListOfMsg.map( msg =>
-        {
-            return    msg.sender === 'me' ?
-                    (<MsgCardMe key={msg.id} msg={msg} />)
-                :
-                    (<MsgCardOther key={msg.id} msg={msg} />)
-        }
-    );
+    useEffect(()=>{
+        Axios.get('http://localhost:3000/user/me', {withCredentials: true})
+            .then((response) => {
+                setMyId(response.data.id);
+            })
+            .catch()
+    }, []);
+
+
+    const msgCard = ListOfMsg? ListOfMsg.map( msg =>
+                    {
+                        return    myId === msg.userId ?
+                                (<MsgCardMe key={msg.userId} msg={msg} />)
+                            :
+                                (<MsgCardOther key={msg.userId} msg={msg} />)
+                    }
+                ) : ''
 
     return (
         <div className='chat-area-messages'>
@@ -276,7 +282,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
 
-    const Trigger = <FriendCard img={Image} username="BARAE" />;
+    const Trigger = <FriendCard id={0} image={Image} username="BARAE" />;
 
     const Content = (<UserCardPopOverContent />);
 
@@ -288,7 +294,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
 
             <div className="chat-area-group-owner">
                 <p className="header">Owner</p>
-                <FriendCard img={Image} username="BARAE"/>
+                <FriendCard id={0} image={Image} username="BARAE"/>
             </div>
 
             <div className="chat-area-group-members">
@@ -444,13 +450,39 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
     );
 }
 
-export const ChatArea = ({ListOfMsg, setIsProfileOpen, type} : ChatAreaProps) => {
+type ChatAreaProps = {
+    // ListOfMsg:          msgListType,
+    chatId:             string | null;
+    type:               string | null,
+    chatName:           string | null,
+    chatImage:          string | null,
+    setIsProfileOpen:   (isOpen: boolean) => void,
+}
+
+export const ChatArea = ({chatId, setIsProfileOpen, type, chatName, chatImage} : ChatAreaProps) => {
+    const [msgList, setmsgList] = useState<msgListType | null>(null);
+
+    useEffect(() => {
+        if (!chatId)
+          return;
+        Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatId}, {withCredentials: true})
+            .then((response) => {
+                // console.log(response.data);
+                setmsgList(response.data);
+              }
+            )
+            .catch((error) => {
+                console.log(error);
+              }
+            );
+      },[chatId]);
 
     return (
         <>
             <div className='chat-area-container'>
-                <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} type={type} />
-                <ChatAreaMessages ListOfMsg={ListOfMsg}/>
+                <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} type={type} 
+                    chatName={chatName} chatImage={chatImage} />
+                <ChatAreaMessages ListOfMsg={msgList}/>
                 <ChatAreaInput />
             </div>
         </>

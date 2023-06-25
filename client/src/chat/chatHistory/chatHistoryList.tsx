@@ -7,7 +7,7 @@ const filterList = ['All chats', 'Friends', 'Groups'];
 const settingsList = ['New Chat', 'Create Group', 'Invite'];
 
 type ChatListHeaderProps = {
-    setChat: (chatId: string, type: string)=> void,
+    setChat: (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
 }
 
 function ChatListHeader({setChat} : ChatListHeaderProps)
@@ -28,15 +28,18 @@ function ChatListHeader({setChat} : ChatListHeaderProps)
 }
 
 type HistoryListProps = {
-    data: channel,
-    setChat: (chatId: string, type: string)=> void,
-    selected: boolean
+    data:           channel,
+    selected:       boolean
+    setChat:        (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
 }
 
 const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
 {
     const handleOnClick = () => {
-        setChat(data.channelId, data.type)
+        data.type === 'PERSONEL'?
+                setChat(data.channelId, data.otherUserImage, data.otherUserName, data.type)
+            :
+                setChat(data.channelId, data.channelImage, data.channelImage, data.type);
     } 
 
     const isGroup = data.type === 'PRIVATE';
@@ -64,12 +67,6 @@ const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
     );
 }
 
-type chatHistoryListProps =
-{
-    setChatId:          (chatId: string) => void,
-    setIsProfileOpen:   (isOpen: boolean) => void,
-    setChatType:        (type: string) => void;
-}
 
 export type channel = {
     channelId:      string,
@@ -85,41 +82,45 @@ export type channel = {
         content:    string,
         timeSent:   string,
         senderId:   number,
-    },
-
+    },   
 }
 
-const ChatHistoryList = ( {setChatId, setIsProfileOpen, setChatType}: chatHistoryListProps) =>
+type chatHistoryListProps =
 {
-    const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+    setChat:            (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
+    setIsProfileOpen:   (isOpen: boolean) => void,
+    chatId:             string | null,
+}
+
+const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListProps) =>
+{
+    // const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
     const [channelList, setChannelList] = useState<channel[]| null>(null);
 
     useEffect(() => {
         Axios.get('http://localhost:3000/chat/all-channel-of-user', { withCredentials: true })
             .then((response) => {
-                // console.log('cannel id: ', response.data);
                 setChannelList(response.data);
             })
             .catch((error) => {
                     console.log(error);
                 }
             );
-    }, []);
+    }, [chatId]);
 
-    const handleSetChat = (chatId: string, type: string) => {
-        setSelectedChatId(chatId);
-        setChatId(chatId);
-        setChatType(type);
+    const handleSetChat = (chatId: string,chatImage: string,
+                            chatName: string, chatType: string) => {
+        setChat(chatId, chatImage, chatName, chatType);
         setIsProfileOpen(false);
     };
 
     const msgCard = channelList? channelList.map( channel =>
                                 (
                                     <HistoryList
-                                    key={channel.channelId}
-                                    data={channel}
-                                    selected={selectedChatId === channel.channelId}
-                                    setChat={handleSetChat}
+                                        key={channel.channelId}
+                                        data={channel}
+                                        selected={chatId === channel.channelId}
+                                        setChat={setChat}
                                     />
                                 ))
                     : <p>No Channels</p>

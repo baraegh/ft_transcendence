@@ -14,7 +14,7 @@ type DropMenuProps =
   size?:              string,
   triggerIconSize?:   string,
   setIsProfileOpen?:  (isOpen: boolean) => void,
-  setChat?: (chatId: string, type: string)=> void,
+  setChat?: (chatId: string, chatImage: string, chatName: string, chatType: string) => void
 }
 
 const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, 

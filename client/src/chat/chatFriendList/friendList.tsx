@@ -2,23 +2,23 @@ import React, { useState, useEffect } from "react";
 import { FilterBtn, Search } from "../tools/filterSearchSettings";
 import Axios from "axios";
 
-export const FriendCard = (props : {id: number, img: string, username:string}) => {
+export type friendDataType = {
+    id: number,
+    username: string,
+    image: string
+}
+
+export const FriendCard = (props : friendDataType) => {
 
     return (
             <div className="friend-card">
-                <img src={props.img} alt={props.username + " profile's image"}/>
+                <img src={props.image} alt={props.username + " profile's image"}/>
                 <p>{props.username}</p>
             </div>
     );
 }
 
 const filterList = ['All Friends', 'Online', 'Block', 'Pending'];
-
-export type friendDataType = {
-    id: number,
-    username: string,
-    image: string
-}
 
 export const FriendList = () => {
     const [friendListArray, setFriendListArray] = useState<friendDataType[] | null>(null);
@@ -38,7 +38,7 @@ export const FriendList = () => {
                                     <FriendCard 
                                         key={friend.id} 
                                         id={friend.id}
-                                        img={friend.image} 
+                                        image={friend.image} 
                                         username={friend.username}/>)
                         : <p>NO FRIENDS</p>;
 

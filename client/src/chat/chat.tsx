@@ -170,40 +170,35 @@ const chatArray: chatArrayType = [
 export function Chat() {
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatType, setChatType] = useState<string | null>(null);
+  const [chatImage, setChatImage] = useState<string | null>(null);
+  const [chatName, setChatName] = useState<string | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
 
-  const navigate = useNavigate();
-  const fetchdata = () => {
-    Axios
-      .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error("Request failed");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        navigate("/");
-      });
-  };
-  fetchdata();
 
-  useEffect(() => {
-    console.log(`chatId: ${chatId}`);
-    if (!chatId)
-      return ;
-    Axios.get("http://localhost:3000/chat/all-msg/", {withCredentials: true, channelId: chatId})
-        .then((response) => {
-            console.log('here');
-            console.log(response.data);
-          }
-        )
-        .catch((error) => {
-            console.log(error);
-          }
-        );
-  },[chatId]);
+  const setChat = (chatId: string, chatImage: string,
+                    chatName: string, chatType: string) => {
+    setChatId(chatId);
+    setChatImage(chatImage);
+    setChatName(chatName);
+    setChatType(chatType);
+  }
+
+  // const navigate = useNavigate();
+  // const fetchdata = () => {
+  //   Axios
+  //     .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
+  //     .then((response) => {
+  //       if (response.status !== 200) {
+  //         throw new Error("Request failed");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       navigate("/");
+  //     });
+  // };
+  // fetchdata();
 
 
   return (
@@ -211,18 +206,19 @@ export function Chat() {
       {!isChatSettingOpen ? (
         <>
           <ChatHistoryList
-            setChatId={setChatId}
-            setChatType={setChatType}
+            chatId={chatId}
+            setChat={setChat}
             setIsProfileOpen={setIsProfileOpen}
           />
           <div className="chat-area">
             {chatId !== null ? (
-              // <ChatArea
-              //   chatId={chatId}
-              //   setIsProfileOpen={setIsProfileOpen}
-              //   // type={chatType? chatType: 'PERSONEL'}
-              // />
-              <p>chatArea</p>
+              <ChatArea
+                chatId={chatId}
+                chatImage={chatImage}
+                chatName={chatName}
+                setIsProfileOpen={setIsProfileOpen}
+                type={chatType}
+              />
             ) : (
               <div className="chat-area-default">
                 <p>Getting no message is also a message</p>
