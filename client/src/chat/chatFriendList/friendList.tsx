@@ -3,17 +3,27 @@ import { FilterBtn, Search } from "../tools/filterSearchSettings";
 import Axios from "axios";
 
 export type friendDataType = {
-    id: number,
-    username: string,
-    image: string
+    blocked:            boolean,
+    isRequested:        boolean,
+    isFriend:           boolean,
+    requestAccepted:    boolean,
+    friend:             {
+        id: number,
+        username: string,
+        image: string   
+    }
 }
 
-export const FriendCard = (props : friendDataType) => {
+type FriendCardProps = {
+    friend: friendDataType,
+}
+
+export const FriendCard = ({friend} : FriendCardProps) => {
 
     return (
             <div className="friend-card">
-                <img src={props.image} alt={props.username + " profile's image"}/>
-                <p>{props.username}</p>
+                <img src={friend.friend.image} alt={friend.friend.username + " profile's image"}/>
+                <p>{friend.friend.username}</p>
             </div>
     );
 }
@@ -26,6 +36,7 @@ export const FriendList = () => {
         Axios.get('http://localhost:3000/user/friends', { withCredentials: true })
             .then((response) => {
                     setFriendListArray(response.data);
+                    console.log('response.data: ', response.data);
             })
             .catch((error) => {
                     console.log(error);
@@ -36,10 +47,8 @@ export const FriendList = () => {
     let friendsList =   friendListArray? 
                             friendListArray.map(friend => 
                                     <FriendCard 
-                                        key={friend.id} 
-                                        id={friend.id}
-                                        image={friend.image} 
-                                        username={friend.username}/>)
+                                        key={friend.friend.id} 
+                                        friend={friend}/>)
                         : <p>NO FRIENDS</p>;
 
     return (
