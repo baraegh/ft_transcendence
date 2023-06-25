@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -15,6 +16,9 @@ import {
   OWNERPROPDTO,
 } from '../dto/owner.dto';
 import * as argon from 'argon2';
+import * as path from 'path';
+import { createWriteStream } from 'fs';
+import { RETUR_OF_CHANNEL_DTO } from '../dto';
 
 @Injectable()
 export class ChatOwnerService {
@@ -73,7 +77,7 @@ export class ChatOwnerService {
     });
     if (!findChannel) throw new NotFoundException('channel not found');
 
-     if (findChannel.chanelID['role'] && findChannel.ownerId === userId)
+    if (findChannel.chanelID['role'] && findChannel.ownerId === userId)
       throw new ForbiddenException('Access Denied');
     if (findChannel.ownerId != userId || findChannel.chanelID['role']) {
       throw new ForbiddenException('Access Denied');
@@ -202,7 +206,12 @@ export class ChatOwnerService {
   //   } else throw new ForbiddenException('user already added');
   // }
 
-  async editgroup(userID: number, dto: OWNEREDITDTO) {
+  async editgroup(
+    userID: number,
+    dto: OWNEREDITDTO,
+    localhostUrl: string,
+    file: Express.Multer.File,
+  ):Promise<RETUR_OF_CHANNEL_DTO> {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userID },
     });
@@ -219,6 +228,23 @@ export class ChatOwnerService {
       throw new HttpException('Name is not unique', HttpStatus.BAD_REQUEST);
     if (findChannel.ownerId != userID) {
       throw new ForbiddenException('You are not the Owner');
+    }
+
+    if (file) {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png']; // Specify the allowed image extensions
+      const fileExtension = path.extname(file.originalname).toLowerCase(); // Extract the file extension
+      if (!allowedExtensions.includes(fileExtension)) {
+        throw new BadRequestException(
+          'Invalid file type. Only images are allowed : jpg, jpeg ,png',
+        );
+      }
+      const imageName = `${findChannel.id}${fileExtension}`;
+      let imagePath = `uploads/${imageName}`;
+      const stream = createWriteStream(imagePath);
+      stream.write(file.buffer);
+      stream.end();
+      imagePath = `${localhostUrl}/uploads/${imageName}`;
+      dto.image = imagePath;
     }
     if (findChannel.type === 'PERSONEL')
       throw new ForbiddenException('Acces Denied');
@@ -237,8 +263,7 @@ export class ChatOwnerService {
       default:
         throw new ForbiddenException('Acces Denied');
     }
-
-    await this.prisma.channel.update({
+   const updatechannel =  await this.prisma.channel.update({
       where: { id: dto.channelid },
       data: {
         type: dto.type,
@@ -246,6 +271,15 @@ export class ChatOwnerService {
         hash: dto.hash,
         name: dto.name,
       },
+      select:{
+        id:true,
+        ownerId:true,
+        type:true,
+        name:true,
+        image:true,
+        updatedAt:true
+      }
     });
+    return updatechannel
   }
 }

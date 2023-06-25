@@ -65,6 +65,6 @@ export class UploadsController {
     if (!fs.existsSync(imagePath)) {
       throw new NotFoundException('File not found');
     }
-    res.sendFile(imagePath);
+    res.sendFile(imagePath);  
   }
 }

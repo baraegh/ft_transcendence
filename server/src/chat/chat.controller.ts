@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -32,6 +34,7 @@ import {
   JOINGROUPRTURNDTO,
   MSGDTO,
   PersonelChannelInfoDTO,
+  RETUR_OF_CHANNEL_DTO,
   SHOWCHATDTO,
   SHOWGROUPS,
   SHOWUSERS,
@@ -41,6 +44,7 @@ import { HttpStatusCode } from 'axios';
 import { FetchChatService } from './fetchChat.servise';
 import { OWNERDTO } from './dto/owner.dto';
 import { ChatOwnerService } from './owner/chatOwner.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiBearerAuth()
 @ApiTags('chat')
@@ -111,11 +115,18 @@ export class ChatController {
   })
   @ApiResponse({
     description: 'Returns id of channel ',
+    type:RETUR_OF_CHANNEL_DTO
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Post('create-goupe')
-  async CreateGroup(@Req() req: Request, @Body() body: CREATEGROUPSDTO) {
+  async CreateGroup(
+    @Req() req: Request,
+    @Body() body: CREATEGROUPSDTO,
+    @UploadedFile() file: Express.Multer.File,
+  ):Promise<RETUR_OF_CHANNEL_DTO>  {
     const ownerId = req.user['id'];
-    return await this.chat.CreateGroup(ownerId, body);
+     const localhostUrl = `${req.protocol}://${req.get('host')}`;
+    return await this.chat.CreateGroup(ownerId, body,file,localhostUrl);
   }
 
   @ApiOperation({ summary: 'get msg  ' })
@@ -220,7 +231,6 @@ export class ChatController {
     return await this.fetshchat.ShowMembersOfGroup(userID, channelId);
   }
 
-
   @ApiOperation({
     summary: 'get all Users except blocked',
   })
@@ -233,7 +243,6 @@ export class ChatController {
     return await this.fetshchat.show_users(req.user['id']);
   }
 
-
   @ApiOperation({
     summary: 'get all Groups except Personnel And Private',
   })
@@ -243,6 +252,6 @@ export class ChatController {
   })
   @Get('show-all-groups')
   async show_Groups(@Req() req: Request): Promise<SHOWGROUPS[]> {
-    return await this.fetshchat.show_Groups(req.user['id']); 
+    return await this.fetshchat.show_Groups(req.user['id']);
   }
 }

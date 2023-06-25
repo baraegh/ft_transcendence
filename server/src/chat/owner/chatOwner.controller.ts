@@ -7,12 +7,15 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
+  ApiProperty,
   ApiResponse,
   ApiResponseProperty,
   ApiTags,
@@ -27,6 +30,9 @@ import {
   OWNERPROPDTO,
 } from '../dto/owner.dto';
 import { ChatOwnerService } from './chatOwner.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { RETUR_OF_CHANNEL_DTO } from '../dto';
+import { type } from 'os';
 
 @ApiBearerAuth()
 @ApiTags('Owner in Group && Admin')
@@ -36,8 +42,9 @@ import { ChatOwnerService } from './chatOwner.service';
 export class ChaOwnertController {
   constructor(private chatowner: ChatOwnerService) {}
 
-
-  @ApiOperation({summary:'can owner and admin mut others, but admin cant mute owner'})
+  @ApiOperation({
+    summary: 'can owner and admin mut others, but admin cant mute owner',
+  })
   @ApiBody({
     type: OWNERDTO, // Example class representing the request body
     required: true,
@@ -49,8 +56,9 @@ export class ChaOwnertController {
     await this.chatowner.muteMember(userID, body);
   }
 
-
-  @ApiOperation({summary:'can owner and admin remove others , but adim can remove owner'})
+  @ApiOperation({
+    summary: 'can owner and admin remove others , but adim can remove owner',
+  })
   @ApiBody({
     type: OWNERPROPDTO, // Example class representing the request body
     required: true,
@@ -62,8 +70,7 @@ export class ChaOwnertController {
     await this.chatowner.removeMember(userID, body);
   }
 
-
-  @ApiOperation({summary:'Just for owner'})
+  @ApiOperation({ summary: 'Just for owner' })
   @ApiBody({
     type: CHANNELIDDTO, // Example class representing the request body
     required: true,
@@ -75,7 +82,7 @@ export class ChaOwnertController {
     await this.chatowner.clearchat(userID, body);
   }
 
-  @ApiOperation({summary:'Just for owner'})
+  @ApiOperation({ summary: 'Just for owner' })
   @ApiBody({
     type: CHANNELIDDTO,
     required: true,
@@ -87,7 +94,7 @@ export class ChaOwnertController {
     await this.chatowner.deletgroup(userID, body);
   }
 
-  @ApiOperation({summary:'Just for owner'})
+  @ApiOperation({ summary: 'Just for owner' })
   @ApiBody({
     type: OWNEADDADMINRDTO,
     required: true,
@@ -99,14 +106,24 @@ export class ChaOwnertController {
     await this.chatowner.addAdmin(userID, body);
   }
 
-  @ApiOperation({summary:'Just for owner'})
+
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    type:RETUR_OF_CHANNEL_DTO
+  })
+  @ApiOperation({ summary: 'Just for owner' })
   @ApiBody({
     type: OWNEREDITDTO,
     required: true,
   })
-  @Patch('edit-group')
-  async editgroup(@Req() req: Request, @Body() body: OWNEREDITDTO) {
-    await this.chatowner.editgroup(req.user['id'], body);
+  @UseInterceptors(FileInterceptor('image'))
+  @Post('edit-group')
+  async editgroup(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Body() body: OWNEREDITDTO,
+  ):Promise<RETUR_OF_CHANNEL_DTO> {
+    const localhostUrl = `${req.protocol}://${req.get('host')}`;
+    return await this.chatowner.editgroup(req.user['id'], body,localhostUrl,file);
   }
-  
 }

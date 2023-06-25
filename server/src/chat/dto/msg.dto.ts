@@ -22,10 +22,11 @@ export class MSGDTO {
 }
 export class CREATEGROUPSDTO {
   // @ApiProperty({ type:Type})
-  @ApiProperty({ description: 'most be enum Type { PRIVATE,PROTECTED,PUBLIC,PERSONEL}' })
+
   @IsNotEmpty()
   @IsString()
-  type: any;
+  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED', 'PERSONEL'] })
+  type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
 
   @ApiProperty({ description: 'Channel id' })
   @IsNotEmpty()
@@ -37,10 +38,12 @@ export class CREATEGROUPSDTO {
   @IsString()
   hash: string;
 
-  @ApiProperty({ description: 'IsOptional' })
+
+
+  @ApiProperty({ type: 'string', format: 'binary' ,description: 'IsOptional' })
   @IsOptional()
   @IsString()
-  image: string;
+  image?: string;
 
   @ApiProperty({ description: 'must be array of sring of id' })
   @IsNotEmpty()

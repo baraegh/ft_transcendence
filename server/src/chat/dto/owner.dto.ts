@@ -65,7 +65,7 @@ export class OWNEADDADMINRDTO {
     @IsString()
     hash?: string;
   
-    @ApiProperty({ description: 'IsOptional' })
+    @ApiProperty({ description: 'IsOptional',type: 'string', format: 'binary'})
     @IsOptional()
     @IsString()
     image?: string;

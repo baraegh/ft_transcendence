@@ -12,7 +12,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CREATEGROUPSDTO } from './dto/msg.dto';
 import * as argon from 'argon2';
 import { CHANNELIDDTO } from './dto/owner.dto';
-import { INVETUSERDTO, JOINGROUPDTO, JOINGROUPRTURNDTO } from './dto';
+import { INVETUSERDTO, JOINGROUPDTO, JOINGROUPRTURNDTO, RETUR_OF_CHANNEL_DTO } from './dto';
+import { createWriteStream } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ChatService {
@@ -133,7 +135,7 @@ export class ChatService {
         type: true,
         name: true,
         image: true,
-        ownerId:true,
+        ownerId: true,
         chanelID: {
           select: {
             role: true,
@@ -146,32 +148,35 @@ export class ChatService {
     }
 
     const findinparticepents = await this.prisma.participants.findUnique({
-      where:{ channelID_userID: {
-        channelID: dto.channelId,
-        userID: dto.otheruserid,
-      }},
-    })
+      where: {
+        channelID_userID: {
+          channelID: dto.channelId,
+          userID: dto.otheruserid,
+        },
+      },
+    });
     if (findinparticepents) {
       throw new ForbiddenException('The user already member');
     }
     if (existingChannel.type === 'PERSONEL')
       throw new ForbiddenException('Forbiden acces');
 
-    if(existingChannel.ownerId === userId || existingChannel.chanelID['role'] === 'ADMIN'){
+    if (
+      existingChannel.ownerId === userId ||
+      existingChannel.chanelID['role'] === 'ADMIN'
+    ) {
       await this.prisma.participants.create({
         data: {
           channelID: dto.channelId,
           userID: dto.otheruserid,
         },
       });
-      delete existingChannel.chanelID 
-      delete existingChannel.ownerId
-      return existingChannel
-    }
-    else{
+      delete existingChannel.chanelID;
+      delete existingChannel.ownerId;
+      return existingChannel;
+    } else {
       throw new ForbiddenException('Forbiden acces');
     }
-
   }
 
   /*********************************************************/
@@ -209,7 +214,12 @@ export class ChatService {
   }
 
   /*********************************************************/
-  async CreateGroup(ownerId, dto: CREATEGROUPSDTO) {
+  async CreateGroup(
+    ownerId,
+    dto: CREATEGROUPSDTO,
+    file: Express.Multer.File,
+    localhostUrl: string,
+  ):Promise<RETUR_OF_CHANNEL_DTO> {
     if (dto.hash) {
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
@@ -228,6 +238,16 @@ export class ChatService {
     });
     if (findeuniquenqme)
       throw new HttpException('Name is not unique', HttpStatus.BAD_REQUEST);
+    let fileExtension;
+    if (file) {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png']; // Specify the allowed image extensions
+      fileExtension = path.extname(file.originalname).toLowerCase(); // Extract the file extension
+      if (!allowedExtensions.includes(fileExtension)) {
+        throw new BadRequestException(
+          'Invalid file type. Only images are allowed : jpg, jpeg ,png',
+        );
+      }
+    }
     const createChannel = await this.prisma.channel.create({
       data: {
         ownerId: ownerId,
@@ -236,6 +256,28 @@ export class ChatService {
         hash: dto.hash,
         name: dto.name,
       },
+    });
+    const imageName = `${createChannel.id}${fileExtension}`;
+    let imagePath = `uploads/${imageName}`;
+    const stream = createWriteStream(imagePath);
+    stream.write(file.buffer);
+    stream.end();
+    imagePath = `${localhostUrl}/uploads/${imageName}`;
+    dto.image = imagePath;
+
+    const updatechannel = await this.prisma.channel.update({
+      where: { id: createChannel.id },
+      data: {
+        image: dto.image,
+      },
+      select:{
+        id:true,
+        ownerId:true,
+        type:true,
+        name:true,
+        image:true,
+        updatedAt:true
+      }
     });
     if (
       !Array.isArray(pars.parsedMembers(dto.members)) ||
@@ -262,7 +304,8 @@ export class ChatService {
       });
       throw new NotImplementedException('eroor with participants');
     }
-    return createChannel.id;
+
+    return updatechannel;
   }
 
   ///////////////////////////////////////////////
@@ -286,7 +329,6 @@ export class ChatService {
         id: true,
       },
     });
-
     if (!personalChannel) {
       return null;
     }

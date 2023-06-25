@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
 export class LastMessage {
   @ApiProperty()
   messageId: string;
@@ -178,7 +178,7 @@ export class JOINGROUPRTURNDTO{
   @IsString()
   image?:string;
 }
-
+ 
 
 export class INVETUSERDTO{
   @ApiProperty()
@@ -224,5 +224,36 @@ export class SHOWGROUPS{
   @IsOptional()
   image?: string;
 
+}
+
+export class RETUR_OF_CHANNEL_DTO{
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  ownerId: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED'] })
+  type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @ApiProperty({ description: 'IsOptional' })
+  @IsString()
+  image?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsDate()
+  updatedAt: Date;
 }
 
