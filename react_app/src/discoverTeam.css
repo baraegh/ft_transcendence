@@ -89,6 +89,7 @@ transition: opacity .2s, visibility .2s;
   box-shadow: 12px 10px 0px 0px black;
   transition: filter 0.5s;
   text-align: center;
+  filter: grayscale(100%);
   
 }
   

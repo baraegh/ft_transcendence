@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './style.css'
 import './discoverTeam.css'
 import './loginPage.css'
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

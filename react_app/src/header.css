@@ -1,0 +1,110 @@
+header {
+    width: 1058px;
+    height: 48px;
+    display: flex;
+    padding: 5px 50px;
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
+    margin: auto;
+    margin-top : 10px;
+    margin-bottom : 1px;
+}
+
+header h3{
+    position: relative;
+    text-align: center;
+    right: 20px;    
+}
+
+.bellImg {
+    position: relative;
+    width: 27px;
+    height: 27px;
+    left: 210%;
+    top: 5px;
+}
+
+.profileImg {
+    top: 3px;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 60px;
+    background-color: black;
+    left: 640px;
+}
+
+.vertical-line {
+    position: relative;
+    bottom : 6px;
+    left: 10px;
+    width: 2px;
+    height: 50px;
+    background-color: black;
+}
+
+.header_buttons
+{
+    display: flex;
+
+}
+.header_buttons #Lbutton
+{
+    position: relative;
+    left: 56px;
+    width: 160px;
+    height: 35px;
+}
+.header_buttons #Cbutton
+{
+    position: relative;
+    left: 80px;
+    width: 80px;
+    height: 35px;
+
+}
+
+.header_buttons a{
+    display: block;
+
+    line-height: 40px;
+    font-size: 25px;
+    font-family: sans-serif;
+    text-decoration: none;
+    color: #333;
+    border: 2px solid #333;
+    letter-spacing: 5px;
+    text-align: center;
+    position: relative;
+    transition: all .35s;
+    border-radius: 9px;
+  }
+  
+  .header_buttons a span{
+    position: relative;
+    z-index: 1;
+    bottom : 5px;
+
+  }
+  
+  .header_buttons  a:after{
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: black;
+    transition: all .20s;
+
+  }
+  
+  .header_buttons a:hover{
+    color: #fff;
+  }
+  
+  .header_buttons a:hover:after{
+    width: 100%;
+  }
+  

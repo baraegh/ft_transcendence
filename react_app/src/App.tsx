@@ -1,13 +1,19 @@
-import ListGroup from "./components/ListGroup";
-import 'bootstrap/dist/css/bootstrap.css';
 import React, { useEffect, useState } from 'react';
-// import DSTeam from './discoverTeam'
 import LoginPage from "./loginPage";
 import FA from './2FA'
 import DSTeam from './discoverTeam'
+import Home from './home'
+import MyHeader from "./header";
+import MyProfileUser from './myProfileUser';
+import OtherProfileUser from "./otherProfileUser";
+import LeaderBoard from './leaderBoard';
+import Play from './play'
+import ParentComponent from './QRpopup'
+
 function App()
 {
-  return(<LoginPage/>);
+
+  return(<ParentComponent />);
 }
 
 export default App;
