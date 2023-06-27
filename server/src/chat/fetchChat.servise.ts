@@ -19,7 +19,7 @@ import {
   SHOWUSERS,
   SHOW_MEMBERS_OFGROUP,
 } from './dto';
-import * as argon from 'argon2';
+
 
 @Injectable()
 export class FetchChatService {
@@ -32,14 +32,44 @@ export class FetchChatService {
     if (!findChannel) {
       throw new NotFoundException('channel not found');
     }
-    const findinparticepents = await this.prisma.participants.findFirst({
+    let findinparticepents = await this.prisma.participants.findFirst({
       where: { channelID: dto.channelId, userID: userid },
     });
     if (!findinparticepents) {
       throw new NotFoundException('not found in Participants');
     }
+
+    const currentDate = new Date();
+
+    if (findinparticepents.blocked_at) {
+      const diff_on_min = Math.round(
+        (currentDate.getTime() - findinparticepents.blocked_at.getTime()) /
+          60000,
+      );
+      if (
+        (diff_on_min >= 15 && findinparticepents.mut == 'M15') ||
+        (diff_on_min >= 45 && findinparticepents.mut == 'M45') ||
+        (diff_on_min >= 480 && findinparticepents.mut == 'M15')
+      ) {
+        findinparticepents = await this.prisma.participants.update({
+          where: {
+            channelID_userID: {
+              channelID: dto.channelId,
+              userID: userid,
+            },
+          },
+          data: {
+            mut: 'NAN',
+            blocked_at: null,
+          },
+        });
+      }
+    }
+
     if (findinparticepents.mut != 'NAN')
       throw new ForbiddenException('you are muted from this channel');
+    if (findinparticepents.blocked === true)
+      throw new ForbiddenException('you are blocked');
     const messages = await this.prisma.messages.findMany({
       where: {
         channelID: dto.channelId,
@@ -302,12 +332,9 @@ export class FetchChatService {
     if (!finduser) {
       throw new NotFoundException('User not found');
     }
-  
+
     const users = await this.prisma.user.findMany({
-      orderBy: [
-        { gameWon: 'desc' },
-        { updatedAt: 'asc' },
-      ],
+      orderBy: [{ gameWon: 'desc' }, { updatedAt: 'asc' }],
       select: {
         id: true,
         username: true,
@@ -315,7 +342,7 @@ export class FetchChatService {
         gameWon: true,
       },
     });
-  
+
     const userRanking = users.findIndex((user) => user.id === friendId);
     const leaderboard: RANKINFIDTO[] = users
       .slice(userRanking, userRanking + 6) // Retrieve five more users
@@ -326,7 +353,7 @@ export class FetchChatService {
         username: user.username,
         gameWon: user.gameWon,
       }));
-  
+
     const aboutDto: ABOUTDTO = {
       username: finduser.username,
       gameWon: finduser.gameWon,
@@ -335,7 +362,7 @@ export class FetchChatService {
       updatedAt: finduser.updatedAt,
       rank: leaderboard,
     };
-  
+
     return aboutDto;
   }
   /******************************************** */
