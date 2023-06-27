@@ -123,13 +123,14 @@ type createGroupType = {
 
 type CreateGroupFirstDialogProps = {
     GroupData:      createGroupType,
+    nameExist:      boolean,
     nameWarn:       boolean,
     handleOnChange: (e: React.ChangeEvent<HTMLInputElement> 
                     | { name: string; value: string }
                     | { name: string; value: string; isChecked: boolean }) => void,
 }
 
-export const CreateGroupFirstDialog = ({GroupData, nameWarn, handleOnChange} : CreateGroupFirstDialogProps) =>
+export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn, handleOnChange} : CreateGroupFirstDialogProps) =>
 {
     const [privateKeyInput, setPrivateKeyInput] = useState(false);
 
@@ -147,7 +148,14 @@ export const CreateGroupFirstDialog = ({GroupData, nameWarn, handleOnChange} : C
             <label className='dialog-label' key="group-name" >
                 <div className='create-group-name-warn'>
                     <p className='dialog-MPLUS-font'>Group name</p>
-                    {nameWarn? <p className='create-group-warn-name'>the group's name is mandatory</p>: ''}
+                    {nameWarn?  <p className='create-group-warn-name'>
+                                    {nameExist?
+                                          "the group's name already exist"
+                                        : "the group's name is mandatory"
+                                    }
+                                </p>
+                            : ''
+                    }
                 </div>
                 <input  className='dialog-input'
                         name='name'
@@ -314,6 +322,15 @@ const CreateGroupThirdDialog = () => {
     );
 }
 
+type createGroupResponseTyep = {
+    id:         string,
+    ownerId:    number,
+    type:       string,
+    name:       string,
+    image:      string,
+    updatedAt:  string
+}
+
 const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     
     const   [showFirstDialog, setShowFirstDialog] = useState(true);
@@ -321,6 +338,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     const   [showThirdDialog, setShowThirdDialog] = useState(false);
     let     [numberOfDailog, setNumberOfDailog] = useState(0);
     const   [nameWarn, setNameWarn] = useState(false);
+    const   [nameExist, setNameExist] = useState(false);
     const   [membersWarn, setMembersWarn] = useState(false);
     const   [GroupData, setGroupData] = useState<createGroupType>({
             type: Type.PUBLIC,
@@ -330,7 +348,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
             members: [''],
         });
     
-    const checkNameInput = async (groupName : string): Promise<boolean> =>
+    const checkNameInput = (groupName : string): boolean =>
     {
         if (GroupData.name === '')
             return true;
@@ -338,55 +356,63 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         const trimmedString = groupName.trim();
         if (!(trimmedString.length > 0))
             return true;
+
         
-        
-        Axios.get(`http://localhost:3000/chat/NameGroupExist/${groupName}`,
-                {withCredentials: true})
-            .then((response) => {
-                console.log(response.data);
-                if (response.data)
-                    return (response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
     
         return false;
     }
 
-    const handleNext =  () => {
-        checkNameInput(GroupData.name)
-            .then((isNameInputInvalid) => {
-                console.log('isNameInputInvalid: ', isNameInputInvalid);
-                if (isNameInputInvalid)
-                    setNameWarn(true);
-                else if (numberOfDailog <= 2)
-                {
-                    setNumberOfDailog(++numberOfDailog);
-                    switch (numberOfDailog) {
-                        case 1:
-                            setShowFirstDialog(false);
-                            setShowSecondtDialog(true);
-                            setShowThirdDialog(false);      
-                            break;
-                        
-                        case 2:
-                            setShowFirstDialog(false);
-                            setShowSecondtDialog(false);
-                            setShowThirdDialog(true);
-                            break;
-        
-                        default:
-                            break;
-                    }
-                }
-            })
+    const checkIsNameExist = async (groupName : string): Promise<boolean> => {
+        try
+        {
+            const response = await Axios.get(`http://localhost:3000/chat/NameGroupExist/${groupName}`,
+                                    {withCredentials: true});
+            return response.data;
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
+        return false;
+    }
 
+    const handleNext = async (checkInput: boolean) => {
+
+        if (checkInput && checkNameInput(GroupData.name))
+            setNameWarn(true);
+        else if (checkInput && await checkIsNameExist(GroupData.name))
+        {
+            setNameWarn(true);
+            setNameExist(true);
+        }
+        else if (numberOfDailog <= 2)
+        {
+            setNumberOfDailog(++numberOfDailog);
+            switch (numberOfDailog) {
+                case 1:
+                    setShowFirstDialog(false);
+                    setShowSecondtDialog(true);
+                    setShowThirdDialog(false);      
+                    break;
+                
+                case 2:
+                    setShowFirstDialog(false);
+                    setShowSecondtDialog(false);
+                    setShowThirdDialog(true);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        
     }
 
     const handlePrevious = () => {
         if (nameWarn)
             setNameWarn(false);
+        if (nameExist)
+            setNameExist(false);
         if (membersWarn)
             setMembersWarn(false);
         if (numberOfDailog > 2)
@@ -420,6 +446,8 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         
         if (nameWarn)
             setNameWarn(false);
+        if (nameExist)
+            setNameExist(false);
         if ('target' in e)
         {
             const {name, value} = e.target;
@@ -451,7 +479,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         }
     }
 
-    const  handleOnSubmit = (e: React.SyntheticEvent) => {
+    const  handleOnSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         if (GroupData.members.length > 0 && GroupData.members[0] != '')
         {
@@ -463,23 +491,26 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
             formData.append('image', GroupData.image);
             formData.append('members', JSON.stringify(GroupData.members));
 
-            Axios.post("http://localhost:3000/chat/create-group", 
-                formData, 
-                { 
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    }
-                })
-                .then((response) => {
-                    console.log(response.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-            
-            console.log('group: ', GroupData);
-            handleNext();
+            try
+            {
+                const response = await Axios.post("http://localhost:3000/chat/create-group", 
+                                    formData, 
+                                    { 
+                                        withCredentials: true,
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data',
+                                        }
+                                    });
+                console.log(response.data);
+                handleNext(false);
+                if (setChat)
+                    setChat(response.data.id, response.data.image,
+                            response.data.name, response.data.type);
+            }
+            catch(error)
+            {
+                console.log(error);
+            }
         }
         else
             setMembersWarn(true);
@@ -489,7 +520,8 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     return (
         <form onSubmit={handleOnSubmit}>
             {
-                showFirstDialog && <CreateGroupFirstDialog  nameWarn={nameWarn} GroupData={GroupData} handleOnChange={handleOnChange} />
+                showFirstDialog && <CreateGroupFirstDialog nameExist={nameExist}  nameWarn={nameWarn} 
+                                        GroupData={GroupData} handleOnChange={handleOnChange} />
                 ||
                 showSecondtDialog && <CreateGroupSecondDialog membersWarn={membersWarn} setMembersWarn={setMembersWarn} 
                                             GroupData={GroupData} handleOnChange={handleOnChange} />
@@ -503,7 +535,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
                     <div className='dialog-Previous-next-btn'>
                         {!showFirstDialog && <button className='previous-btn' onClick={handlePrevious}>Previous</button>}
                         {!showThirdDialog && showFirstDialog && <button className='next-btn' type='button'
-                            onClick={handleNext}>Next</button>}
+                            onClick={() => handleNext(true)}>Next</button>}
                         {!showThirdDialog && showSecondtDialog && <button className='next-btn' 
                             type='submit'>Submit</button>}
                     </div>

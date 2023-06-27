@@ -36,7 +36,6 @@ export const FriendList = () => {
         Axios.get('http://localhost:3000/user/friends', { withCredentials: true })
             .then((response) => {
                     setFriendListArray(response.data);
-                    console.log('response.data: ', response.data);
             })
             .catch((error) => {
                     console.log(error);

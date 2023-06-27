@@ -184,21 +184,21 @@ export function Chat() {
     setChatType(chatType);
   }
 
-  // const navigate = useNavigate();
-  // const fetchdata = () => {
-  //   Axios
-  //     .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
-  //     .then((response) => {
-  //       if (response.status !== 200) {
-  //         throw new Error("Request failed");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       navigate("/");
-  //     });
-  // };
-  // fetchdata();
+  const navigate = useNavigate();
+  const fetchdata = () => {
+    Axios
+      .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error("Request failed");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        navigate("/");
+      });
+  };
+  fetchdata();
 
 
   return (

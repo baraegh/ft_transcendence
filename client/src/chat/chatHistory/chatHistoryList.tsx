@@ -100,6 +100,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListPr
     useEffect(() => {
         Axios.get('http://localhost:3000/chat/all-channel-of-user', { withCredentials: true })
             .then((response) => {
+                console.log(response.data);
                 setChannelList(response.data);
             })
             .catch((error) => {
@@ -113,6 +114,8 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListPr
         setChat(chatId, chatImage, chatName, chatType);
         setIsProfileOpen(false);
     };
+
+    console.table(channelList);
 
     const msgCard = channelList? channelList.map( channel =>
                                 (
