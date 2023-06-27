@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CREAT_GAME_DTO{
 
@@ -61,4 +61,14 @@ export class END_GAME_DTO{
     @IsString()
     @IsNotEmpty()
     GameId:string
+
+    @ApiProperty({ nullable: true })
+    @IsNumber()
+    @IsOptional()
+    WinnerId:number
+
+    @ApiProperty({ nullable: true })
+    @IsNumber()
+    @IsOptional()
+    LosserId:number
 }
