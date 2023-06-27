@@ -5,15 +5,8 @@ import { LEADERBOURD_DTO } from './leaderboard.dto';
 @Injectable()
 export class LeaderboardService {
     constructor(private prisma:PrismaService){}
-  async leaderboard(userId: number):Promise<LEADERBOURD_DTO[]> {
+  async leaderboard():Promise<LEADERBOURD_DTO[]> {
     
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-    if (!finduser) {
-      throw new NotFoundException('user not found');
-    }
-
     const users = await this.prisma.user.findMany({
         orderBy: [
           { gameWon: 'desc' },

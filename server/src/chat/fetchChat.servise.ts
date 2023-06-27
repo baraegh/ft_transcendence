@@ -61,12 +61,6 @@ export class FetchChatService {
 
   /******************************************** */
   async ShowAllChannelsOfUser(userId): Promise<ChannelInfoDTO[]> {
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-    if (!userId) {
-      throw new NotFoundException('user not found');
-    }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
       where: {
         userID: userId,
@@ -186,12 +180,6 @@ export class FetchChatService {
 
   //***************************************** */
   async ShowGroupChannelsOfUser(userId): Promise<ChannelGroupInfoDTO[]> {
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-    if (!finduser) {
-      throw new NotFoundException('user not found');
-    }
     const channelsWithLastMessage = await this.prisma.participants.findMany({
       where: {
         userID: userId,
@@ -238,12 +226,6 @@ export class FetchChatService {
   }
   /******************************************** */
   async ShowPersonelChannelsOfUser(userId): Promise<PersonelChannelInfoDTO[]> {
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-    if (!userId) {
-      throw new NotFoundException('user not found');
-    }
     const channelsWithOtherUser = await this.prisma.participants.findMany({
       where: {
         userID: userId,
@@ -362,12 +344,6 @@ export class FetchChatService {
     userID: number,
     channelId: string,
   ): Promise<SHOW_MEMBERS_OFGROUP> {
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userID },
-    });
-    if (!finduser) {
-      throw new NotFoundException('user not found');
-    }
     const owner = await this.prisma.channel.findUnique({
       where: { id: channelId },
       include: {
@@ -444,14 +420,7 @@ export class FetchChatService {
     return fetchUsers;
   }
 
-  async show_Groups(userId: number): Promise<SHOWGROUPS[]> {
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-    if (!finduser) {
-      throw new NotFoundException('user not found');
-    }
-
+  async show_Groups(): Promise<SHOWGROUPS[]> {
     const fetchGroups = await this.prisma.channel.findMany({
       where: {
         NOT: {
