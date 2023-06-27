@@ -13,6 +13,7 @@ import {
   ChannelGroupInfoDTO,
   ChannelInfoDTO,
   PersonelChannelInfoDTO,
+  RANKINFIDTO,
   SHOWCHATDTO,
   SHOWGROUPS,
   SHOWUSERS,
@@ -317,9 +318,43 @@ export class FetchChatService {
       },
     });
     if (!finduser) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('User not found');
     }
-    return finduser;
+  
+    const users = await this.prisma.user.findMany({
+      orderBy: [
+        { gameWon: 'desc' },
+        { updatedAt: 'asc' },
+      ],
+      select: {
+        id: true,
+        username: true,
+        image: true,
+        gameWon: true,
+      },
+    });
+  
+    const userRanking = users.findIndex((user) => user.id === friendId);
+    const leaderboard: RANKINFIDTO[] = users
+      .slice(userRanking, userRanking + 6) // Retrieve five more users
+      .map((user, index) => ({
+        rank: userRanking + index + 1,
+        id: user.id,
+        image: user.image,
+        username: user.username,
+        gameWon: user.gameWon,
+      }));
+  
+    const aboutDto: ABOUTDTO = {
+      username: finduser.username,
+      gameWon: finduser.gameWon,
+      gameLost: finduser.gameLost,
+      achievements: finduser.achievements,
+      updatedAt: finduser.updatedAt,
+      rank: leaderboard,
+    };
+  
+    return aboutDto;
   }
   /******************************************** */
 

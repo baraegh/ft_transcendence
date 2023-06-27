@@ -36,6 +36,7 @@ import {
   JOINGROUPRTURNDTO,
   MSGDTO,
   PersonelChannelInfoDTO,
+  RANKINFIDTO,
   RETUR_OF_CHANNEL_DTO,
   SHOWCHATDTO,
   SHOWGROUPS,
@@ -227,10 +228,11 @@ export class ChatController {
   }
 
   @ApiOperation({
-    summary: 'get about friend in chat , i wiil implement ranking later',
+    summary: 'get about friend in chat , ranking start with friend rank nd 5 more **** add ranking',
   })
   @ApiResponse({
-    description: 'Returns an  array of all Personel channels ordered with time',
+    status: 200,
+    description: 'OK',
     type: [ABOUTDTO],
   })
   @ApiParam({

@@ -15,6 +15,7 @@ import { FriendsModule } from './friends/friends.module';
 import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { GameModule } from './game/game.module';
     FriendsModule,
     ChatModule,
     ProfileModule,
-    GameModule
+    GameModule,
+    LeaderboardModule
   ],
   providers: [
     {
