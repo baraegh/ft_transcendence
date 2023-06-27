@@ -14,3 +14,23 @@ export class BLOCK_FRIEND_DTO {
   @ApiProperty()
   FriendId: number;
 }
+
+export class FILTER_USERS_DTO{
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  id:number;
+
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  image:string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  username:string
+}
+
+
