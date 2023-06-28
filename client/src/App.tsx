@@ -18,9 +18,18 @@ import MyProfileUser from './front-end/tsx/myProfileUser';
 // import QRpopup from './tsx/QRpopup'
 
 
+
+
 function App() {
 
   return (
+    // <Router>
+    // <Routes >
+    //   <Route  path="/" element={<AuthPage />} />
+    //   <Route path="/home" element={<HomePage />} />
+    //   <Route path="/chat" element={<Chat />} />
+    // </Routes>
+    // </Router>
     <div className='App'>
       <MyProfileUser />
       {/* <FA></FA> */}
