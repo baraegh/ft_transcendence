@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import './QRpopup.css'
-
-
 
 interface BlankModalProps {
   show: boolean;
@@ -12,36 +10,35 @@ interface BlankModalProps {
 
 const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
   return (
-    <Modal className="modal" show={show} onHide={onHide} centered>
+    <Modal className="QRmodal" show={show} onHide={onHide} centered>
       <Modal.Body>
         <div className="QR">
-            <p id="QrLabel"></p>
+          <p id="QrLabel"></p>
         </div>
         {/* Add your custom content here */}
-        <input id="QRinput" type="text" placeholder="Your Code"/>
+        <input id="QRinput" type="text" placeholder="Your Code" />
       </Modal.Body>
     </Modal>
   );
 };
 
-const ParentComponent: React.FC = () => {
+const QRpopup: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
 
-  const handleShowModal = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShowModal(event.target.checked);
   };
 
   return (
     <div>
-      <button onClick={handleShowModal}>Open Modal</button>
-
-      <BlankModal show={showModal} onHide={handleCloseModal} />
+      <label className="toggle-switch">
+        <input type="checkbox" checked={showModal} onChange={handleToggleChange} />
+        <span className="slider"></span>
+        <p>2FA</p>
+      </label>
+      {showModal && <BlankModal show={showModal} onHide={() => setShowModal(false)} />}
     </div>
   );
 };
 
-export default ParentComponent;
+export default QRpopup;

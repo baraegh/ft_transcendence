@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import LoginPage from "./loginPage";
 import FA from './2FA'
 import DSTeam from './discoverTeam'
@@ -8,12 +9,13 @@ import MyProfileUser from './myProfileUser';
 import OtherProfileUser from "./otherProfileUser";
 import LeaderBoard from './leaderBoard';
 import Play from './play'
-import ParentComponent from './QRpopup'
+import QRpopup from './QRpopup'
+
 
 function App()
 {
 
-  return(<ParentComponent />);
+  return(<MyProfileUser />);
 }
 
 export default App;

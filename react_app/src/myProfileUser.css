@@ -99,7 +99,7 @@ input[type="checkbox"]:checked + .slider:before {
     margin: auto;
 }
 
-.ProfilePictureUsername img{
+.ProfilePictureUsername #profileImg{
     width: 100px;
     height: 100px;
     margin: auto;
@@ -287,3 +287,6 @@ input[type="checkbox"]:checked + .slider:before {
     background-color: green;
     z-index: 10 ;
 }
+
+
+

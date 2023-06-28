@@ -7,36 +7,32 @@ import './myProfileUser.css';
 import me from './rimney.jpeg';
 import ach from '../ach.jpeg';
 import MyHeader from './header';
+import QRpopup from './QRpopup'
+import Edit from './edit.png'
+import EditProfileIcon from './editProfile'
+
 
 
 function myProfileUser(): JSX.Element {
     const [toggleState, setToggleState] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
-  
+
     const handleToggleChange = () => {
-      setToggleState(!toggleState);
-      setShowPopup(!showPopup);
+        setToggleState(!toggleState);
+        setShowPopup(!showPopup);
     };
     return (
-        
         <div>
             <MyHeader />
             <div className='profileAndFriends'>
                 <div className="profile">
-                    <label className="toggle-switch">
-                    <input type="checkbox" checked={toggleState} onChange={handleToggleChange} />
-                        <span className="slider"></span>
-                        <p>2FA</p>
-                    </label>
-                    {showPopup && (
-                <div className="popup">
-                <p>Toggle switch is toggled!</p>
-                </div>
-                )}
+                    <QRpopup />
                     <h3 id="profileScore">score : 200</h3>
                     <div className="ProfilePictureUsername">
-                        <img src={me} alt="" />
+                        <img id="profileImg" src={me} alt="" />
                         <p>rimney</p>
+                        <EditProfileIcon />
+                        {/* <img id="editIcon" src={Edit} alt="" /> */}
                     </div>
                     <div className='WinLoss'>
                         <div className='Win'>
