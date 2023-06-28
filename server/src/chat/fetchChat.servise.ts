@@ -70,23 +70,33 @@ export class FetchChatService {
       throw new ForbiddenException('you are muted from this channel');
     if (findinparticepents.blocked === true)
       throw new ForbiddenException('you are blocked');
-    const messages = await this.prisma.messages.findMany({
-      where: {
-        channelID: dto.channelId,
-      },
-      select: {
-        userId: true,
-        content: true,
-        timeSend: true,
-        user: {
-          select: {
-            image: true,
+      const messages = await this.prisma.messages.findMany({
+        where: {
+          channelID: dto.channelId,
+        },
+        select: {
+          userId: true,
+          content: true,
+          timeSend: true,
+          user: {
+            select: {
+              image: true,
+              username: true,
+            },
           },
         },
-      },
-    });
-    messages.sort((a, b) => a.timeSend.getTime() - b.timeSend.getTime());
-    return messages;
+      });
+      const fetchMessages: FETCHMSG[] = messages.map((message) => ({
+        userId: message.userId,
+        content: message.content,
+        timeSend: message.timeSend,
+        image: message.user.image,
+        username: message.user.username,
+      }));
+      
+      fetchMessages.sort((a, b) => a.timeSend.getTime() - b.timeSend.getTime());
+      
+      return fetchMessages;
   }
 
   /******************************************** */
