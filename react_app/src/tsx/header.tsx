@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import tvGif from './giphy.gif'
-import Bell from './bell.png'
-import './header.css'
+import tvGif from '../img/giphy.gif'
+import Bell from '../img/bell.png'
+import '../css/header.css'
 
 function MyHeader() : JSX.Element
 {

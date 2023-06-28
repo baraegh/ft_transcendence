@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import LoginPage from "./loginPage";
-import FA from './2FA'
-import DSTeam from './discoverTeam'
-import Home from './home'
-import MyHeader from "./header";
-import MyProfileUser from './myProfileUser';
-import OtherProfileUser from "./otherProfileUser";
-import LeaderBoard from './leaderBoard';
-import Play from './play'
-import QRpopup from './QRpopup'
+import LoginPage from "./tsx/loginPage";
+import FA from './tsx/2FA'
+import DSTeam from './tsx/discoverTeam'
+import Home from './tsx/home'
+import MyHeader from "./tsx/header";
+import MyProfileUser from './tsx/myProfileUser';
+import OtherProfileUser from "./tsx/otherProfileUser";
+import LeaderBoard from './tsx/leaderBoard';
+import Play from './tsx/play'
+import QRpopup from './tsx/QRpopup'
 
 
 function App()

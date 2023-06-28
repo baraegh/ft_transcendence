@@ -5,7 +5,7 @@ import { faXmark, faCircleCheck, faTriangleExclamation } from '@fortawesome/free
 import { Search } from './filterSearchSettings';
 import DropMenu from './DropMenu';
 
-import Image from '/Users/eel-ghan/Desktop/work_space/ft_transcendence_chat/src/chat/barae.jpg';
+import Image from '../barae.jpg';
 import './Dialog.css';
 
 interface DialogProps

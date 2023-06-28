@@ -4,7 +4,7 @@ import {FriendList} from './chatFriendList/friendList';
 import {ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from './ChatArea/charArea';
 import './chat.css';
 
-import  Image from '/Users/eel-ghan/Desktop/work_space/ft_transcendence_chat/src/chat/barae.jpg';
+import  Image from './barae.jpg';
 
 type msgListType = {id: number, sender: string, msg: string, time: string, image?: string}[];
 

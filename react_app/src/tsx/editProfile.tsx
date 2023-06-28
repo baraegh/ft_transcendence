@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import './editProfile.css'
-import Edit from './edit.png'
+import '../css/editProfile.css'
+import Edit from '../img/edit.png'
 
 interface BlankModalProps {
   show: boolean;

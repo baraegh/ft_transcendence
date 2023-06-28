@@ -1,38 +1,21 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import tvGif from './giphy.gif';
-import Bell from './bell.png';
-import './myProfileUser.css';
-import me from './rimney.jpeg';
-import ach from '../ach.jpeg';
-import MyHeader from './header';
-import QRpopup from './QRpopup'
-import Edit from './edit.png'
-import EditProfileIcon from './editProfile'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './OtherProfileUser.css'
+import me from './rimney.jpeg'
+import ach from '../ach.jpeg'
+import MyHeader from './header'
 
-
-
-function myProfileUser(): JSX.Element {
-    const [toggleState, setToggleState] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
-
-    const handleToggleChange = () => {
-        setToggleState(!toggleState);
-        setShowPopup(!showPopup);
-    };
+function otherProfileUser(): JSX.Element {
     return (
         <div>
             <MyHeader />
             <div className='profileAndFriends'>
                 <div className="profile">
-                    <QRpopup />
                     <h3 id="profileScore">score : 200</h3>
                     <div className="ProfilePictureUsername">
-                        <img id="profileImg" src={me} alt="" />
+                        <img src={me} alt="" />
                         <p>rimney</p>
-                        <EditProfileIcon />
-                        {/* <img id="editIcon" src={Edit} alt="" /> */}
                     </div>
                     <div className='WinLoss'>
                         <div className='Win'>
@@ -48,6 +31,16 @@ function myProfileUser(): JSX.Element {
                             <img src={ach} alt="" />
                             <img src={ach} alt="" />
                             <img src={ach} alt="" />
+                        </div>
+                        <div className='fourButtons'>
+                            <div className='leftButtons'>
+                                <a id="challenge" href="#"><span>Challenge</span></a>
+                                <a id="message" href="#"><span>Message</span></a>
+                            </div>
+                            <div className='rightButtons'>
+                                <a id="invite" href="#"><span>Invite</span></a>
+                                <a id="block" href="#"><span>Block</span></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,4 +78,4 @@ function myProfileUser(): JSX.Element {
     )
 }
 
-export default myProfileUser;
+export default otherProfileUser;

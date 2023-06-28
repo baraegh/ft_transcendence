@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import 'bootstrap/dist/css/bootstrap.css'
-import './css/style.css'
-import './css/discoverTeam.css'
-import './css/loginPage.css'
+import '../css/style.css'
+import './discoverTeam.css'
+import './loginPage.css'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 

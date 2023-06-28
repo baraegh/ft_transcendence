@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import './QRpopup.css'
+import '../css/QRpopup.css'
 
 interface BlankModalProps {
   show: boolean;

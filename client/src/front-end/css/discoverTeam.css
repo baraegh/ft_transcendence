@@ -1,0 +1,144 @@
+* {
+  font-family: 'Mouse Memoirs', sans-serif;
+}
+
+.button_animation a{
+  display: block;
+  width: 100px;
+  height: 50px;
+  line-height: 40px;
+  font-size: 25px;
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #333;
+  border: 2px solid #333;
+  letter-spacing: 2px;
+  text-align: center;
+  position: relative;
+  transition: all .35s;
+  border-radius: 9px;
+}
+
+.button_animation a span{
+  position: relative;
+  z-index: 2;
+}
+
+.button_animation  a:after{
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: black;
+  transition: all .20s;
+}
+
+.button_animation a:hover{
+  color: #fff;
+}
+
+.button_animation a:hover:after{
+  width: 100%;
+}
+
+.discoverTeam h2
+{
+  position: relative;
+  display: inline-block;
+  text-decoration: none; 
+}
+.discoverTeam h2:before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #000; /* Change the color as desired */
+  transform: scaleX(0);
+  /* transition: transform 0.1s ease-in-out; */
+transition: opacity .2s, visibility .2s;
+
+}
+
+.discoverTeam h2:hover:before {
+  transform: scaleX(1);
+}
+
+.meetTheTeamImages
+{
+  position: relative;
+  bottom: 13%;
+  width: 90%;
+  height: 60%;
+  display : flex;
+  flex-direction: row;
+  justify-content : space-between;
+  align-items : center;
+  margin: auto;
+
+}
+  
+.meetTheTeamImages img
+{
+  width: 230px;
+  position: relative;
+  border-radius: 30px;
+  box-shadow: 12px 10px 0px 0px black;
+  transition: filter 0.5s;
+  text-align: center;
+  filter: grayscale(100%);
+  
+}
+  
+.meetTheTeamImage1:hover
+{
+  position: relative;
+  display: inline-block;
+  filter: grayscale(100%) blur(5px);
+  display: block;
+}
+.meetTheTeamImage2:hover
+{
+  filter: grayscale(100%) blur(5px);
+  display: block;
+}
+.meetTheTeamImage3:hover
+{
+  filter: grayscale(100%) blur(5px);
+}
+.meetTheTeamImage4:hover
+{
+  filter: grayscale(80%) blur(5px);
+}
+
+.meetTheTeamImages img {
+  display: block;
+  height: auto;
+}
+
+.textName1 {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+  top: 50%;
+  left: 6.8%;
+  color: white;
+  transform: translate(-50%, 50%);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.meetTheTeamImage1:hover + .textName1 {
+  opacity: 1;
+  z-index: 1;
+}
+
+.dercription1
+{
+  display: none;
+}
+
+
+

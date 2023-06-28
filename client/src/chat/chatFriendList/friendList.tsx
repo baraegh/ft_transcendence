@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FilterBtn, Search } from "../tools/filterSearchSettings";
 
-import Image from '/Users/eel-ghan/Desktop/work_space/ft_transcendence_chat/src/chat/barae.jpg';
+import Image from '../barae.jpg';
 
 const array = [
     {id: 0, img:Image, username:"BARAE"}, 
