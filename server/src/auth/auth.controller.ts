@@ -12,7 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Token } from './types';
-import { Jwt_refresh_Guard } from './guard';
+import { JwtGuard, Jwt_refresh_Guard } from './guard';
 import { GetUser, Public } from './decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
@@ -41,7 +41,30 @@ export class AuthController {
     const is_exist: boolean = await this.authService.checkeUser(dto_42.id);
     if (!is_exist) token = await this.authService.signuplocal(dto_42);
     else token = await this.authService.signinlocal(dto_42);
-    res.cookie('acces_token', token.acces_token, {
+    res.cookie('access_token', token.access_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+    res.cookie('refresh_token', token.refresh_token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+    res.redirect('http://localhost:5173/home/');
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh')
+  @ApiBearerAuth()
+  @UseGuards(Jwt_refresh_Guard)
+  async refreshToken(@Res() res:Response,@Req() req: Request) {
+    const user = req.user;
+    const token = await this.authService.refreshToken(user['sub'], user['refreshToken']);
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+    res.cookie('access_token',token.access_token, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -54,22 +77,14 @@ export class AuthController {
     res.end();
   }
 
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  @Post('refresh')
-  @ApiBearerAuth()
-  @UseGuards(Jwt_refresh_Guard)
-  refreshToken(@Req() req: Request): Promise<Token> {
-    console.log(req);
-    const user = req.user;
-    return this.authService.refreshToken(user['sub'], user['refreshToken']);
-  }
-
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @Post('logout')
-  logoutlocal(@Req() req: Request) {
+  logoutlocal(@Res() res: Response, @Req() req: Request) {
     const user = req.user;
-    return this.authService.logoutlocal(user['id']);
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+    this.authService.logoutlocal(user['id']);
+    res.end();
   }
 }

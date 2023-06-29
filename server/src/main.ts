@@ -19,9 +19,9 @@ SwaggerModule.setup('api', app, document);
     whitelist: true,
   }));
   app.enableCors({
-    origin: 'http://localhost:3001',
-    methods: ['POST', 'PUT', 'DELETE', 'GET'],
-    // credentials: true,
+    origin: 'http://localhost:5173',
+    methods: ['POST', 'PUT', 'DELETE', 'GET', 'PATCH'],
+    credentials: true,
   });
   app.use(cookieParser());
   await app.listen(3000);

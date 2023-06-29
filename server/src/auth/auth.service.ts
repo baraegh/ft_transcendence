@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, Req } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Token } from './types';
 import { AuthDto_42 } from './42_auth/dtos';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,7 @@ export class AuthService {
         image:dto.link,
       },
     });
-    const tokens = await this.signToken(user.id, user.email);
+    const tokens = await this.signToken(user.id);
     await this.updateRthash(user.id, tokens.refresh_token);
     return tokens;
   }
@@ -43,7 +44,7 @@ export class AuthService {
     if (!user) {
       throw new ForbiddenException('You Are Fucked');
     }
-      const tokens = await this.signToken(user.id, user.email);
+      const tokens = await this.signToken(user.id);
       await this.updateRthash(user.id, tokens.refresh_token);
       return tokens;
   }
@@ -69,9 +70,10 @@ export class AuthService {
     if (!user || !user.hashedRT) throw new ForbiddenException('Acces Denied');
     const rtMatches = await argon.verify(user.hashedRT, rt);
     if (!rtMatches) throw new ForbiddenException('Acces Denied');
-    const tokens = await this.signToken(user.id, user.email);
+    const tokens = await this.signToken(user.id);
     await this.updateRthash(user.id, tokens.refresh_token);
     return tokens;
+    
   }
 
   async updateRthash(UserID: number, rt: string): Promise<void> {
@@ -86,10 +88,10 @@ export class AuthService {
     });
   }
 
-  async signToken(UserID: number, Email: string): Promise<Token> {
+  async signToken(UserID: number): Promise<Token> {
 
 
-    const payload = { sub: UserID, Email };
+    const payload = { sub: UserID };
     const secret = this.config.get('SECRETE_TOKEN');
     const secret_refresh = this.config.get('SECRETE_TOKEN_REFRESH');
     const [at, rt] = await Promise.all([
@@ -105,7 +107,7 @@ export class AuthService {
       }),
     ]);
     return {
-      acces_token: at,
+      access_token: at,
       refresh_token: rt,
     };
   }

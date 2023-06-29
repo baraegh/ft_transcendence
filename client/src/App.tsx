@@ -1,5 +1,5 @@
-import React from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Chat from './chat/chat';
 // import React, { useEffect, useState } from 'react';
 // import axios from 'axios';
@@ -23,19 +23,14 @@ import MyProfileUser from './front-end/tsx/myProfileUser';
 function App() {
 
   return (
-    // <Router>
-    // <Routes >
-    //   <Route  path="/" element={<AuthPage />} />
-    //   <Route path="/home" element={<HomePage />} />
-    //   <Route path="/chat" element={<Chat />} />
-    // </Routes>
-    // </Router>
-    <div className='App'>
-      <MyProfileUser />
-      {/* <FA></FA> */}
-        {/* <Chat /> */}
-    </div>
-  )
+    <Router>
+      <Routes >
+        <Route  path="/" element={<AuthPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/chat" element={<Chat />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

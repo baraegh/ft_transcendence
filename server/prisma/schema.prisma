@@ -18,6 +18,8 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   achievements String[]
+  twoFactorAuthenticationSecret String?
+  isTwoFactorAuthenticationEnabled  Boolean @default(false) 
 
   matchHistoriesUser1 Match_History[] @relation("Match_History_User1")
   matchHistoriesUser2 Match_History[] @relation("Match_History_User2")
@@ -40,6 +42,8 @@ model Match_History {
   user1   User   @relation("Match_History_User1", fields: [user1Id], references: [id])
   user2   User   @relation("Match_History_User2", fields: [user2Id], references: [id])
 
+  game_end Boolean @default(false)
+
   createdAt    DateTime @default(now())
   user1P Int
   user2P Int
@@ -54,9 +58,10 @@ model Friendship {
   user   User   @relation("Friendship_User", fields: [userID], references: [id])
   friend User   @relation("Friendship_Friend", fields: [friendID], references: [id])
 
-  blocked     Boolean
-  isRequested Boolean
-  isFriend    Boolean
+  blocked     Boolean @default(false) 
+  isRequested Boolean @default(false) 
+  isFriend    Boolean @default(false) 
+  requestAccepted Boolean  @default(false) 
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -73,6 +78,7 @@ model Participants {
   role      Role    @default(USER)
   blocked   Boolean @default(false)
   mut       Mut     @default(NAN)
+  
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -97,10 +103,10 @@ enum Mut {
 // Channel model
 model Channel {
   id       String         @id @default(uuid())
-  owner    User           @relation(fields: [ownerId], references: [id])
-  ownerId  Int
-  type     Type @default(PRIVATE)
-  name     String
+  owner    User?          @relation(fields: [ownerId], references: [id])
+  ownerId  Int?
+  type     Type @default(PERSONEL)
+  name     String?        @unique
   hash     String?
   image    String?
   chanelID Participants[]
@@ -115,12 +121,13 @@ enum Type {
   PRIVATE
   PROTECTED
   PUBLIC
+  PERSONEL
 }
 
 // Messages model
 model Messages {
   id        String   @id @default(uuid())
-  channelID String   @unique
+  channelID String   
   userId    Int
   user    User     @relation(fields: [userId], references: [id])
   channel   Channel  @relation(fields: [channelID], references: [id])

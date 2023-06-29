@@ -1,19 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FilterBtn, Search, Settings } from "../tools/filterSearchSettings";
 import '../chat';
-import Image from '../barae.jpg';
+import Axios from "axios";
 
 const filterList = ['All chats', 'Friends', 'Groups'];
 const settingsList = ['New Chat', 'Create Group', 'Invite'];
 
-function ChatListHeader()
+type ChatListHeaderProps = {
+    setChat: (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
+}
+
+function ChatListHeader({setChat} : ChatListHeaderProps)
 {
     return (
         <div className="chat-list-header">
 
             <div className="title-options">
                 <p>Chat</p>
-                <Settings list={settingsList}/>
+                <Settings list={settingsList} setChat={setChat} />
             </div>
             <div className="filter-search">
                 <FilterBtn list={filterList} />
@@ -23,105 +27,110 @@ function ChatListHeader()
     );
 }
 
-type Object = {
-    id: number
-    img: string,
-    desciption: string,
-    name: string,
-    msg: string,
-    time: string,
-    setChatId: (chatId: number)=> void,
-    selected: boolean
+type HistoryListProps = {
+    data:           channel,
+    selected:       boolean
+    setChat:        (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
 }
 
-const HistoryList = (props: Object) =>
+const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
 {
     const handleOnClick = () => {
-        props.setChatId(props.id)
+        data.type === 'PERSONEL'?
+                setChat(data.channelId, data.otherUserImage, data.otherUserName, data.type)
+            :
+                setChat(data.channelId, data.channelImage, data.channelImage, data.type);
     } 
 
+    const isGroup = data.type === 'PRIVATE';
+
     return (
-        <div className={`item ${props.selected? 'selected': ''}`}
+        <div className={`item ${selected? 'selected': ''}`}
             onClick={handleOnClick}>
-            <img src={props.img} alt={props.desciption}/>
+            <img src={isGroup? data.channelImage : data.otherUserImage} 
+                alt={`${isGroup? data.channelName : data.otherUserName} image`}/>
             <div>
                 <div className='item-username-group-status-circle'>
-                    <p className="item-username-group">{props.name}</p>
+                    <p className="item-username-group">{isGroup? data.channelName : data.otherUserName}</p>
                     <div className='status-circle online'></div>
                 </div>
-                <p className="item-last-message">{props.msg}</p>
+                { 
+                    data.lastMessage?
+                        <p className="item-last-message">{data.lastMessage.content}</p>
+                    : ''
+                }
             </div>
             <div className="item-time">
-                <p>{props.time}</p>
+               {data.lastMessage? <p>{data.lastMessage.timeSent}</p> : ''}
             </div>
         </div>
     );
 }
 
-const array = [
-    {id: 0,  chatId:0 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "Just now"}, 
-    {id: 1,  chatId:1 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 2,  chatId:2 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 3,  chatId:3 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 4,  chatId:4 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 5,  chatId:5 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 6,  chatId:6 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 7,  chatId:7 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 8,  chatId:8 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 9,  chatId:9 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 10, chatId:10 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 11, chatId:11 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 12, chatId:12 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 13, chatId:13 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 14, chatId:14 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 15, chatId:15 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 16, chatId:16 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 17, chatId:17 , img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 18, chatId:18, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 19, chatId:19, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 20, chatId:20, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 21, chatId:21, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 22, chatId:22, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 23, chatId:23, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 24, chatId:24, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 25, chatId:25, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 26, chatId:26, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-    {id: 27, chatId:27, img: Image, desciption: "profile img" , name: "barae", msg: "test test", time: "1 min"},
-];
+
+export type channel = {
+    channelId:      string,
+    type:           string,
+    updatedAt:      string,
+    otherUserId:    number,
+    otherUserName:  string,
+    otherUserImage: string,
+    channelName:    string,
+    channelImage:   string,
+    lastMessage:    {
+        messageId:  string,
+        content:    string,
+        timeSent:   string,
+        senderId:   number,
+    },   
+}
 
 type chatHistoryListProps =
 {
-    setChatId:          (chatId: number)=> void,
+    setChat:            (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
     setIsProfileOpen:   (isOpen: boolean) => void,
+    chatId:             string | null,
 }
 
-function ChatHistoryList( {setChatId, setIsProfileOpen}: chatHistoryListProps)
+const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListProps) =>
 {
-    const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
+    // const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+    const [channelList, setChannelList] = useState<channel[]| null>(null);
 
-    const handleSetChatId = (chatId: number) => {
-        setSelectedChatId(chatId);
-        setChatId(chatId);
+    useEffect(() => {
+        Axios.get('http://localhost:3000/chat/all-channel-of-user', { withCredentials: true })
+            .then((response) => {
+                console.log(response.data);
+                setChannelList(response.data);
+            })
+            .catch((error) => {
+                    console.log(error);
+                }
+            );
+    }, [chatId]);
+
+    const handleSetChat = (chatId: string,chatImage: string,
+                            chatName: string, chatType: string) => {
+        setChat(chatId, chatImage, chatName, chatType);
         setIsProfileOpen(false);
     };
 
-    const msgCard = array.map( o =>
-        <HistoryList
-            key={o.id}
-            id={o.chatId}
-            img={o.img}
-            desciption={o.desciption}
-            name={o.name}
-            msg={o.msg}
-            time={o.time}
-            setChatId={handleSetChatId}
-            selected={selectedChatId === o.chatId}
-        />
-    );
+    console.table(channelList);
+
+    const msgCard = channelList? channelList.map( channel =>
+                                (
+                                    <HistoryList
+                                        key={channel.channelId}
+                                        data={channel}
+                                        selected={chatId === channel.channelId}
+                                        setChat={setChat}
+                                    />
+                                ))
+                    : <p>No Channels</p>
 
     return (
         <div className="chat-history-list">
-            <ChatListHeader />
+            <ChatListHeader setChat={handleSetChat} />
             <div className="list-scroll">
                 {msgCard}
             </div>
