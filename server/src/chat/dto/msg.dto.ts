@@ -63,19 +63,22 @@ export class FETCHMSG {
   @ApiProperty()
   @IsNumber()
   userId: number;
-  
+
   @ApiProperty()
   @IsString()
   content: string;
-  
+
   @ApiProperty()
   @IsDate()
   timeSend: Date;
-  
+
   @ApiProperty({ required: false }) 
   @IsString()
   @IsOptional()
   image?: string;
 
-
+  @ApiProperty() 
+  @IsString()
+  @IsNotEmpty()
+  username: string;
 }

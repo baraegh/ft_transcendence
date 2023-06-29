@@ -8,12 +8,6 @@ export class USerService {
   constructor(private prisma: PrismaService) {}
 
 async findUserFriends(userId: number): Promise<USER_FRIEN_DTO[]> {
-  const finduser = await this.prisma.user.findFirst({
-    where: { id: userId },
-  });
-  if (!finduser) {
-    throw new NotFoundException('user not found');
-  }
   const friendships = await this.prisma.friendship.findMany({
     where: {
       userID: userId,
@@ -34,7 +28,6 @@ async findUserFriends(userId: number): Promise<USER_FRIEN_DTO[]> {
       },
     },
   });
-    // const friends = friendships.map(friendship => friendship.friend);
     return friendships;
   }
 

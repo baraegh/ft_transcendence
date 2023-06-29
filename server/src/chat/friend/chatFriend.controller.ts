@@ -1,9 +1,10 @@
-import { Body, Controller, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
 import { ChatFriendService } from './chatFriend.service';
 import { Request } from 'express';
-import { BLOCK_FRIEND_DTO, CHATFRIENDDTO } from './chatfried.dto';
+import { BLOCK_FRIEND_DTO, CHATFRIENDDTO, FILTER_USERS_DTO } from './chatfried.dto';
+import { type } from 'os';
 
 @ApiBearerAuth()
 @ApiTags('chat With Friend')
@@ -40,5 +41,19 @@ export class ChaFriendController {
   @Patch('unblock_friend')
   async unblock_user(@Req() req: Request, @Body() dto: BLOCK_FRIEND_DTO) {
     await this.chatfriend.unblock_user(req.user['id'],dto.FriendId);
+  }
+
+  @ApiOperation({summary:"take nothing"})
+  @ApiResponse({type:FILTER_USERS_DTO})
+  @Get('filter/block')
+  async Friends_Ho_Blocked(@Req() req:Request):Promise<FILTER_USERS_DTO[]>{
+      return await this.chatfriend.Friends_Ho_Blocked(req.user['id'])
+  }
+
+  @ApiOperation({summary:"take nothing"})
+  @ApiResponse({type:FILTER_USERS_DTO})
+  @Get('filter/pending')
+  async Friends_Ho_Peding(@Req() req:Request):Promise<FILTER_USERS_DTO[]>{
+      return await this.chatfriend.Friends_Ho_Pending(req.user['id'])
   }
 }

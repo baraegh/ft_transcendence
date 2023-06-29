@@ -39,8 +39,7 @@ export class GameController {
     })
     @Patch('edit-match')
     async editMatch(@Req() req:Request, @Body() dto:EDIT_GAME_DTO): Promise<Match_History>{
-      const userid = req.user['id'];
-      return await this.gameServise.editMatch(userid,dto);
+      return await this.gameServise.editMatch(dto);
     }
 
 

@@ -100,6 +100,33 @@ export class SHOWCHATDTO {
   channelId: string;
 }
 
+export class RANKINFIDTO{
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  rank: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  image: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  username: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty()
+  gameWon: number;
+}
+
 export class ABOUTDTO {
   @ApiProperty()
   @IsString()
@@ -122,6 +149,10 @@ export class ABOUTDTO {
   @ApiProperty()
   @IsDate()
   updatedAt: Date;
+
+  @ApiProperty({ type: [RANKINFIDTO] })
+  @IsNotEmpty()
+  rank : RANKINFIDTO[]
 }
 
 

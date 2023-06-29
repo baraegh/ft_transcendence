@@ -36,6 +36,7 @@ import {
   JOINGROUPRTURNDTO,
   MSGDTO,
   PersonelChannelInfoDTO,
+  RANKINFIDTO,
   RETUR_OF_CHANNEL_DTO,
   SHOWCHATDTO,
   SHOWGROUPS,
@@ -146,14 +147,7 @@ export class ChatController {
     description: 'true or false',
   })
   @Get('NameGroupExist/:name')
-  async NameGroupExist(@Req() req: Request, @Param('name') name: string) {
-    const userid = req.user['id'];
-    const userixist = await this.prisma.user.findMany({
-      where: {
-        id: userid,
-      },
-    });
-    if(!userixist) throw new NotFoundException('user not found');
+  async NameGroupExist(@Param('name') name: string) {
     const findenameunique = await this.prisma.channel.findUnique({
       where: {
         name: name,
@@ -227,10 +221,11 @@ export class ChatController {
   }
 
   @ApiOperation({
-    summary: 'get about friend in chat , i wiil implement ranking later',
+    summary: 'get about friend in chat , ranking start with friend rank nd 5 more **** add ranking',
   })
   @ApiResponse({
-    description: 'Returns an  array of all Personel channels ordered with time',
+    status: 200,
+    description: 'OK',
     type: [ABOUTDTO],
   })
   @ApiParam({
@@ -285,7 +280,7 @@ export class ChatController {
     type: [SHOWGROUPS],
   })
   @Get('show-all-groups')
-  async show_Groups(@Req() req: Request): Promise<SHOWGROUPS[]> {
-    return await this.fetshchat.show_Groups(req.user['id']);
+  async show_Groups(): Promise<SHOWGROUPS[]> {
+    return await this.fetshchat.show_Groups();
   }
 }
