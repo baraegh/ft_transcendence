@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import '../css/myProfileUser.css';
 import me from '../img/rimney.jpeg';
@@ -7,8 +7,16 @@ import MyHeader from '../tsx/header';
 import QRpopup from '../tsx/QRpopup'
 import Edit from '../img/edit.png'
 import EditProfileIcon from '../tsx/editProfile'
+import axios from 'axios';
 
-
+interface User {
+    id: number;
+    username: string;
+    image: string;
+    gameWon: number;
+    gameLost: number;
+    achievements: string[];
+  }
 
 function myProfileUser(): JSX.Element {
     const [toggleState, setToggleState] = useState(false);
@@ -18,6 +26,38 @@ function myProfileUser(): JSX.Element {
         setToggleState(!toggleState);
         setShowPopup(!showPopup);
     };
+    const [userData, setUserData] = useState<User | null>(null);
+
+    const fetchData = () => {
+      axios
+        .get('http://localhost:3000/user/me', { withCredentials: true })
+        .then((response) => {
+          if (response.status === 200) {
+            const data = response.data;
+  
+            const fetchedUser: User = {
+              id: data.id,
+              username: data.username,
+              image: data.image,
+              gameWon: data.gameWon,
+              gameLost: data.gameLost,
+              achievements: data.achievements,
+            };
+  
+            console.log(fetchedUser);
+            setUserData(fetchedUser); // Set the fetched user data
+          } else {
+            throw new Error('Request failed');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+  
+    useEffect(() => {
+      fetchData();
+    }, []);
     return (
         <div>
             <MyHeader />
@@ -33,10 +73,10 @@ function myProfileUser(): JSX.Element {
                     </div>
                     <div className='WinLoss'>
                         <div className='Win'>
-                            <p>Win : 10</p>
+                            <p>Win : {userData && userData.gameWon || '33'}</p>
                         </div>
                         <div className='Loss'>
-                            <p>Loss : 15</p>
+                        <p>Loss : {userData && userData.gameLost || '11'}</p>
                         </div>
                     </div>
                     <div className='achievement'>

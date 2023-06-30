@@ -16,6 +16,9 @@ import MyProfileUser from './front-end/tsx/myProfileUser';
 // import LeaderBoard from './tsx/leaderBoard';
 // import Play from './tsx/play'
 // import QRpopup from './tsx/QRpopup'
+import myProfileUser from './front-end/tsx/myProfileUser';
+import AuthPage from './auth/AuthPage'
+import HomePage from './home/HomePage'
 
 
 
@@ -26,7 +29,7 @@ function App() {
     <Router>
       <Routes >
         <Route  path="/" element={<AuthPage />} />
-        <Route path="/home" element={<HomePage />} />
+        <Route path="/home" element={<MyProfileUser />} />
         <Route path="/chat" element={<Chat />} />
       </Routes>
     </Router>
