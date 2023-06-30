@@ -13,6 +13,7 @@ type jwtPayload = {
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(config: ConfigService) {
     const secret = config.get<string>('SECRETE_TOKEN_REFRESH');
+    
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {

@@ -17,11 +17,15 @@ import { GetUser, Public } from './decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthDto_42 } from './42_auth/dtos';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private prisma: PrismaService,
+  ) {}
 
   @Public()
   @Get()
@@ -51,7 +55,21 @@ export class AuthController {
       sameSite: 'none',
       secure: true,
     });
-    res.redirect('http://localhost:5173/home/');
+    const finde_active2fa = await this.prisma.user.findUnique({
+      where: { id: req.user['id'] },
+      select: { isTwoFactorAuthenticationEnabled: true },
+    });
+    if (finde_active2fa.isTwoFactorAuthenticationEnabled === true) {
+      const image = await this.prisma.user.findUnique({
+        where: { id: req.user['id'] },
+        select: { image: true },
+      });
+      res.clearCookie('access_token');
+      res.redirect(
+        'http://localhost:5173/TwoFactorAuth/?image=' +
+          encodeURIComponent(image.image),
+      );
+    } else res.redirect('http://localhost:5173/home/');
   }
 
   @Public()
@@ -59,12 +77,15 @@ export class AuthController {
   @Post('refresh')
   @ApiBearerAuth()
   @UseGuards(Jwt_refresh_Guard)
-  async refreshToken(@Res() res:Response,@Req() req: Request) {
+  async refreshToken(@Res() res: Response, @Req() req: Request) {
     const user = req.user;
-    const token = await this.authService.refreshToken(user['sub'], user['refreshToken']);
+    const token = await this.authService.refreshToken(
+      user['sub'],
+      user['refreshToken'],
+    );
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    res.cookie('access_token',token.access_token, {
+    res.cookie('access_token', token.access_token, {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -86,5 +107,11 @@ export class AuthController {
     res.clearCookie('refresh_token');
     this.authService.logoutlocal(user['id']);
     res.end();
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @Get('check')
+  checkifuotorize() {
   }
 }

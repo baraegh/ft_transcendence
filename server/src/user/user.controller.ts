@@ -11,8 +11,6 @@ import {
 import { USerService } from './user.service';
 import { Request } from 'express';
 import { USERDTO, USERINFODTO, USER_FRIEN_DTO } from './dto';
-import { promises } from 'dns';
-
 @ApiBearerAuth()
 @ApiTags('User')
 @UseGuards(JwtGuard)
