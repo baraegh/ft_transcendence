@@ -7,6 +7,7 @@ import Chat from './chat/chat';
 // import FA from './tsx/2FA'
 // import DSTeam from './tsx/discoverTeam'
 // import Home from './tsx/home'
+import LeaderBoard from './front-end/tsx/leaderBoard';
 import MyHeader from "./front-end/tsx/header";
 // import './front-end/css/.css'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -31,6 +32,7 @@ function App() {
         <Route  path="/" element={<AuthPage />} />
         <Route path="/home" element={<MyProfileUser />} />
         <Route path="/chat" element={<Chat />} />
+        < Route path='/leaderboard' element={<LeaderBoard/>} />
       </Routes>
     </Router>
   );

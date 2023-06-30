@@ -2,6 +2,7 @@ import Bell from '../img/bell.png';
 import '../css/header.css';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -14,7 +15,8 @@ interface User {
 
 function MyHeader(): JSX.Element {
   const [userData, setUserData] = useState<User | null>(null);
-
+  const navigate = useNavigate();
+  
   const fetchData = () => {
     axios
       .get('http://localhost:3000/user/me', { withCredentials: true })
@@ -31,7 +33,6 @@ function MyHeader(): JSX.Element {
             achievements: data.achievements,
           };
 
-          console.log(fetchedUser);
           setUserData(fetchedUser); // Set the fetched user data
         } else {
           throw new Error('Request failed');
@@ -46,18 +47,17 @@ function MyHeader(): JSX.Element {
     fetchData();
   }, []);
 
-  console.log(userData?.image + ' <<<<<< ');
 
   return (
     <div>
       <header>
-        <h3 className="logo">KIR</h3>
+        <h3 onClick={() => navigate('/home')} className="logo">KIR</h3>
         <div className="vertical-line"></div>
         <div className="header_buttons">
-          <a id="Lbutton" href="#">
+          <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
             <span>LeaderBoard</span>
           </a>
-          <a id="Cbutton" href="#">
+          <a onClick={() => navigate('/chat')} id="Cbutton" href="#">
             <span>Chat</span>
           </a>
           <img className="bellImg" src={Bell} alt="" />

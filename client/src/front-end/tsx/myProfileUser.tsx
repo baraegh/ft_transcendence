@@ -18,6 +18,18 @@ interface User {
     achievements: string[];
   }
 
+interface Friends {
+    blocked: boolean;
+    isRequested: boolean;
+    isFriend: boolean;
+    requestAccepted: boolean;
+    friend : {
+        id : number,
+        username : string;
+        image : string;
+    }
+}
+
 function myProfileUser(): JSX.Element {
     const [toggleState, setToggleState] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
@@ -27,37 +39,56 @@ function myProfileUser(): JSX.Element {
         setShowPopup(!showPopup);
     };
     const [userData, setUserData] = useState<User | null>(null);
+    const [friendData, setFriendData] = useState<Friends | null>(null);
 
     const fetchData = () => {
-      axios
-        .get('http://localhost:3000/user/me', { withCredentials: true })
-        .then((response) => {
-          if (response.status === 200) {
-            const data = response.data;
-  
-            const fetchedUser: User = {
-              id: data.id,
-              username: data.username,
-              image: data.image,
-              gameWon: data.gameWon,
-              gameLost: data.gameLost,
-              achievements: data.achievements,
-            };
-  
-            console.log(fetchedUser);
-            setUserData(fetchedUser); // Set the fetched user data
-          } else {
-            throw new Error('Request failed');
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
+        const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
+        const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
+      
+        Promise.all([fetchUserData, fetchAdditionalData])
+          .then((responses) => {
+            const userDataResponse = responses[0];
+            const additionalDataResponse = responses[1];
+      
+            if (userDataResponse.status === 200 && additionalDataResponse.status === 200) {
+              const userData = userDataResponse.data;
+              const friendData = additionalDataResponse.data;
+      
+              const fetchedUser: User = {
+                id: userData.id,
+                username: userData.username,
+                image: userData.image,
+                gameWon: userData.gameWon,
+                gameLost: userData.gameLost,
+                achievements: userData.achievements,
+              };
+      
+              const fetchedFriends: Friends = {
+                blocked: friendData.blocked,
+                isRequested: friendData.isRequested,
+                isFriend: friendData.isFriend,
+                requestAccepted: friendData.requestAccepted,
+                friend: friendData.friend,
+              };
+      
+              setUserData(fetchedUser);
+              setFriendData(fetchedFriends);
+              console.log(friendData);
+            } else {
+              throw new Error('Request failed');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
   
     useEffect(() => {
       fetchData();
+
+
     }, []);
+    
     return (
         <div>
             <MyHeader />
@@ -66,10 +97,9 @@ function myProfileUser(): JSX.Element {
                     <QRpopup />
                     <h3 id="profileScore">score : 200</h3>
                     <div className="ProfilePictureUsername">
-                        <img id="profileImg" src={me} alt="" />
-                        <p>rimney</p>
+                        <img id="profileImg" src={userData?.image} alt="" />
+                        <p>{userData?.username}</p>
                         <EditProfileIcon />
-                        {/* <img id="editIcon" src={Edit} alt="" /> */}
                     </div>
                     <div className='WinLoss'>
                         <div className='Win'>
@@ -91,6 +121,12 @@ function myProfileUser(): JSX.Element {
                 <div className="friends">
                     <h1>Friends</h1>
                     <div className='friendslist'>
+                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
+                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
+                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
+                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
+                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
+                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
                         <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
                         <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
                         <div className='friend'><img src={me} alt="" /><p> rimney</p></div>

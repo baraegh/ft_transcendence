@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import './leaderBoard.css'
-import me from './rimney.jpeg'
-import MyHeader from './header'
+import '../css/leaderBoard.css'
+import me from '../img/rimney.jpeg'
+import MyHeader from '../tsx/header'
 
 function LeaderBoard() : JSX.Element
 {

@@ -7,6 +7,7 @@ import Axios from "axios";
 
 import Image from "./barae.jpg";
 import { useNavigate } from "react-router-dom";
+import MyHeader from "../front-end/tsx/header";
 
 type msgListType = {
   id: number;
@@ -202,6 +203,8 @@ export function Chat() {
 
 
   return (
+    <div>
+    <MyHeader/>
     <div className="chat-page">
       {!isChatSettingOpen ? (
         <>
@@ -237,6 +240,7 @@ export function Chat() {
       ) : (
         <ChatGroupSettings setIsChatSettingOpen={setIsChatSettingOpen} />
       )}
+    </div>
     </div>
   );
 }
