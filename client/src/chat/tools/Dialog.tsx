@@ -7,12 +7,14 @@ import DropMenu from './DropMenu';
 import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
 import Axios from 'axios';
+import { chatInfoType } from '../chat';
 
 type UserProps =
 {
     user:               friendDataType,
     checkbox?:          boolean,
-    setChat?:           (chatId: string, chatImage: string, chatName: string, chatType: string) => void
+    setChat?:           (chatId: string, chatImage: string,
+                        chatName: string, chatType: string, userId: number | null) => void
     closeDialog?:       () => void,
     GroupData?:         createGroupType,
     setMembersWarn?:    (membersWarn: boolean) => void,
@@ -38,7 +40,8 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
                 })
             .then((response) => {
                 if (setChat )
-                    setChat(response.data, user.friend.image, user.friend.username,'PERSONEL');
+                    setChat(response.data, user.friend.image, user.friend.username,
+                            'PERSONEL', user.friend.id);
                 if (closeDialog)
                     closeDialog();
             })
@@ -72,7 +75,8 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
 }
 
 type NewChatProps = {
-    setChat?: (chatId: string, chatImage: string, chatName: string, chatType: string) => void
+    setChat?: (chatId: string, chatImage: string,
+                chatName: string, chatType: string, userId: number | null) => void
     closeDialog?:       () => void,
 }
 
@@ -322,15 +326,6 @@ const CreateGroupThirdDialog = () => {
     );
 }
 
-type createGroupResponseTyep = {
-    id:         string,
-    ownerId:    number,
-    type:       string,
-    name:       string,
-    image:      string,
-    updatedAt:  string
-}
-
 const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     
     const   [showFirstDialog, setShowFirstDialog] = useState(true);
@@ -347,6 +342,16 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
             hash:'',
             members: [''],
         });
+
+    useEffect((() => {
+        Axios.get('http://localhost:3000/user/me', {withCredentials: true})
+            .then((response) => {
+                GroupData.members[0] = response.data.id;
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }), []);
     
     const checkNameInput = (groupName : string): boolean =>
     {
@@ -355,10 +360,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
 
         const trimmedString = groupName.trim();
         if (!(trimmedString.length > 0))
-            return true;
-
-        
-    
+            return true;    
         return false;
     }
 
@@ -457,11 +459,24 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         else if (e.name == 'members')
         {
             const {name, value, isChecked} = e;
-            if (GroupData.members[0] === '')
-            {
-                GroupData.members[0] = value.toString();
-                return;
-            }
+            // if (GroupData.members[0] === '')
+            // {
+            //     try
+            //     {
+
+                // }
+                // const response = await Axios.get('http://localhost:3000/user/me', {withCredentials: true});
+                // Axios.get('http://localhost:3000/user/me', {withCredentials: true})
+                //     .then((response) => {
+                //         setMyId(response.data.id);
+                //     })
+                //     .catch((error) => {
+                //         console.log(error);
+                //     })
+
+            //     GroupData.members[0] = value.toString();
+            //     return;
+            // }
 
             const updatedMembers = isChecked ? 
                     [...GroupData.members, value.toString()]
@@ -481,7 +496,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
 
     const  handleOnSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        if (GroupData.members.length > 0 && GroupData.members[0] != '')
+        if (GroupData.members.length > 1 && GroupData.members[0] != '')
         {
             const formData = new FormData();
 
@@ -666,15 +681,37 @@ const AddAdmin = ({closeDialog} : DialogProps) => {
     );
 }
 
-const ClearChat = ({closeDialog} : DialogProps) => {
+const ClearChat = ({closeDialog, chatInfo, title, setMsgSend, msgSend} : DialogProps) => {
+
+    const handleOnClickYes = () => {
+        if (!chatInfo)
+            return;
+        Axios.post("http://localhost:3000/chat/friend/delet-chat",
+            {channelId: chatInfo.chatId},
+            {withCredentials: true})
+            .then((response) => {
+                console.log('response: ', response);
+                console.log('before: ', msgSend);
+                if (setMsgSend)
+                    setMsgSend(!msgSend);
+                    console.log('after: ', msgSend);
+                if (closeDialog)
+                    closeDialog();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
 
     return (
         <div className='dialog-remove-group'>
             <FontAwesomeIcon icon={faTriangleExclamation} size='3x' style={{color: "#000000",}} />
-            <p className='dialog-remove-group-msg'>Are you sure you want to clear {'GROUPNAME'}'s chat ?</p>
+            <p className='dialog-remove-group-msg'>
+                Are you sure you want to {title === 'Delete'? 'delete' : 'clear'} {chatInfo?.chatName}'s chat ?
+            </p>
             <div className='dialog-remove-group-cancel-yes'>
                 <button onClick={closeDialog}>Cancel</button>
-                <button className='dialog-remove-group-yes-btn'>Yes</button>
+                <button className='dialog-remove-group-yes-btn' onClick={handleOnClickYes}>Yes</button>
             </div>
         </div>
     );
@@ -696,12 +733,17 @@ const DeleteGroup = ({closeDialog} : DialogProps) => {
 
 type DialogProps =
 {
-    title?: string;
-    closeDialog?: () => void;
-    setChat?: (chatId: string, chatImage: string, chatName: string, chatType: string) => void
+    title?:         string;
+    closeDialog?:   () => void;
+    setChat?:       (chatId: string, chatImage: string,
+                        chatName: string, chatType: string, userId: number | null) => void,
+    chatInfo?:      chatInfoType,
+    msgSend?:        boolean,
+    setMsgSend?:     (msgSend: boolean) => void,
 }
 
-export function Dialog({title, closeDialog, setChat} : DialogProps)
+export function Dialog({title, closeDialog, setChat,
+                        chatInfo, msgSend, setMsgSend} : DialogProps)
 {
     // 'New Chat', 'Create Group', 'Invite', 'Leave Group'...
     let ItemComponent :React.ComponentType = () => <p>Invalid Choise</p>;
@@ -736,9 +778,17 @@ export function Dialog({title, closeDialog, setChat} : DialogProps)
         //     ItemComponent = dialogContent.addAdmin;
         //     break;
 
-        // case 'Clear Chat':
-        //     ItemComponent = dialogContent.clearChat;
-        //     break;
+        case 'Delete':
+            ItemComponent = () => <ClearChat    chatInfo={chatInfo}
+                                                closeDialog={closeDialog}
+                                                title={title}
+                                                setMsgSend={setMsgSend}
+                                                msgSend={msgSend}/>;
+            break;
+
+        case 'Clear Chat':
+            ItemComponent = () => <ClearChat />;
+            break;
 
         // case 'Delete Group':
         //     ItemComponent = dialogContent.deleteGroup;

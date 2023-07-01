@@ -7,10 +7,14 @@ const filterList = ['All chats', 'Friends', 'Groups'];
 const settingsList = ['New Chat', 'Create Group', 'Invite'];
 
 type ChatListHeaderProps = {
-    setChat: (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
+    setChat:        (chatId: string, chatImage: string, chatName: string,
+                        chatType: string, userId: number | null) => void,
+    searchQuery:    string,
+    setSearchQuery: (searchQuery: string) => void,
+    setFilter:      (filter: string) => void,
 }
 
-function ChatListHeader({setChat} : ChatListHeaderProps)
+function ChatListHeader({setChat, searchQuery, setSearchQuery, setFilter} : ChatListHeaderProps)
 {
     return (
         <div className="chat-list-header">
@@ -20,29 +24,37 @@ function ChatListHeader({setChat} : ChatListHeaderProps)
                 <Settings list={settingsList} setChat={setChat} />
             </div>
             <div className="filter-search">
-                <FilterBtn list={filterList} />
-                <Search />
+                <FilterBtn list={filterList} setFilter={setFilter}/>
+                <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
             </div>
         </div>
     );
 }
 
+export const format = (str: string, n: number): string => {
+    if (str.length > n)
+        return str.substring(0, n) + '...';
+    return str;
+}
+
 type HistoryListProps = {
     data:           channel,
     selected:       boolean
-    setChat:        (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
+    setChat:        (chatId: string, chatImage: string,
+                    chatName: string, chatType: string, userId: number | null) => void,
 }
 
 const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
 {
     const handleOnClick = () => {
         data.type === 'PERSONEL'?
-                setChat(data.channelId, data.otherUserImage, data.otherUserName, data.type)
+                setChat(data.channelId, data.otherUserImage, data.otherUserName, data.type, data.otherUserId)
             :
-                setChat(data.channelId, data.channelImage, data.channelImage, data.type);
+                setChat(data.channelId, data.channelImage, data.channelImage, data.type, null);
     } 
 
-    const isGroup = data.type === 'PRIVATE';
+    const isGroup = data.type !== 'PERSONEL';
+
 
     return (
         <div className={`item ${selected? 'selected': ''}`}
@@ -51,12 +63,20 @@ const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
                 alt={`${isGroup? data.channelName : data.otherUserName} image`}/>
             <div>
                 <div className='item-username-group-status-circle'>
-                    <p className="item-username-group">{isGroup? data.channelName : data.otherUserName}</p>
+                    <p className="item-username-group">
+                        {
+                            isGroup?
+                                format(data.channelName, 8)
+                            : format(data.otherUserName, 8)
+                        }
+                    </p>
                     <div className='status-circle online'></div>
                 </div>
                 { 
                     data.lastMessage?
-                        <p className="item-last-message">{data.lastMessage.content}</p>
+                        <p className="item-last-message">
+                            {format(data.lastMessage.content, 17)}
+                        </p>
                     : ''
                 }
             </div>
@@ -87,50 +107,99 @@ export type channel = {
 
 type chatHistoryListProps =
 {
-    setChat:            (chatId: string, chatImage: string, chatName: string, chatType: string) => void,
+    setChat:            (chatId: string, chatImage: string, chatName: string,
+                        chatType: string, userId: number | null) => void,
     setIsProfileOpen:   (isOpen: boolean) => void,
     chatId:             string | null,
 }
 
 const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListProps) =>
 {
-    // const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
     const [channelList, setChannelList] = useState<channel[]| null>(null);
+    const [groupList, setGroupList] = useState<channel[]| null>(null);
+    const [friendList, setFriendList] = useState<channel[]| null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filter, setFilter] = useState('');
+    let msgCard: React.ReactNode;
 
     useEffect(() => {
-        Axios.get('http://localhost:3000/chat/all-channel-of-user', { withCredentials: true })
+        let url: string = 'chat/all-channel-of-user';
+
+        if (filter === 'Friends')
+            url = 'chat/all-Personel-channel-of-user';
+        else if (filter === 'Groups')
+            url = 'chat/all-group-channel-of-user';
+
+        Axios.get(`http://localhost:3000/${url}`, { withCredentials: true })
             .then((response) => {
-                console.log(response.data);
-                setChannelList(response.data);
+                if (filter === '' || filter === 'All chats')
+                    setChannelList(response.data);
+                else if (filter === 'Friends')
+                    setFriendList(response.data);
+                else if (filter === 'Groups')
+                    setGroupList(response.data);
             })
             .catch((error) => {
                     console.log(error);
                 }
             );
-    }, [chatId]);
+    }, [chatId, searchQuery, filter]);
 
     const handleSetChat = (chatId: string,chatImage: string,
-                            chatName: string, chatType: string) => {
-        setChat(chatId, chatImage, chatName, chatType);
+                            chatName: string, chatType: string,
+                            userId: number | null) => {
+        setChat(chatId, chatImage, chatName, chatType, userId);
         setIsProfileOpen(false);
     };
 
-    console.table(channelList);
-
-    const msgCard = channelList? channelList.map( channel =>
-                                (
-                                    <HistoryList
-                                        key={channel.channelId}
-                                        data={channel}
-                                        selected={chatId === channel.channelId}
-                                        setChat={setChat}
-                                    />
-                                ))
-                    : <p>No Channels</p>
+    let filtredChannelList: channel[] | null = null;
+ 
+    if (filter === '' || filter === 'All chats')
+    {
+        filtredChannelList = channelList?.filter( channel => {
+            if (channel.channelName)
+                return channel.channelName.toLowerCase().includes(searchQuery.toLowerCase());
+            else
+                return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
+        }) ?? null;
+    }
+    else if (filter === 'Friends')
+    {
+        filtredChannelList = friendList?.filter( channel => {
+            if (channel.channelName)
+                return channel.channelName.toLowerCase().includes(searchQuery.toLowerCase());
+            else
+                return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
+        }) ?? null;
+    }
+    else if (filter === 'Groups')
+    {
+        filtredChannelList = groupList?.filter( channel => {
+            if (channel.channelName)
+                return channel.channelName.toLowerCase().includes(searchQuery.toLowerCase());
+            else
+                return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
+        }) ?? null;
+    }
+        
+    msgCard = filtredChannelList?
+            filtredChannelList.map( channel =>
+            (
+                <HistoryList
+                    key={channel.channelId}
+                    data={channel}
+                    selected={chatId === channel.channelId}
+                    setChat={setChat}
+                />
+            ))
+        : <p>No Channels</p>
 
     return (
         <div className="chat-history-list">
-            <ChatListHeader setChat={handleSetChat} />
+            <ChatListHeader setChat={handleSetChat} 
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            setFilter={setFilter}/>
             <div className="list-scroll">
                 {msgCard}
             </div>

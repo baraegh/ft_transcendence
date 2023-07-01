@@ -167,21 +167,34 @@ const chatArray: chatArrayType = [
   { chatId: 27, chat: generateArrayOfMsg(100), type: "normal" },
 ];
 
+export type chatInfoType = {
+  chatId:     string,
+  chatType:   string,
+  chatImage:  string,
+  chatName:   string,
+  chatUserId: number | null,
+}
+
 export function Chat() {
-  const [chatId, setChatId] = useState<string | null>(null);
-  const [chatType, setChatType] = useState<string | null>(null);
-  const [chatImage, setChatImage] = useState<string | null>(null);
-  const [chatName, setChatName] = useState<string | null>(null);
+
+  const [chatInfo, setChatInfo] = useState<chatInfoType>({
+    chatId:     '',
+    chatType:   '',
+    chatImage:  '',
+    chatName:   '',
+    chatUserId: null,
+  });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
 
 
-  const setChat = (chatId: string, chatImage: string,
-                    chatName: string, chatType: string) => {
-    setChatId(chatId);
-    setChatImage(chatImage);
-    setChatName(chatName);
-    setChatType(chatType);
+  const setChat = (Id: string, Image: string,
+                    Name: string, Type: string, userId: number | null) => {
+
+    setChatInfo({chatId: Id, chatImage: Image,
+                chatName: Name, chatType: Type,
+                chatUserId: userId
+              })
   }
 
   const navigate = useNavigate();
@@ -206,18 +219,15 @@ export function Chat() {
       {!isChatSettingOpen ? (
         <>
           <ChatHistoryList
-            chatId={chatId}
+            chatId={chatInfo.chatId}
             setChat={setChat}
             setIsProfileOpen={setIsProfileOpen}
           />
           <div className="chat-area">
-            {chatId !== null ? (
+            {chatInfo.chatId !== '' ? (
               <ChatArea
-                chatId={chatId}
-                chatImage={chatImage}
-                chatName={chatName}
+                chatInfo={chatInfo} 
                 setIsProfileOpen={setIsProfileOpen}
-                type={chatType}
               />
             ) : (
               <div className="chat-area-default">
@@ -226,13 +236,13 @@ export function Chat() {
             )}
           </div>
 
-          {/* {chatId !== null && chatType === "group" ? (
+          {chatInfo.chatId !== null && chatInfo.chatType === "group" ? (
             <ChatAreaGroup setIsChatSettingOpen={setIsChatSettingOpen} />
           ) : isProfileOpen ? (
-            <ChatAreaProfile setIsProfileOpen={setIsProfileOpen} />
-          ) : ( */}
+            <ChatAreaProfile chatInfo={chatInfo} setIsProfileOpen={setIsProfileOpen} />
+          ) : (
             <FriendList />
-          {/* )} */}
+          )}
         </>
       ) : (
         <ChatGroupSettings setIsChatSettingOpen={setIsChatSettingOpen} />

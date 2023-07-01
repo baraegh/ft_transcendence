@@ -2,12 +2,27 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons' ;
 import DropMenu from './DropMenu';
+import { chatInfoType } from "../chat";
 
-export function Search()
+type searchProps = {
+    searchQuery:    string,
+    setSearchQuery: (searchQuery: string) => void,
+}
+
+export function Search({searchQuery, setSearchQuery}: searchProps)
 {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    }
+
     return(
         <div className="search">
-            <input className="search-input" type="search" placeholder="Search..." />
+            <input  className="search-input"
+                    name="search-input"
+                    value={searchQuery}
+                    type="search"
+                    placeholder="Search..."
+                    onChange={handleInputChange}/>
             <FontAwesomeIcon
                 className="search-icon"
                 icon={faMagnifyingGlass}
@@ -19,10 +34,11 @@ export function Search()
 }
 
 type FilterBtnProps = {
-    list: string[];
+    list:       string[];
+    setFilter?:  (filter: string) => void,
 }
 
-export function FilterBtn({list} : FilterBtnProps)
+export function FilterBtn({list, setFilter} : FilterBtnProps)
 {
     const [hasShadow, setHasShadow] = useState(true);
 
@@ -32,26 +48,39 @@ export function FilterBtn({list} : FilterBtnProps)
 
     return (
         <div className={`filter  ${hasShadow ? '': 'triger-without-shadow'}`}>
-            <DropMenu list={list} OnOpen={handleMenuOpenChange} />
+            <DropMenu   list={list} 
+                        OnOpen={handleMenuOpenChange}
+                        setFilter={setFilter} />
         </div>
     );
 }
 
 type SettingsProps =
 {
-    list: string[];
-    size?: string,
+    list:               string[];
+    size?:              string,
     setIsProfileOpen?:  (isOpen: boolean) => void
-    setChat?: (chatId: string, chatImage: string, chatName: string, chatType: string) => void
+    setChat?:           (chatId: string, chatImage: string,
+                            chatName: string, chatType: string, userId: number | null) => void,
+    chatInfo?:          chatInfoType,
+    msgSend?:            boolean,
+    setMsgSend?:         (msgSend: boolean) => void,
 }
 
-export function Settings({list, size='14px', setIsProfileOpen, setChat} : SettingsProps)
+export function Settings({list, size='14px', setIsProfileOpen,
+                            setChat, chatInfo, msgSend, setMsgSend} : SettingsProps)
 {
     return (
         <div className="chat-settings">
-            <DropMenu setIsProfileOpen={setIsProfileOpen} list={list} 
-                defaultValue={false} settings={true} size={size}
-                setChat={setChat}/>
+            <DropMenu   setIsProfileOpen={setIsProfileOpen}
+                        list={list} 
+                        defaultValue={false}
+                        settings={true}
+                        size={size}
+                        setChat={setChat}
+                        chatInfo={chatInfo}
+                        msgSend={msgSend}
+                        setMsgSend={setMsgSend}/>
         </div>
     );
 }
