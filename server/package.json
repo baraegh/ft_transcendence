@@ -37,7 +37,6 @@
     "@nestjs/platform-express": "^9.4.3",
     "@nestjs/swagger": "^7.0.12",
     "@prisma/client": "^4.15.0",
-    "@types/otplib": "^10.0.0",
     "@types/qr-image": "^3.2.5",
     "argon2": "^0.30.3",
     "axios": "^1.4.0",

@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
       receiverId: 98782, // User ID of barae
     };
     axios
-  .post('http://localhost:3000/chat/join-friend', requestData, {
+  .post('ht`tp://localhost:`3000/chat/join-friend', requestData, {
     headers: {
       'Content-Type': 'application/json',
     },withCredentials: true, 

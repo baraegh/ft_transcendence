@@ -3,6 +3,7 @@ import Chat from './chat/chat';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AuthPage from './auth/AuthPage';
 import HomePage from './home/HomePage';
+import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
 
 
 
@@ -19,6 +20,7 @@ function App() {
     <Router>
       <Routes >
         <Route  path="/" element={<AuthPage />} />
+        <Route  path="/TwoFactorAuth" element={<TwoFactorAuth />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/chat" element={<Chat_/>} />
       </Routes>
