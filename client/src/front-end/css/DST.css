@@ -1,0 +1,158 @@
+/* Header Styles */
+.header {
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 5%;
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 8px 0px 2px rgba(0, 0, 0, 1);
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 1px;
+  }
+  
+  .discover-team-h2 {
+    display: inline-block;
+    margin-right: 15px;
+  }
+  
+  .play-button {
+    width: 70px;
+    font-size: 30px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 10px;
+  }
+  
+  .discover-this-amazing-team {
+    display: flex;
+    margin: auto;
+    height: 750px;
+    width: 95%;
+    border: 2px solid black;
+    border-radius: 20px;
+    background-color: black;
+    box-shadow: 6px 6px 0px 2px rgb(172, 169, 169);
+  }
+  
+  .ping-pong-reboot {
+    margin: auto;
+    width: 95%;
+    height: 430px;
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0px 2px black;
+  }
+  
+  .ping-ping-reboot-h1 {
+    margin-left: 50px;
+    margin-top: 31px;
+  }
+  
+  .ping-pong-reboot-text {
+    font-size: 24px;
+    width: 50%;
+    height: 50%;
+    margin-left: 50px;
+    display: inline-block;
+    padding-bottom: 10px;
+  }
+  
+  .ping-pong-photo {
+    position: relative;
+    background-color: green;
+    height: 300px;
+    width: 300px;
+    display: inline-block;
+    margin-left: 20px;
+    bottom: 150px;
+    left: 10%;
+  }
+  
+  .discover-this-amazing-team-title {
+    font-size: 120px;
+    margin-top: 1%;
+    color: white;
+    margin-left: 7%;
+    line-height: 0.98;
+  }
+  
+  .meet-the-team {
+    margin: auto;
+    width: 95%;
+    height: 460px;
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0px 2px black;
+  }
+  
+  .meet-the-team-h1 {
+    position: relative;
+    text-align: center;
+    font-size: 100px;
+    bottom: 20px;
+  }
+  
+  .meet-the-team-h3 {
+    text-align: center;
+    font-size: 40px;
+    position: relative;
+    bottom: 15%;
+  }
+  
+  .meet-the-team-line {
+    position: relative;
+    border-bottom: 5px solid;
+    background-color: black;
+    bottom: 12%;
+  }
+  
+  .meet-the-team-images {
+    position: relative;
+    bottom: 13%;
+    width: 90%;
+    height: 60%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+  }
+  
+  .meet-the-team-image {
+    width: 230px;
+    position: relative;
+    border-radius: 30px;
+    box-shadow: 12px 10px 0px 0px black;
+  }
+  
+  .footer {
+    position: relative;
+    bottom: 30px;
+    flex-direction: column;
+    display: flex;
+    margin: auto;
+    width: 95%;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0px 2px black;
+  }
+  
+  .footer-h2 {
+    position: relative;
+    text-align: center;
+  }
+  
+  .footer-text {
+    position: relative;
+    top: -10px;
+    right: 0.17%;
+    line-height: 1;
+    font-family: 'Mplus 1p';
+  }
+  

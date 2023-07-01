@@ -1,8 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { useEffect, useState } from 'react';
-import './style.css'
-import imm from './pic.jpeg'
-import me from './rimney.jpeg'
+import '../css/style.css'
+import '../css/DST.css'
+import imm from '../img/pic.jpeg'
+import me from '../img/rimney.jpeg'
 
 function getActualWindowDientions() {
     const [windowDimensions, setWindowDimensions] = useState({
@@ -185,20 +186,19 @@ function getActualWindowDientions() {
     };
     return (
       <div>
-        <header style={headerStyle}>
+       <header className='header'>
           <h3 className="logo">Keep It Random !</h3>
-          <div  className=
-          "discoverTeam">
-            <h2 style={discoverTeamH2}>Discover</h2>
-            <h2 style={discoverTeamH2} >Team</h2>
+          <div  className="discoverTeam">
+            <h2 className='discover-team-h2'>Discover</h2>
+            <h2 className='discover-team-h' >Team</h2>
           </div>
           <div className="button_animation">
             <a href="#"><span>Play</span></a>
             </div>
         </header>
     <br/>
-    <div className="discoverThisAmazingTeam" style={discoverThisAmazingTeam}>
-    <div className="discoverThisAmazingTeamTitle" style={discoverThisAmazingTeamTitle}>
+    <div className="discover-this-amazing-team">
+    <div className="discover-this-amazing-team">
       <p className="pingPongRebootText">Discover</p>
       <p>This</p>
       <p>Amazing</p>
@@ -207,30 +207,30 @@ function getActualWindowDientions() {
     </div>
     </div>
     <br/>
-    <div className="pingPongReboot" style={pingPongReboot}>
-      <h1 style={pingPingRebootH1}>Ping Pong Reboot 2023</h1>
-        <div id="pingPongRebootText" style={pingPongRebootText}>
+    <div className="ping-pong-reboot">
+      <h1 className="ping-ping-reboot-h1">Ping Pong Reboot 2023</h1>
+        <div id="pingPongRebootText" className="ping-pong-reboot-text">
         <p>Have you ever played Pong? If not, it is the perfect time to start playing one of the earliest, and popular, video games!
             <br/>
             Pong is a table tennis-themed game released in 1972 by Atari. This 1v1 game consists of two paddles used by players to hit the ball back and forth. The goal for each player is to reach the maximum number of points before their opponent.
             Today, Pong is back like you’ve never thought it could be!
             <br/>
             Meet Pong-enthusiasts, make new friends and hit the leaderboard!</p>
-            {/* <button style={playButton} className="PlayButton">Try It</button> */}
+            {/* <button className={playButton} className="PlayButton">Try It</button> */}
             <div className="button_animation">
             <a href="#"><span>Try It!</span></a>
             </div>
           </div>
-            <img src={imm} style={pingPongPhoto}></img>
+            <img src={imm} className=".ping-pong-photo"></img>
     </div>
     <br/>
-    <div style={meetTheTeam} className="meetTheTeam">
-      <p style={meetTheTeamH1}> Meet the team </p>
-      <p style={meetTheTeamH3}> the creative minds who brought out site to life !</p>
-      <div style={meetTheTeamLine}></div>
-      <div className="meetTheTeamImages">
+    <div className="meet-the-team">
+      <p className="meet-the-team-h1"> Meet the team </p>
+      <p className="meet-the-team-h3"> the creative minds who brought out site to life !</p>
+      <div className="meet-the-team-line"></div>
+      <div className="meet-the-team-images">
         <div>
-      <img src={me}  className="meetTheTeamImage1"/>
+      <img src={me}  className="meet-the-team-image"/>
           <p className="textName1">Riad mney<br />
         </p>
       <p className="dercription1">fhfhfhfhfhfhfhfhfhff</p>
@@ -240,9 +240,9 @@ function getActualWindowDientions() {
     </div>
     <br/>
     <br/>
-    <div className="footer" style={footer} >
-      <h2 style={footerH2}>ft_transcendance, a 42 project</h2>
-      <p style={footerText}>Made with love by Mohammed x 2, Barae and riyad</p>
+    <div className="footer" >
+      <h2 className="footer-text">ft_transcendance, a 42 project</h2>
+      <p className="footer-text">Made with love by Mohammed x 2, Barae and riyad</p>
     </div>
     </div>
     );
