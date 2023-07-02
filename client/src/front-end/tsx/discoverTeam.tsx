@@ -4,6 +4,7 @@ import '../css/style.css'
 import '../css/DST.css'
 import imm from '../img/pic.jpeg'
 import me from '../img/rimney.jpeg'
+import gif from '../img/gif.webp'
 
 function getActualWindowDientions() {
     const [windowDimensions, setWindowDimensions] = useState({
@@ -51,6 +52,7 @@ function getActualWindowDientions() {
       <p>Amazing</p>
       <p>Team</p>
       <p>Work</p>
+      <img  id="gif" src={gif} alt="" />
     </div>
     <br/>
     <div className="ping-pong-reboot">
