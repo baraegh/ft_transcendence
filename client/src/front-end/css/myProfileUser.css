@@ -289,5 +289,21 @@ input[type="checkbox"]:checked + .slider:before {
     z-index: 10 ;
 }
 
+.friends a
+{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    position: relative;
+    left : 190px;
+    /* top : 250px; */
+    /* font-size: 15px; */
+    /* padding : 200px; */
+    color : gray;
+    /* background-color: green; */
+}
+
+.friends a:hover {
+    color: blue !important;
+}
+
 
 

@@ -2,10 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import 'bootstrap/dist/css/bootstrap.css'
-import './style.css'
-import './loginPage.css'
-import gif from './intro.gif'
-import logo42 from './42_logo.png'
+import '../css/style.css'
+import '../css/loginPage.css'
+import gif from '../img/intro.gif'
+import logo42 from '../img/42_logo.png'
+import logo42White from '../img/42_logo_white.png'
 
 // function getActualWindowDientions() {
 //     const [windowDimensions, setWindowDimensions] = useState({
@@ -31,18 +32,25 @@ import logo42 from './42_logo.png'
 //     return (windowDimensions);
 //   }
 
+  
 
 function LoginPage() : JSX.Element {
+        const handleLogin = () => {
+          window.location.href = "http://localhost:3000/auth/";
+    }
     return (
         <div className="loginDiv">
             <img src={gif} alt="" />
-            
-            {/* <img src={logo42} className="logo42"/> */}
-            <button className="button_42">42 intra</button>
-            <button className="button_google">Google</button>
+            <div className="loginDiv">
+                <button  
+                onClick ={handleLogin}
+                className='button_42'><img src={logo42} id="logo42" alt="" />
+                <img src={logo42White} id="logo42White" alt="" />
+                LOGIN
+                </button>
+            </div>
         </div>
 
     );
 }
-
 export default LoginPage;

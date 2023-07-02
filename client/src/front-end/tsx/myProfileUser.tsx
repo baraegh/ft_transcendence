@@ -16,23 +16,36 @@ interface User {
     gameWon: number;
     gameLost: number;
     achievements: string[];
-  }
+}
+
+interface friend {
+    id: number,
+    username: string;
+    image: string;
+}
 
 interface Friends {
     blocked: boolean;
     isRequested: boolean;
     isFriend: boolean;
     requestAccepted: boolean;
-    friend : {
-        id : number,
-        username : string;
-        image : string;
+    friend: {
+        id: number,
+        username: string;
+        image: string;
     }
 }
 
+
+
 function myProfileUser(): JSX.Element {
+    const switchScrollFlag = () => {
+        setScrollFlag(!scrollFlag);
+        console.log(!scrollFlag + ' < switched');
+      };
     const [toggleState, setToggleState] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const [scrollFlag, setScrollFlag] = useState(false);
 
     const handleToggleChange = () => {
         setToggleState(!toggleState);
@@ -44,51 +57,56 @@ function myProfileUser(): JSX.Element {
     const fetchData = () => {
         const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
         const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
-      
+
         Promise.all([fetchUserData, fetchAdditionalData])
-          .then((responses) => {
-            const userDataResponse = responses[0];
-            const additionalDataResponse = responses[1];
-      
-            if (userDataResponse.status === 200 && additionalDataResponse.status === 200) {
-              const userData = userDataResponse.data;
-              const friendData = additionalDataResponse.data;
-      
-              const fetchedUser: User = {
-                id: userData.id,
-                username: userData.username,
-                image: userData.image,
-                gameWon: userData.gameWon,
-                gameLost: userData.gameLost,
-                achievements: userData.achievements,
-              };
-      
-              const fetchedFriends: Friends = {
-                blocked: friendData.blocked,
-                isRequested: friendData.isRequested,
-                isFriend: friendData.isFriend,
-                requestAccepted: friendData.requestAccepted,
-                friend: friendData.friend,
-              };
-      
-              setUserData(fetchedUser);
-              setFriendData(fetchedFriends);
-              console.log(friendData);
-            } else {
-              throw new Error('Request failed');
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      };
-  
+            .then((responses) => {
+                const userDataResponse = responses[0];
+                const additionalDataResponse = responses[1];
+
+                if (userDataResponse.status === 200 && additionalDataResponse.status === 200) {
+                    const userData = userDataResponse.data;
+                    const friendData = additionalDataResponse.data;
+
+                    const fetchedUser: User = {
+                        id: userData.id,
+                        username: userData.username,
+                        image: userData.image,
+                        gameWon: userData.gameWon,
+                        gameLost: userData.gameLost,
+                        achievements: userData.achievements,
+                    };
+
+                    const fetchedFriends: Friends = {
+                        blocked: friendData.blocked,
+                        isRequested: friendData.isRequested,
+                        isFriend: friendData.isFriend,
+                        requestAccepted: friendData.requestAccepted,
+                        friend: friendData.friend,
+                    };
+
+
+                    setUserData(fetchedUser);
+                    setFriendData(fetchedFriends);
+                    // console.log(friendData);
+                } else {
+                    throw new Error('Request failed');
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
     useEffect(() => {
-      fetchData();
+        fetchData();
 
 
     }, []);
-    
+    const friends: friend[] = Array.from({ length: 30 }, (_, index) => ({
+        id: index + 1,
+        username: `rimney ${index + 2}`,
+        image: me,
+    }));
     return (
         <div>
             <MyHeader />
@@ -106,7 +124,7 @@ function myProfileUser(): JSX.Element {
                             <p>Win : {userData && userData.gameWon || '33'}</p>
                         </div>
                         <div className='Loss'>
-                        <p>Loss : {userData && userData.gameLost || '11'}</p>
+                            <p>Loss : {userData && userData.gameLost || '11'}</p>
                         </div>
                     </div>
                     <div className='achievement'>
@@ -119,21 +137,27 @@ function myProfileUser(): JSX.Element {
                     </div>
                 </div>
                 <div className="friends">
-                    <h1>Friends</h1>
-                    <div className='friendslist'>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                        <div className='friend'><img src={me} alt="" /><p> rimney</p></div>
-                    </div>
-                </div>
+  <h1>Friends</h1>
+  <div className="friendslistScrollBar">
+    {!scrollFlag ? (
+      Array.from({ length: 5 }).map((_, index) => (
+        <div key={index} className="friend">
+          <img src={friends[index].image} alt="" />
+          <p>{friends[index].username}</p>
+        </div>
+      ))
+    ) : (
+      friends.map((friend, index) => (
+        <div key={index} className="friend">
+          <img src={friend.image} alt="" />
+          <p>{friend.username}</p>
+        </div>
+      ))
+    )}
+    <a onClick={switchScrollFlag}> And {friends.length - 5} More</a>
+  </div>
+</div>
+
                 <div className='matches'>
                     <h1>Matches</h1>
                     <div className='winLoseContainter'>

@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Chat from './chat/chat';
 // import React, { useEffect, useState } from 'react';
 // import axios from 'axios';
-// import LoginPage from "./front-end/tsx/loginPage";
-// import FA from './tsx/2FA'
+import LoginPage from "./front-end/tsx/loginPage";
 import DSTeam from '../src/front-end/tsx/discoverTeam'
 // import Home from './tsx/home'
 import LeaderBoard from './front-end/tsx/leaderBoard';
@@ -28,15 +27,15 @@ function App() {
 
   return (
 
-    // <Router>
-    //   <Routes >
-    //     <Route  path="/" element={<AuthPage />} />
-    //     <Route path="/home" element={<MyProfileUser />} />
-    //     <Route path="/chat" element={<Chat />} />
-    //     < Route path='/leaderboard' element={<LeaderBoard/>} />
-    //   </Routes>
-    // </Router>
-    <DSTeam/>
+    <Router>
+      <Routes >
+        <Route  path="/" element={<LoginPage />} />
+        <Route path="/home" element={<MyProfileUser />} />
+        <Route path="/chat" element={<Chat />} />
+        < Route path='/leaderboard' element={<LeaderBoard/>} />
+      </Routes>
+    </Router>
+    // <LoginPage/>
   );
 }
 
