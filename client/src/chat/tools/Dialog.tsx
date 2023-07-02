@@ -690,11 +690,8 @@ const ClearChat = ({closeDialog, chatInfo, title, setMsgSend, msgSend} : DialogP
             {channelId: chatInfo.chatId},
             {withCredentials: true})
             .then((response) => {
-                console.log('response: ', response);
-                console.log('before: ', msgSend);
                 if (setMsgSend)
                     setMsgSend(!msgSend);
-                    console.log('after: ', msgSend);
                 if (closeDialog)
                     closeDialog();
             })
@@ -731,6 +728,38 @@ const DeleteGroup = ({closeDialog} : DialogProps) => {
     );
 }
 
+const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => {
+
+    const handleOnClick = () => {
+        if (!chatInfo)
+            return;
+        Axios.patch("http://localhost:3000/chat/friend/block_friend",
+            {FriendId: chatInfo.chatUserId},
+            {withCredentials: true})
+            .then((response) => {
+                if (setMsgSend)
+                    setMsgSend(!msgSend);
+                if (closeDialog)
+                    closeDialog();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    return (
+        <div className='dialog-remove-group'>
+            <FontAwesomeIcon icon={faTriangleExclamation} size='3x' style={{color: "#000000",}} />
+            <p className='dialog-remove-group-msg'>Are you sure you want to block {chatInfo?.chatName} ?</p>
+            <div className='dialog-remove-group-cancel-yes'>
+                <button onClick={closeDialog}>Cancel</button>
+                <button className='dialog-remove-group-yes-btn'
+                        onClick={handleOnClick}>Yes</button>
+            </div>
+        </div>
+    );
+}
+
 type DialogProps =
 {
     title?:         string;
@@ -746,7 +775,7 @@ export function Dialog({title, closeDialog, setChat,
                         chatInfo, msgSend, setMsgSend} : DialogProps)
 {
     // 'New Chat', 'Create Group', 'Invite', 'Leave Group'...
-    let ItemComponent :React.ComponentType = () => <p>Invalid Choise</p>;
+    let ItemComponent :React.ComponentType = () => <p>Invalid Choose</p>;
 
     switch(title)
     {
@@ -784,6 +813,13 @@ export function Dialog({title, closeDialog, setChat,
                                                 title={title}
                                                 setMsgSend={setMsgSend}
                                                 msgSend={msgSend}/>;
+            break;
+        
+        case 'Block':
+            ItemComponent = () => <BlockUser    closeDialog={closeDialog}
+                                                chatInfo={chatInfo}
+                                                setMsgSend={setMsgSend}
+                                                msgSend={msgSend}/>
             break;
 
         case 'Clear Chat':

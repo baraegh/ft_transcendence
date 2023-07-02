@@ -57,8 +57,6 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false,
 
       if (value === 'Profile')
         setIsProfileOpen && setIsProfileOpen(true);
-      // Apply filtering logic based on the selected filter
-      // For example, update the state or trigger a filtering function
     };
 
     const closeDialog = () => {

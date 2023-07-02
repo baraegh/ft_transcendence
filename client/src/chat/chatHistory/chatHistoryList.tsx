@@ -87,7 +87,6 @@ const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
     );
 }
 
-
 export type channel = {
     channelId:      string,
     type:           string,
