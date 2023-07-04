@@ -244,12 +244,14 @@ export class ChatService {
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
     }
-    const pars = new CREATEGROUPSDTO();
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id: ownerId },
+    
+    const existingUser = await this.prisma.user.findMany({
+      where: { id: { in: dto.members } },
     });
-    if (!existingUser) {
-      throw new NotFoundException('The user Not Exist');
+    if(dto.members.length == 1)
+      throw new BadRequestException('select users');
+    if (existingUser.length !== dto.members.length) {
+      throw new NotFoundException('One or more users not found');
     }
     const findeuniquenqme = await this.prisma.channel.findUnique({
       where: {
@@ -300,14 +302,6 @@ export class ChatService {
         updatedAt:true
       }
     });
-    // if (
-    //   !Array.isArray(pars.parsedMembers(dto.members)) ||
-    //   !pars.parsedMembers(dto.members).every(Number.isInteger)
-    // ) {
-    //   throw new BadRequestException(
-    //     'Invalid input: members should be an array of numbers',
-    //   );
-    // }
     const participantsData: Prisma.ParticipantsCreateManyInput[] = dto.members
       .map((userId) => ({
         channelID: createChannel.id,
