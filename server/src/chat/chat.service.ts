@@ -239,7 +239,7 @@ export class ChatService {
     file: Express.Multer.File,
     localhostUrl: string,
   ):Promise<RETUR_OF_CHANNEL_DTO> {
-    console.log(typeof dto.members,dto.members);
+    console.log(typeof dto.members);
     if (dto.hash) {
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
@@ -300,16 +300,15 @@ export class ChatService {
         updatedAt:true
       }
     });
-    if (
-      !Array.isArray(pars.parsedMembers(dto.members)) ||
-      !pars.parsedMembers(dto.members).every(Number.isInteger)
-    ) {
-      throw new BadRequestException(
-        'Invalid input: members should be an array of numbers',
-      );
-    }
-    const participantsData: Prisma.ParticipantsCreateManyInput[] = pars
-      .parsedMembers(dto.members)
+    // if (
+    //   !Array.isArray(pars.parsedMembers(dto.members)) ||
+    //   !pars.parsedMembers(dto.members).every(Number.isInteger)
+    // ) {
+    //   throw new BadRequestException(
+    //     'Invalid input: members should be an array of numbers',
+    //   );
+    // }
+    const participantsData: Prisma.ParticipantsCreateManyInput[] = dto.members
       .map((userId) => ({
         channelID: createChannel.id,
         userID: userId,

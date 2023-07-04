@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   postgresql-db:
-    image: postgres:13
+    image: postgres
     ports:
       - 5432:5432
     environment:
@@ -14,3 +14,4 @@ networks:
   ft_transcendence:
 
   # docker-compose --env-file .env  up -d postgresql-db
+  # npm rebuild argon2 --build-from-source
