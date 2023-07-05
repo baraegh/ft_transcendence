@@ -21,26 +21,32 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly auth: AuthLogic) {}
   private server: Server;
 
-  private connectedUsers: Map<string, Socket> = new Map<string, Socket>();
+  private connectedUsers: Map<number, Socket> = new Map<number, Socket>();
 
   handleConnection(client: Socket) {
     const user = Array.isArray(client.handshake.query.user)
       ? client.handshake.query.user[0]
       : client.handshake.query.user;
-    const decodedUser = JSON.parse(decodeURIComponent(user));
-    client.data.userId = decodedUser.id;
-    const token = this.auth.generateToken(client.data.userId);
-    console.log('New client connected:', client.data.userId);
-    client.data.token = token;
+      if(decodeURIComponent(user) != "undefined"  )
+      {
+        const decodedUser = JSON.parse(decodeURIComponent(user));
+        client.data.userId = decodedUser.id;
+        const token = this.auth.generateToken(client.data.userId);
+        console.log('New client connected:', client.data.userId);
+        client.data.token = token;
+        this.connectedUsers.set( client.data.userId, client);
+      }
+   
   }
   handleDisconnect(client: Socket) {
     this.auth.verifyToken(client.data.token, client);
+    this.connectedUsers.delete(client.data.userId);
   }
 
-  sendGameRequest(userId: string, data:object): void {
+  sendGameRequest(userId: number, data:object): void {
     const userSocket = this.connectedUsers.get(userId);
     if (userSocket) {
-      userSocket.emit('data', data);
+      userSocket.emit('sendGameRequest', data);
     }
   }
   // Inject the socket.io server instance
