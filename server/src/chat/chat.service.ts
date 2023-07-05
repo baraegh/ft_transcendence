@@ -181,25 +181,44 @@ export class ChatService {
 
   /*********************************************************/
   async sendMsg(channelID, userId, content) {
-    const finduser = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-    if (!finduser) throw new ForbiddenException('User Not Exist');
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: channelID },
     });
     if (!findChannel) throw new ForbiddenException('Channel Not Exist');
 
-    const find_user_and_channel_in_particepents =
+    let find_user_and_channel_in_particepents =
       await this.prisma.participants.findFirst({
         where: { userID: userId, channelID: channelID },
       });
 
+      const currentDate = new Date();
+    
+      if (find_user_and_channel_in_particepents.blocked_at ){
+        const diff_on_min = Math.round(
+          ( currentDate.getTime() - find_user_and_channel_in_particepents.blocked_at.getTime())/60000,
+          );
+        if ((diff_on_min >= 15 && find_user_and_channel_in_particepents.mut == 'M15') ||
+        (diff_on_min >= 45 && find_user_and_channel_in_particepents.mut == 'M45') ||
+        (diff_on_min >= 480 && find_user_and_channel_in_particepents.mut == 'M15')) {
+          find_user_and_channel_in_particepents = await this.prisma.participants.update({
+            where: {
+              channelID_userID: {
+                channelID: channelID,
+                userID: userId,
+              },
+            },
+            data: {
+              mut: 'NAN',
+              blocked_at:null
+            },
+          });
+        } 
+      }
     if (
       find_user_and_channel_in_particepents.blocked ||
       find_user_and_channel_in_particepents.mut != 'NAN'
     )
-      throw new ForbiddenException('U Dont have The PermetionTo Send Msg');
+      throw new ForbiddenException('U Dont have The Permetion To Send Msg');
 
     const creatmsg = await this.prisma.messages.create({
       data: {
@@ -220,17 +239,19 @@ export class ChatService {
     file: Express.Multer.File,
     localhostUrl: string,
   ):Promise<RETUR_OF_CHANNEL_DTO> {
-    console.log(typeof dto.members,dto.members);
+    console.log(typeof dto.members);
     if (dto.hash) {
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
     }
-    const pars = new CREATEGROUPSDTO();
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id: ownerId },
+    
+    const existingUser = await this.prisma.user.findMany({
+      where: { id: { in: dto.members } },
     });
-    if (!existingUser) {
-      throw new NotFoundException('The user Not Exist');
+    if(dto.members.length == 1)
+      throw new BadRequestException('select users');
+    if (existingUser.length !== dto.members.length) {
+      throw new NotFoundException('One or more users not found');
     }
     const findeuniquenqme = await this.prisma.channel.findUnique({
       where: {
@@ -281,16 +302,7 @@ export class ChatService {
         updatedAt:true
       }
     });
-    if (
-      !Array.isArray(pars.parsedMembers(dto.members)) ||
-      !pars.parsedMembers(dto.members).every(Number.isInteger)
-    ) {
-      throw new BadRequestException(
-        'Invalid input: members should be an array of numbers',
-      );
-    }
-    const participantsData: Prisma.ParticipantsCreateManyInput[] = pars
-      .parsedMembers(dto.members)
+    const participantsData: Prisma.ParticipantsCreateManyInput[] = dto.members
       .map((userId) => ({
         channelID: createChannel.id,
         userID: userId,

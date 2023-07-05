@@ -13,7 +13,6 @@ import {
 import { createWriteStream } from 'fs';
 import * as path from 'path';
 import { USERINFODTO } from 'src/user/dto';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class ProfileService {
@@ -25,17 +24,9 @@ export class ProfileService {
     dto: Edite_Profile_DTO,
     file: Express.Multer.File,
   ): Promise<USERINFODTO> {
-    const finduser = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (!finduser) throw new NotFoundException('user not found');
-
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-
     const allowedExtensions = ['.jpg', '.jpeg', '.png']; // Specify the allowed image extensions
     const fileExtension = path.extname(file.originalname).toLowerCase(); // Extract the file extension
     if (!allowedExtensions.includes(fileExtension)) {
@@ -77,13 +68,6 @@ export class ProfileService {
   }
 
   async matchHistory(userId: number): Promise<MATCH_HISTORY_DTO[]> {
-    const finduser = await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (!finduser) throw new NotFoundException('user not found');
-
     const matchHistory = await this.prisma.match_History.findMany({
       where: {
         OR: [

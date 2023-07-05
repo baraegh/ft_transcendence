@@ -25,11 +25,6 @@ export class ChatOwnerService {
   constructor(private prisma: PrismaService) {}
 
   async muteMember(userId: number, dto: OWNERDTO) {
-    const finduser = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-
-    if (!finduser) throw new NotFoundException('user not found');
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelid },
       include: {
@@ -41,11 +36,8 @@ export class ChatOwnerService {
       },
     });
     if (!findChannel) throw new NotFoundException('channel not found');
-    if (findChannel.chanelID['role'] && findChannel.ownerId === userId)
+    if (findChannel.chanelID['role'] === 'USER' && findChannel.ownerId != userId)
       throw new ForbiddenException('Access Denied');
-    if (findChannel.ownerId != userId || findChannel.chanelID['role']) {
-      throw new ForbiddenException('Access Denied');
-    }
     const participantUniqueInput: Prisma.ParticipantsWhereUniqueInput = {
       channelID_userID: {
         channelID: dto.channelid,
@@ -56,6 +48,7 @@ export class ChatOwnerService {
       where: participantUniqueInput,
       data: {
         mut: dto.mute,
+        blocked_at :new Date()
       },
     });
     if (!updateParticipant) throw new NotFoundException('Entity not found');

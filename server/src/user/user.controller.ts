@@ -1,17 +1,20 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard } from '../auth/guard';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { USerService } from './user.service';
 import { Request } from 'express';
 import { USERDTO, USERINFODTO, USER_FRIEN_DTO } from './dto';
-import { promises } from 'dns';
+import { ParseIntPipe } from '@nestjs/common';
+
+
 
 @ApiBearerAuth()
 @ApiTags('User')
@@ -49,6 +52,26 @@ export class UserController {
   async findUserFriends(@Req() req: Request): Promise<USER_FRIEN_DTO[]> {
     const userId = req.user['id'];
     const user = await this.user.findUserFriends(userId);
+    return user;
+  }
+
+
+  @ApiOperation({
+    summary: 'friend with usr',
+  })
+  @ApiResponse({
+    description: 'friend info ',
+    type: USER_FRIEN_DTO,
+  })
+  @ApiParam({
+    name: 'friendId',
+    type: 'number',
+    required: true,
+  })
+  @Get('my-friends/:friendId')
+  async findUsermyFriend(@Req() req: Request,@Param('friendId',ParseIntPipe) friendId: number): Promise<USER_FRIEN_DTO> {
+    const userId = req.user['id'];
+    const user = await this.user.findMyfriend(userId,friendId);
     return user;
   }
 }

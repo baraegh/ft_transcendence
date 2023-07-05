@@ -23,6 +23,7 @@ import { join } from 'path';
 import * as fs from 'fs';
 import { Response } from 'express';
 import { USERINFODTO } from 'src/user/dto';
+import { Public } from 'src/auth/decorator/public.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Profile')
@@ -49,7 +50,6 @@ export class ProfileController {
     return await this.profile.edite_profile(localhostUrl, userid, dto, file);
   }
 
-
   @ApiResponse({
     type:MATCH_HISTORY_DTO
   })
@@ -57,7 +57,6 @@ export class ProfileController {
   async matchHistory(@Req() req:Request):Promise<MATCH_HISTORY_DTO[]>{
     return await this.profile.matchHistory(req.user['id']);
   }
-
 
 }
 
@@ -69,6 +68,7 @@ export class ProfileController {
 @UseGuards(JwtGuard)
 @Controller('uploads')
 export class UploadsController {
+  @Public()
   @Get(':filename')
   async getImage(
     @Param('filename') filename: string,

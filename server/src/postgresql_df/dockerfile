@@ -1,0 +1,6 @@
+
+FROM postgres:13
+
+ARG POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB 
+
+CMD ["postgres"]

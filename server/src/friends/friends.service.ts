@@ -14,12 +14,6 @@ export class FriendsService {
     if (!existingUser) {
       throw new ForbiddenException('The Friend Not Exist');
     }
-     existingUser = await this.prisma.user.findUnique({
-      where: { id: userid },
-    });
-    if (!existingUser) {
-      throw new ForbiddenException('The Friend Not Exist');
-    }
     const chekiffriend = await this.prisma.friendship.findFirst({
       where: { userID: friendId, friendID: userid },
     });
@@ -43,12 +37,6 @@ export class FriendsService {
     if (userid == friendId) throw new ForbiddenException('same person');
     let existingUser = await this.prisma.user.findUnique({
       where: { id: friendId },
-    });
-    if (!existingUser) {
-      throw new ForbiddenException('The Friend Not Exist');
-    }
-     existingUser = await this.prisma.user.findUnique({
-      where: { id: userid },
     });
     if (!existingUser) {
       throw new ForbiddenException('The Friend Not Exist');

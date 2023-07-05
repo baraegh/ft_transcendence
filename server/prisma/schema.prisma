@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -8,18 +9,18 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username     String @unique
-  email        String @unique
-  image        String?
-  hashedRT      String?
-  gameWon      Int?
-  gameLost     Int?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  achievements String[]
-  twoFactorAuthenticationSecret String?
-  isTwoFactorAuthenticationEnabled  Boolean @default(false) 
+  id                               Int      @id @default(autoincrement())
+  username                         String   @unique
+  email                            String   @unique
+  image                            String?
+  hashedRT                         String?
+  gameWon                          Int?
+  gameLost                         Int?
+  createdAt                        DateTime @default(now())
+  updatedAt                        DateTime @updatedAt
+  achievements                     String[]
+  twoFactorAuthenticationSecret    String?
+  isTwoFactorAuthenticationEnabled Boolean  @default(false)
 
   matchHistoriesUser1 Match_History[] @relation("Match_History_User1")
   matchHistoriesUser2 Match_History[] @relation("Match_History_User2")
@@ -44,44 +45,44 @@ model Match_History {
 
   game_end Boolean @default(false)
 
-  createdAt    DateTime @default(now())
-  user1P Int
-  user2P Int
+  createdAt DateTime @default(now())
+  user1P    Int
+  user2P    Int
 
   @@map("Match_History")
 }
 
 model Friendship {
   id       String @id @default(uuid())
-  userID     Int
-  friendID   Int
-  user   User   @relation("Friendship_User", fields: [userID], references: [id])
-  friend User   @relation("Friendship_Friend", fields: [friendID], references: [id])
+  userID   Int
+  friendID Int
+  user     User   @relation("Friendship_User", fields: [userID], references: [id])
+  friend   User   @relation("Friendship_Friend", fields: [friendID], references: [id])
 
-  blocked     Boolean @default(false) 
-  isRequested Boolean @default(false) 
-  isFriend    Boolean @default(false) 
-  requestAccepted Boolean  @default(false) 
+  blocked         Boolean @default(false)
+  isRequested     Boolean @default(false)
+  isFriend        Boolean @default(false)
+  requestAccepted Boolean @default(false)
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("friends")
 }
 
 // Participants model
 model Participants {
-  channelID String
-  userID    Int
-  channel   Channel @relation(fields: [channelID], references: [id])
-  user      User    @relation(fields: [userID], references: [id])
-  role      Role    @default(USER)
-  blocked   Boolean @default(false)
-  mut       Mut     @default(NAN)
-  
+  channelID  String
+  userID     Int
+  channel    Channel   @relation(fields: [channelID], references: [id])
+  user       User      @relation(fields: [userID], references: [id])
+  role       Role      @default(USER)
+  blocked    Boolean   @default(false)
+  mut        Mut       @default(NAN)
+  blocked_at DateTime?
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([channelID, userID])
   @@map("participants")
@@ -105,15 +106,16 @@ model Channel {
   id       String         @id @default(uuid())
   owner    User?          @relation(fields: [ownerId], references: [id])
   ownerId  Int?
-  type     Type @default(PERSONEL)
+  type     Type           @default(PERSONEL)
   name     String?        @unique
   hash     String?
   image    String?
   chanelID Participants[]
   messages Messages[]
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("channels")
 }
 
@@ -127,9 +129,9 @@ enum Type {
 // Messages model
 model Messages {
   id        String   @id @default(uuid())
-  channelID String   
+  channelID String
   userId    Int
-  user    User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   channel   Channel  @relation(fields: [channelID], references: [id])
   content   String
   timeSend  DateTime @default(now())
