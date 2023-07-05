@@ -17,6 +17,8 @@ import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { _2faModule } from './2fa/2fa.module';
+import { GatwayModule } from './gateway/gateway.module';
+
 
 @Module({
   imports: [
@@ -29,7 +31,8 @@ import { _2faModule } from './2fa/2fa.module';
     ProfileModule,
     GameModule,
     LeaderboardModule,
-    _2faModule
+    _2faModule,
+    GatwayModule
   ],
   providers: [
     {

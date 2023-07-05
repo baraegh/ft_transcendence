@@ -435,6 +435,38 @@ export class FetchChatService {
     };
   }
 
+
+
+  async roleOfuser(
+    userID: number,
+    channelId: string,
+  ){
+    const owner = await this.prisma.participants.findUnique({
+      where: { channelID_userID: {
+        userID:userID,
+        channelID:channelId
+      } 
+      },
+      select: {
+        role: true,
+        channel: {
+          select: {
+            ownerId: true,
+          },
+        },
+      },
+    });
+    if (!owner) {
+      throw new NotFoundException('channel not found');
+    }
+    if(owner.channel.ownerId === userID)
+      return "owner"
+    else 
+    {
+    return owner.role;
+    }
+  }
+ /******************************************** */
   async show_users(userId: number): Promise<SHOWUSERS[]> {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
