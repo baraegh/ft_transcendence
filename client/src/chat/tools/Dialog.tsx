@@ -7,6 +7,7 @@ import DropMenu from './DropMenu';
 import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
 import Axios from 'axios';
+import { membersDataType } from '../chat';
 import { chatInfoType } from '../chat';
 
 type UserProps =
@@ -112,12 +113,12 @@ const NewChat = ({setChat, closeDialog} : NewChatProps) => {
     );
 }
 
-enum Type { PRIVATE = 'PRIVATE',
+export enum Type { PRIVATE = 'PRIVATE',
             PROTECTED = 'PROTECTED',
             PUBLIC = 'PUBLIC',
             PERSONEL = 'PERSONEL'};
 
-type createGroupType = {
+export type createGroupType = {
     type:       Type,
     name:       string,
     image:      File | null,
@@ -127,8 +128,8 @@ type createGroupType = {
 
 type CreateGroupFirstDialogProps = {
     GroupData:      createGroupType,
-    nameExist:      boolean,
-    nameWarn:       boolean,
+    nameExist?:      boolean,
+    nameWarn?:       boolean,
     handleOnChange: (e: React.ChangeEvent<HTMLInputElement> 
                     | { name: string; value: string }
                     | { name: string; value: string; isChecked: boolean }) => void,
@@ -145,7 +146,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn, handleOn
         handleOnChange({ name: 'type', value: type === 'private'? Type.PRIVATE : Type.PUBLIC });
     }
 
-    const {name, image, type, hash} = GroupData;
+    const {name, type, hash} = GroupData;
 
     return (   
         <>      
@@ -174,7 +175,6 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn, handleOn
                 <div className='browse-image-div'>
                     <input  className='browse-image-input'
                             name='image'
-                            // value={image}
                             type='file' 
                             id='profilePicture'
                             onChange={handleOnChange}/>
@@ -217,6 +217,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn, handleOn
         </>
     );
 }
+
 
 const UsersList = ({user, checkbox = false, setMembersWarn, membersWarn, handleOnChange}: UserProps) => {
     const [isChecked, setIsChecked] = useState(false);

@@ -50,7 +50,7 @@ const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
         data.type === 'PERSONEL'?
                 setChat(data.channelId, data.otherUserImage, data.otherUserName, data.type, data.otherUserId)
             :
-                setChat(data.channelId, data.channelImage, data.channelImage, data.type, null);
+                setChat(data.channelId, data.channelImage, data.channelName, data.type, null);
     } 
 
     const isGroup = data.type !== 'PERSONEL';

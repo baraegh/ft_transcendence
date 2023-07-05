@@ -7,6 +7,7 @@ import Axios from "axios";
 
 import Image from "./barae.jpg";
 import { useNavigate } from "react-router-dom";
+import { createGroupType } from "./tools/Dialog";
 
 type msgListType = {
   id: number;
@@ -167,9 +168,15 @@ const chatArray: chatArrayType = [
   { chatId: 27, chat: generateArrayOfMsg(100), type: "normal" },
 ];
 
+export type membersDataType = {
+  owner : {id: number, username: string, image: string };
+  admins: {id: number, username: string, image: string }[];
+  users: {id: number, username: string, image: string }[];
+}
+
 export type chatInfoType = {
   chatId:     string,
-  chatType:   string,
+  chatType:   string | null,
   chatImage:  string,
   chatName:   string,
   chatUserId: number | null,
@@ -179,13 +186,14 @@ export function Chat() {
 
   const [chatInfo, setChatInfo] = useState<chatInfoType>({
     chatId:     '',
-    chatType:   '',
+    chatType:   null,
     chatImage:  '',
     chatName:   '',
     chatUserId: null,
   });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
+  const [membersData, setMembersData] = useState<membersDataType | null>(null);
 
 
   const setChat = (Id: string, Image: string,
@@ -197,22 +205,22 @@ export function Chat() {
               })
   }
 
-  const navigate = useNavigate();
-  const fetchdata = () => {
-    Axios
-      .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error("Request failed");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        navigate("/");
-      });
-  };
-  fetchdata();
-
+  // const navigate = useNavigate();
+  // const fetchdata = () => {
+  //   Axios
+  //     .post("http://localhost:3000/auth/refresh", null, 
+  //       { withCredentials: true })
+  //     .then((response) => {
+  //       if (response.status !== 200) {
+  //         throw new Error("Request failed");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       navigate("/");
+  //     });
+  // };
+  // fetchdata();
 
   return (
     <div className="chat-page">
@@ -236,8 +244,11 @@ export function Chat() {
             )}
           </div>
 
-          {chatInfo.chatId !== null && chatInfo.chatType === "group" ? (
-            <ChatAreaGroup setIsChatSettingOpen={setIsChatSettingOpen} />
+          {chatInfo.chatId !== null && chatInfo.chatType && chatInfo.chatType !== "PERSONEL" ? (
+            <ChatAreaGroup  chatInfo={chatInfo} 
+                            setIsChatSettingOpen={setIsChatSettingOpen}
+                            membersData={membersData}
+                            setMembersData={setMembersData}/>
           ) : isProfileOpen ? (
             <ChatAreaProfile chatInfo={chatInfo} setIsProfileOpen={setIsProfileOpen} />
           ) : (
@@ -245,7 +256,10 @@ export function Chat() {
           )}
         </>
       ) : (
-        <ChatGroupSettings setIsChatSettingOpen={setIsChatSettingOpen} />
+        <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
+                            membersData={membersData}
+                            chatInfo={chatInfo}
+                            setChatInfo={setChatInfo}/>
       )}
     </div>
   );

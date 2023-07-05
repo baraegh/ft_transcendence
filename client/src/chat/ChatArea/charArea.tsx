@@ -1,19 +1,24 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faKhanda, faXmark, faGear} from '@fortawesome/free-solid-svg-icons';
 import {SendOutlined} from '@ant-design/icons';
 import { Settings, Search } from "../tools/filterSearchSettings";
 import { FriendCard } from "../chatFriendList/friendList";
-import { CreateGroupFirstDialog } from "../tools/Dialog";
+import { CreateGroupFirstDialog, Type, createGroupType } from "../tools/Dialog";
 import PopoverComp from "../tools/popover";
 import { Dialog } from "../tools/Dialog";
-import { chatInfoType } from "../chat";
+import { chatInfoType, membersDataType } from "../chat";
+import { userMe } from "../../App";
 import "./chatArea.css"
 
-import Image from '../barae.jpg';
+import defaultUserImage from '../../assets/person.png';
+import dfaultGroupImage from '../../assets/group.png';
 
-type msgCard = {userId: number, content: string, timeSend: string, user: {image: string}}
+import Image from '../barae.jpg';
+import { Group } from "@radix-ui/react-dropdown-menu";
+
+type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
 
 const settingsList = ['Profile', 'Delete', 'Block'];
@@ -41,18 +46,20 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend, msgSend} : chat
             <div className="challenge-setting">
                 {
                     (chatInfo.chatType === 'PERSONEL') ?
-                        <button className="challenge-btn">
-                            <p>Challenge</p>
-                            <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
-                        </button>
+                        <>
+                            <button className="challenge-btn">
+                                <p>Challenge</p>
+                                <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
+                            </button>
+                            <Settings   chatInfo={chatInfo}
+                                        setIsProfileOpen={setIsProfileOpen}
+                                        list={settingsList}
+                                        size="18px"
+                                        setMsgSend={setMsgSend}
+                                        msgSend={msgSend}/>
+                        </>
                     : ''
                 }
-                <Settings   chatInfo={chatInfo}
-                            setIsProfileOpen={setIsProfileOpen}
-                            list={settingsList}
-                            size="18px"
-                            setMsgSend={setMsgSend}
-                            msgSend={msgSend}/>
             </div>
         </div>
     );
@@ -155,7 +162,7 @@ const MsgCardOther = ({msg} : msgCardProps) =>
                 <p className="chat-area-message">{msg.content}</p>
             </div>
             <div className="msg-of-other-time-img">
-                <img src={msg.user.image} alt="description..."/>
+                <img src={msg.image} alt="description..."/>
                 <p className="chat-time">{msg.timeSend}</p>
             </div>
         </div>
@@ -168,23 +175,24 @@ type chatAreaMessagesProps =
 }
 
 const ChatAreaMessages = ({ListOfMsg} : chatAreaMessagesProps) => {
-    const [myId, setMyId] = useState<number | null>(null);
+    // const [myId, setMyId] = useState<number | null>(null);
+    const me = useContext(userMe);
     let i = 0;
 
-    useEffect(()=>{
-        Axios.get('http://localhost:3000/user/me', {withCredentials: true})
-            .then((response) => {
-                setMyId(response.data.id);
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-    }, [ListOfMsg]);
+    // useEffect(()=>{
+    //     Axios.get('http://localhost:3000/user/me', {withCredentials: true})
+    //         .then((response) => {
+    //             setMyId(response.data.id);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    // }, [ListOfMsg]);
 
 
     const msgCard = ListOfMsg? ListOfMsg.map( msg =>
                     {
-                        return    myId === msg.userId ?
+                        return    me?.id === msg.userId ?
                                 (<MsgCardMe key={msg.userId + i++} msg={msg} />)
                             :
                                 (<MsgCardOther key={msg.userId + i++} msg={msg} />)
@@ -223,6 +231,8 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
     });
 
     useEffect(() => {
+        if (!chatInfo.chatUserId)
+            return;
         Axios.get(`http://localhost:3000/chat/aboutfriend/${chatInfo.chatUserId}`,
             { withCredentials: true })
             .then((response) => {
@@ -311,11 +321,12 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
     );
 }
 
-const MemberCard = (props: {img: string, username: string}) => {
+const MemberCard = (props: {img: string | undefined, username: string | undefined}) => {
 
     return (
         <div className="user-card-img-username">
-            <img src={props.img} alt={ 'image'}/>
+            <img    src={props.img? props.img : defaultUserImage}
+                    alt={`${props.username}'s image`}/>
             <p>{props.username}</p>
         </div>
     );
@@ -354,83 +365,121 @@ const MemberCardPopOverContent = () => {
     );
 }
 
-type ChatAreaGroupProps =
-{
+// type EditGroupFirstDialog = {
+//     membersData:            membersDataType | null,
+//     // handleOnChange: (e: React.ChangeEvent<HTMLInputElement> 
+//     //                 | { name: string; value: string }
+//     //                 | { name: string; value: string; isChecked: boolean }) => void,
+// }
+
+// export const EditGroupFirstDialog = ({ membersData } : EditGroupFirstDialog) =>
+// {
+//     const [privateKeyInput, setPrivateKeyInput] = useState(false);
+
+
+//     // const handlegroupPrivacy = (type: string) => {
+//     //     setPrivateKeyInput(type === 'private');
+
+//     //     handleOnChange({ name: 'type', value: type === 'private'? Type.PRIVATE : Type.PUBLIC });
+//     // }
+
+//     // const {name, image, type, hash} = GroupData;
+
+//     return (   
+//         <>      
+//             <label className='dialog-label' key="group-name" >
+//                 <div className='create-group-name-warn'>
+//                     <p className='dialog-MPLUS-font'>Group name</p>
+//                     {nameWarn?  <p className='create-group-warn-name'>
+//                                     {nameExist?
+//                                           "the group's name already exist"
+//                                         : "the group's name is mandatory"
+//                                     }
+//                                 </p>
+//                             : ''
+//                     }
+//                 </div>
+//                 <input  className='dialog-input'
+//                         name='name'
+//                         value={name}
+//                         onChange={handleOnChange}
+//                         type='text'
+//                         autoComplete='off'
+//                         placeholder="Insert the group name" />
+//             </label>
+//             <div key="profile-img-upload">
+//                 <p className='dialog-MPLUS-font'>Choose profile picture</p>
+//                 <div className='browse-image-div'>
+//                     <input  className='browse-image-input'
+//                             name='image'
+//                             // value={image}
+//                             type='file' 
+//                             id='profilePicture'
+//                             onChange={handleOnChange}/>
+//                     <label htmlFor="profilePicture" className='browse-image-label'>Browse</label>
+//                 </div>
+//             </div>
+//             <label className='dialog-label' key="group-privacy" >
+//                 <p className='dialog-MPLUS-font'>Group privacy</p>
+//                 <div className='group-privacy-type'>
+//                     <div className='group-privacy-item' onClick={() => handlegroupPrivacy('public')}>
+//                         <input  type='radio'
+//                                 id="public_group"
+//                                 name="type"
+//                                 value={type}
+//                                 checked={!privateKeyInput}
+//                                 onChange={()=>{}}/>
+//                         <label htmlFor="public_group">public group</label>
+//                     </div>
+//                     <div className='group-privacy-item' onClick={() => handlegroupPrivacy('private')}>
+//                         <input  type='radio'
+//                                 id="private_group"
+//                                 name="type"
+//                                 value={type}
+//                                 checked={privateKeyInput}
+//                                 onChange={()=>{}}/>
+//                         <label htmlFor="private_group">private group</label>
+//                     </div>
+//                 </div>
+//             </label>
+//             {   
+//                 privateKeyInput && 
+//                 <input  className='dialog-input private-key-input'
+//                         name='hash'
+//                         value={hash}
+//                         id='privateKey' 
+//                         type='text'
+//                         placeholder="Private key" 
+//                         onChange={handleOnChange}/>
+//             }
+//         </>
+//     );
+// }
+
+type ChatGroupSettingsProps = {
     setIsChatSettingOpen:   (isOpen: boolean) => void,
+    membersData:            membersDataType | null,
+    chatInfo:               chatInfoType,
+    setChatInfo:            (chatInfo: chatInfoType) => void,
 }
 
-export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
-    const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
-    const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
-
-
-    const Trigger = <FriendCard id={0} image={Image} username="BARAE" />;
-
-    const Content = (<MemberCardPopOverContent />);
-
-    return (
-        <div className="chat-area-group">
-            <div className="chat-area-group-search">
-                <Search />
-            </div>
-
-            <div className="chat-area-group-owner">
-                <p className="header">Owner</p>
-                <FriendCard id={0} image={Image} username="BARAE"/>
-            </div>
-
-            <div className="chat-area-group-members">
-                <p className="header">Members</p>
-                <div className="chat-area-group-members-list">
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                    <PopoverComp Trigger={Trigger} Content={Content} />
-                </div>
-
-            </div>
-
-            <div className="chat-area-group-settings-invite">
-                {/* Seetings-Invite btn appears for the owner */}
-                <button className="chat-area-group-settings-btn" onClick={() => props.setIsChatSettingOpen(true)}>
-                    <p>SETTINGS</p>
-                    <FontAwesomeIcon icon={faGear} />
-                </button>
-                <button className="chat-area-group-invite-btn" onClick={() => setIsInviteDialogOpen(true)}>
-                    <p>INVITE</p>
-                    {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
-                </button>
-
-                {/* leave button appears for the users*/}
-                <button className="chat-area-group-leave-btn" onClick={() => setIsLeaveDialogOpen(true)}>
-                    <p>Leave</p>
-                    {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
-                </button>
-            </div>
-            {isLeaveDialogOpen && <Dialog title="Leave Group" closeDialog={()=> setIsLeaveDialogOpen(false)} />}
-            {isInviteDialogOpen && <Dialog title="Invite" closeDialog={() => setIsInviteDialogOpen(false)} />}
-        </div>
-    );
-}
-
-export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolean) => void}) =>
+export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
 {
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
     const [isAddAdminDialogOpen, setIsAddAdminDialogOpen] = useState(false);
     const [isClearChatDialogOpen, setIsClearChatDialogOpen] = useState(false);
     const [isDeleteGroupDialogOpen, setIsDeleteGroupDialogOpen] = useState(false);
+    const [groupData, setGroupData] = useState<createGroupType>({
+        type: Type.PUBLIC,
+        name: '',
+        image: null,
+        hash:'',
+        members: [''],
+    }); //to be edited
+
+    const handleOnChange = () => {
+        // to be edited
+    }
 
     return (
         <div className="chat-group-settings">
@@ -439,7 +488,9 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
                 <div>
                     <button onClick={() => props.setIsChatSettingOpen(false)}>
                         <FontAwesomeIcon 
-                            className="x-mark" size="xl" icon={faXmark} 
+                            className="x-mark"
+                            size="xl"
+                            icon={faXmark} 
                             style={{color: "#000000",}} />
                     </button>
                 </div>
@@ -447,7 +498,8 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
 
             <div className="chat-group-settings-content">
                 <div className="chat-group-settings-group">
-                    <CreateGroupFirstDialog />
+                    <CreateGroupFirstDialog GroupData={groupData}
+                                            handleOnChange={handleOnChange}/>
                     <div className="chat-group-settings-edit">
                         <button>Edit</button>
                     </div>
@@ -456,6 +508,7 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
                     <div>
                         <p>Users</p>
                         <div className="chat-group-settings-users-list">
+                            {/* <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
@@ -484,14 +537,13 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
                             <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
+                            <MemberCard img={Image} username="BARAE" /> */}
                         </div>
                     </div>
                     <div>
                         <p>Owner</p>
                         <div className="chat-group-settings-owner">
-                            <MemberCard img={Image} username="BARAE" />
+                            {/* <MemberCard img={Image} username="BARAE" /> */}
                             <div className="chat-group-settings-owner-btn">
                                 <button onClick={() => setIsAddAdminDialogOpen(true)}>Add Admin</button>
                                 <button onClick={() => setIsInviteDialogOpen(true)}>Invite</button>
@@ -501,10 +553,10 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
                     <div>
                         <p>Admins</p>
                         <div className="chat-group-settings-admins">
+                            {/* <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
+                            <MemberCard img={Image} username="BARAE" /> */}
                             {/* <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
                             <MemberCard img={Image} username="BARAE" />
@@ -532,6 +584,116 @@ export const ChatGroupSettings = (props : {setIsChatSettingOpen: (isOpen: boolea
     );
 }
 
+type ChatAreaGroupProps =
+{
+    setIsChatSettingOpen:   (isOpen: boolean) => void,
+    chatInfo:               chatInfoType,
+    membersData:            membersDataType | null,
+    setMembersData:         (membersData: membersDataType) => void,
+}
+
+export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
+    const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
+    const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        Axios.get(`http://localhost:3000/chat/show-members/${props.chatInfo.chatId}`,
+                {withCredentials: true})
+            .then((response) => {
+                props.setMembersData(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        }, []);
+
+    const admins = props.membersData?.admins.map((admin) => {
+        return  <PopoverComp    Trigger={<MemberCard    img={admin.image}
+                                                username={admin.username} />}
+                                Content={<MemberCardPopOverContent />}
+                                key={admin.id}/>
+    })
+
+    const users = props.membersData?.users.map((user) => {
+        return  <PopoverComp    Trigger={<MemberCard    img={user.image}
+                                                username={user.username} />}
+                                Content={<MemberCardPopOverContent />}
+                                key={user.id}/>
+    });
+
+    return (
+        <div className="chat-area-group">
+            <div className="group-owner-admins-members">
+                <div className="chat-area-group-search">
+                    <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                </div>
+
+                <div className="chat-area-group-owner">
+                    <p className="header">Owner</p>
+                    <MemberCard img={props.membersData?.owner.image}
+                                username={props.membersData?.owner.username} />
+                </div>
+
+                <div className="chat-area-group-admins-members">
+                    <p className="header">Admins</p>
+                    <div className="chat-area-group-admins">
+                        <div className="chat-area-group-admins-list">
+                            {admins? admins: <p>No admin</p>}
+                            {users}
+                                {users}
+                                {users}
+                                {users}
+                                {users}
+                        </div>
+                    </div>
+
+                    <div className="chat-area-group-members">
+                        <p className="header">Members</p>
+                        <div className="chat-area-group-members-list">
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                            {users}
+                        </div>
+                </div>
+
+                </div>
+            </div>
+
+            <div className="chat-area-group-settings-invite">
+                {/* Seetings-Invite btn appears for the owner */}
+                <button className="chat-area-group-settings-btn" onClick={() => props.setIsChatSettingOpen(true)}>
+                    <p>SETTINGS</p>
+                    <FontAwesomeIcon icon={faGear} />
+                </button>
+                <button className="chat-area-group-invite-btn" onClick={() => setIsInviteDialogOpen(true)}>
+                    <p>INVITE</p>
+                    {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
+                </button>
+
+                {/* leave button appears for the users*/}
+                <button className="chat-area-group-leave-btn" onClick={() => setIsLeaveDialogOpen(true)}>
+                    <p>Leave</p>
+                    {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
+                </button>
+            </div>
+            {isLeaveDialogOpen && <Dialog title="Leave Group" closeDialog={()=> setIsLeaveDialogOpen(false)} />}
+            {isInviteDialogOpen && <Dialog title="Invite" closeDialog={() => setIsInviteDialogOpen(false)} />}
+        </div>
+    );
+}
+
+
+
 type ChatAreaProps = {
     chatInfo:           chatInfoType,
     setIsProfileOpen:   (isOpen: boolean) => void,
@@ -542,20 +704,20 @@ export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
     const [msgSend, setMsgSend] = useState(false);
 
 
-    // useEffect(() => {
-    //     if (!chatInfo.chatId)
-    //       return;
-    //     Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
-    //             {withCredentials: true})
-    //         .then((response) => {
-    //             setmsgList(response.data);
-    //           }
-    //         )
-    //         .catch((error) => {
-    //             console.log(error);
-    //           }
-    //         );
-    //   }); // [msgSend]
+    useEffect(() => {
+        if (!chatInfo.chatId)
+          return;
+        Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
+                {withCredentials: true})
+            .then((response) => {
+                setmsgList(response.data);
+              }
+            )
+            .catch((error) => {
+                console.log(error);
+              }
+            );
+      }, [chatInfo.chatId, msgSend]);
 
     return (
         <>
