@@ -260,6 +260,27 @@ export class ChatController {
     return await this.fetshchat.ShowMembersOfGroup(userID, channelId);
   }
 
+
+  @ApiOperation({
+    summary: 'get all group members',
+  })
+  @ApiResponse({
+    description: 'Returns an  role : owner,admin,user',
+    type: [SHOW_MEMBERS_OFGROUP],
+  })
+  @ApiParam({
+    name: 'channelId',
+    description: 'The ID of the channel you want to get information about',
+    type: 'string',
+    required: true,
+  })
+  @Get('roleOfuser/:channelId')
+  async roleOfuser(@Req() req: Request) {
+    const channelId = String(req.params['channelId']);
+    const userID = req.user['id'];
+    return await this.fetshchat.roleOfuser(userID, channelId);
+  }
+
   @ApiOperation({
     summary: 'get all Users except blocked',
   })
