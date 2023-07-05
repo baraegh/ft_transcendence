@@ -288,3 +288,21 @@ export class RETUR_OF_CHANNEL_DTO{
   updatedAt: Date;
 }
 
+export class GROUP_INFO_DTO{
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED'] })
+  type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+
+  @ApiProperty({ description: 'IsOptional' })
+  @IsString()
+  image?: string;
+
+}
+

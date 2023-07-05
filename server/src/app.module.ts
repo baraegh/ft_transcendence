@@ -16,6 +16,9 @@ import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
 import { GameModule } from './game/game.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { _2faModule } from './2fa/2fa.module';
+import { GatwayModule } from './gateway/gateway.module';
+
 
 @Module({
   imports: [
@@ -27,7 +30,9 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
     ChatModule,
     ProfileModule,
     GameModule,
-    LeaderboardModule
+    LeaderboardModule,
+    _2faModule,
+    GatwayModule
   ],
   providers: [
     {

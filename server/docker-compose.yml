@@ -1,19 +1,9 @@
 version: '3.8'
 services:
   postgresql-db:
-    image: postgres:13
+    image: postgres
     ports:
-      - 1337:5432
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    networks:
-      - ft_transcendence
-  test-db-sql:
-    image: postgres:13
-    ports:
-      - 5435:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -23,4 +13,5 @@ services:
 networks:
   ft_transcendence:
 
-# docker-compose --env-file .env  up -d postgresql-db
+  # docker-compose --env-file .env  up -d postgresql-db
+  # npm rebuild argon2 --build-from-source

@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -78,7 +79,7 @@ model Participants {
   role       Role      @default(USER)
   blocked    Boolean   @default(false)
   mut        Mut       @default(NAN)
-  blocked_at DateTime? 
+  blocked_at DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

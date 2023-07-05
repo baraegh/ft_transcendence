@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+ postgresql-db:
+    image: postgres
+    container_name: postgres
+    build: 
+      context: ${PWD}/server/src/postgresql_df
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - ${PWD}/server/.env
+    networks:
+      - ft_transcendence
+
+ nestjs:
+    image: nestjs
+    container_name: nestjs
+    build: 
+      context: ./server
+    ports:
+      - 3000:3000
+    restart: always
+    volumes:
+      - nestjs:/app
+    depends_on:
+      - postgresql-db
+    env_file:
+      - ${PWD}/server/.env
+    networks:
+      - ft_transcendence
+
+  # react:
+  #   image: react
+  #   container_name: react
+  #   build:
+  #     context: ./client
+  #   ports:
+  #     - 5173:5173
+  #   depends_on:
+  #     - nestjs
+  #   volumes:
+  #     - react:/app
+  #   networks:
+  #     - ft_transcendence
+volumes:
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./server/Data
+  nestjs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./server
+  react:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./client
+
+networks:
+  ft_transcendence:
+    driver: bridge
+
+
+# docker-compose --env-file .env  up -d
+
+
+   
