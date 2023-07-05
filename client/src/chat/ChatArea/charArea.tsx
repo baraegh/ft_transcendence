@@ -542,20 +542,20 @@ export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
     const [msgSend, setMsgSend] = useState(false);
 
 
-    useEffect(() => {
-        if (!chatInfo.chatId)
-          return;
-        Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
-                {withCredentials: true})
-            .then((response) => {
-                setmsgList(response.data);
-              }
-            )
-            .catch((error) => {
-                console.log(error);
-              }
-            );
-      },[msgSend]);
+    // useEffect(() => {
+    //     if (!chatInfo.chatId)
+    //       return;
+    //     Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
+    //             {withCredentials: true})
+    //         .then((response) => {
+    //             setmsgList(response.data);
+    //           }
+    //         )
+    //         .catch((error) => {
+    //             console.log(error);
+    //           }
+    //         );
+    //   }); // [msgSend]
 
     return (
         <>

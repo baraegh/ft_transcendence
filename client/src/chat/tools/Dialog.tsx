@@ -120,7 +120,7 @@ enum Type { PRIVATE = 'PRIVATE',
 type createGroupType = {
     type:       Type,
     name:       string,
-    image:      string,
+    image:      File | null,
     hash:       string,
     members:    string[],
 }
@@ -174,7 +174,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn, handleOn
                 <div className='browse-image-div'>
                     <input  className='browse-image-input'
                             name='image'
-                            value={image}
+                            // value={image}
                             type='file' 
                             id='profilePicture'
                             onChange={handleOnChange}/>
@@ -335,10 +335,11 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     const   [nameWarn, setNameWarn] = useState(false);
     const   [nameExist, setNameExist] = useState(false);
     const   [membersWarn, setMembersWarn] = useState(false);
+    // const   [myId, setMyId] = useState<number | null>(null);
     const   [GroupData, setGroupData] = useState<createGroupType>({
             type: Type.PUBLIC,
             name: '',
-            image: '',
+            image: null,
             hash:'',
             members: [''],
         });
@@ -346,7 +347,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     useEffect((() => {
         Axios.get('http://localhost:3000/user/me', {withCredentials: true})
             .then((response) => {
-                GroupData.members[0] = response.data.id;
+                GroupData.members[0] = response.data.id.toString();
             })
             .catch((error) => {
                 console.log(error);
@@ -452,38 +453,37 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
             setNameExist(false);
         if ('target' in e)
         {
-            const {name, value} = e.target;
-            setGroupData({...GroupData, [name]: value});
-            console.log('name: ', name, ', value: ', value);
+            const {name, value, type} = e.target;
+
+            if (type === 'file') {
+                const file = e.target.files && e.target.files[0];
+                setGroupData({ ...GroupData, [name]: file });
+                console.log('name: ', name, ', file: ', file);
+            } else {
+                setGroupData({ ...GroupData, [name]: value });
+                console.log('name: ', name, ', value: ', value);
+            }
+
+            // if (name === 'image' && files && files.length > 0)
+            // {
+            //     console.log('files[0]: ', files[0])
+            //     setGroupData({ ...GroupData, image: files[0] });
+            // }
+            // else
+            //     setGroupData({ ...GroupData, [name]: value });
+          
+            // setGroupData({...GroupData, [name]: value});
+            // console.log('name: ', name, ', value: ', value);
         }
         else if (e.name == 'members')
         {
             const {name, value, isChecked} = e;
-            // if (GroupData.members[0] === '')
-            // {
-            //     try
-            //     {
 
-                // }
-                // const response = await Axios.get('http://localhost:3000/user/me', {withCredentials: true});
-                // Axios.get('http://localhost:3000/user/me', {withCredentials: true})
-                //     .then((response) => {
-                //         setMyId(response.data.id);
-                //     })
-                //     .catch((error) => {
-                //         console.log(error);
-                //     })
-
-            //     GroupData.members[0] = value.toString();
-            //     return;
-            // }
-
+            console.log('GroupData.members[0]: ', GroupData.members[0])
             const updatedMembers = isChecked ? 
                     [...GroupData.members, value.toString()]
                 :   GroupData.members.filter(member => member !== value);
 
-            console.log("isChecked: ", isChecked);
-            console.log('updatedMembers: ', updatedMembers);
             setGroupData({...GroupData, [name]: updatedMembers});
         }
         else
@@ -496,15 +496,21 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
 
     const  handleOnSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        if (GroupData.members.length > 1 && GroupData.members[0] != '')
+        if (GroupData.members.length > 1 && GroupData.members[0] !== '')
         {
             const formData = new FormData();
 
             formData.append('type', GroupData.type);
             formData.append('name', GroupData.name);
             formData.append('hash', GroupData.hash)
-            formData.append('image', GroupData.image);
+            // formData.append('image', GroupData.image);
             formData.append('members', JSON.stringify(GroupData.members));
+            if (GroupData.image !== null) {
+                formData.append('image', GroupData.image);
+              }
+
+            console.log('formData: ', formData.getAll('image'))
+
 
             try
             {
@@ -516,11 +522,11 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
                                             'Content-Type': 'multipart/form-data',
                                         }
                                     });
-                console.log(response.data);
+                console.log(response);
                 handleNext(false);
                 if (setChat)
                     setChat(response.data.id, response.data.image,
-                            response.data.name, response.data.type);
+                            response.data.name, response.data.type, null);
             }
             catch(error)
             {
