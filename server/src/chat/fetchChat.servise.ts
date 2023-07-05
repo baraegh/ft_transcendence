@@ -12,6 +12,7 @@ import {
   ABOUTDTO,
   ChannelGroupInfoDTO,
   ChannelInfoDTO,
+  GROUP_INFO_DTO,
   PersonelChannelInfoDTO,
   RANKINFIDTO,
   SHOWCHATDTO,
@@ -465,6 +466,26 @@ export class FetchChatService {
     {
     return owner.role;
     }
+  }
+
+
+    async infoOfgroup(
+    channelId: string,
+  ):Promise<GROUP_INFO_DTO>{
+    const owner = await this.prisma.channel.findUnique({
+      where: {  
+        id:channelId,
+      },
+      select: {
+        type: true,
+        name:true,
+        image:true,
+      },
+    });
+    if (!owner) {
+      throw new NotFoundException('channel not found');
+    }
+   return owner
   }
  /******************************************** */
   async show_users(userId: number): Promise<SHOWUSERS[]> {

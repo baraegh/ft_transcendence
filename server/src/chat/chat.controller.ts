@@ -31,6 +31,7 @@ import {
   ChannelGroupInfoDTO,
   ChannelInfoDTO,
   FETCHMSG,
+  GROUP_INFO_DTO,
   INVETUSERDTO,
   JOINGROUPDTO,
   JOINGROUPRTURNDTO,
@@ -254,8 +255,7 @@ export class ChatController {
     required: true,
   })
   @Get('show-members/:channelId')
-  async ShowMembersOfGroup(@Req() req: Request): Promise<SHOW_MEMBERS_OFGROUP> {
-    const channelId = String(req.params['channelId']);
+  async ShowMembersOfGroup(@Req() req: Request,@Param('channelId') channelId: string): Promise<SHOW_MEMBERS_OFGROUP> {
     const userID = req.user['id'];
     return await this.fetshchat.ShowMembersOfGroup(userID, channelId);
   }
@@ -265,8 +265,7 @@ export class ChatController {
     summary: 'get all group members',
   })
   @ApiResponse({
-    description: 'Returns an  role : owner,admin,user',
-    type: [SHOW_MEMBERS_OFGROUP],
+    description: 'Returns an  role : OWNER,ADMIN,USER'
   })
   @ApiParam({
     name: 'channelId',
@@ -275,10 +274,27 @@ export class ChatController {
     required: true,
   })
   @Get('roleOfuser/:channelId')
-  async roleOfuser(@Req() req: Request) {
-    const channelId = String(req.params['channelId']);
+  async roleOfuser(@Req() req: Request,@Param('channelId') channelId: string) {
     const userID = req.user['id'];
     return await this.fetshchat.roleOfuser(userID, channelId);
+  }
+
+  @ApiOperation({
+    summary: 'get all group members',
+  })
+  @ApiResponse({
+    description: 'Info of Group',
+    type: [GROUP_INFO_DTO],
+  })
+  @ApiParam({
+    name: 'channelId',
+    description: 'The ID of the channel you want to get information about',
+    type: 'string',
+    required: true,
+  })
+  @Get('infoOfgroup/:channelId')
+  async infoOfgroup(@Param('channelId') channelId: string):Promise<GROUP_INFO_DTO>{
+    return await this.fetshchat.infoOfgroup(channelId);
   }
 
   @ApiOperation({
