@@ -194,6 +194,8 @@ export function Chat() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
   const [membersData, setMembersData] = useState<membersDataType | null>(null);
+  const [role, setRole] = useState('');
+
 
 
   const setChat = (Id: string, Image: string,
@@ -230,7 +232,8 @@ export function Chat() {
             chatId={chatInfo.chatId}
             setChat={setChat}
             setIsProfileOpen={setIsProfileOpen}
-          />
+            setRole={setRole}/>
+
           <div className="chat-area">
             {chatInfo.chatId !== '' ? (
               <ChatArea

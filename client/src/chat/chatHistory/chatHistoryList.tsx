@@ -110,9 +110,10 @@ type chatHistoryListProps =
                         chatType: string, userId: number | null) => void,
     setIsProfileOpen:   (isOpen: boolean) => void,
     chatId:             string | null,
+    setRole:            (role: string) => void;
 }
 
-const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListProps) =>
+const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId, setRole}: chatHistoryListProps) =>
 {
     const [channelList, setChannelList] = useState<channel[]| null>(null);
     const [groupList, setGroupList] = useState<channel[]| null>(null);
@@ -143,6 +144,21 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId}: chatHistoryListPr
                 }
             );
     }, [chatId, searchQuery, filter]);
+
+    useEffect(() => {
+        if (!chatId)
+            return;
+        Axios.get(`http://localhost:3000/chat/roleOfuser/${chatId}`,
+                { withCredentials: true })
+            .then((response) => {
+                setRole(response.data);
+                console.log('role: ', response.data);
+            })
+            .catch((error) => {
+                    console.log(error);
+                }
+            );
+    }, [chatId]);
 
     const handleSetChat = (chatId: string,chatImage: string,
                             chatName: string, chatType: string,
