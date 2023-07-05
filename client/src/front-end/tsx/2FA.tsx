@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css'
 import '../css/style.css'
 import '../css/2FA.css'

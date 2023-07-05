@@ -8,6 +8,8 @@ import QRpopup from '../tsx/QRpopup'
 import Edit from '../img/edit.png'
 import EditProfileIcon from '../tsx/editProfile'
 import axios from 'axios';
+import nextButton from '../img/next.png'
+import backButton from '../img/back.png'
 
 interface User {
     id: number;
@@ -36,16 +38,69 @@ interface Friends {
     }
 }
 
+interface Match {
+    matchId: string;
+    otherUser: {
+        id: number;
+        image: string;
+        username: string;
+    };
+    win: boolean;
+    user1P: number;
+    user2P: number;
+}
+
+interface OtherUser {
+    id: number;
+    image: string;
+    username: string;
+}
 
 
 function myProfileUser(): JSX.Element {
     const switchScrollFlag = () => {
         setScrollFlag(!scrollFlag);
         console.log(!scrollFlag + ' < switched');
-      };
+    };
+    const generateRandomUser = (index: number): OtherUser => {
+        const randomId = Math.floor(Math.random() * 1000);
+        const randomImage = me;
+        const randomUsername = `Other ${index}`;
+        return { id: randomId, image: randomImage, username: randomUsername };
+    };
+
+    const matches: Match[] = [];
+
+    for (let i = 0; i < 64; i++) {
+        const match: Match = {
+            matchId: `match${i}`,
+            otherUser: generateRandomUser(i),
+            win: Math.random() < 0.5,
+            user1P: Math.floor(Math.random() * 10),
+            user2P: Math.floor(Math.random() * 10),
+        };
+        matches.push(match);
+    }
+    const matchElements = matches.map((match) => (
+        <div className='winLose' key={match.matchId}>
+            <img src={match.otherUser.image} alt="" />
+            <p>{match.win ? "win" : "Lose"} Agains {match.otherUser.username}</p>
+            <p>3 - 1</p>
+        </div>
+    ));
+
     const [toggleState, setToggleState] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [scrollFlag, setScrollFlag] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handlePrevClick = () => {
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? matches.length - 4 : prevIndex - 4));
+    };
+
+    const handleNextClick = () => {
+        setCurrentIndex((prevIndex) => (prevIndex === matches.length - 4 ? 0 : prevIndex + 4));
+    };
 
     const handleToggleChange = () => {
         setToggleState(!toggleState);
@@ -99,7 +154,7 @@ function myProfileUser(): JSX.Element {
 
     useEffect(() => {
         fetchData();
-
+        console.log(matches);
 
     }, []);
     const friends: friend[] = Array.from({ length: 30 }, (_, index) => ({
@@ -137,43 +192,48 @@ function myProfileUser(): JSX.Element {
                     </div>
                 </div>
                 <div className="friends">
-  <h1>Friends</h1>
-  <div className="friendslistScrollBar">
-    {!scrollFlag ? (
-      Array.from({ length: 5 }).map((_, index) => (
-        <div key={index} className="friend">
-          <img src={friends[index].image} alt="" />
-          <p>{friends[index].username}</p>
-        </div>
-      ))
-    ) : (
-      friends.map((friend, index) => (
-        <div key={index} className="friend">
-          <img src={friend.image} alt="" />
-          <p>{friend.username}</p>
-        </div>
-      ))
-    )}
-    <a onClick={switchScrollFlag}> And {friends.length - 5} More</a>
-  </div>
-</div>
+                    <h1>Friends</h1>
+                    <div className="friendslistScrollBar">
+                        {!scrollFlag ? (
+                            Array.from({ length: 5 }).map((_, index) => (
+                                <div key={index} className="friend">
+                                    <img src={friends[index].image} alt="" />
+                                    <p>{friends[index].username}</p>
+                                </div>
+                            ))
+                        ) : (
+                            friends.map((friend, index) => (
+                                <div key={index} className="friend">
+                                    <img src={friend.image} alt="" />
+                                    <p>{friend.username}</p>
+                                </div>
+                            ))
+                        )}
+                        <a onClick={switchScrollFlag}>{!scrollFlag ? `And ${friends.length - 5} More` : "Show Less"}</a>
+                    </div>
+                </div>
 
                 <div className='matches'>
                     <h1>Matches</h1>
                     <div className='winLoseContainter'>
                         <div className='winLoseLeft'>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
+                            {matchElements.slice(currentIndex, currentIndex + 4)}
                         </div>
                         <div className='winLoseLine'></div>
                         <div className='winLoseRight'>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
-                            <div className='winLose'><img src={me} alt="" /><p>win Against Simo</p><p>3 - 1</p></div>
+                            {matchElements.slice(currentIndex + 4, currentIndex + 8)}
                         </div>
+                    </div>
+                    <div className="nextBackButtons">
+                        <button onClick={handlePrevClick}>
+                            <img id='backButton' src={backButton} alt="" />
+                            back
+                            </button>
+                        <p>{currentIndex} - {currentIndex + 8} of {matchElements.length}</p>
+                        <button onClick={handleNextClick}>Next
+                        <img id='nextButton' src={nextButton} alt="" />
+
+                        </button>
                     </div>
                 </div>
             </div>
