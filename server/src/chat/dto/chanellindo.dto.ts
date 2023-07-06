@@ -307,3 +307,9 @@ export class GROUP_INFO_DTO{
 
 }
 
+
+export class LEAVEGROUPDTO {
+  @ApiProperty()
+  @IsString()
+  channelid: string;
+}

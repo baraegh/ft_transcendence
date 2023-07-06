@@ -153,16 +153,6 @@ export class ChatService {
       throw new ForbiddenException('The Channel Not Exist');
     }
 
-    const participants = await this.prisma.participants.findMany({
-      where: {
-        channelID: dto.channelId,
-        userID: { in: dto.otheruserid },
-      }
-    });
-  
-    if (participants) {
-      throw new ForbiddenException('The user already member');
-    }
     if (existingChannel.type === 'PERSONEL')
       throw new ForbiddenException('Forbiden acces');
 

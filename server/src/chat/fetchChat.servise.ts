@@ -13,6 +13,7 @@ import {
   ChannelGroupInfoDTO,
   ChannelInfoDTO,
   GROUP_INFO_DTO,
+  LEAVEGROUPDTO,
   PersonelChannelInfoDTO,
   RANKINFIDTO,
   SHOWCHATDTO,
@@ -20,11 +21,12 @@ import {
   SHOWUSERS,
   SHOW_MEMBERS_OFGROUP,
 } from './dto';
+import { ChatOwnerService } from './owner/chatOwner.service';
 
 
 @Injectable()
 export class FetchChatService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,private chatowner: ChatOwnerService) {}
 
   async ShowAllMsgsOfChannel(userid, dto: SHOWCHATDTO): Promise<FETCHMSG[]> {
     const findChannel = await this.prisma.channel.findUnique({
@@ -528,4 +530,42 @@ export class FetchChatService {
     });
     return fetchGroups;
   }
+
+  async leave_group(userId: number, dto: LEAVEGROUPDTO) {
+    const finduser = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+    if (!finduser) throw new NotFoundException('user not found');
+    const findChannel = await this.prisma.channel.findUnique({
+      where: { id: dto.channelid },
+      include: {
+        chanelID: {
+          select: {
+            role: true,
+          },
+        },
+      },
+    });
+    if (!findChannel) throw new NotFoundException('channel not found');
+    if(findChannel.type == "PERSONEL")
+      throw new ForbiddenException('Ths channel is private');
+    if (findChannel.ownerId === userId)
+    {
+      await this.chatowner.deletgroup(userId, dto);
+      return ;
+    }
+    const participantUniqueInput: Prisma.ParticipantsWhereUniqueInput = {
+      channelID_userID: {
+        channelID: dto.channelid,
+        userID: userId,
+      },
+    };
+    const updateParticipant = await this.prisma.participants.delete({
+      where: participantUniqueInput,
+    });
+    if (!updateParticipant) throw new NotFoundException('Entity not found');
+  }
 }
+
+
+
