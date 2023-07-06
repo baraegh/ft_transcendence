@@ -2,8 +2,24 @@ FROM node:20.3.0-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . .
+
+RUN rm -rf node_modules
+
+RUN npm cache clean --force
+
+RUN npm update
 
 RUN npm install
 
-CMD [ "npm", "run", "dev" ]
+RUN npm uninstall esbuild
+
+RUN npm install --platform=linux esbuild
+
+RUN npm install vite @vitejs/plugin-react
+
+RUN npm update vite esbuild
+
+RUN npm ci
+
+CMD ["npm", "run", "dev"]

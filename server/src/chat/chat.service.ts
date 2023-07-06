@@ -121,10 +121,16 @@ export class ChatService {
       throw new ForbiddenException('The User Not Exist');
     }
 
-    const otheruser = await this.prisma.user.findUnique({
-      where: { id: dto.otheruserid },
+    const otherusers = await this.prisma.user.findMany({
+      where: { id: { in: dto.otheruserid } },
     });
-    if (!otheruser) {
+    if(dto.otheruserid.length == 0)
+      throw new BadRequestException('select users');
+      
+    if (otherusers.length !== dto.otheruserid.length) {
+      throw new NotFoundException('som users not in server');
+    }
+    if (!otherusers) {
       throw new ForbiddenException('The other user Not Exist');
     }
 
@@ -147,15 +153,14 @@ export class ChatService {
       throw new ForbiddenException('The Channel Not Exist');
     }
 
-    const findinparticepents = await this.prisma.participants.findUnique({
+    const participants = await this.prisma.participants.findMany({
       where: {
-        channelID_userID: {
-          channelID: dto.channelId,
-          userID: dto.otheruserid,
-        },
-      },
+        channelID: dto.channelId,
+        userID: { in: dto.otheruserid },
+      }
     });
-    if (findinparticepents) {
+  
+    if (participants) {
       throw new ForbiddenException('The user already member');
     }
     if (existingChannel.type === 'PERSONEL')
@@ -165,12 +170,32 @@ export class ChatService {
       existingChannel.ownerId === userId ||
       existingChannel.chanelID['role'] === 'ADMIN'
     ) {
-      await this.prisma.participants.create({
-        data: {
+      
+
+      const participants = await this.prisma.participants.findMany({
+        where: {
           channelID: dto.channelId,
-          userID: dto.otheruserid,
+          userID: { in: dto.otheruserid },
+        },
+        select: {
+          userID: true,
         },
       });
+    
+      const existingUserIds = participants.map((participant) => participant.userID);
+    
+      const newUsers = dto.otheruserid.filter((userId) => !existingUserIds.includes(userId));
+    
+  if (newUsers.length > 0) {
+    const participantsToCreate: Prisma.ParticipantsCreateManyInput[] = newUsers.map((userId) => ({
+      channelID: dto.channelId,
+      userID: userId,
+    }));
+
+    await this.prisma.participants.createMany({
+      data: participantsToCreate,
+    });
+  }
       delete existingChannel.chanelID;
       delete existingChannel.ownerId;
       return existingChannel;
