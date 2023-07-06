@@ -1,7 +1,15 @@
+import React, { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-    const canvas = document.getElementById("pong") as HTMLCanvasElement;
+
+const Game = () => {
+  const canvasRef = useRef(null);
+  const socketRef = useRef(null);
+  const animationFrameIdRef : number = 0;
+
+
+  useEffect(() => {
+    const canvas = canvasRef.current as unknown as HTMLCanvasElement;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    
     if (window.innerWidth >= 1600 && window.innerHeight > 800)
     canvas.style.width = '1600px';
     else if (window.innerWidth >= 1000 && window.innerHeight > 500)
@@ -161,3 +169,13 @@ socket.on('ballMove', (message) => {
     ball = message.ball;
 });
 game();
+return () => {
+    cancelAnimationFrame(animationFrameIdRef);
+    // socketRef.current.disconnect();
+  };
+}, []);
+
+return <canvas ref={canvasRef} id="pong" />;
+};
+
+export default Game;

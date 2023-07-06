@@ -13,6 +13,7 @@ interface User {
   achievements: string[];
 }
 
+
 function MyHeader(): JSX.Element {
   const [userData, setUserData] = useState<User | null>(null);
   const navigate = useNavigate();
