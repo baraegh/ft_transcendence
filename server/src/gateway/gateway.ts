@@ -3,10 +3,12 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
+  MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
 import {
+  Body,
   ForbiddenException,
   UnauthorizedException,
   UseGuards,
@@ -45,19 +47,31 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
    
   }
   handleDisconnect(client: Socket) {
-    // this.auth.verifyToken(client.data.token, client);
+    this.auth.verifyToken(client.data.token, client);
     console.log("client: ",client.data.userId," just left");
-    this.connectedUsers.delete(client.data.userId);
+    this.connectedUsers.delete(client.data.userId); 
   }
 
   
   @SubscribeMessage('sendGameRequest')
-  sendGameRequest(userId: number, data: object): void {
-    const userSocket = this.getUserSocket(userId);
+  sendGameRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
+    this.auth.verifyToken(client.data.token, client);
+    const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
-      userSocket.emit('gameRequestResponse', data);
+      this.server.to(userSocket.id).emit('gameRequestResponse', data); 
+      console.log(`User ${data.userId} sent:`, data);
     }
-    console.log(`User ${userId} sent:`, data);
+  }
+  
+
+  @SubscribeMessage('sendFriendRequest')
+  sendFriendRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
+    this.auth.verifyToken(client.data.token, client);
+    const userSocket = this.connectedUsers.get(data.userId);
+    if (userSocket) {
+      this.server.to(userSocket.id).emit('FriendRequestResponse', data); 
+      console.log(`User ${data.userId} sent:`, data);
+    }
   }
   
   getUserSocket(userId: number): Socket | undefined {

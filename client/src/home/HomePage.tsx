@@ -48,7 +48,11 @@ const HomePage: React.FC = () => {
   .then(response => {
     console.log(response.data);
     if (socket) {
-      socket.emit('sendGameRequest', 98782, requestData);
+      let data = {
+        userId: 98782,
+        cData: requestData
+      }
+      socket.emit('sendGameRequest', data);
     }
   })
   .catch(error => {
@@ -310,6 +314,6 @@ const HomePage: React.FC = () => {
 
 export default HomePage;
 function setReceivedData(data: any) {
-  throw new Error("Function not implemented.");
+  console.log("Function not implemented.",data);
 }
 
