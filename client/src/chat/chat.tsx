@@ -1,17 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatHistoryList from "./chatHistory/chatHistoryList";
 import { FriendList } from "./chatFriendList/friendList";
-import {
-  ChatArea,
-  ChatAreaProfile,
-  ChatAreaGroup,
-  ChatGroupSettings,
-} from "./ChatArea/charArea";
+import { ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from "./ChatArea/charArea";
 import "./chat.css";
+import Axios from "axios";
 
 import Image from "./barae.jpg";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MyHeader from "../front-end/tsx/header";
 
 type msgListType = {
   id: number;
@@ -84,7 +80,7 @@ const arrayOfMsg00: msgListType = [
   { id: 53, sender: "me", msg: "test 1test 1test 1test 1test 1", time: "time" },
 ];
 
-type chatType = { chatId: number; chat: msgListType; type: string }[];
+type chatArrayType = { chatId: number; chat: msgListType; type: string }[];
 
 /* SCRIPT TO GENERATE RANDOM DATA */
 type msgType = {
@@ -141,7 +137,7 @@ const generateArrayOfMsg = (count: number): msgType[] => {
 generateArrayOfMsg(100);
 /* END OF SCRIPT */
 
-const chatArray: chatType = [
+const chatArray: chatArrayType = [
   { chatId: 0, chat: generateArrayOfMsg(10), type: "group" },
   { chatId: 1, chat: generateArrayOfMsg(100), type: "normal" },
   { chatId: 2, chat: generateArrayOfMsg(20), type: "normal" },
@@ -173,17 +169,28 @@ const chatArray: chatType = [
 ];
 
 export function Chat() {
-  const [chatId, setChatId] = useState<number | null>(null);
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatType, setChatType] = useState<string | null>(null);
+  const [chatImage, setChatImage] = useState<string | null>(null);
+  const [chatName, setChatName] = useState<string | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
+
+
+  const setChat = (chatId: string, chatImage: string,
+                    chatName: string, chatType: string) => {
+    setChatId(chatId);
+    setChatImage(chatImage);
+    setChatName(chatName);
+    setChatType(chatType);
+  }
+
   const navigate = useNavigate();
   const fetchdata = () => {
-    axios
+    Axios
       .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
       .then((response) => {
-        if (response.status === 200) {
-          console.log("done");
-        } else {
+        if (response.status !== 200) {
           throw new Error("Request failed");
         }
       })
@@ -193,20 +200,27 @@ export function Chat() {
       });
   };
   fetchdata();
+
+
   return (
+    <div>
+    <MyHeader/>
     <div className="chat-page">
       {!isChatSettingOpen ? (
         <>
           <ChatHistoryList
-            setChatId={setChatId}
+            chatId={chatId}
+            setChat={setChat}
             setIsProfileOpen={setIsProfileOpen}
           />
           <div className="chat-area">
-            {chatId === 0 || chatId !== null ? (
+            {chatId !== null ? (
               <ChatArea
-                ListOfMsg={chatArray[chatId].chat}
+                chatId={chatId}
+                chatImage={chatImage}
+                chatName={chatName}
                 setIsProfileOpen={setIsProfileOpen}
-                type={chatArray[chatId].type}
+                type={chatType}
               />
             ) : (
               <div className="chat-area-default">
@@ -214,17 +228,19 @@ export function Chat() {
               </div>
             )}
           </div>
-          {chatId !== null && chatArray[chatId].type === "group" ? (
+
+          {/* {chatId !== null && chatType === "group" ? (
             <ChatAreaGroup setIsChatSettingOpen={setIsChatSettingOpen} />
           ) : isProfileOpen ? (
             <ChatAreaProfile setIsProfileOpen={setIsProfileOpen} />
-          ) : (
+          ) : ( */}
             <FriendList />
-          )}
+          {/* )} */}
         </>
       ) : (
         <ChatGroupSettings setIsChatSettingOpen={setIsChatSettingOpen} />
       )}
+    </div>
     </div>
   );
 }

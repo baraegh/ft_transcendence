@@ -1,5 +1,4 @@
 import './App.css';
-import Chat from './chat/chat';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AuthPage from './auth/AuthPage';
 import HomePage from './home/HomePage';
@@ -8,15 +7,9 @@ import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
 
 
 function App() {
-  const Chat_ = () => {
-    return (
-      <div className='App'>
-      <header></header>
-        <Chat />
-    </div>
-    );
-  }
+
   return (
+
     <Router>
       <Routes >
         <Route  path="/" element={<AuthPage />} />
@@ -25,6 +18,7 @@ function App() {
         <Route path="/chat" element={<Chat_/>} />
       </Routes>
     </Router>
+    // <LoginPage/>
   );
 }
 

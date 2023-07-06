@@ -110,7 +110,7 @@ const HomePage: React.FC = () => {
 
   const userFefriends = () => {
     axios
-      .get("http://localhost:3000/user/friends", { withCredentials: true })
+    .get("http://localhost:3000/user/friends", { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           console.log(response);

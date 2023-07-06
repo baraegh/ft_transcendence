@@ -265,8 +265,10 @@
 
 .create-group-items
 {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   overflow: auto;
+  height: 300px;
   margin: 0 -20px 0 -20px;
 }
 
@@ -301,11 +303,29 @@
   background-color: var(--secondary-color);
 }
 
-.dialog-MPLUS-font
+.create-group-name-warn
+{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+}
+
+.dialog-MPLUS-font, .create-group-warn-name, .create-group-members-warn
 {
   font-family: 'MPLUS 1p regular';
   font-size: 13px;
 }
+
+.create-group-warn-name, .create-group-members-warn
+{
+  color: gray;
+}
+
+.create-group-members-warn
+{
+  text-align: center;
+}
+
 
 /* LEAVE-REMOVE-MUTE GROUP DIALOG STYLE */
 
