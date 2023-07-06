@@ -176,7 +176,7 @@ export type membersDataType = {
 
 export type chatInfoType = {
   chatId:     string,
-  chatType:   string | null,
+  chatType:   string,
   chatImage:  string,
   chatName:   string,
   chatUserId: number | null,
@@ -186,15 +186,21 @@ export function Chat() {
 
   const [chatInfo, setChatInfo] = useState<chatInfoType>({
     chatId:     '',
-    chatType:   null,
+    chatType:   '',
     chatImage:  '',
     chatName:   '',
     chatUserId: null,
   });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
-  const [membersData, setMembersData] = useState<membersDataType | null>(null);
-  const [role, setRole] = useState('');
+  const [membersData, setMembersData] = useState<membersDataType>(
+    {
+      owner: { id: 0, username: "", image: "" },
+      admins: [],
+      users: [],
+    }
+  );
+  const [role, setRole] = useState('user');
 
 
 
@@ -247,13 +253,16 @@ export function Chat() {
             )}
           </div>
 
-          {chatInfo.chatId !== null && chatInfo.chatType && chatInfo.chatType !== "PERSONEL" ? (
+          {chatInfo.chatId !== null && chatInfo.chatType !== '' && chatInfo.chatType !== "PERSONEL" ? (
             <ChatAreaGroup  chatInfo={chatInfo} 
                             setIsChatSettingOpen={setIsChatSettingOpen}
                             membersData={membersData}
-                            setMembersData={setMembersData}/>
+                            setMembersData={setMembersData}
+                            role={role}
+                            setChat={setChat}/>
           ) : isProfileOpen ? (
-            <ChatAreaProfile chatInfo={chatInfo} setIsProfileOpen={setIsProfileOpen} />
+            <ChatAreaProfile  chatInfo={chatInfo}
+                              setIsProfileOpen={setIsProfileOpen} />
           ) : (
             <FriendList />
           )}
@@ -262,7 +271,8 @@ export function Chat() {
         <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
                             membersData={membersData}
                             chatInfo={chatInfo}
-                            setChatInfo={setChatInfo}/>
+                            setChatInfo={setChatInfo}
+                            role={role}/>
       )}
     </div>
   );

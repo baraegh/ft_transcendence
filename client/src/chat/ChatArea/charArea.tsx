@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faKhanda, faXmark, faGear} from '@fortawesome/free-solid-svg-icons';
 import {SendOutlined} from '@ant-design/icons';
 import { Settings, Search } from "../tools/filterSearchSettings";
-import { FriendCard } from "../chatFriendList/friendList";
 import { CreateGroupFirstDialog, Type, createGroupType } from "../tools/Dialog";
 import PopoverComp from "../tools/popover";
 import { Dialog } from "../tools/Dialog";
@@ -16,7 +15,6 @@ import defaultUserImage from '../../assets/person.png';
 import dfaultGroupImage from '../../assets/group.png';
 
 import Image from '../barae.jpg';
-import { Group } from "@radix-ui/react-dropdown-menu";
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
@@ -89,7 +87,6 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsClicked(true);
         setMsg(e.target.value);
-        console.log(msg);
     }
 
     const checkNameInput = (input : string): boolean =>
@@ -175,20 +172,8 @@ type chatAreaMessagesProps =
 }
 
 const ChatAreaMessages = ({ListOfMsg} : chatAreaMessagesProps) => {
-    // const [myId, setMyId] = useState<number | null>(null);
     const me = useContext(userMe);
     let i = 0;
-
-    // useEffect(()=>{
-    //     Axios.get('http://localhost:3000/user/me', {withCredentials: true})
-    //         .then((response) => {
-    //             setMyId(response.data.id);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         })
-    // }, [ListOfMsg]);
-
 
     const msgCard = ListOfMsg? ListOfMsg.map( msg =>
                     {
@@ -212,22 +197,32 @@ type ChatAreaProfile =
     chatInfo:             chatInfoType,
 }
 
+type RankItem = {
+    rank:       number;
+    id:         number;
+    image:      string;
+    username:   string;
+    gameWon:    number;
+}
+
 type profileDataType = {
     username:       string,
     gameWon:        number,
     gameLost:       number,
     achievements:   string[] | null,
     updatedAt:      string,
+    rank:          RankItem[],
 }
 
 export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) => {
 
     const   [profileData, setProfileData] = useState<profileDataType>({
-        username: '',
-        gameWon:    0,
-        gameLost:   0,
-        achievements: null,
+        username:       '',
+        gameWon:        0,
+        gameLost:       0,
+        achievements:   null,
         updatedAt:      '',
+        rank:           [],
     });
 
     useEffect(() => {
@@ -332,135 +327,108 @@ const MemberCard = (props: {img: string | undefined, username: string | undefine
     );
 }
 
-const MemberCardPopOverContent = () => {
+type MemberCardPopOverContentProps = {
+    role:       string,
+    img:        string,
+    username:   string,
+    id:         number,
+    setChat?:   (Id: string, Image: string, Name: string,
+                Type: string, userId: number | null) => void,  
+    chatInfo:   chatInfoType;
+}
+
+const MemberCardPopOverContent = ({role, img, username, id, setChat, chatInfo} : MemberCardPopOverContentProps) => {
     const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
     const [isMuteDialogOpen, setIsMuteDialogOpen] = useState(false);
+    const   [profileData, setProfileData] = useState<profileDataType>({
+        username:       '',
+        gameWon:        0,
+        gameLost:       0,
+        achievements:   null,
+        updatedAt:      '',
+        rank:           [],
+    });
+    const me = useContext(userMe);
+
+    useEffect(() => {
+        // if (setChat)
+            // setChat(chatInfo.chatId,
+            //         chatInfo.chatImage,
+            //         chatInfo.chatName,
+            //         chatInfo.chatType? chatInfo.chatType: chatInfo.chatUserId);
+    }, []);
 
     const closeDialog = () => {
         setIsRemoveDialogOpen(false);
         setIsMuteDialogOpen(false);
     }
 
+    const handleMessage = () => {
+        Axios.post(`http://localhost:3000/chat/join-friend`,
+                { receiverId: id },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                })
+            .then((response) => {
+                if (setChat )
+                    setChat(response.data, img, username,
+                            'PERSONEL', id);
+                if (closeDialog)
+                    closeDialog();
+            })
+            .catch((error) => {
+                console.log(error);
+            }
+            );
+    }
+
     return (
         <div className="user-card-popover-content">
-            <MemberCard img={Image} username="BARAE" />
+            <MemberCard img={img} username={username} />
             <div>
-                <p className="user-card-win">Win - 5</p>
-                <p className="user-card-loses">Loses - 1</p>
+                <p className="user-card-win">Win - {profileData.gameWon? profileData.gameWon: 0}</p>
+                <p className="user-card-loses">Loses - {profileData.gameLost? profileData.gameLost: 0}</p>
             </div>
             <div className="user-card-btn">
                 <button>Profile</button>
-                <button>Message</button>
+                {
+                    id !==  me?.id? 
+                        <button onClick={handleMessage}>Message</button>
+                    : ''
+                }
             </div>
             <div className="user-card-btn">
-                <button onClick={() => setIsRemoveDialogOpen(true)}>Remove</button>
-                <button onClick={() => setIsMuteDialogOpen(true)}>Mute</button>
+                {
+                    role === 'owner' || role === 'admin' ?
+                        <>
+                            <button onClick={() => setIsRemoveDialogOpen(true)}>Remove</button>
+                            <button onClick={() => setIsMuteDialogOpen(true)}>Mute</button>
+                        </>
+                    : ''
+                }
             </div> 
             {
-                isRemoveDialogOpen && <Dialog title="Remove Member" closeDialog={closeDialog} />
+                isRemoveDialogOpen && <Dialog   title="Remove Member"
+                                                closeDialog={closeDialog}
+                                                chatInfo={chatInfo} />
                 ||
-                isMuteDialogOpen && <Dialog title="Mute Member" closeDialog={closeDialog} />
+                isMuteDialogOpen && <Dialog title="Mute Member" 
+                                            closeDialog={closeDialog}
+                                            chatInfo={chatInfo} />
             }
         </div>
     );
 }
-
-// type EditGroupFirstDialog = {
-//     membersData:            membersDataType | null,
-//     // handleOnChange: (e: React.ChangeEvent<HTMLInputElement> 
-//     //                 | { name: string; value: string }
-//     //                 | { name: string; value: string; isChecked: boolean }) => void,
-// }
-
-// export const EditGroupFirstDialog = ({ membersData } : EditGroupFirstDialog) =>
-// {
-//     const [privateKeyInput, setPrivateKeyInput] = useState(false);
-
-
-//     // const handlegroupPrivacy = (type: string) => {
-//     //     setPrivateKeyInput(type === 'private');
-
-//     //     handleOnChange({ name: 'type', value: type === 'private'? Type.PRIVATE : Type.PUBLIC });
-//     // }
-
-//     // const {name, image, type, hash} = GroupData;
-
-//     return (   
-//         <>      
-//             <label className='dialog-label' key="group-name" >
-//                 <div className='create-group-name-warn'>
-//                     <p className='dialog-MPLUS-font'>Group name</p>
-//                     {nameWarn?  <p className='create-group-warn-name'>
-//                                     {nameExist?
-//                                           "the group's name already exist"
-//                                         : "the group's name is mandatory"
-//                                     }
-//                                 </p>
-//                             : ''
-//                     }
-//                 </div>
-//                 <input  className='dialog-input'
-//                         name='name'
-//                         value={name}
-//                         onChange={handleOnChange}
-//                         type='text'
-//                         autoComplete='off'
-//                         placeholder="Insert the group name" />
-//             </label>
-//             <div key="profile-img-upload">
-//                 <p className='dialog-MPLUS-font'>Choose profile picture</p>
-//                 <div className='browse-image-div'>
-//                     <input  className='browse-image-input'
-//                             name='image'
-//                             // value={image}
-//                             type='file' 
-//                             id='profilePicture'
-//                             onChange={handleOnChange}/>
-//                     <label htmlFor="profilePicture" className='browse-image-label'>Browse</label>
-//                 </div>
-//             </div>
-//             <label className='dialog-label' key="group-privacy" >
-//                 <p className='dialog-MPLUS-font'>Group privacy</p>
-//                 <div className='group-privacy-type'>
-//                     <div className='group-privacy-item' onClick={() => handlegroupPrivacy('public')}>
-//                         <input  type='radio'
-//                                 id="public_group"
-//                                 name="type"
-//                                 value={type}
-//                                 checked={!privateKeyInput}
-//                                 onChange={()=>{}}/>
-//                         <label htmlFor="public_group">public group</label>
-//                     </div>
-//                     <div className='group-privacy-item' onClick={() => handlegroupPrivacy('private')}>
-//                         <input  type='radio'
-//                                 id="private_group"
-//                                 name="type"
-//                                 value={type}
-//                                 checked={privateKeyInput}
-//                                 onChange={()=>{}}/>
-//                         <label htmlFor="private_group">private group</label>
-//                     </div>
-//                 </div>
-//             </label>
-//             {   
-//                 privateKeyInput && 
-//                 <input  className='dialog-input private-key-input'
-//                         name='hash'
-//                         value={hash}
-//                         id='privateKey' 
-//                         type='text'
-//                         placeholder="Private key" 
-//                         onChange={handleOnChange}/>
-//             }
-//         </>
-//     );
-// }
 
 type ChatGroupSettingsProps = {
     setIsChatSettingOpen:   (isOpen: boolean) => void,
     membersData:            membersDataType | null,
     chatInfo:               chatInfoType,
     setChatInfo:            (chatInfo: chatInfoType) => void,
+    role:                   string,
 }
 
 export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
@@ -545,8 +513,8 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                         <div className="chat-group-settings-owner">
                             {/* <MemberCard img={Image} username="BARAE" /> */}
                             <div className="chat-group-settings-owner-btn">
-                                <button onClick={() => setIsAddAdminDialogOpen(true)}>Add Admin</button>
-                                <button onClick={() => setIsInviteDialogOpen(true)}>Invite</button>
+                                {<button onClick={() => setIsAddAdminDialogOpen(true)}>Add Admin</button>}
+                                {<button onClick={() => setIsInviteDialogOpen(true)}>Invite</button>}
                             </div>
                         </div>
                     </div>
@@ -571,8 +539,8 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                         </div>
                     </div>
                     <div className="chat-group-settings-clear-delete">
-                        <button onClick={() => setIsClearChatDialogOpen(true)}>Clear chat</button>
-                        <button className="delete" onClick={() => setIsDeleteGroupDialogOpen(true)}>Delete group</button>
+                        {<button onClick={() => setIsClearChatDialogOpen(true)}>Clear chat</button>}
+                        {<button className="delete" onClick={() => setIsDeleteGroupDialogOpen(true)}>Delete group</button>}
                     </div>
                 </div>
             </div>
@@ -588,8 +556,11 @@ type ChatAreaGroupProps =
 {
     setIsChatSettingOpen:   (isOpen: boolean) => void,
     chatInfo:               chatInfoType,
-    membersData:            membersDataType | null,
+    membersData:            membersDataType,
     setMembersData:         (membersData: membersDataType) => void,
+    role:                   string,
+    setChat:                (Id: string, Image: string, Name: string,
+                            Type: string, userId: number | null) => void,
 }
 
 export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
@@ -608,19 +579,31 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
             })
         }, []);
 
-    const admins = props.membersData?.admins.map((admin) => {
+    const admins = props.membersData?.admins.length !== 0 ? props.membersData?.admins.map((admin) => {
         return  <PopoverComp    Trigger={<MemberCard    img={admin.image}
-                                                username={admin.username} />}
-                                Content={<MemberCardPopOverContent />}
+                                                        username={admin.username} />}
+                                Content={<MemberCardPopOverContent  role={props.role} 
+                                                                    img={admin.image}
+                                                                    username={admin.username}
+                                                                    id={admin.id}
+                                                                    setChat={props.setChat}
+                                                                    chatInfo={props.chatInfo} />}
                                 key={admin.id}/>
-    })
+    }) : null;
 
-    const users = props.membersData?.users.map((user) => {
+    const users = props.membersData?.users.length !== 0 ? props.membersData?.users.map((user) => {
         return  <PopoverComp    Trigger={<MemberCard    img={user.image}
-                                                username={user.username} />}
-                                Content={<MemberCardPopOverContent />}
+                                                        username={user.username}/>}
+                                Content={<MemberCardPopOverContent role={props.role}
+                                                                    img={user.image}
+                                                                    username={user.username}
+                                                                    id={user.id} 
+                                                                    setChat={props.setChat}
+                                                                    chatInfo={props.chatInfo} />}
                                 key={user.id}/>
-    });
+    }) : null;
+
+    const {owner} = props.membersData;
 
     return (
         <div className="chat-area-group">
@@ -631,38 +614,28 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
 
                 <div className="chat-area-group-owner">
                     <p className="header">Owner</p>
-                    <MemberCard img={props.membersData?.owner.image}
-                                username={props.membersData?.owner.username} />
+                    <PopoverComp    Trigger={<MemberCard   img={props.membersData?.owner.image}
+                                                        username={props.membersData?.owner.username} />}
+                                    Content={<MemberCardPopOverContent  role=''
+                                                                        img={owner.image}
+                                                                        username={owner.username}
+                                                                        id={owner.id}
+                                                                        setChat={props.setChat}
+                                                                        chatInfo={props.chatInfo} />}/>
                 </div>
 
                 <div className="chat-area-group-admins-members">
                     <p className="header">Admins</p>
                     <div className="chat-area-group-admins">
                         <div className="chat-area-group-admins-list">
-                            {admins? admins: <p>No admin</p>}
-                            {users}
-                                {users}
-                                {users}
-                                {users}
-                                {users}
+                            {admins? admins: <p className="No-data">No admin</p>}
                         </div>
                     </div>
 
                     <div className="chat-area-group-members">
                         <p className="header">Members</p>
                         <div className="chat-area-group-members-list">
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
-                            {users}
+                            {users? users: <p className="No-data">No member</p>}
                         </div>
                 </div>
 
@@ -670,29 +643,39 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
             </div>
 
             <div className="chat-area-group-settings-invite">
-                {/* Seetings-Invite btn appears for the owner */}
-                <button className="chat-area-group-settings-btn" onClick={() => props.setIsChatSettingOpen(true)}>
-                    <p>SETTINGS</p>
-                    <FontAwesomeIcon icon={faGear} />
-                </button>
-                <button className="chat-area-group-invite-btn" onClick={() => setIsInviteDialogOpen(true)}>
-                    <p>INVITE</p>
-                    {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
-                </button>
+                {
+                    props.role == 'owner' ?
+                        <button className="chat-area-group-settings-btn" onClick={() => props.setIsChatSettingOpen(true)}>
+                            <p>SETTINGS</p>
+                            <FontAwesomeIcon icon={faGear} />
+                        </button>
+                    : ''
+                }
 
-                {/* leave button appears for the users*/}
+                {
+                    props.role == 'owner' ?
+                        <button className="chat-area-group-invite-btn" onClick={() => setIsInviteDialogOpen(true)}>
+                            <p>INVITE</p>
+                            {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
+                        </button>
+                        : ''
+                }
+
                 <button className="chat-area-group-leave-btn" onClick={() => setIsLeaveDialogOpen(true)}>
                     <p>Leave</p>
                     {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
                 </button>
             </div>
-            {isLeaveDialogOpen && <Dialog title="Leave Group" closeDialog={()=> setIsLeaveDialogOpen(false)} />}
-            {isInviteDialogOpen && <Dialog title="Invite" closeDialog={() => setIsInviteDialogOpen(false)} />}
+            {isLeaveDialogOpen && <Dialog   chatInfo={props.chatInfo}
+                                            title="Leave Group"
+                                            closeDialog={()=> setIsLeaveDialogOpen(false)} />}
+
+            {isInviteDialogOpen && <Dialog  chatInfo={props.chatInfo}
+                                            title="Invite"
+                                            closeDialog={() => setIsInviteDialogOpen(false)} />}
         </div>
     );
 }
-
-
 
 type ChatAreaProps = {
     chatInfo:           chatInfoType,

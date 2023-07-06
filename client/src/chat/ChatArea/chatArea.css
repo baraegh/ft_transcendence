@@ -479,10 +479,10 @@
 {
     display: grid;
     overflow: auto;
-
+    min-height: 30px;
 }
 
-.chat-area-group-members-list
+.chat-area-group-members-list, .chat-area-group-admins-list
 {
     display: grid;
     overflow-y: auto;

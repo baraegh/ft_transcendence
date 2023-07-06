@@ -283,18 +283,8 @@ input[type="search"]:hover,
     background-color: white;
 }
 
-/* TO BE EDITED: scroll bar */
-/* ::-webkit-scrollbar
+.No-data
 {
-    width: 7px;
+    font-family: 'MPLUS 1p regular';
+    color: gray;
 }
-
-::-webkit-scrollbar-track
-{
-    width: 5px;
-    background-color: black;
-}
-::-webkit-scrollbar-thumb {
-    background-color: white;
-    border-radius: 15px;
-} */

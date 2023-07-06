@@ -151,8 +151,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId, setRole}: chatHist
         Axios.get(`http://localhost:3000/chat/roleOfuser/${chatId}`,
                 { withCredentials: true })
             .then((response) => {
-                setRole(response.data);
-                console.log('role: ', response.data);
+                setRole(response.data.toLowerCase());
             })
             .catch((error) => {
                     console.log(error);
