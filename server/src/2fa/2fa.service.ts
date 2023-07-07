@@ -10,10 +10,14 @@ export class _2faService {
   jwtService: any;
   constructor(private prisma: PrismaService) {}
 
-  //generate
   async generateTwoFactorAuthenticationSecret(user: User) {
     const secret = authenticator.generateSecret();
 
+    const finduser =   await this.prisma.user.findUnique({
+      where: { id: user.id },
+    })
+    if(finduser.isTwoFactorAuthenticationEnabled === true)
+      throw new BadRequestException("the 2FA is enable");
     await this.prisma.user.update({
       where: { id: user.id },
       data: { twoFactorAuthenticationSecret: secret },
@@ -22,15 +26,34 @@ export class _2faService {
       user.username,
       'Keip_It_Random',
       secret,
-    );
-
-    // await this.setTwoFactorAuthenticationSecret(secret, user.id);
+    );;
     const qrCodeImage1 = await qrcode.toDataURL(otpauthUrl);
     const qrCodeImage =  qrCodeImage1 ;
     return {
       qrCodeImage,
     };
   }
+
+
+  async disableTwoFactorAuthentication(user: User) {
+    const finduser =   await this.prisma.user.findUnique({
+      where: { id: user.id },
+    })
+    if(finduser.isTwoFactorAuthenticationEnabled === false)
+      throw new BadRequestException("the 2FA is disable");
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { isTwoFactorAuthenticationEnabled: false },
+    });
+  }
+
+  async isenable(user: User) {
+    const finduser =   await this.prisma.user.findUnique({
+      where: { id: user.id },
+    })
+    return finduser.isTwoFactorAuthenticationEnabled;
+  }
+
   async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
     await this.prisma.user.update({
       where: {
@@ -43,13 +66,12 @@ export class _2faService {
   }
 
   async verifyTwoFactorAuth(userId: number, verificationCode: string) {
-    // Fetch the user's secret from the database
+
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { twoFactorAuthenticationSecret: true },
     });
 
-    // Verify the provided code using the user's secret
     const isVerified = this.verifyCode(
       verificationCode,
       user.twoFactorAuthenticationSecret,
@@ -70,13 +92,11 @@ export class _2faService {
   }
 
   async verifyTwoFactorAuthFirstTime(userId: number, verificationCode: string) {
-    // Fetch the user's secret from the database
+
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { twoFactorAuthenticationSecret: true },
     });
-
-    // Verify the provided code using the user's secret
     const isVerified = this.verifyCode(
       verificationCode,
       user.twoFactorAuthenticationSecret,

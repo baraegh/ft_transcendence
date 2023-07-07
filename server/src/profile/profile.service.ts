@@ -27,8 +27,8 @@ export class ProfileService {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-    const allowedExtensions = ['.jpg', '.jpeg', '.png']; // Specify the allowed image extensions
-    const fileExtension = path.extname(file.originalname).toLowerCase(); // Extract the file extension
+    const allowedExtensions = ['.jpg', '.jpeg', '.png']; 
+    const fileExtension = path.extname(file.originalname).toLowerCase(); 
     if (!allowedExtensions.includes(fileExtension)) {
       throw new BadRequestException(
         'Invalid file type. Only images are allowed : jpg, jpeg ,png',
@@ -97,7 +97,7 @@ export class ProfileService {
             id: true,
             image: true,
             username: true,
-          },
+          }, 
         },
       },
     });
