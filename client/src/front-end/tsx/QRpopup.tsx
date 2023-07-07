@@ -91,6 +91,7 @@ const QRpopup: React.FC = () => {
     setShowModal(event.target.checked);
     if(QRisEnabled)
       setShowModal(false);
+    setQRisEnabled(false);
     console.log(QRisEnabled);
     console.log("EEE");
   };
