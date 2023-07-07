@@ -185,11 +185,11 @@ const HomePage: React.FC = () => {
       });
 
       newSocket.on('connect', () => {
-        const requestData = {
-          event: 'userConnected',
-          user: { id: getid },
-        };
-        newSocket.emit('requestData', requestData);
+        // const requestData = {
+        //   event: 'userConnected',
+        //   user: { id: getid },
+        // };
+        // newSocket.emit('requestData', requestData);
       });
 
       newSocket.on('gameRequestResponse', (data) => {
