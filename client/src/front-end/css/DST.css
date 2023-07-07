@@ -1,6 +1,7 @@
 /* Header Styles */
 .header {
    width: 1142px;
+   height: 59px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -41,7 +42,7 @@
   width: 1142px;
   border: 2px solid black;
   border-radius: 20px;
-  background-color: rgb(10, 10, 10);
+  background-color: rgb(6, 6, 6);
   box-shadow: 6px 6px 0px 2px rgb(172, 169, 169);
   flex-direction: column;
   font-size: 130px;
@@ -166,8 +167,8 @@
 
 .button_animation a{
   display: block;
-  width: 100px;
-  height: 50px;
+  width: 104px;
+  height: 45px;
   line-height: 40px;
   font-size: 25px;
   font-family: sans-serif;

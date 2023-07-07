@@ -4,6 +4,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { Button, Modal } from 'react-bootstrap';
+import Notification from './notification'
 
 interface User {
   id: number;
@@ -27,11 +29,30 @@ function MyHeader(): JSX.Element {
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
   };
+  const handleLogout = () => {
+    axios
+      .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
+      .then((response) => {
+        if (response.status === 200) {
+          window.location.reload(); // Reload the page
+        }
+         else {
+          throw new Error("Request failed");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        // Handle the error
+      });
+  };
 
   const fetchData = () => {
     axios
       .get('http://localhost:3000/user/me', { withCredentials: true })
       .then((response) => {
+        if(response.status === 401)
+        window.location.reload();
+
         if (response.status === 200) {
           const data = response.data;
 
@@ -57,7 +78,25 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     fetchData();
   }, []);
-
+  const SlideInModal = ({ onClose }) => {
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 10000);
+  
+      return () => clearTimeout(timer);
+    }, [onClose]);
+  
+    return (
+      <div className="slide-in-modal">
+        <div className="content">
+          <h3>Notification</h3>
+          <p>This is a notification message.</p>
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <div>
       <header>
@@ -69,7 +108,7 @@ function MyHeader(): JSX.Element {
           <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
             <span>LeaderBoard</span>
           </a>
-          <a onClick={() => navigate('/chat')} id="Cbutton" href="#">
+          <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
             <span>Chat</span>
           </a>
         </div>
@@ -79,7 +118,7 @@ function MyHeader(): JSX.Element {
                 <img className="bellImg" src={Bell} alt="" />
               </Dropdown.Toggle>
               <Dropdown.Menu className="dropDownMenu">
-                <Dropdown.Item id="drop" href="#action1">
+                <Dropdown.Item id="drop" href="#action1" onClick={() =>  {console.log("EE")}}>
                   Profile
                 </Dropdown.Item>
                 <Dropdown.Item id="drop" href="#action1">
@@ -92,31 +131,33 @@ function MyHeader(): JSX.Element {
                   Profile
                 </Dropdown.Item>
                 <Dropdown.Item id="drop" href="#action3">
-                  Logout
+
                 </Dropdown.Item>
+                
               </Dropdown.Menu>
             </Dropdown>
           </div>
         <div className="profileImg">
           {userData && (
             <Dropdown
-              show={profileDropdownOpen}
-              onToggle={toggleProfileDropdown}
+            show={profileDropdownOpen}
+            onToggle={toggleProfileDropdown}
             >
               <Dropdown.Toggle variant="light">
                 <img src={userData.image} alt="" />
               </Dropdown.Toggle>
               <Dropdown.Menu className="dropDownMenu">
-                <Dropdown.Item id="drop" href="#action1">
+                <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
                   Profile
                 </Dropdown.Item>
-                <Dropdown.Item id="drop" href="#action3">
+                <Dropdown.Item id="drop" onClick={handleLogout} >
                   Logout
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           )}
         </div>
+        <Notification />
       </header>
     </div>
   );

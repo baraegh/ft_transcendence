@@ -1,9 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import './home.css'
-import tvGif from './giphy.gif'
+import '../css/home.css'
+import tvGif from '../img/giphy.gif'
 import MyHeader from './header'
+import { useNavigate } from 'react-router-dom';
+
 
 function Home() : JSX.Element
 {
