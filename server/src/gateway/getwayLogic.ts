@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { Socket } from 'socket.io';
@@ -21,7 +21,7 @@ export class AuthLogic {
         }
       } catch (error) {
         // Handle the ForbiddenException or other errors
-        client.emit('error', {
+        client.emit('error', { 
             message: error.message,
             code: error.getStatus(),
           });

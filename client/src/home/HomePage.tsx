@@ -12,11 +12,9 @@ const HomePage: React.FC = () => {
   const [getid, setid] = useState<number>();
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   const [socket, setSocket] = useState<Socket | null>(null); // Declare socket state
-  const [socketChat, setSocketChat] = useState<{ chat: Socket | null}>({
-    chat: null
-  });
 
   const challenge = () =>{
+    console.log("challenge")
     const requestData = {
       challengerId: getid, // User ID of barae
       login:login
@@ -33,21 +31,21 @@ const HomePage: React.FC = () => {
 
   const leaveroom = () =>{
 
-  if (socketChat.chat) {
-    socketChat.chat.emit('leaveRoom', '1');
+  if (socket) {
+    socket.emit('leaveRoom', '1');
     console.log("leaved");
     }
   }
   const sendingroup = () =>{
 
-  if (socketChat.chat) {
-    socketChat.chat.emit('chatToServer', { sender: "this.username", room: "1", message: "this.text" });
+  if (socket) {
+    socket.emit('chatToServer', { sender: "this.username", room: "1", message: "this.text" });
     console.log("send");
     }
   }
   const joiroom = () =>{
-    if (socketChat.chat) {
-      socketChat.chat.emit('joinRoom', "1");
+    if (socket) {
+      socket.emit('joinRoom', "1");
       console.log("join");
     }
   }
@@ -206,18 +204,15 @@ const HomePage: React.FC = () => {
       setReceivedData(data);
     });
 
+    newSocket.on('chatToClient', (msg) => {
+      console.log(msg);
+    });
+
     setSocket(newSocket);
 
     return newSocket;
     };
 
-
-
-      socketChat.chat = io('http://localhost:3000/chat');
-
-      socketChat.chat.on('chatToClient', (msg) => {
-        console.log(msg);
-      });
 
     if (getid !== undefined) {
       const newSocket = connectToSocket();
@@ -228,11 +223,8 @@ const HomePage: React.FC = () => {
       if (socket) {
         socket.disconnect();
       }
-      if (socketChat) {
-        socketChat.chat?.disconnect();
-      }
     };
-  }, []);
+  }, [getid]);
   
   return (
     <div style={{ textAlign: "center" }}>

@@ -29,10 +29,15 @@ export class ChatService {
     if (!existingUser) {
       throw new ForbiddenException('The Friend Not Exist');
     }
-    const finde_same_channel = await this.findPersonalChannelId(
-      senderId,
-      receiverId,
-    );
+
+    const finde_same_channel = await this.prisma.participants.findFirst({
+      where: {
+        OR: [
+          { AND: [{ userID: senderId }, { channel: { chanelID: { some: { userID: receiverId } } } }] },
+          { AND: [{ userID: receiverId }, { channel: { chanelID: { some: { userID: senderId } } } }] },
+        ],
+      },
+    });
     console.log('finde_same_channel', finde_same_channel);
     if (finde_same_channel) return finde_same_channel;
     const createChanell = await this.prisma.channel.create({
@@ -66,7 +71,6 @@ export class ChatService {
     if (!existingUser) {
       throw new ForbiddenException('The User Not Exist');
     }
-
     const existingChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelId },
       select: {

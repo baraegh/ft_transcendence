@@ -1,7 +1,7 @@
-import {Headers, Body, Controller, Post, Req, Res, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import {Headers, Body, Controller, Post, Req, Res, UseGuards, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { _2faService } from './2fa.service';
 import { JwtGuard, Jwt_refresh_Guard } from 'src/auth/guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 
 import { GetUser, Public } from 'src/auth/decorator';
 import { User } from '@prisma/client';
@@ -23,6 +23,14 @@ export class _2faController {
     return qrCodeImage;
   }
 
+  @ApiOperation({
+    summary: 'disble 2fa',
+  })
+  @Post('disable')
+  async disableTwoFactorAuth(@GetUser() user: User) {
+      await this._2fa.disableTwoFactorAuthentication(user);
+  }
+
   @Post('verified_first_time')
   async verifyTwoFactorAuthFirstTime(@Req() req, @Body() body: _2FA_DTO) {
     await this._2fa.verifyTwoFactorAuthFirstTime(
@@ -41,5 +49,14 @@ export class _2faController {
       body.secret,
     );
 
+  }
+
+  
+  @ApiOperation({
+    summary: 'retturn : true or false',
+  })
+  @Get('isenable')
+  async isenable(@GetUser() user: User) {
+      await this._2fa.isenable(user);
   }
 }

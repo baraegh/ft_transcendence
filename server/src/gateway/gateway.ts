@@ -7,12 +7,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
-import {
-  Body,
-  ForbiddenException,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -24,6 +18,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly auth: AuthLogic) {}
   private server: Server;
 
+  private rooms: Set<string> = new Set<string>();
   private connectedUsers: Map<number, Socket> = new Map<number, Socket>();
 
   handleConnection(client: Socket) {
@@ -47,7 +42,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
    
   }
   handleDisconnect(client: Socket) {
-    this.auth.verifyToken(client.data.token, client);
+    // this.auth.verifyToken(client.data.token, client);
     console.log("client: ",client.data.userId," just left");
     this.connectedUsers.delete(client.data.userId); 
   }
@@ -56,6 +51,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('sendGameRequest')
   sendGameRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
     // this.auth.verifyToken(client.data.token, client);
+    // console.log(client.data);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
       this.server.to(userSocket.id).emit('gameRequestResponse', data); 
@@ -66,7 +62,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('sendFriendRequest')
   sendFriendRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
-    // this.auth.verifyToken(client.data.token, client);
+    this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
       this.server.to(userSocket.id).emit('FriendRequestResponse', data); 
@@ -78,6 +74,43 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.connectedUsers.get(userId);
   }
 
+  @SubscribeMessage('chatToServer')
+  handleMessage(
+    client: Socket,
+    message: { sender: string; room: string; message: string },
+  ) {
+    this.auth.verifyToken(client.data.token, client);
+    if (client.rooms.has(message.room)) {
+      this.server.to(message.room).emit('chatToClient', message);
+      console.log(client.data.userId + ' sent ' + message);
+    } else {
+      console.log(
+        client.data.userId + ' is not a member of room ' + message.room,
+      );
+    }
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleRoomJoin(client: Socket, room: string) {
+    this.auth.verifyToken(client.data.token, client);
+    if (!this.rooms.has(room)) {
+      this.rooms.add(room);
+      console.log(client.data.userId + ' just arrived');
+    }
+    client.join(room);
+    client.emit('joinedRoom', room);
+  }
+  @SubscribeMessage('leaveRoom')
+  handleRoomLeave(client: Socket, room: string) {
+    this.auth.verifyToken(client.data.token, client);
+    client.leave(room);
+    client.emit('leftRoom', room);
+    console.log(client.data.userId + ' just left');
+    const clientsInRoom = this.rooms.size;
+    if (!clientsInRoom || clientsInRoom === 0) {
+      this.rooms.delete(room);
+    }
+  }
   // Inject the socket.io server instance
   afterInit(server: Server) {
     this.server = server;
