@@ -14,6 +14,6 @@ export class LeaderboardController {
   @ApiResponse({type:LEADERBOURD_DTO, isArray: true})
   @Get('leaderboard')
   async leaderboard(@Req() req:Request):Promise<LEADERBOURD_DTO[]> {
-    return await this.leaderboardServise.leaderboard()
+    return await this.leaderboardServise.leaderboard() 
   }
 }

@@ -28,7 +28,7 @@ export class _2faService {
       secret,
     );;
     const qrCodeImage1 = await qrcode.toDataURL(otpauthUrl);
-    const qrCodeImage =  qrCodeImage1 ;
+    const qrCodeImage = qrCodeImage1;
     return {
       qrCodeImage,
     };

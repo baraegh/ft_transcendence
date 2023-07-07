@@ -5,6 +5,8 @@ import '../css/DST.css'
 import imm from '../img/pic.jpeg'
 import me from '../img/rimney.jpeg'
 import gif from '../img/gif.webp'
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function getActualWindowDientions() {
     const [windowDimensions, setWindowDimensions] = useState({
@@ -32,17 +34,32 @@ function getActualWindowDientions() {
   
 
   function DSTeam(): JSX.Element {
-  
+    const navigate = useNavigate();
+    // const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+
+    // useEffect(() => {
+    //   // const check = () => {
+    //     axios
+    //       .get("http://localhost:3000/auth/check", { withCredentials: true })
+    //       .then((response) => {
+    //         if (response.status === 200) {
+    //           setIsLoggedIn(true);
+    //         }
+    //       })
+    //   // };
+    //   // check();
+    // }, []);
     return (
       <div>
        <header className='header'>
           <h3 className="logo">Keep It Random !</h3>
           <div  className="discoverTeam">
             <h2 className='discover-team-h2'>Discover</h2>
-            <h2 className='discover-team-h' >Team</h2>
+            <h2 className='discover-team-h'>Team</h2>
           </div>
           <div className="button_animation">
-            <a href="#"><span>Play</span></a>
+            <a href="#" onClick={() => {navigate('/loginPage')}} ><span>Play</span></a>
             </div>
         </header>
     <br/>

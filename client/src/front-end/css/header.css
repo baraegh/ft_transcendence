@@ -30,18 +30,18 @@ header h3{
     position: relative;
     width: 27px;
     height: 27px;
-    left: 210%;
+    left: 600px;
     top: 5px;
 }
 
 .profileImg {
-    top: 3px;
+    bottom: 5px;
     position: relative;
     width: 30px;
-    height: 30px;
+    height: 60px;
     border-radius: 60px;
     /* background-color: black; */
-    left: 640px;
+    left: 610px;
 }
 
 .profileImg img 
@@ -106,7 +106,7 @@ header h3{
 
   }
   
-  .header_buttons  a:after{
+  .header_buttons   a:after{
     position: absolute;
     content: "";
     top: 0;
@@ -126,3 +126,44 @@ header h3{
     width: 100%;
   }
   
+  .dropdown-menu {
+    position: absolute;
+    top: 40px; /* Adjust the top position as needed */
+    right: 0;
+    width: 150px; /* Adjust the width as needed */
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 10px;
+    display: none;
+  }
+  
+  .dropdown-menu.open {
+    display: block;
+  }
+
+  #drop
+  {
+    position: relative;
+    bottom: 10px;
+    text-align: center;
+    border : 1px solid black;
+    box-shadow: 1px 1px 0px 2px rgba(0,0,0,1);
+    transition: 0.2s;
+  }
+
+  #drop:hover
+  {
+    box-shadow: 0px 1px 0px 0px rgba(0,0,0,1);
+  }
+
+  .dropDownMenu
+  {
+
+    height: 70px !important;
+    width: 80px !important;
+    /* position: relative !important; */
+    /* bottom : px !important; */
+    /* right: 20px !important; */
+  }
+

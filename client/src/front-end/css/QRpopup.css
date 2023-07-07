@@ -2,27 +2,38 @@
 
 .QRmodal .modal-content
 {
-    width: 500px;
-    height: 620px;
-    /* background-color:; */
+    width: 600px !important;
+    height: 600px ;
     border: 2px black solid;
     box-shadow: 8px 8px 0px 2px rgba(0,0,0,1);
 }
 
 .QR
 {
+    display: flex;
+    align-items: baseline;
     border-radius: 20px;
     width: 450px;
     height: 500px;
     margin: auto;
     justify-content: center;
-    background-color: #cabcbc;
+    /* background-color: rgb(18, 18, 18); */
+    align-items: stretch;
+}
+
+.QR img
+{
+    border-radius: 50px;
+    width : 450px;
+    height : 500px;
+    border : 0.5px solid black;
 }
 
 #QRinput
 {
+    text-align: center;
     background: #F6F6F6;
-    width: 440px;
+    width: 320px;
     border-radius: 2px;
     border: solid 2px black;
     display: flex;
