@@ -103,15 +103,17 @@ enum Mut {
 
 // Channel model
 model Channel {
-  id       String         @id @default(uuid())
-  owner    User?          @relation(fields: [ownerId], references: [id])
-  ownerId  Int?
-  type     Type           @default(PERSONEL)
-  name     String?        @unique
-  hash     String?
-  image    String?
-  chanelID Participants[]
-  messages Messages[]
+  id         String         @id @default(uuid())
+  owner      User?          @relation(fields: [ownerId], references: [id])
+  ownerId    Int?
+  type       Type           @default(PERSONEL)
+  name       String?        @unique
+  hash       String?
+  image      String?
+  blocked    Boolean        @default(false)
+  hasblocked Int?
+  chanelID   Participants[]
+  messages   Messages[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -12,7 +12,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CREATEGROUPSDTO } from './dto/msg.dto';
 import * as argon from 'argon2';
 import { CHANNELIDDTO } from './dto/owner.dto';
-import { INVETUSERDTO, JOINGROUPDTO, JOINGROUPRTURNDTO, RETUR_OF_CHANNEL_DTO } from './dto';
+import {
+  INVETUSERDTO,
+  JOINGROUPDTO,
+  JOINGROUPRTURNDTO,
+  RETUR_OF_CHANNEL_DTO,
+} from './dto';
 import { createWriteStream } from 'fs';
 import * as path from 'path';
 
@@ -30,21 +35,30 @@ export class ChatService {
       throw new ForbiddenException('The Friend Not Exist');
     }
 
-    const finde_same_channel = await this.prisma.participants.findFirst({
+
+    const finde_same_channel = await this.prisma.channel.findFirst({
       where: {
-        OR: [
-          { AND: [{ userID: senderId }, { channel: { chanelID: { some: { userID: receiverId } } } }] },
-          { AND: [{ userID: receiverId }, { channel: { chanelID: { some: { userID: senderId } } } }] },
-        ],
+        type: 'PERSONEL',
+        chanelID: {
+          every: {
+            OR: [{ userID: senderId }, { userID: receiverId }],
+          },
+        },
       },
     });
-    console.log('finde_same_channel', finde_same_channel);
-    if (finde_same_channel) return finde_same_channel;
+
+    if (finde_same_channel) {
+      const findchannel = await this.prisma.channel.findFirst({
+        where: { id: finde_same_channel['id'] },
+      });
+      console.log('findchannel', findchannel);
+      return findchannel;
+    }
     const createChanell = await this.prisma.channel.create({
       data: {
         ownerId: null,
       },
-    });
+    }); 
     await this.prisma.participants.createMany({
       data: [
         {
@@ -128,9 +142,9 @@ export class ChatService {
     const otherusers = await this.prisma.user.findMany({
       where: { id: { in: dto.otheruserid } },
     });
-    if(dto.otheruserid.length == 0)
+    if (dto.otheruserid.length == 0)
       throw new BadRequestException('select users');
-      
+
     if (otherusers.length !== dto.otheruserid.length) {
       throw new NotFoundException('som users not in server');
     }
@@ -164,8 +178,6 @@ export class ChatService {
       existingChannel.ownerId === userId ||
       existingChannel.chanelID['role'] === 'ADMIN'
     ) {
-      
-
       const participants = await this.prisma.participants.findMany({
         where: {
           channelID: dto.channelId,
@@ -175,21 +187,26 @@ export class ChatService {
           userID: true,
         },
       });
-    
-      const existingUserIds = participants.map((participant) => participant.userID);
-    
-      const newUsers = dto.otheruserid.filter((userId) => !existingUserIds.includes(userId));
-    
-  if (newUsers.length > 0) {
-    const participantsToCreate: Prisma.ParticipantsCreateManyInput[] = newUsers.map((userId) => ({
-      channelID: dto.channelId,
-      userID: userId,
-    }));
 
-    await this.prisma.participants.createMany({
-      data: participantsToCreate,
-    });
-  }
+      const existingUserIds = participants.map(
+        (participant) => participant.userID,
+      );
+
+      const newUsers = dto.otheruserid.filter(
+        (userId) => !existingUserIds.includes(userId),
+      );
+
+      if (newUsers.length > 0) {
+        const participantsToCreate: Prisma.ParticipantsCreateManyInput[] =
+          newUsers.map((userId) => ({
+            channelID: dto.channelId,
+            userID: userId,
+          }));
+
+        await this.prisma.participants.createMany({
+          data: participantsToCreate,
+        });
+      }
       delete existingChannel.chanelID;
       delete existingChannel.ownerId;
       return existingChannel;
@@ -210,16 +227,24 @@ export class ChatService {
         where: { userID: userId, channelID: channelID },
       });
 
-      const currentDate = new Date();
-    
-      if (find_user_and_channel_in_particepents.blocked_at ){
-        const diff_on_min = Math.round(
-          ( currentDate.getTime() - find_user_and_channel_in_particepents.blocked_at.getTime())/60000,
-          );
-        if ((diff_on_min >= 15 && find_user_and_channel_in_particepents.mut == 'M15') ||
-        (diff_on_min >= 45 && find_user_and_channel_in_particepents.mut == 'M45') ||
-        (diff_on_min >= 480 && find_user_and_channel_in_particepents.mut == 'M15')) {
-          find_user_and_channel_in_particepents = await this.prisma.participants.update({
+    const currentDate = new Date();
+
+    if (find_user_and_channel_in_particepents.blocked_at) {
+      const diff_on_min = Math.round(
+        (currentDate.getTime() -
+          find_user_and_channel_in_particepents.blocked_at.getTime()) /
+          60000,
+      );
+      if (
+        (diff_on_min >= 15 &&
+          find_user_and_channel_in_particepents.mut == 'M15') ||
+        (diff_on_min >= 45 &&
+          find_user_and_channel_in_particepents.mut == 'M45') ||
+        (diff_on_min >= 480 &&
+          find_user_and_channel_in_particepents.mut == 'M15')
+      ) {
+        find_user_and_channel_in_particepents =
+          await this.prisma.participants.update({
             where: {
               channelID_userID: {
                 channelID: channelID,
@@ -228,11 +253,11 @@ export class ChatService {
             },
             data: {
               mut: 'NAN',
-              blocked_at:null
+              blocked_at: null,
             },
           });
-        } 
       }
+    }
     if (
       find_user_and_channel_in_particepents.blocked ||
       find_user_and_channel_in_particepents.mut != 'NAN'
@@ -257,18 +282,17 @@ export class ChatService {
     dto: CREATEGROUPSDTO,
     file: Express.Multer.File,
     localhostUrl: string,
-  ):Promise<RETUR_OF_CHANNEL_DTO> {
+  ): Promise<RETUR_OF_CHANNEL_DTO> {
     console.log(typeof dto.members);
     if (dto.hash) {
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
     }
-    
+
     const existingUser = await this.prisma.user.findMany({
       where: { id: { in: dto.members } },
     });
-    if(dto.members.length == 1)
-      throw new BadRequestException('select users');
+    if (dto.members.length == 1) throw new BadRequestException('select users');
     if (existingUser.length !== dto.members.length) {
       throw new NotFoundException('One or more users not found');
     }
@@ -298,31 +322,31 @@ export class ChatService {
         name: dto.name,
       },
     });
-    if(file){
+    if (file) {
       const imageName = `${createChannel.id}${fileExtension}`;
       let imagePath = `uploads/${imageName}`;
       const stream = createWriteStream(imagePath);
       stream.write(file.buffer);
       stream.end();
       imagePath = `${localhostUrl}/uploads/${imageName}`;
-      dto.image = imagePath;  
+      dto.image = imagePath;
     }
     const updatechannel = await this.prisma.channel.update({
       where: { id: createChannel.id },
       data: {
         image: dto.image,
       },
-      select:{
-        id:true,
-        ownerId:true,
-        type:true,
-        name:true,
-        image:true,
-        updatedAt:true
-      }
+      select: {
+        id: true,
+        ownerId: true,
+        type: true,
+        name: true,
+        image: true,
+        updatedAt: true,
+      },
     });
-    const participantsData: Prisma.ParticipantsCreateManyInput[] = dto.members
-      .map((userId) => ({
+    const participantsData: Prisma.ParticipantsCreateManyInput[] =
+      dto.members.map((userId) => ({
         channelID: createChannel.id,
         userID: userId,
       }));

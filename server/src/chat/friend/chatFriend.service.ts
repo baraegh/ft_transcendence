@@ -4,7 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { BLOCK_FRIEND_DTO, CHATFRIENDDTO, FILTER_USERS_DTO } from './chatfried.dto';
+import {
+  BLOCK_FRIEND_DTO,
+  CHATFRIENDDTO,
+  FILTER_USERS_DTO,
+} from './chatfried.dto';
 
 @Injectable()
 export class ChatFriendService {
@@ -63,6 +67,26 @@ export class ChatFriendService {
     });
     if (!fetchUsers) throw new NotFoundException('Not Your Friend');
     if (fetchUsers.blocked === true) throw new NotFoundException('Is blocked');
+    const foundPersonalChannel = await this.prisma.channel.findFirst({
+      where: {
+        type: 'PERSONEL',
+        chanelID: {
+          every: {
+            OR: [{ userID: userId }, { userID: FriendId }],
+          },
+        },
+      },
+    });
+
+    if (foundPersonalChannel) {
+       await this.prisma.channel.update({
+        where: { id: foundPersonalChannel.id },
+        data: {
+          blocked: true,
+          hasblocked: userId,
+        },
+      });
+    }
     await this.prisma.friendship.update({
       where: {
         id: fetchUsers.id,
@@ -106,7 +130,7 @@ export class ChatFriendService {
     });
   }
 
-  async Friends_Ho_Blocked(userId: number):Promise<FILTER_USERS_DTO[]> {
+  async Friends_Ho_Blocked(userId: number): Promise<FILTER_USERS_DTO[]> {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -135,11 +159,11 @@ export class ChatFriendService {
       username: blocker.friend.username,
       image: blocker.friend.image,
     }));
-  
+
     return blockedFriends;
   }
 
-  async Friends_Ho_Pending(userId: number):Promise<FILTER_USERS_DTO[]> {
+  async Friends_Ho_Pending(userId: number): Promise<FILTER_USERS_DTO[]> {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -168,7 +192,7 @@ export class ChatFriendService {
       username: blocker.friend.username,
       image: blocker.friend.image,
     }));
-  
+
     return blockedFriends;
   }
 }
