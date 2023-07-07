@@ -26,7 +26,7 @@ export class _2faService {
 
     // await this.setTwoFactorAuthenticationSecret(secret, user.id);
     const qrCodeImage1 = await qrcode.toDataURL(otpauthUrl);
-    const qrCodeImage = '<img src="' + qrCodeImage1 + '"/>';
+    const qrCodeImage = qrCodeImage1;
     return {
       qrCodeImage,
     };

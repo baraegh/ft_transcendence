@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
  postgresql-db:
-    image: postgres
+    image: postgres:13
     container_name: postgres
     build: 
       context: ${PWD}/server/src/postgresql_df
