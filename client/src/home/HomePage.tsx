@@ -1,13 +1,19 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import io from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [logo, setLogo] = useState<string>(
     " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
   );
+  const [getid, setid] = useState<number>();
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  const [socket, setSocket] = useState<Socket | null>(null); // Declare socket state
+
+
   const sendmsg = () =>{
     const requestData = {
       channelID: 'dc5f6d35-5c28-498b-9012-f1af63c7b7ea', // User ID of barae
@@ -27,7 +33,9 @@ const HomePage: React.FC = () => {
     console.error(error);
   });
   }
+
   const SendFriendRequest = () =>{
+    
     const requestData = {
       receiverId: 98782, // User ID of barae
     };
@@ -39,6 +47,9 @@ const HomePage: React.FC = () => {
   })
   .then(response => {
     console.log(response.data);
+    if (socket) {
+      socket.emit('sendGameRequest', 98782, requestData);
+    }
   })
   .catch(error => {
     console.error(error);
@@ -56,6 +67,7 @@ const HomePage: React.FC = () => {
   })
   .then(response => {
     console.log(response.data);
+    
   })
   .catch(error => {
     console.error(error);
@@ -94,22 +106,7 @@ const HomePage: React.FC = () => {
         // Handle the error
       });
   };
-  const fetchdata = () => {
-    axios
-      .get("http://localhost:3000/user/me", { withCredentials: true })
-      .then((response) => {
-        if (response.status === 200) {
-          setLogo(response.data.image);
-          setLogin("Welcome " + response.data.username );
-        } else {
-          throw new Error("Request failed");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        navigate("/");
-      });
-  };
+
 
   const userFefriends = () => {
     axios
@@ -130,7 +127,74 @@ const HomePage: React.FC = () => {
     // Perform logout logic here
     navigate("/chat");
   };
-  fetchdata();
+
+
+
+
+ 
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/user/me", {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setLogo(response.data.image);
+          setLogin("Welcome " + response.data.username);
+          setid(response.data.id);
+        } else {
+          throw new Error("Request failed");
+        }
+      } catch (error) {
+        console.log(error);
+        navigate("/");
+      }
+    };
+  
+    fetchdata();
+  }, []);
+  
+  useEffect(() => {
+    const connectToSocket = () => {
+      const newSocket = io('http://localhost:3000', {
+        query: { user: encodeURIComponent(JSON.stringify({ id: getid })) },
+      });
+
+      newSocket.on('connect', () => {
+        const requestData = {
+          event: 'userConnected',
+          user: { id: getid },
+        };
+        newSocket.emit('requestData', requestData);
+      });
+
+      newSocket.on('response', (data) => {
+        // Handle the response from the server
+        console.log('Received response:', data);
+      });
+
+        newSocket.on('gameRequestResponse', (data) => {
+      console.log('Received data from server:', data);
+      // Perform actions with the received data
+      setReceivedData(data);
+    });
+
+    setSocket(newSocket);
+
+    return newSocket;
+    };
+
+    if (getid !== undefined) {
+      const newSocket = connectToSocket();
+      setSocket(newSocket);
+    }
+  }, [getid]);
+  
+
+
+
+
+
   return (
     <div style={{ textAlign: "center" }}>
       <h2 style={{ marginBottom: "20px" }}>{login}</h2>
@@ -245,3 +309,7 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+function setReceivedData(data: any) {
+  throw new Error("Function not implemented.");
+}
+

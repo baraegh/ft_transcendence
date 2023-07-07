@@ -19,6 +19,7 @@
     "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@radix-ui/react-popover": "1.0.5",
     "@radix-ui/react-select": "^1.2.1",
+    "@types/socket.io-client": "^3.0.0",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.0",
     "mdb-react-ui-kit": "^6.1.0",
@@ -26,7 +27,8 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.13.0"
+    "react-router-dom": "^6.13.0",
+    "socket.io-client": "^4.7.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

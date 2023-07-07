@@ -1,7 +1,7 @@
 
-.mainDisplay
+.mainDisplay 
 {
-  
+    display: flex;
     position: relative;
     top : 50px;
     width: 1058px;
@@ -10,19 +10,18 @@
     border-radius: 20px;
     border: 2px solid black;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
+    background-color: green;
 
 }
 
+.mainDisplay #pong
+{
+  width: 1200px;
+  height: 500px;
+  border-radius: 20px;
+}
 
 
-.mainDisplay img{
-    width: 1100px;
-    height: 650px;
-    border-radius: 20px;
-    position: relative;
-    bottom : 1px;
-
- }
 
 #Play
 {
