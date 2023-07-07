@@ -335,12 +335,15 @@ type MemberCardPopOverContentProps = {
     setChat?:   (Id: string, Image: string, Name: string,
                 Type: string, userId: number | null) => void,  
     chatInfo:   chatInfoType;
+    setUpdate:  (update: boolean) => void,
+    update:     boolean,
 }
 
-const MemberCardPopOverContent = ({role, img, username, id, setChat, chatInfo} : MemberCardPopOverContentProps) => {
+const MemberCardPopOverContent = ({role, img, username, id, setChat,
+                                    chatInfo, setUpdate, update} : MemberCardPopOverContentProps) => {
     const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
     const [isMuteDialogOpen, setIsMuteDialogOpen] = useState(false);
-    const   [profileData, setProfileData] = useState<profileDataType>({
+    const [profileData, setProfileData] = useState<profileDataType>({
         username:       '',
         gameWon:        0,
         gameLost:       0,
@@ -351,11 +354,9 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat, chatInfo} :
     const me = useContext(userMe);
 
     useEffect(() => {
-        // if (setChat)
-            // setChat(chatInfo.chatId,
-            //         chatInfo.chatImage,
-            //         chatInfo.chatName,
-            //         chatInfo.chatType? chatInfo.chatType: chatInfo.chatUserId);
+        if (setChat)
+            setChat(chatInfo.chatId, chatInfo.chatImage,
+                    chatInfo.chatName, chatInfo.chatType, id);
     }, []);
 
     const closeDialog = () => {
@@ -413,7 +414,9 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat, chatInfo} :
             {
                 isRemoveDialogOpen && <Dialog   title="Remove Member"
                                                 closeDialog={closeDialog}
-                                                chatInfo={chatInfo} />
+                                                chatInfo={chatInfo}
+                                                setUpdate={setUpdate}
+                                                update={update} />
                 ||
                 isMuteDialogOpen && <Dialog title="Mute Member" 
                                             closeDialog={closeDialog}
@@ -561,6 +564,8 @@ type ChatAreaGroupProps =
     role:                   string,
     setChat:                (Id: string, Image: string, Name: string,
                             Type: string, userId: number | null) => void,
+    update:                 boolean,
+    setUpdate:              (update: boolean) => void,
 }
 
 export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
@@ -577,7 +582,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
             .catch((error) => {
                 console.log(error);
             })
-        }, []);
+        }, [props.update]);
 
     const admins = props.membersData?.admins.length !== 0 ? props.membersData?.admins.map((admin) => {
         return  <PopoverComp    Trigger={<MemberCard    img={admin.image}
@@ -587,7 +592,9 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                                                                     username={admin.username}
                                                                     id={admin.id}
                                                                     setChat={props.setChat}
-                                                                    chatInfo={props.chatInfo} />}
+                                                                    chatInfo={props.chatInfo}
+                                                                    setUpdate={props.setUpdate}
+                                                                    update={props.update} />}
                                 key={admin.id}/>
     }) : null;
 
@@ -599,9 +606,23 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                                                                     username={user.username}
                                                                     id={user.id} 
                                                                     setChat={props.setChat}
-                                                                    chatInfo={props.chatInfo} />}
+                                                                    chatInfo={props.chatInfo}
+                                                                    setUpdate={props.setUpdate}
+                                                                    update={props.update} />}
                                 key={user.id}/>
     }) : null;
+
+    const filteredAdmins = admins
+  ? admins.filter((admin) =>
+      admin.props.Trigger.props.username.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  : null;
+
+    const filteredUsers = users
+    ? users.filter((user) =>
+        user.props.Trigger.props.username.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    : null;
 
     const {owner} = props.membersData;
 
@@ -611,31 +632,34 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                 <div className="chat-area-group-search">
                     <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                 </div>
-
-                <div className="chat-area-group-owner">
-                    <p className="header">Owner</p>
-                    <PopoverComp    Trigger={<MemberCard   img={props.membersData?.owner.image}
-                                                        username={props.membersData?.owner.username} />}
-                                    Content={<MemberCardPopOverContent  role=''
-                                                                        img={owner.image}
-                                                                        username={owner.username}
-                                                                        id={owner.id}
-                                                                        setChat={props.setChat}
-                                                                        chatInfo={props.chatInfo} />}/>
-                </div>
-
+                {   searchQuery === '' ?
+                        <div className="chat-area-group-owner">
+                            <p className="header">Owner</p>
+                            <PopoverComp    Trigger={<MemberCard   img={props.membersData?.owner.image}
+                                                                username={props.membersData?.owner.username} />}
+                                            Content={<MemberCardPopOverContent  role=''
+                                                                                img={owner.image}
+                                                                                username={owner.username}
+                                                                                id={owner.id}
+                                                                                setChat={props.setChat}
+                                                                                chatInfo={props.chatInfo}
+                                                                                setUpdate={props.setUpdate}
+                                                                                update={props.update} />}/>
+                        </div>
+                    : ''
+                }
                 <div className="chat-area-group-admins-members">
                     <p className="header">Admins</p>
                     <div className="chat-area-group-admins">
                         <div className="chat-area-group-admins-list">
-                            {admins? admins: <p className="No-data">No admin</p>}
+                            {filteredAdmins && filteredAdmins.length !== 0 ? filteredAdmins: <p className="No-data">No admin</p>}
                         </div>
                     </div>
 
                     <div className="chat-area-group-members">
                         <p className="header">Members</p>
                         <div className="chat-area-group-members-list">
-                            {users? users: <p className="No-data">No member</p>}
+                            {filteredUsers && filteredUsers.length !== 0 ? filteredUsers: <p className="No-data">No member</p>}
                         </div>
                 </div>
 
@@ -668,11 +692,15 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
             </div>
             {isLeaveDialogOpen && <Dialog   chatInfo={props.chatInfo}
                                             title="Leave Group"
-                                            closeDialog={()=> setIsLeaveDialogOpen(false)} />}
+                                            closeDialog={()=> setIsLeaveDialogOpen(false)}
+                                            update={props.update}
+                                            setUpdate={props.setUpdate} />}
 
             {isInviteDialogOpen && <Dialog  chatInfo={props.chatInfo}
                                             title="Invite"
-                                            closeDialog={() => setIsInviteDialogOpen(false)} />}
+                                            closeDialog={() => setIsInviteDialogOpen(false)}
+                                            update={props.update}
+                                            setUpdate={props.setUpdate} />}
         </div>
     );
 }

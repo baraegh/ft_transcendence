@@ -76,6 +76,7 @@ export const UserCard = ({user} : UserCardProps) => {
 }
 
 
+
 const filterList = ['All Friends', 'All Groups', 'All Users',  'Online', 'Block', 'Pending'];
 
 export const FriendList = () => {

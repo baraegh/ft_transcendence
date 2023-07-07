@@ -201,8 +201,7 @@ export function Chat() {
     }
   );
   const [role, setRole] = useState('user');
-
-
+  const [updateGroup, setUpdateGroup] = useState(false);
 
   const setChat = (Id: string, Image: string,
                     Name: string, Type: string, userId: number | null) => {
@@ -234,11 +233,12 @@ export function Chat() {
     <div className="chat-page">
       {!isChatSettingOpen ? (
         <>
-          <ChatHistoryList
-            chatId={chatInfo.chatId}
-            setChat={setChat}
-            setIsProfileOpen={setIsProfileOpen}
-            setRole={setRole}/>
+          <ChatHistoryList  chatId={chatInfo.chatId}
+                            setChat={setChat}
+                            setIsProfileOpen={setIsProfileOpen}
+                            setRole={setRole}
+                            updateGroup={updateGroup}
+                            setUpdateGroup={setUpdateGroup}/>
 
           <div className="chat-area">
             {chatInfo.chatId !== '' ? (
@@ -259,7 +259,9 @@ export function Chat() {
                             membersData={membersData}
                             setMembersData={setMembersData}
                             role={role}
-                            setChat={setChat}/>
+                            setChat={setChat}
+                            update={updateGroup}
+                            setUpdate={setUpdateGroup}/>
           ) : isProfileOpen ? (
             <ChatAreaProfile  chatInfo={chatInfo}
                               setIsProfileOpen={setIsProfileOpen} />

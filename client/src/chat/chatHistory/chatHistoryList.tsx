@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FilterBtn, Search, Settings } from "../tools/filterSearchSettings";
 import '../chat';
 import Axios from "axios";
+import defaultUserImage from '../../assets/person.png';
+import defaultGroupImage from '../../assets/group.png';
 
 const filterList = ['All chats', 'Friends', 'Groups'];
 const settingsList = ['New Chat', 'Create Group', 'Invite'];
@@ -42,15 +44,24 @@ type HistoryListProps = {
     selected:       boolean
     setChat:        (chatId: string, chatImage: string,
                     chatName: string, chatType: string, userId: number | null) => void,
+    updateGroup:    boolean,
+    setUpdateGroup: (update: boolean) => void,
 }
 
-const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
+const HistoryList = ({data, setChat, selected, updateGroup, setUpdateGroup}: HistoryListProps) =>
 {
     const handleOnClick = () => {
-        data.type === 'PERSONEL'?
-                setChat(data.channelId, data.otherUserImage, data.otherUserName, data.type, data.otherUserId)
-            :
-                setChat(data.channelId, data.channelImage, data.channelName, data.type, null);
+        if (data.type === 'PERSONEL')
+                setChat(data.channelId,
+                        data.otherUserImage? data.otherUserImage: defaultUserImage,
+                        data.otherUserName, data.type, data.otherUserId);
+        else
+        {
+            setChat(data.channelId,
+                    data.channelImage? data.channelImage : defaultGroupImage,
+                    data.channelName, data.type, null)
+            setUpdateGroup(!updateGroup)                
+        }
     } 
 
     const isGroup = data.type !== 'PERSONEL';
@@ -59,7 +70,10 @@ const HistoryList = ({data, setChat, selected}: HistoryListProps) =>
     return (
         <div className={`item ${selected? 'selected': ''}`}
             onClick={handleOnClick}>
-            <img src={isGroup? data.channelImage : data.otherUserImage} 
+            <img src={
+                        isGroup? 
+                            (data.channelImage? data.channelImage : defaultGroupImage) 
+                        : (data.otherUserImage? data.otherUserImage: defaultUserImage)} 
                 alt={`${isGroup? data.channelName : data.otherUserName} image`}/>
             <div>
                 <div className='item-username-group-status-circle'>
@@ -111,16 +125,19 @@ type chatHistoryListProps =
     setIsProfileOpen:   (isOpen: boolean) => void,
     chatId:             string | null,
     setRole:            (role: string) => void;
+    setUpdateGroup:     (update: boolean) => void,
+    updateGroup:        boolean,
 }
 
-const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId, setRole}: chatHistoryListProps) =>
+const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId,
+                            setRole, setUpdateGroup, updateGroup}: chatHistoryListProps) =>
 {
     const [channelList, setChannelList] = useState<channel[]| null>(null);
     const [groupList, setGroupList] = useState<channel[]| null>(null);
     const [friendList, setFriendList] = useState<channel[]| null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState('');
-    let msgCard: React.ReactNode;
+    let   msgCard: React.ReactNode;
 
     useEffect(() => {
         let url: string = 'chat/all-channel-of-user';
@@ -199,12 +216,12 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId, setRole}: chatHist
     msgCard = filtredChannelList?
             filtredChannelList.map( channel =>
             (
-                <HistoryList
-                    key={channel.channelId}
-                    data={channel}
-                    selected={chatId === channel.channelId}
-                    setChat={setChat}
-                />
+                <HistoryList    key={channel.channelId}
+                                data={channel}
+                                selected={chatId === channel.channelId}
+                                setChat={setChat}
+                                setUpdateGroup={setUpdateGroup}
+                                updateGroup={updateGroup}/>
             ))
         : <p>No Channels</p>
 

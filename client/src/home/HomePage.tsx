@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import io from 'socket.io-client';
-import { Socket } from 'socket.io-client';
+// import io from 'socket.io-client';
+// import { Socket } from 'socket.io-client';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
   );
   const [getid, setid] = useState<number>();
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
-  const [socket, setSocket] = useState<Socket | null>(null); // Declare socket state
+  // const [socket, setSocket] = useState<Socket | null>(null); // Declare socket state
 
 
   const sendmsg = () =>{
@@ -158,41 +158,41 @@ const HomePage: React.FC = () => {
     fetchdata();
   }, []);
   
-  useEffect(() => {
-    const connectToSocket = () => {
-      const newSocket = io('http://localhost:3000', {
-        query: { user: encodeURIComponent(JSON.stringify({ id: getid })) },
-      });
+  // useEffect(() => {
+  //   const connectToSocket = () => {
+  //     const newSocket = io('http://localhost:3000', {
+  //       query: { user: encodeURIComponent(JSON.stringify({ id: getid })) },
+  //     });
 
-      newSocket.on('connect', () => {
-        const requestData = {
-          event: 'userConnected',
-          user: { id: getid },
-        };
-        newSocket.emit('requestData', requestData);
-      });
+  //     newSocket.on('connect', () => {
+  //       const requestData = {
+  //         event: 'userConnected',
+  //         user: { id: getid },
+  //       };
+  //       newSocket.emit('requestData', requestData);
+  //     });
 
-      newSocket.on('response', (data) => {
-        // Handle the response from the server
-        console.log('Received response:', data);
-      });
+  //     newSocket.on('response', (data) => {
+  //       // Handle the response from the server
+  //       console.log('Received response:', data);
+  //     });
 
-        newSocket.on('gameRequestResponse', (data) => {
-      console.log('Received data from server:', data);
-      // Perform actions with the received data
-      setReceivedData(data);
-    });
+  //       newSocket.on('gameRequestResponse', (data) => {
+  //     console.log('Received data from server:', data);
+  //     // Perform actions with the received data
+  //     setReceivedData(data);
+  //   });
 
-    setSocket(newSocket);
+  //   setSocket(newSocket);
 
-    return newSocket;
-    };
+  //   return newSocket;
+  //   };
 
-    if (getid !== undefined) {
-      const newSocket = connectToSocket();
-      setSocket(newSocket);
-    }
-  }, [getid]);
+  //   if (getid !== undefined) {
+  //     const newSocket = connectToSocket();
+  //     setSocket(newSocket);
+  //   }
+  // }, [getid]);
   
 
 
