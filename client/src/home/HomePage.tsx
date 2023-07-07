@@ -13,31 +13,47 @@ const HomePage: React.FC = () => {
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   const [socket, setSocket] = useState<Socket | null>(null); // Declare socket state
 
-
-  const sendmsg = () =>{
+  const challenge = () =>{
+    console.log("challenge")
     const requestData = {
-      channelID: 'dc5f6d35-5c28-498b-9012-f1af63c7b7ea', // User ID of barae
-      content:"hi"
-
+      challengerId: getid, // User ID of barae
+      login:login
     };
-    axios
-  .post('http://localhost:3000/chat/sendMsg', requestData, {
-    headers: {
-      'Content-Type': 'application/json',
-    },withCredentials: true, 
-  })
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+
+  if (socket) {
+      let data = {
+        userId: 98782,//barae
+        cData: requestData
+      }
+      socket.emit('sendGameRequest', data);
+    }
+  }
+
+  const leaveroom = () =>{
+
+  if (socket) {
+    socket.emit('leaveRoom', '1');
+    console.log("leaved");
+    }
+  }
+  const sendingroup = () =>{
+
+  if (socket) {
+    socket.emit('chatToServer', { sender: "this.username", room: "1", message: "this.text" });
+    console.log("send");
+    }
+  }
+  const joiroom = () =>{
+    if (socket) {
+      socket.emit('joinRoom', "1");
+      console.log("join");
+    }
   }
 
   const SendFriendRequest = () =>{
     
     const requestData = {
-      receiverId: 98782, // User ID of barae
+        receiverId: 98782
     };
     axios
   .post('http://localhost:3000/friends/send-friend-request', requestData, {
@@ -47,8 +63,16 @@ const HomePage: React.FC = () => {
   })
   .then(response => {
     console.log(response.data);
+    const RrequestData = {
+      friendId: getid, // User ID of barae
+      login:login
+    };
     if (socket) {
-      socket.emit('sendGameRequest', 98782, requestData);
+      let data = {
+        userId: 98782,//barae
+        cData: RrequestData
+      }
+      socket.emit('sendFriendRequest', data);
     }
   })
   .catch(error => {
@@ -161,22 +185,27 @@ const HomePage: React.FC = () => {
       });
 
       newSocket.on('connect', () => {
-        const requestData = {
-          event: 'userConnected',
-          user: { id: getid },
-        };
-        newSocket.emit('requestData', requestData);
+        // const requestData = {
+        //   event: 'userConnected',
+        //   user: { id: getid },
+        // };
+        // newSocket.emit('requestData', requestData);
       });
 
-      newSocket.on('response', (data) => {
-        // Handle the response from the server
-        console.log('Received response:', data);
+      newSocket.on('gameRequestResponse', (data) => {
+        console.log('Received data from server:', data);
+        // Perform actions with the received data
+        setReceivedData(data);
       });
 
-        newSocket.on('gameRequestResponse', (data) => {
+        newSocket.on('FriendRequestResponse', (data) => {
       console.log('Received data from server:', data);
       // Perform actions with the received data
       setReceivedData(data);
+    });
+
+    newSocket.on('chatToClient', (msg) => {
+      console.log(msg);
     });
 
     setSocket(newSocket);
@@ -184,17 +213,19 @@ const HomePage: React.FC = () => {
     return newSocket;
     };
 
+
     if (getid !== undefined) {
       const newSocket = connectToSocket();
       setSocket(newSocket);
+
     }
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
   }, [getid]);
   
-
-
-
-
-
   return (
     <div style={{ textAlign: "center" }}>
       <h2 style={{ marginBottom: "20px" }}>{login}</h2>
@@ -292,7 +323,7 @@ const HomePage: React.FC = () => {
         join chat with barae
       </button>
       <button
-        onClick={ sendmsg}
+        onClick={ challenge}
         style={{
           backgroundColor: "blue",
           color: "white",
@@ -302,7 +333,48 @@ const HomePage: React.FC = () => {
           cursor: "pointer",
         }}
       >
-        send msg
+        challenge
+      </button>
+      <button
+        onClick={ joiroom}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        joiroom
+      </button>
+
+      <button
+        onClick={ leaveroom}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        leaverrom
+      </button>
+
+      <button
+        onClick={ sendingroup}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        sendingroup
       </button>
     </div>
   );
@@ -310,6 +382,6 @@ const HomePage: React.FC = () => {
 
 export default HomePage;
 function setReceivedData(data: any) {
-  throw new Error("Function not implemented.");
+  console.log("Function not implemented.",data);
 }
 

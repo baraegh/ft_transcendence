@@ -36,7 +36,10 @@ export class ChatOwnerService {
       },
     });
     if (!findChannel) throw new NotFoundException('channel not found');
-    if (findChannel.chanelID['role'] === 'USER' && findChannel.ownerId != userId)
+    if (
+      findChannel.chanelID['role'] === 'USER' &&
+      findChannel.ownerId != userId
+    )
       throw new ForbiddenException('Access Denied');
     const participantUniqueInput: Prisma.ParticipantsWhereUniqueInput = {
       channelID_userID: {
@@ -48,7 +51,7 @@ export class ChatOwnerService {
       where: participantUniqueInput,
       data: {
         mut: dto.mute,
-        blocked_at :new Date()
+        blocked_at: new Date(),
       },
     });
     if (!updateParticipant) throw new NotFoundException('Entity not found');
@@ -160,18 +163,26 @@ export class ChatOwnerService {
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
     }
-    const participantUniqueInput: Prisma.ParticipantsWhereUniqueInput = {
-      channelID_userID: {
-        channelID: dto.channelid,
-        userID: dto.otheruser,
+
+    const existingUser = await this.prisma.user.findMany({
+      where: { id: { in: dto.members } },
+    });
+    if (existingUser.length !== dto.members.length) {
+      throw new NotFoundException('One or more users not found');
+    }
+
+    const updateParticipant = await this.prisma.participants.updateMany({
+      where: {
+        AND: dto.members.map((userId) => ({
+          channelID: dto.channelid,
+          userID: userId,
+        })),
       },
-    };
-    const updateParticipant = await this.prisma.participants.update({
-      where: participantUniqueInput,
       data: {
         role: dto.role,
       },
     });
+
     if (!updateParticipant) throw new NotFoundException('Entity not found');
   }
 
@@ -205,7 +216,7 @@ export class ChatOwnerService {
     dto: OWNEREDITDTO,
     localhostUrl: string,
     file: Express.Multer.File,
-  ):Promise<RETUR_OF_CHANNEL_DTO> {
+  ): Promise<RETUR_OF_CHANNEL_DTO> {
     const finduser = await this.prisma.user.findFirst({
       where: { id: userID },
     });
@@ -257,7 +268,7 @@ export class ChatOwnerService {
       default:
         throw new ForbiddenException('Acces Denied');
     }
-   const updatechannel =  await this.prisma.channel.update({
+    const updatechannel = await this.prisma.channel.update({
       where: { id: dto.channelid },
       data: {
         type: dto.type,
@@ -265,15 +276,15 @@ export class ChatOwnerService {
         hash: dto.hash,
         name: dto.name,
       },
-      select:{
-        id:true,
-        ownerId:true,
-        type:true,
-        name:true,
-        image:true,
-        updatedAt:true
-      }
+      select: {
+        id: true,
+        ownerId: true,
+        type: true,
+        name: true,
+        image: true,
+        updatedAt: true,
+      },
     });
-    return updatechannel
+    return updatechannel;
   }
 }

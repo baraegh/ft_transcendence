@@ -36,6 +36,7 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.4.3",
     "@nestjs/platform-socket.io": "^9.0.0",
+    "@nestjs/platform-ws": "^10.0.5",
     "@nestjs/swagger": "^7.0.12",
     "@nestjs/websockets": "^9.0.0",
     "@prisma/client": "^4.15.0",
