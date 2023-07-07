@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { ArrayNotEmpty, IsArray, IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class OWNERDTO {
   @ApiProperty()
   @IsNumber()
@@ -32,9 +33,11 @@ export class CHANNELIDDTO {
 }
 
 export class OWNEADDADMINRDTO {
-    @ApiProperty()
-    @IsNumber()
-    otheruser: number;
+  @ApiProperty({ description: 'must be array of string of id' })
+@IsArray()
+@ArrayNotEmpty()
+@Transform(({ value }) => JSON.parse(value).map((v: string) => Number(v)), { toClassOnly: true })
+  members: number[];
   
     @ApiProperty()
     @IsString()

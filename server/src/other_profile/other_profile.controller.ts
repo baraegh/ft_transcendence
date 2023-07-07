@@ -67,7 +67,6 @@ export class OtherProfileController {
       })
       @Get('about/:otheruserID')
       async Aboutouther(@Req() req:Request,@Param("otheruserID",ParseIntPipe ) otheruserID:number): Promise<ABOUOTHERTDTO> {
-        console.log(typeof otheruserID);
         return await this.Oprofile.Aboutouther(req.user['id'],otheruserID);
       }
 
