@@ -55,7 +55,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
   @SubscribeMessage('sendGameRequest')
   sendGameRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
-    this.auth.verifyToken(client.data.token, client);
+    // this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
       this.server.to(userSocket.id).emit('gameRequestResponse', data); 
@@ -66,7 +66,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('sendFriendRequest')
   sendFriendRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
-    this.auth.verifyToken(client.data.token, client);
+    // this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
       this.server.to(userSocket.id).emit('FriendRequestResponse', data); 

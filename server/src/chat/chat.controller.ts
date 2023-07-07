@@ -35,6 +35,7 @@ import {
   INVETUSERDTO,
   JOINGROUPDTO,
   JOINGROUPRTURNDTO,
+  LEAVEGROUPDTO,
   MSGDTO,
   PersonelChannelInfoDTO,
   RANKINFIDTO,
@@ -319,5 +320,19 @@ export class ChatController {
   @Get('show-all-groups')
   async show_Groups(): Promise<SHOWGROUPS[]> {
     return await this.fetshchat.show_Groups();
+  }
+
+  @ApiOperation({
+    summary: 'Leave groups',
+  })
+  @ApiBody({
+    type: LEAVEGROUPDTO, // Example class representing the request body
+    required: true,
+  }) // Add this line
+  @HttpCode(HttpStatus.OK)
+  @Post('leave-group')
+  async leave_group(@Req() req: Request, @Body() body: LEAVEGROUPDTO) {
+    const userID = req.user['id'];
+    await this.fetshchat.leave_group(userID, body);
   }
 }
