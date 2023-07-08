@@ -18,6 +18,8 @@ import { GameModule } from './game/game.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { _2faModule } from './2fa/2fa.module';
 import { GatwayModule } from './gateway/gateway.module';
+import { AuthLogic } from './gateway/getwayLogic';
+import { OtherProfileModule } from './other_profile/other_profile.module';
 
 
 @Module({
@@ -32,7 +34,8 @@ import { GatwayModule } from './gateway/gateway.module';
     GameModule,
     LeaderboardModule,
     _2faModule,
-    GatwayModule
+    GatwayModule,
+    OtherProfileModule,
   ],
   providers: [
     {

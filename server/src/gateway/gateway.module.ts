@@ -1,10 +1,10 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module,  } from '@nestjs/common';
 import { MyGateway } from './gateway';
 import { AuthLogic } from './getwayLogic';
-import { JwtModule } from '@nestjs/jwt';
+import { GameGateway } from './game.gateway';
 
 @Module({
-  providers: [MyGateway,AuthLogic],
+  providers: [MyGateway,AuthLogic,GameGateway],
   exports: [AuthLogic],
 })
 export class GatwayModule {

@@ -14,7 +14,7 @@ import FA from './front-end/tsx/2FA'
 import MyProfileUser from './front-end/tsx/myProfileUser';
 // import OtherProfileUser from "./tsx/otherProfileUser";
 // import LeaderBoard from './tsx/leaderBoard';
-// import Play from './tsx/play'
+import Play from './front-end/tsx/play'
 // import QRpopup from './tsx/QRpopup'
 import myProfileUser from './front-end/tsx/myProfileUser';
 import AuthPage from './auth/AuthPage'
@@ -51,6 +51,7 @@ function App() {
         <Route  path="/" element={<DSTeam />}></Route>
         <Route  path="/loginPage" element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}></Route>
         <Route path="/home" element={isLoggedIn ? < Home /> : <Navigate to="/loginPage" replace />} />
+        <Route path="/play" element={isLoggedIn ? < Play /> : <Navigate to="/loginPage" replace />} />
         <Route path="/TwoFactorAuth" element={isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth /> } />
         <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />} />
         <Route path='/leaderboard' element={isLoggedIn ? <LeaderBoard/> : <Navigate to="/loginPage" replace />} />

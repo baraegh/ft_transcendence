@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
+import { IsArray, IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
 export class LastMessage {
   @ApiProperty()
   messageId: string;
@@ -216,9 +216,10 @@ export class INVETUSERDTO{
   @IsString()
   channelId: string;
 
-  @ApiProperty()
-  @IsNumber()
-  otheruserid:number
+  @ApiProperty({ type: [Number] })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  otheruserid: number[]
 }
 
 
@@ -306,3 +307,9 @@ export class GROUP_INFO_DTO{
 
 }
 
+
+export class LEAVEGROUPDTO {
+  @ApiProperty()
+  @IsString()
+  channelid: string;
+}
