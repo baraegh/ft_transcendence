@@ -39,7 +39,7 @@ export class GameGateway{
   getRoom(roomID: number): string{
     if  (this.streaming.get(roomID))
         return this.streaming.get(roomID);
-    return undefined;
+    return undefined; 
   }
   
   @SubscribeMessage('ServerToClient')

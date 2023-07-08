@@ -1,6 +1,8 @@
 import  { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-const socket = io('http://localhost:3000/');
+import  {socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { Socket } from "socket.io-client/debug";
+const socket   = socketInstance;
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 const Game = () => {
@@ -41,8 +43,9 @@ const Game = () => {
                 bColor: 'GRAY',
                 fColor:'BLACK',
                 bMode:''};
-    socket.on('initGame', (eMode: modeType) => {
-        modeControl = eMode;
+    socket?.on('initGame', (eMode: modeType) => {
+        if (eMode)
+            modeControl = eMode;
     });
     let player1: playerType = {
         x: 0,
@@ -156,23 +159,23 @@ const Game = () => {
             W: canvas.width,
             H: canvas.height
         };
-        socket.emit('ServerToClient', data);
+        socket?.emit('ServerToClient', data);
         let message = {ball: ball, player1:player1, player2:player2, dim:dim}
-        socket.emit('ballMove', message);
+        socket?.emit('ballMove', message);
         update();
         render();
         requestAnimationFrame(game);
     }
     userInputs();
-    socket.on('ServerToClient', (data: dataForm) => {
+    socket?.on('ServerToClient', (data: dataForm) => {
         player2.y = data.y;
     });
-    socket.on('ballMove', (message: {ball: ballType, player1: playerType, player2: playerType, dim:{W:number, H: number}}) => {
+    socket?.on('ballMove', (message: {ball: ballType, player1: playerType, player2: playerType, dim:{W:number, H: number}}) => {
         ball = message.ball;
         player1.score = message.player1.score;
         player2.score = message.player2.score;
     });
-    socket.on('thisIsStream', (message) => {
+    socket?.on('thisIsStream', (message) => {
         document.onkeydown = (event: KeyboardEvent) => {
             event.preventDefault();
           };
@@ -183,11 +186,16 @@ const Game = () => {
         socket.emit('newStreamRoom', dim);
         socket.emit('joinStreamRoom', message);
     });
-    socket.on('streaming', (message) => {
+    socket?.on('streaming', (message) => {
         ball = message.ball;
         player1 = message.player1;
         player2 = message.player2;
     });
+
+    socket?.on('gameRequestResponse', (data) => {
+        console.log('Received data from server:', data);
+        // Perform actions with the received data
+      });
     game();
     return () => {
         cancelAnimationFrame(animationFrameIdRef);
