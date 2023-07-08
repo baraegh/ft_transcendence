@@ -18,6 +18,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly auth: AuthLogic) {}
   private server: Server;
 
+
   private rooms: Set<string> = new Set<string>();
   private connectedUsers: Map<number, Socket> = new Map<number, Socket>();
 
@@ -26,32 +27,30 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       ? client.handshake.query.user[0]
       : client.handshake.query.user;
      
-      if(decodeURIComponent(user) != "undefined"  )
-      {
-        
+      if (decodeURIComponent(user) !== "undefined") {
         const decodedUser = JSON.parse(decodeURIComponent(user));
-        const userSocket = this.getUserSocket( client.data.userId);
-        if(!userSocket){
+        const userSocket = this.getUserSocket(client.data.userId);
+        if (!userSocket) {
           client.data.userId = decodedUser.id;
           const token = this.auth.generateToken(client.data.userId);
           console.log('New client connected:', client.data.userId);
           client.data.token = token;
-          this.connectedUsers.set( client.data.userId, client);
+          this.connectedUsers.set(client.data.userId, client);
+        } else {
+          client.data = userSocket.data; 
         }
       }
-   
   }
   handleDisconnect(client: Socket) {
-    // this.auth.verifyToken(client.data.token, client);
+    this.auth.verifyToken(client.data.token, client); 
     console.log("client: ",client.data.userId," just left");
-    this.connectedUsers.delete(client.data.userId); 
+    this.connectedUsers.delete(client.data.userId);
   }
 
   
   @SubscribeMessage('sendGameRequest')
-  sendGameRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
-    // this.auth.verifyToken(client.data.token, client);
-    // console.log(client.data);
+  sendGameRequest(client:Socket,  data:{ userId: number, cData: object}) {
+    this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
       this.server.to(userSocket.id).emit('gameRequestResponse', data); 
@@ -59,9 +58,8 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
   
-
   @SubscribeMessage('sendFriendRequest')
-  sendFriendRequest(client:Socket, @MessageBody() data:{ userId: number, cData: object}): void {
+  sendFriendRequest(client:Socket, data:{ userId: number, cData: object}): void {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
@@ -111,7 +109,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.rooms.delete(room);
     }
   }
-  // Inject the socket.io server instance
+
   afterInit(server: Server) {
     this.server = server;
   }
