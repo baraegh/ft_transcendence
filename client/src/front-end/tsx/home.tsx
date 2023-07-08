@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
+import { useEffect, useState } from "react";
 import "../css/home.css";
-import tvGif from "../img/giphy.gif";
 import MyHeader from "./header";
 import { useNavigate } from "react-router-dom";
 import Game from "../../game/example";
 import axios from "axios";
-import io from "socket.io-client";
 import  {socketInstance, initializeSocket, getSocket } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
 function Home(): JSX.Element {
 
@@ -15,26 +11,11 @@ function Home(): JSX.Element {
   const [logo, setLogo] = useState<string>(
     " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
   );
-    const socket = socketInstance;
-   const [getid, setid] = useState<number | null>(null);
+  const socket = socketInstance;
+  const [getid, setid] = useState<number | null>(null);
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
 
-  const challenge = () => {
-    // console.log("challenge");
-    const requestData = {
-      challengerId: 98782, // User ID of barae
-      login: login,
-    };
-    
-    console.log(socket)
-    if (socket) {
-      let data = {
-        userId: 99030, //barae
-        cData: requestData,
-      }
-      socket.emit("sendGameRequest", data);
-    }
-  };
+
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -79,10 +60,10 @@ function Home(): JSX.Element {
         };
         socket.emit("requestData", requestData);
       });
-
-      socket.on("gameRequestResponse", (data) => {
-        console.log("Received data from server:", data);
-        // Perform actions with the received data
+      type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+      socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType}) =>{
+        
+        socket.emit('gameStart', data);
       });
 
       socket.on("FriendRequestResponse", (data) => {

@@ -16,10 +16,13 @@ export class GameGateway{
   @WebSocketServer() server: Server;
   @SubscribeMessage('gameStart')
   handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType}):void {
-    this.logger.log(`client connecter ${client.id}`);
+    this.logger.log("helllllllo");
+    this.logger.log(`client connecter1 ${data.player1Id}`);
+    this.logger.log(`client connecter2 ${data.player2Id}`);
+    this.logger.log(`client connecter3 ${client.id}`);
     this.games.set(this.gameId, data);
     this.server.to(data.player1Id).emit('initGame', data.mode)
-    this.server.to(data.player2Id).emit('initGame', data.mode)
+    this.server.to(client.id).emit('initGame', data.mode)
     this.gameId++;
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
