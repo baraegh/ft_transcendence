@@ -15,7 +15,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
       <Modal.Body>
         <div className="modalHeader">
           <p id='editModalTitle'> Edit Profile</p>
-          <p id="closeButtonEditModal">x</p>
+          <p onClick={onHide} id="closeButtonEditModal">x</p>
         </div>
         <div className='editHeaderLine'></div>
         <div className="editModalNamePic">
@@ -31,8 +31,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
           
         </div>
         <div className='editModalFooter'>
-          <Button></Button>      
-          <Button></Button>
+          <Button onClick={onHide} id="Cancel" >Cancel</Button>      
+          <Button id='Edit'>Edit</Button>
         </div>
         {/* Add your custom content here */}
       </Modal.Body>

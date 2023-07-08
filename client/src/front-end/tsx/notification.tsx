@@ -8,7 +8,7 @@ const Notification = () => {
     if (showNotification) {
       const timer = setTimeout(() => {
         setShowNotification(false);
-      }, 10000);
+      }, 30000);
 
       return () => {
         clearTimeout(timer);
@@ -26,14 +26,12 @@ const Notification = () => {
         <div className="slide-in-modal">
           <div className="content">
             <span className="message">rimney has sent you a friend request</span>
-            <button className="close-button" onClick={closeNotification}>
-              X
-            </button>
+
             <img id="profileImgNotif" src={me} alt="" />
           </div>
           <div className='notifButons'>
           <a onClick={() => {console.log("Accept Button")}}>Accept</a>
-          <a onClick={() => {console.log("Reject Button")}}>Reject</a>
+          <a onClick={() => {closeNotification()}}>Reject</a>
         </div>
         </div>
       )}
