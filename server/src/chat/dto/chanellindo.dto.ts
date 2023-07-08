@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
+import { IsArray, IsBoolean, IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
 export class LastMessage {
   @ApiProperty()
   messageId: string;
@@ -42,9 +42,18 @@ export class ChannelInfoDTO {
   @IsOptional()
   channelImage?: string;
 
+  @ApiProperty()
+  @IsBoolean()
+  blocked: boolean;
+
+  @ApiProperty()
+  @IsNumber()
+  hasblocked: number;
+
   @ApiProperty({ nullable: true })
   @IsOptional()
   lastMessage?: LastMessage;
+
 }
 
 export class ChannelGroupInfoDTO {
@@ -88,6 +97,14 @@ export class PersonelChannelInfoDTO {
 
   @ApiProperty()
   otherUserImage: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  blocked: boolean;
+
+  @ApiProperty()
+  @IsNumber()
+  hasblocked: number;
 
   @ApiProperty({ nullable: true })
   @IsOptional()
