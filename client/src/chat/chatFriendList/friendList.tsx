@@ -136,7 +136,7 @@ export const FriendList = () => {
                         <FriendCard 
                             key={friend.friend.id} 
                             friend={friend}/>)
-                : <p>NO FRIENDS</p> ;
+                : <p className="No-data" style={{textAlign: 'center'}}>NO FRIENDS</p> ;
     }
     else if (filter === 'All Groups')
     {
@@ -149,7 +149,7 @@ export const FriendList = () => {
                         <GroupCard 
                             key={group.id}
                             group={group}/>)
-                : <p>NO GROUPS</p>;
+                : <p className="No-data" style={{textAlign: 'center'}}>NO GROUPS</p>;
     }
     else if (filter === 'All Users')
     {
@@ -161,7 +161,7 @@ export const FriendList = () => {
                         <UserCard 
                             key={user.id} 
                             user={user}/>)
-                : <p>NO USERS</p> ;
+                : <p className="No-data" style={{textAlign: 'center'}}>NO USERS</p> ;
     }
     else if (filter === 'Block')
     {
@@ -173,7 +173,7 @@ export const FriendList = () => {
                         <UserCard 
                             key={user.id} 
                             user={user}/>)
-                : <p>NO USERS</p> ;
+                : <p className="No-data" style={{textAlign: 'center'}}>NO USERS</p> ;
     }
     else if (filter === 'Pending')
     {
@@ -185,10 +185,10 @@ export const FriendList = () => {
                         <UserCard 
                             key={user.id} 
                             user={user}/>)
-                : <p>NO USERS</p> ;
+                : <p className="No-data" style={{textAlign: 'center'}}>NO USERS</p> ;
     }
     else
-        List = <p>NO DATA</p>
+        List = <p className="No-data" style={{textAlign: 'center'}}>NO DATA</p>
 
     return (
         <div className="friends-list">

@@ -747,13 +747,6 @@
     align-items: center;
 }
 
-.chat-group-settings-owner-btn
-{
-    display: flex;
-    justify-content: space-around;
-    width: 20%;
-}
-
 .chat-group-settings-owner-btn button
 {
     font-family: 'Mouse Memoirs';

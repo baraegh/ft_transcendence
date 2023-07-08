@@ -10,11 +10,8 @@ import { Dialog } from "../tools/Dialog";
 import { chatInfoType, membersDataType } from "../chat";
 import { userMe } from "../../App";
 import "./chatArea.css"
-
 import defaultUserImage from '../../assets/person.png';
 import dfaultGroupImage from '../../assets/group.png';
-
-import Image from '../barae.jpg';
 import { format } from "../chatHistory/chatHistoryList";
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
@@ -436,7 +433,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
             </div>
             <div className="user-card-btn">
                 {
-                    role === 'owner' || role === 'admin' ?
+                    (role === 'owner' || role === 'admin') && id !==  me?.id ?
                         <>
                             <button onClick={() => setIsRemoveDialogOpen(true)}>Remove</button>
                             <button onClick={() => setIsMuteDialogOpen(true)}>Mute</button>
@@ -466,6 +463,9 @@ type ChatGroupSettingsProps = {
     chatInfo:               chatInfoType,
     setChatInfo:            (chatInfo: chatInfoType) => void,
     role:                   string,
+    setMembersData:         (membersData: membersDataType) => void,
+    setChat:                (Id: string, Image: string, Name: string,
+                                Type: string, userId: number | null) => void,
 }
 
 export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
@@ -476,6 +476,10 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
     const [isDeleteGroupDialogOpen, setIsDeleteGroupDialogOpen] = useState(false);
     const [update, setUpdate] = useState(false);
     const [membersWarn, setMembersWarn] = useState(false);
+    const [updatedAdmins, setUpdatedAdmins] = useState(false);
+    const [nameWarn, setNameWarn] = useState(false);
+    const [nameExist, setNameExist] = useState(false);
+    const [fileWarn, setFileWarn] = useState(false);
     const [groupData, setGroupData] = useState<createGroupType>({
         type: Type.PUBLIC,
         name: '',
@@ -484,9 +488,84 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
         members: [''],
     }); //to be edited
 
-    const handleOnChange = () => {
-        // to be edited
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>
+                            | { name: string; value: string; isChecked: boolean }
+                            | { name: string; value: string; isChecked?: boolean }
+                            | { id: number; isChecked: boolean}) => {
+        if (nameWarn)
+            setNameWarn(false);
+        if (nameExist)
+            setNameExist(false);
+        if (fileWarn)
+            setFileWarn(false);
+        if (membersWarn)
+            setMembersWarn(false);
+        if ('target' in e)
+        {
+            const {name, value, type} = e.target;
+
+            if (type === 'file') {
+                const file = e.target.files && e.target.files[0];
+                setGroupData({ ...groupData, [name]: file });
+            }
+            else
+                setGroupData({ ...groupData, [name]: value });
+        }
+        else if ( 'name' in e && e.name == 'members')
+        {
+            const {name, value, isChecked} = e;
+            const updatedMembers = isChecked ? 
+                    [...groupData.members, value.toString()]
+                :   groupData.members.filter(member => member !== value);
+
+            setGroupData({...groupData, [name]: updatedMembers});
+        }
+        else if ('name' in e)
+        {
+            const {name, value} = e;
+            setGroupData({...groupData, [name]: value});
+        }
     }
+
+    const OnEdit = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        formData.append('channelid', props.chatInfo.chatId);
+        formData.append('type', groupData.type);
+        formData.append('name', groupData.name);
+        formData.append('hash', groupData.hash)
+        if (groupData.image !== null)
+            formData.append('image', groupData.image);
+
+        Axios.post("http://localhost:3000/chat/setting/edit-group",
+                formData,
+                {withCredentials: true})
+            .then((response) => {
+                props.setChat(props.chatInfo.chatId, response.data.image,
+                                groupData.name, groupData.type, null);
+                props.setIsChatSettingOpen(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        console.log('data: ', groupData);
+    }
+
+    useEffect(() => {
+        if (!updatedAdmins)
+            return;
+        Axios.get(`http://localhost:3000/chat/show-members/${props.chatInfo.chatId}`,
+            {withCredentials: true})
+            .then((response) => {
+                props.setMembersData(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }, [updatedAdmins])
 
     const members = props.membersData?
                         props.membersData.users.length > 0 ?
@@ -528,7 +607,7 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                     <CreateGroupFirstDialog GroupData={groupData}
                                             handleOnChange={handleOnChange}/>
                     <div className="chat-group-settings-edit">
-                        <button>Edit</button>
+                        <button type="submit" onClick={OnEdit}>Edit</button>
                     </div>
                 </div>
                 <div className="chat-group-settings-users">
@@ -545,7 +624,6 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                                         username={props.membersData?.owner.username} />
                             <div className="chat-group-settings-owner-btn">
                                 {<button onClick={() => setIsAddAdminDialogOpen(true)}>Add Admin</button>}
-                                {<button onClick={() => setIsInviteDialogOpen(true)}>Invite</button>}
                             </div>
                         </div>
                     </div>
@@ -561,20 +639,23 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                     </div>
                 </div>
             </div>
-            {isInviteDialogOpen && <Dialog  title="add member"
-                                            closeDialog={() => setIsInviteDialogOpen(false)}
-                                            membersWarn={membersWarn}
-                                            setMembersWarn={setMembersWarn}/>}
 
             {isAddAdminDialogOpen && <Dialog    chatInfo={props.chatInfo}
-                                                title="add adminr"
-                                                closeDialog={() => setIsInviteDialogOpen(false)}
+                                                title="Add admin"
+                                                closeDialog={() => setIsAddAdminDialogOpen(false)}
                                                 update={update}
                                                 setUpdate={setUpdate}
-                                                membersData={props.membersData}/>}
+                                                membersData={props.membersData}
+                                                setUpdatedAdmins={setUpdatedAdmins}/>}
 
-            {isClearChatDialogOpen && <Dialog title="Clear Chat" closeDialog={() => setIsClearChatDialogOpen(false)} />}
-            {isDeleteGroupDialogOpen && <Dialog title="Delete Group" closeDialog={() => setIsDeleteGroupDialogOpen(false)} />}
+            {isClearChatDialogOpen && <Dialog   title="Clear chat" 
+                                                closeDialog={() => setIsClearChatDialogOpen(false)}
+                                                chatInfo={props.chatInfo}/>}
+            {isDeleteGroupDialogOpen && <Dialog title="Delete Group"
+                                                closeDialog={() => setIsDeleteGroupDialogOpen(false)}
+                                                chatInfo={props.chatInfo}
+                                                setChat={props.setChat}
+                                                closeGroupSetting={() => props.setIsChatSettingOpen(false)}/>}
         </div>
     );
 }

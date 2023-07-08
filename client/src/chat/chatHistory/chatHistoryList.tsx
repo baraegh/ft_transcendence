@@ -157,6 +157,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                     setFriendList(response.data);
                 else if (filter === 'Groups')
                     setGroupList(response.data);
+                console.log('response.data: ', response.data);
             })
             .catch((error) => {
                     console.log(error);

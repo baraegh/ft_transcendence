@@ -272,9 +272,11 @@ export function Chat() {
       ) : (
         <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
                             membersData={membersData}
+                            setMembersData={setMembersData}
                             chatInfo={chatInfo}
                             setChatInfo={setChatInfo}
-                            role={role}/>
+                            role={role}
+                            setChat={setChat}/>
       )}
     </div>
   );
