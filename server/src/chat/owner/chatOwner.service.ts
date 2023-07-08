@@ -177,7 +177,7 @@ export class ChatOwnerService {
     }))
     const updateParticipant = await this.prisma.participants.updateMany({
       where: {
-        AND: allmembers,
+        OR: allmembers,
       },
       data: {
         role: dto.role,

@@ -33,10 +33,9 @@ export class CHANNELIDDTO {
 }
 
 export class OWNEADDADMINRDTO {
-  @ApiProperty({ description: 'must be array of string of id' })
+  @ApiProperty({ type: [Number] })
   @IsArray()
-  @ArrayNotEmpty()
-  @Transform(({ value }) => JSON.parse(value).map((v: string) => Number(v)), { toClassOnly: true })
+  @IsNumber({}, { each: true })
   members: number[];
   
     @ApiProperty()
