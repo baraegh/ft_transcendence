@@ -15,6 +15,7 @@ import defaultUserImage from '../../assets/person.png';
 import dfaultGroupImage from '../../assets/group.png';
 
 import Image from '../barae.jpg';
+import { format } from "../chatHistory/chatHistoryList";
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
@@ -116,7 +117,7 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
             })
             .catch((error) => {
                 console.log(error);
-            })
+            });
     }
 
     return (
@@ -135,7 +136,8 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
 }
 
 type msgCardProps = {
-    msg: msgCard,
+    msg:        msgCard,
+    chatInfo?:  chatInfoType,
 }
 
 const MsgCardMe = ({msg} : msgCardProps) => 
@@ -150,12 +152,27 @@ const MsgCardMe = ({msg} : msgCardProps) =>
     );
 }
 
-const MsgCardOther = ({msg} : msgCardProps) => 
+const MsgCardOther = ({chatInfo, msg} : msgCardProps) => 
 {
+    const [name, setName] = useState('');
+
+    useEffect(() => {
+        if (chatInfo === undefined || !chatInfo.chatUserId)
+            return;
+        Axios.get(`http://localhost:3000/chat/aboutfriend/${chatInfo.chatUserId}`,
+            { withCredentials: true })
+            .then((response) => {
+                setName(response.data.username);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
     return (
         <div className="chat-area-msg-other">
             <div className="msg-of-other-username-msg">
-                <p className="msg-of-other-username">'msg.sender'</p>
+                <p className="msg-of-other-username">{name}</p>
                 <p className="chat-area-message">{msg.content}</p>
             </div>
             <div className="msg-of-other-time-img">
@@ -168,19 +185,23 @@ const MsgCardOther = ({msg} : msgCardProps) =>
 
 type chatAreaMessagesProps =
 {
-    ListOfMsg: msgListType | null,
+    ListOfMsg:  msgListType | null,
+    chatInfo:   chatInfoType,
 }
 
-const ChatAreaMessages = ({ListOfMsg} : chatAreaMessagesProps) => {
+const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
     const me = useContext(userMe);
     let i = 0;
 
     const msgCard = ListOfMsg? ListOfMsg.map( msg =>
                     {
                         return    me?.id === msg.userId ?
-                                (<MsgCardMe key={msg.userId + i++} msg={msg} />)
+                                (<MsgCardMe key={msg.userId + i++}
+                                            msg={msg} />)
                             :
-                                (<MsgCardOther key={msg.userId + i++} msg={msg} />)
+                                (<MsgCardOther  key={msg.userId + i++}
+                                                msg={msg}
+                                                chatInfo={chatInfo}/>)
                     }
                 ) : ''
 
@@ -202,7 +223,7 @@ type RankItem = {
     id:         number;
     image:      string;
     username:   string;
-    gameWon:    number;
+    gameWon:    number | null;
 }
 
 type profileDataType = {
@@ -212,6 +233,44 @@ type profileDataType = {
     achievements:   string[] | null,
     updatedAt:      string,
     rank:          RankItem[],
+}
+
+type RankCardProps ={
+    ranked:    RankItem,
+}
+
+const RankCard = ({ranked} : RankCardProps) => {
+    if (ranked.rank === 1)
+    {
+        return (
+            <div className="Ranking-1">
+                <div className="Ranking-1-number"><p>{ranked.rank}</p></div>
+                <div className="Ranking-1-img-username">
+                    <img src={ranked.image} alt={`${ranked.username}'s image`}/>
+                    <p>{ranked.username}</p>
+                </div>
+                <div className="Ranking-1-stat">
+                    <p>{ranked.gameWon? ranked.gameWon: 0}</p>    
+                    <p>Games won</p>
+                </div>
+            </div>
+        )
+
+    }
+
+    return (
+        <div className="Ranking-2">
+            <div className="Ranking-2-number"><p>{ranked.rank}</p></div>
+            <div className="Ranking-2-img-username">
+                <img src={ranked.image} alt={`${ranked.username}'s image`}/>
+                <p>{format(ranked.username, 4)}</p>
+            </div>
+            <div className="Ranking-2-stat">
+                <p>{ranked.gameWon? ranked.gameWon: 0}</p>
+                <p>Games won</p>
+            </div>
+        </div>
+    )
 }
 
 export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) => {
@@ -232,11 +291,18 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
             { withCredentials: true })
             .then((response) => {
                 setProfileData(response.data);
+                console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
             });
     }, []);
+
+    const rankCard = profileData.rank.length !== 0?
+                        profileData.rank.map((data) => {
+                            return <RankCard ranked={data} key={data.username}/>
+                        })
+                    : null
 
     return (
         <div className='chat-area-profile'>
@@ -267,48 +333,14 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
                     <p className="CA-profile-achievements-header">Achievements</p>
                     <div className="achievements">
                         {profileData.achievements && profileData.achievements.length !== 0 ? 
-                            profileData.achievements: <p>No achievements</p>}
+                            profileData.achievements: <p className="No-data" style={{textAlign: 'center'}}>No Achievements</p>}
                     </div>
                 </div>
 
                 <div className="chat-area-profile-ranking">
-                    <p className="CA-profile-ranking-header">Ranking - Top 3 | to be fixed</p>
+                    <p className="CA-profile-ranking-header">Ranking</p>
                     <div className="Ranking">
-                        <div className="Ranking-1">
-                            <div className="Ranking-1-number"><p>1</p></div>
-                            <div className="Ranking-1-img-username">
-                                <img src={Image} alt="description"/>
-                                <p>Username</p>
-                            </div>
-                            <div className="Ranking-1-stat">
-                                <p>150</p>
-                                <p>Games won</p>
-                            </div>
-                        </div>
-
-                        <div className="Ranking-2">
-                            <div className="Ranking-2-number"><p>2</p></div>
-                            <div className="Ranking-2-img-username">
-                                <img src={Image} alt="description"/>
-                                <p>Username</p>
-                            </div>
-                            <div className="Ranking-3-stat">
-                                <p>100</p>
-                                <p>Games won</p>
-                            </div>
-                        </div>
-
-                        <div className="Ranking-3">
-                            <div className="Ranking-3-number"><p>3</p></div>
-                            <div className="Ranking-3-img-username">
-                                <img src={Image} alt="description"/>
-                                <p>Username</p>
-                            </div>
-                            <div className="Ranking-3-stat">
-                                <p>90</p>
-                                <p>Games won</p>
-                            </div>
-                        </div>
+                        {rankCard? rankCard: <p className="No-data" style={{textAlign: 'center'}}>No Rank</p>}
                     </div>
                 </div>
             </div>
@@ -374,8 +406,9 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                     withCredentials: true,
                 })
             .then((response) => {
+                // console.log('response.data: ', response.data);
                 if (setChat )
-                    setChat(response.data, img, username,
+                    setChat(response.data.channelID, img, username,
                             'PERSONEL', id);
                 if (closeDialog)
                     closeDialog();
@@ -416,7 +449,8 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                                                 closeDialog={closeDialog}
                                                 chatInfo={chatInfo}
                                                 setUpdate={setUpdate}
-                                                update={update} />
+                                                update={update}
+                                                setChat={setChat}/>
                 ||
                 isMuteDialogOpen && <Dialog title="Mute Member" 
                                             closeDialog={closeDialog}
@@ -440,6 +474,8 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
     const [isAddAdminDialogOpen, setIsAddAdminDialogOpen] = useState(false);
     const [isClearChatDialogOpen, setIsClearChatDialogOpen] = useState(false);
     const [isDeleteGroupDialogOpen, setIsDeleteGroupDialogOpen] = useState(false);
+    const [update, setUpdate] = useState(false);
+    const [membersWarn, setMembersWarn] = useState(false);
     const [groupData, setGroupData] = useState<createGroupType>({
         type: Type.PUBLIC,
         name: '',
@@ -452,10 +488,30 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
         // to be edited
     }
 
+    const members = props.membersData?
+                        props.membersData.users.length > 0 ?
+                            props.membersData.users.map((member) => {
+                                return <MemberCard  img={member.image}
+                                                    username={member.username}
+                                                    key={member.id}/>
+                            })
+                        : null
+                    : null;
+
+    const admins = props.membersData?
+                    props.membersData.admins.length > 0 ?
+                            props.membersData.admins.map((admin) => {
+                                return <MemberCard  img={admin.image}
+                                                    username={admin.username}
+                                                    key={admin.id}/>
+                            })
+                        : null
+                    : null;
+
     return (
         <div className="chat-group-settings">
             <div className="chat-group-settings-header">
-                <p className="chat-group-settings-grouName">Settings {'GROUP-NAME'}</p>
+                <p className="chat-group-settings-grouName">{props.chatInfo.chatName.toUpperCase()}'s Settings</p>
                 <div>
                     <button onClick={() => props.setIsChatSettingOpen(false)}>
                         <FontAwesomeIcon 
@@ -477,44 +533,16 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                 </div>
                 <div className="chat-group-settings-users">
                     <div>
-                        <p>Users</p>
+                        <p>Members</p>
                         <div className="chat-group-settings-users-list">
-                            {/* <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" /> */}
+                            {members? members : <p className="No-data">No Member</p>}
                         </div>
                     </div>
                     <div>
                         <p>Owner</p>
                         <div className="chat-group-settings-owner">
-                            {/* <MemberCard img={Image} username="BARAE" /> */}
+                            <MemberCard img={props.membersData?.owner.image}
+                                        username={props.membersData?.owner.username} />
                             <div className="chat-group-settings-owner-btn">
                                 {<button onClick={() => setIsAddAdminDialogOpen(true)}>Add Admin</button>}
                                 {<button onClick={() => setIsInviteDialogOpen(true)}>Invite</button>}
@@ -524,21 +552,7 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                     <div>
                         <p>Admins</p>
                         <div className="chat-group-settings-admins">
-                            {/* <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" /> */}
-                            {/* <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" />
-                            <MemberCard img={Image} username="BARAE" /> */}
+                            {admins? admins: <p className="No-data">No Admin</p>}
                         </div>
                     </div>
                     <div className="chat-group-settings-clear-delete">
@@ -547,8 +561,18 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                     </div>
                 </div>
             </div>
-            {isInviteDialogOpen && <Dialog title="Invite" closeDialog={() => setIsInviteDialogOpen(false)} />}
-            {isAddAdminDialogOpen && <Dialog title="Add Admin" closeDialog={() => setIsAddAdminDialogOpen(false)} />}
+            {isInviteDialogOpen && <Dialog  title="add member"
+                                            closeDialog={() => setIsInviteDialogOpen(false)}
+                                            membersWarn={membersWarn}
+                                            setMembersWarn={setMembersWarn}/>}
+
+            {isAddAdminDialogOpen && <Dialog    chatInfo={props.chatInfo}
+                                                title="add adminr"
+                                                closeDialog={() => setIsInviteDialogOpen(false)}
+                                                update={update}
+                                                setUpdate={setUpdate}
+                                                membersData={props.membersData}/>}
+
             {isClearChatDialogOpen && <Dialog title="Clear Chat" closeDialog={() => setIsClearChatDialogOpen(false)} />}
             {isDeleteGroupDialogOpen && <Dialog title="Delete Group" closeDialog={() => setIsDeleteGroupDialogOpen(false)} />}
         </div>
@@ -572,6 +596,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [membersWarn, setMembersWarn] = useState(false);
 
     useEffect(() => {
         Axios.get(`http://localhost:3000/chat/show-members/${props.chatInfo.chatId}`,
@@ -601,7 +626,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     const users = props.membersData?.users.length !== 0 ? props.membersData?.users.map((user) => {
         return  <PopoverComp    Trigger={<MemberCard    img={user.image}
                                                         username={user.username}/>}
-                                Content={<MemberCardPopOverContent role={props.role}
+                                Content={<MemberCardPopOverContent  role={props.role}
                                                                     img={user.image}
                                                                     username={user.username}
                                                                     id={user.id} 
@@ -679,7 +704,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                 {
                     props.role == 'owner' ?
                         <button className="chat-area-group-invite-btn" onClick={() => setIsInviteDialogOpen(true)}>
-                            <p>INVITE</p>
+                            <p>Add member</p>
                             {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
                         </button>
                         : ''
@@ -694,13 +719,16 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                                             title="Leave Group"
                                             closeDialog={()=> setIsLeaveDialogOpen(false)}
                                             update={props.update}
-                                            setUpdate={props.setUpdate} />}
+                                            setUpdate={props.setUpdate}
+                                            setChat={props.setChat}/>}
 
             {isInviteDialogOpen && <Dialog  chatInfo={props.chatInfo}
-                                            title="Invite"
+                                            title="add member"
                                             closeDialog={() => setIsInviteDialogOpen(false)}
                                             update={props.update}
-                                            setUpdate={props.setUpdate} />}
+                                            setUpdate={props.setUpdate}
+                                            membersWarn={membersWarn}
+                                            setMembersWarn={setMembersWarn}/>}
         </div>
     );
 }
@@ -713,7 +741,6 @@ type ChatAreaProps = {
 export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
     const [msgList, setmsgList] = useState<msgListType | null>(null);
     const [msgSend, setMsgSend] = useState(false);
-
 
     useEffect(() => {
         if (!chatInfo.chatId)
@@ -731,17 +758,18 @@ export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
       }, [chatInfo.chatId, msgSend]);
 
     return (
-        <>
-            <div className='chat-area-container'>
-                <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} 
-                                chatInfo={chatInfo}
-                                setMsgSend={setMsgSend}
-                                msgSend={msgSend}/>
-                <ChatAreaMessages ListOfMsg={msgList}/>
-                <ChatAreaInput  setMsgSend={setMsgSend}
-                                msgSend={msgSend}
-                                chatInfo={chatInfo} />
-            </div>
-        </>
+        <div className='chat-area-container'>
+            <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} 
+                            chatInfo={chatInfo}
+                            setMsgSend={setMsgSend}
+                            msgSend={msgSend}/>
+
+            <ChatAreaMessages   ListOfMsg={msgList}
+                                chatInfo={chatInfo}/>
+
+            <ChatAreaInput  setMsgSend={setMsgSend}
+                            msgSend={msgSend}
+                            chatInfo={chatInfo}/>
+        </div>
     );
 }

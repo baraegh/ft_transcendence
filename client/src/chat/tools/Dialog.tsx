@@ -7,7 +7,7 @@ import DropMenu from './DropMenu';
 import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
 import Axios from 'axios';
-import { chatInfoType } from '../chat';
+import { chatInfoType, membersDataType } from '../chat';
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
 import { userMe } from '../../App';
@@ -35,8 +35,6 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
     const handleOnClickCheckBox = () => {
         setIsChecked(!isChecked);
 
-        console.log('TO BE FIXED from the bacjend');
-
         Axios.post(`http://localhost:3000/chat/join-friend`,
                 { receiverId: user.id },
                 {
@@ -46,9 +44,8 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
                     withCredentials: true,
                 })
             .then((response) => {
-                // console.log('response.data: ', response.data);
                 if (setChat )
-                    setChat(response.data, user.image, user.username,
+                    setChat(response.data.channelID, user.image, user.username,
                             'PERSONEL', user.id);
                 if (closeDialog)
                     closeDialog();
@@ -118,8 +115,11 @@ const NewChat = ({setChat, closeDialog} : NewChatProps) => {
             <div    key="new-chat-items" 
                     className='new-chat-items'>
                         {
-                            filteredUsersList && filteredUsersList.length !== 0 ? filteredUsersList.map(user => <UsersCard key={user.id} user={user} 
-                                setChat={setChat} closeDialog={closeDialog} />) 
+                            filteredUsersList && filteredUsersList.length !== 0 ? 
+                                filteredUsersList.map(user => <UsersCard    key={user.id}
+                                                                            user={user}     
+                                                                            setChat={setChat}
+                                                                            closeDialog={closeDialog} />) 
                             : <p className='No-data' style={{textAlign: 'center'}}>NO RESULT</p>
                         }
             </div>
@@ -240,7 +240,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn, fileWarn
     );
 }
 
-const UsersList = ({user, checkbox = false, setMembersWarn, membersWarn, handleOnChange, type}: UserProps) => {
+const UsersList = ({user, checkbox = false, setMembersWarn, handleOnChange, type}: UserProps) => {
     const [isChecked, setIsChecked] = useState(false);
 
     const handleOnClickCheckBox = () => {
@@ -304,10 +304,8 @@ type userListType = {
 }
 
 type usersDataType = {
-    // channelId:      string,
     otheruserid:    number[],
 }
-
 
 const CreateGroupSecondDialog = ({GroupData, membersWarn, setMembersWarn,
                                     handleOnChange, type, chatInfo,
@@ -320,8 +318,8 @@ const CreateGroupSecondDialog = ({GroupData, membersWarn, setMembersWarn,
         Axios.get('http://localhost:3000/chat/show-all-users',
                 { withCredentials: true })
             .then((response) => {
-                setUserListArray(response.data);
-            })
+                    setUserListArray(response.data);
+                })
             .catch((error) => {
                     console.log(error);
                 }
@@ -350,8 +348,8 @@ const CreateGroupSecondDialog = ({GroupData, membersWarn, setMembersWarn,
 
     const handleAddMember = (e: React.SyntheticEvent) => {
         e.preventDefault();
-
-        if (chatInfo)
+    
+        if (chatInfo && usersData.otheruserid.length > 0)
         {
             Axios.post("http://localhost:3000/chat/invite-user",
                 {   
@@ -368,7 +366,12 @@ const CreateGroupSecondDialog = ({GroupData, membersWarn, setMembersWarn,
             })
         }
         else
+        {
+            console.log('setMembersWarn: ', setMembersWarn);
+            if (setMembersWarn)
+                setMembersWarn(true);
             return;
+        }
 
         if (closeDialog)
             closeDialog();
@@ -378,10 +381,12 @@ const CreateGroupSecondDialog = ({GroupData, membersWarn, setMembersWarn,
             user.username.toLowerCase().includes(searchQuery.toLowerCase())
         ) ;
 
+        console.log('membersWarn: ', membersWarn);
+
     return (
         <>
             <div key="create-group-search" className='create-group-search'>
-            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
             </div>
             <div className='create-group-members-warn'>
                 {membersWarn? <p>please select at least one member</p>: ''}
@@ -392,7 +397,6 @@ const CreateGroupSecondDialog = ({GroupData, membersWarn, setMembersWarn,
                             filteredUserListArray? 
                                 filteredUserListArray.map(user => 
                                     <UsersList
-                                        membersWarn={membersWarn}
                                         setMembersWarn={setMembersWarn}
                                         GroupData={GroupData}
                                         handleOnChange={type == 'add member' ?
@@ -709,15 +713,35 @@ const Invite = () => {
     );
 }
 
-const LeaveGroup = ({closeDialog} : DialogProps) => {
+const LeaveGroup = ({closeDialog, chatInfo, setChat} : DialogProps) => {
     
+    const handleOnClick = () => {
+        if (chatInfo === undefined)
+            return;
+        Axios.post("http://localhost:3000/chat/leave-group",
+                {   
+                    channelid:  chatInfo.chatId,
+                },
+                {withCredentials: true})
+            .then(() => {
+                console.log('setChat: ', setChat);
+                if (setChat)
+                    setChat('', '', '', '', null);
+                if (closeDialog)
+                    closeDialog();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
     return (
         <div className='dialog-leave-group'>
             <FontAwesomeIcon icon={faTriangleExclamation} size='3x' style={{color: "#000000",}} />
             <p className='dialog-leave-group-msg'>Are you sure you want to Leave ?</p>
             <div className='dialog-leave-group-cancel-yes'>
                 <button onClick={closeDialog}>Cancel</button>
-                <button className='dialog-leave-group-yes-btn'>Yes</button>
+                <button className='dialog-leave-group-yes-btn' onClick={handleOnClick}>Yes</button>
             </div>
         </div>
     );
@@ -776,40 +800,80 @@ const MuteMember = ({closeDialog} : DialogProps) => {
     );
 }
 
-const AddAdmin = ({closeDialog} : DialogProps) => {
-    const [showFirstDialog, setShowFirstDialog] = useState(true);
-    const [showSecondDialog, setShowSecondDialog] = useState(false);
+const AddAdmin = ({closeDialog, chatInfo, membersData} : DialogProps) => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [membersWarn, setMembersWarn] = useState(false);
 
-    const handleAddOnClick = () => {
-        setShowSecondDialog(true);
-        setShowFirstDialog(false);
-    };
+    const handleOnChange = () => {
+
+    }
+
+    const handleAdd = () => {
+
+    }
+
+    const filteredMembers = membersData?
+                                    membersData.users?
+                                        membersData.users.filter((member) =>
+                                            member.username.toLowerCase().includes(searchQuery.toLowerCase()))
+                                    : null
+                                : null
 
     return (
         <>
-            {
-                showFirstDialog &&
-                    (<>
-                        <label className='dialog-label' key="userName-emai" htmlFor="">
-                            <p className='dialog-MPLUS-font'>User-Name Or Email</p>
-                            <input className='dialog-MPLUS-font dialog-input' type='text' placeholder='Type here'/>
-                        </label>
-                        
-                        <div className='dialog-process-btn' key="create-group-process">
-                            <button className='cancel-btn' onClick={closeDialog}>Cancel</button>
-                            <div className='dialog-Previous-next-btn'>
-                                <button className='next-btn' onClick={handleAddOnClick}>Add</button>
-                            </div>
-                        </div>
-                    </>)
-                ||
-                    showSecondDialog && 
-                    (<div className='dialog-success'>
-                        <FontAwesomeIcon icon={faCircleCheck} size="3x" style={{color: "#000000",}} />
-                        <p className='dialog-success-text'>Added successfully</p>
-                    </div>)
-            }
+            <div key="create-group-search" className='create-group-search'>
+            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            </div>
+            <div className='create-group-members-warn'>
+                {membersWarn? <p>please select at least one member</p>: ''}
+            </div>
+            <div    key="create-group-items" 
+                    className='create-group-items'>
+                        {
+                            filteredMembers? 
+                                filteredMembers.map(member => 
+                                    <UsersList
+                                        membersWarn={membersWarn}
+                                        setMembersWarn={setMembersWarn}
+                                        handleOnChange={handleOnChange}
+                                        key={member.id}
+                                        user={member}
+                                        checkbox={true}
+                                        type={'add admin'}/>)
+                            : <p className='No-data' style={{textAlign: 'center'}}>No member</p>
+                        }
+            </div>
+            <div className='dialog-process-btn' key="create-group-process">
+                <button className='cancel-btn' onClick={closeDialog}>Cancel</button>
+                <div className='dialog-Previous-next-btn'>
+                    <button className='next-btn' onClick={handleAdd}>Add</button>
+                </div>
+            </div>
         </>
+        // <>
+        //     {
+        //         showFirstDialog &&
+        //             (<>
+        //                 <label className='dialog-label' key="userName-emai" htmlFor="">
+        //                     <p className='dialog-MPLUS-font'>User-Name Or Email</p>
+        //                     <input className='dialog-MPLUS-font dialog-input' type='text' placeholder='Type here'/>
+        //                 </label>
+                        
+        //                 <div className='dialog-process-btn' key="create-group-process">
+        //                     <button className='cancel-btn' onClick={closeDialog}>Cancel</button>
+        //                     <div className='dialog-Previous-next-btn'>
+        //                         <button className='next-btn' onClick={handleAddOnClick}>Add</button>
+        //                     </div>
+        //                 </div>
+        //             </>)
+        //         ||
+        //             showSecondDialog && 
+        //             (<div className='dialog-success'>
+        //                 <FontAwesomeIcon icon={faCircleCheck} size="3x" style={{color: "#000000",}} />
+        //                 <p className='dialog-success-text'>Added successfully</p>
+        //             </div>)
+        //     }
+        // </>
     );
 }
 
@@ -868,11 +932,12 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) =
         Axios.patch("http://localhost:3000/chat/friend/block_friend",
             {FriendId: chatInfo.chatUserId},
             {withCredentials: true})
-            .then(() => {
+            .then((response) => {
                 if (setMsgSend)
                     setMsgSend(!msgSend);
                 if (closeDialog)
                     closeDialog();
+                console.log('response.data: ', response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -894,20 +959,24 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) =
 
 type DialogProps =
 {
-    title?:         string;
-    closeDialog?:   () => void;
-    setChat?:       (chatId: string, chatImage: string,
-                        chatName: string, chatType: string, userId: number | null) => void,
-    chatInfo?:      chatInfoType,
-    msgSend?:       boolean,
-    setMsgSend?:    (msgSend: boolean) => void,
-    setUpdate?:     (update: boolean) => void,
-    update?:         boolean,
+    title?:             string;
+    closeDialog?:       () => void;
+    setChat?:           (chatId: string, chatImage: string,
+                            chatName: string, chatType: string, userId: number | null) => void,
+    chatInfo?:          chatInfoType,
+    msgSend?:           boolean,
+    setMsgSend?:        (msgSend: boolean) => void,
+    setUpdate?:         (update: boolean) => void,
+    update?:            boolean,
+    membersData?:       membersDataType | null,
+    membersWarn?:       boolean,
+    setMembersWarn?:    (membersWarn: boolean) => void,
 }
 
 export function Dialog({title, closeDialog, setChat,
                         chatInfo, msgSend, setMsgSend,
-                        setUpdate, update} : DialogProps)
+                        setUpdate, update, membersData,
+                        membersWarn, setMembersWarn} : DialogProps)
 {
     let ItemComponent :React.ComponentType = () => <p>Invalid Choose</p>;
 
@@ -921,17 +990,20 @@ export function Dialog({title, closeDialog, setChat,
             ItemComponent = () =>  <CreateGroup setChat={setChat} closeDialog={closeDialog} />;
             break;
 
-        case 'Invite':
+        case 'add member':
             ItemComponent = () => <CreateGroupSecondDialog  type="add member"
                                                             chatInfo={chatInfo}
                                                             closeDialog={closeDialog}
                                                             setUpdate={setUpdate}
-                                                            update={update}/>;
+                                                            update={update}
+                                                            membersWarn={membersWarn}
+                                                            setMembersWarn={setMembersWarn}/>;
             break;
 
         case 'Leave Group':
             ItemComponent = () => <LeaveGroup   chatInfo={chatInfo}
-                                                closeDialog={closeDialog}/>;
+                                                closeDialog={closeDialog}
+                                                setChat={setChat}/>;
             break;
         
         case 'Remove Member':
@@ -945,9 +1017,10 @@ export function Dialog({title, closeDialog, setChat,
         //     ItemComponent = dialogContent.muteMember;
         //     break;
         
-        // case 'Add Admin':
-        //     ItemComponent = dialogContent.addAdmin;
-        //     break;
+        case 'Add Admin':
+            ItemComponent = () => <AddAdmin membersData={membersData}
+                                            closeDialog={closeDialog}/>;
+            break;
 
         case 'Delete':
             ItemComponent = () => <ClearChat    chatInfo={chatInfo}

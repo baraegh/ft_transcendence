@@ -233,7 +233,7 @@ export function Chat() {
     <div className="chat-page">
       {!isChatSettingOpen ? (
         <>
-          <ChatHistoryList  chatId={chatInfo.chatId}
+          <ChatHistoryList  chatInfo={chatInfo}
                             setChat={setChat}
                             setIsProfileOpen={setIsProfileOpen}
                             setRole={setRole}

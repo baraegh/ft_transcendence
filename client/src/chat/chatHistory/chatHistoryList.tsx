@@ -4,6 +4,7 @@ import '../chat';
 import Axios from "axios";
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
+import { chatInfoType } from "../chat";
 
 const filterList = ['All chats', 'Friends', 'Groups'];
 const settingsList = ['New Chat', 'Create Group', 'Invite'];
@@ -50,6 +51,8 @@ type HistoryListProps = {
 
 const HistoryList = ({data, setChat, selected, updateGroup, setUpdateGroup}: HistoryListProps) =>
 {
+    // console.log('selected: ', selected, 'GroupData: ', data);
+
     const handleOnClick = () => {
         if (data.type === 'PERSONEL')
                 setChat(data.channelId,
@@ -65,7 +68,6 @@ const HistoryList = ({data, setChat, selected, updateGroup, setUpdateGroup}: His
     } 
 
     const isGroup = data.type !== 'PERSONEL';
-
 
     return (
         <div className={`item ${selected? 'selected': ''}`}
@@ -123,13 +125,13 @@ type chatHistoryListProps =
     setChat:            (chatId: string, chatImage: string, chatName: string,
                         chatType: string, userId: number | null) => void,
     setIsProfileOpen:   (isOpen: boolean) => void,
-    chatId:             string | null,
+    chatInfo:           chatInfoType,
     setRole:            (role: string) => void;
     setUpdateGroup:     (update: boolean) => void,
     updateGroup:        boolean,
 }
 
-const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId,
+const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                             setRole, setUpdateGroup, updateGroup}: chatHistoryListProps) =>
 {
     const [channelList, setChannelList] = useState<channel[]| null>(null);
@@ -160,12 +162,12 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId,
                     console.log(error);
                 }
             );
-    }, [chatId, searchQuery, filter]);
+    }, [chatInfo, searchQuery, filter]);
 
     useEffect(() => {
-        if (!chatId)
+        if (chatInfo.chatId === '')
             return;
-        Axios.get(`http://localhost:3000/chat/roleOfuser/${chatId}`,
+        Axios.get(`http://localhost:3000/chat/roleOfuser/${chatInfo.chatId}`,
                 { withCredentials: true })
             .then((response) => {
                 setRole(response.data.toLowerCase());
@@ -174,7 +176,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId,
                     console.log(error);
                 }
             );
-    }, [chatId]);
+    }, [chatInfo.chatId]);
 
     const handleSetChat = (chatId: string,chatImage: string,
                             chatName: string, chatType: string,
@@ -212,18 +214,19 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatId,
                 return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
         }) ?? null;
     }
+
         
-    msgCard = filtredChannelList?
+    msgCard = filtredChannelList ?
             filtredChannelList.map( channel =>
             (
                 <HistoryList    key={channel.channelId}
                                 data={channel}
-                                selected={chatId === channel.channelId}
+                                selected={chatInfo.chatId === channel.channelId}
                                 setChat={setChat}
                                 setUpdateGroup={setUpdateGroup}
                                 updateGroup={updateGroup}/>
             ))
-        : <p>No Channels</p>
+        : <p className="No-data" style={{textAlign: 'center'}}>No Channel</p>
 
     return (
         <div className="chat-history-list">

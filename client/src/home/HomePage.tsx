@@ -178,19 +178,19 @@ const HomePage: React.FC = () => {
     fetchdata();
   }, []);
   
-  // useEffect(() => {
-  //   const connectToSocket = () => {
-  //     const newSocket = io('http://localhost:3000', {
-  //       query: { user: encodeURIComponent(JSON.stringify({ id: getid })) },
-  //     });
+  useEffect(() => {
+    const connectToSocket = () => {
+      const newSocket = io('http://localhost:3000', {
+        query: { user: encodeURIComponent(JSON.stringify({ id: getid })) },
+      });
 
-  //     newSocket.on('connect', () => {
-  //       const requestData = {
-  //         event: 'userConnected',
-  //         user: { id: getid },
-  //       };
-  //       newSocket.emit('requestData', requestData);
-  //     });
+      newSocket.on('connect', () => {
+        const requestData = {
+          event: 'userConnected',
+          user: { id: getid },
+        };
+        newSocket.emit('requestData', requestData);
+      });
 
       newSocket.on('gameRequestResponse', (data) => {
         console.log('Received data from server:', data);
@@ -210,8 +210,8 @@ const HomePage: React.FC = () => {
 
     setSocket(newSocket);
 
-  //   return newSocket;
-  //   };
+    return newSocket;
+    };
 
 
     if (getid !== undefined) {

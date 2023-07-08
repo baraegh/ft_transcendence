@@ -364,7 +364,7 @@
     align-items: center;
 }
 
-.Ranking-1, .Ranking-2, .Ranking-3
+.Ranking-1, .Ranking-2
 {
     display: flex;
 
@@ -373,7 +373,7 @@
     margin: 5px;
 }
 
-.Ranking-1-number, .Ranking-2-number, .Ranking-3-number
+.Ranking-1-number, .Ranking-2-number
 {
     display: flex;
     border-right: 1px solid var(--secondary-color);
@@ -390,7 +390,7 @@
     font-size: 20px;
 }
 
-.Ranking-1-img-username, .Ranking-2-img-username, .Ranking-3-img-username
+.Ranking-1-img-username, .Ranking-2-img-username
 {
     display: flex;
     border-right: 1px solid var(--secondary-color);
@@ -411,7 +411,7 @@
     box-shadow: 2px 2px 0px var(--secondary-color);
 }
 
-.Ranking-1-stat, .Ranking-2-stat, .Ranking-3-stat
+.Ranking-1-stat, .Ranking-2-stat
 {
     text-align: center;
     align-items: center;
@@ -419,9 +419,10 @@
     padding: 3px;
 }
 
-.Ranking-2, .Ranking-3
+.Ranking-2
 {
     font-size: 15px;
+    width: 150px;
 }
 
 .Ranking-2 img, .Ranking-3 img
@@ -775,6 +776,7 @@
     display: flex;
     flex-wrap: wrap;
     overflow-y: auto;
+    max-height: 100px;
 }
 
 .chat-group-settings-clear-delete
