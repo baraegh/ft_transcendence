@@ -186,39 +186,39 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
         setIsProfileOpen(false);
     };
 
-    let filtredChannelList: channel[] | null = null;
+    let filteredChannelList: channel[] | null = null;
  
     if (filter === '' || filter === 'All chats')
     {
-        filtredChannelList = channelList?.filter( channel => {
+        filteredChannelList = channelList?.filter( (channel) => {
             if (channel.channelName)
                 return channel.channelName.toLowerCase().includes(searchQuery.toLowerCase());
             else
-                return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
+                return channel.otherUserName.toLowerCase().includes(searchQuery.toLowerCase());
         }) ?? null;
     }
     else if (filter === 'Friends')
     {
-        filtredChannelList = friendList?.filter( channel => {
+        filteredChannelList = friendList?.filter( (channel) => {
             if (channel.channelName)
                 return channel.channelName.toLowerCase().includes(searchQuery.toLowerCase());
             else
-                return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
+                return channel.otherUserName.toLowerCase().includes(searchQuery.toLowerCase());
         }) ?? null;
     }
     else if (filter === 'Groups')
     {
-        filtredChannelList = groupList?.filter( channel => {
+        filteredChannelList = groupList?.filter( (channel) => {
             if (channel.channelName)
                 return channel.channelName.toLowerCase().includes(searchQuery.toLowerCase());
             else
-                return channel.otherUserImage.toLowerCase().includes(searchQuery.toLowerCase());
+                return channel.otherUserName.toLowerCase().includes(searchQuery.toLowerCase());
         }) ?? null;
     }
 
         
-    msgCard = filtredChannelList ?
-            filtredChannelList.map( channel =>
+    msgCard = filteredChannelList ?
+            filteredChannelList.map( (channel) =>
             (
                 <HistoryList    key={channel.channelId}
                                 data={channel}
