@@ -5,24 +5,28 @@ import { Server, Socket } from 'socket.io';
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+type streaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
 @WebSocketGateway()
 export class GameGateway{
   private logger: Logger = new Logger("GameGateway");
-  games = new Map<number, {player1Id: string, player2Id: string, mode: modeType}>();
+  games = new Map<number, {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}>();
   socketId = new Map<number, Socket>();
-  streaming = new Map<number, string>();
+  streaming = new Map<number,streaming>();
   users: number = 0;
   gameId: number = 0;
   @WebSocketServer() server: Server;
   @SubscribeMessage('gameStart')
-  handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType}):void {
-    this.logger.log("helllllllo");
-    this.logger.log(`client connecter1 ${data.player1Id}`);
-    this.logger.log(`client connecter2 ${data.player2Id}`);
-    this.logger.log(`client connecter3 ${client.id}`);
+  handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}):void {
     this.games.set(this.gameId, data);
-    this.server.to(data.player1Id).emit('initGame', data.mode)
-    this.server.to(client.id).emit('initGame', data.mode)
+    this.server.to(data.player1Id).emit('initGame', data.mode);
+    this.server.to(client.id).emit('initGame', data.mode);
+    this.streaming.set(this.gameId,{
+      roomName: ("room_"+this.gameId ),
+      client1Id: data.player1Id,
+      client2Id: data.player2Id,
+      player1Id: data.numplayer1Id,
+      player2Id: data.numplayer2Id
+    })
     this.gameId++;
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
@@ -41,7 +45,7 @@ export class GameGateway{
   }
   getRoom(roomID: number): string{
     if  (this.streaming.get(roomID))
-        return this.streaming.get(roomID);
+        return this.streaming.get(roomID).roomName;
     return undefined; 
   }
   
@@ -129,20 +133,18 @@ export class GameGateway{
     }
   }
 
-  @SubscribeMessage('newStreamRoom')
-  creatingRoom(client: Socket, roomData: {room: string, matchID: number}){
-    this.streaming.set(roomData.matchID, roomData.room);
+  @SubscribeMessage('exploreRooms')
+  creatingRoom(client: Socket){
+    this.server.to(client.id).emit('allRoomsData',this.streaming)
   }
 
   @SubscribeMessage('joinStreamRoom')
   handleJoinRoom(client: Socket, room: string){
     client.join(room);
-    // client.emit('joinedRoom', room);
   }
 
   @SubscribeMessage('leaveStreamRoom')
   handleLeaveRoom(client: Socket, room: string){
     client.leave(room);
-    // client.emit('leftRoom', room);
   }
 }

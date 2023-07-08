@@ -66,6 +66,8 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       player1Id: client.id,
       player2Id: userSocket.id,
       mode: data.mode,
+      numplayer1Id : client.data.userId,
+      numplayer2Id : data.player2Id
     };
     if (userSocket) {
       this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame); 

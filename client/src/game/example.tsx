@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
 import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
-import { Socket } from "socket.io-client/debug";
 import { useNavigate } from "react-router-dom";
 const socket = socketInstance;
 type ballType = {
@@ -239,6 +237,8 @@ const Game = () => {
       let dim = {
         room: message,
         matchID: 0,
+        player1:0,
+        player2:0
       };
       socket.emit("newStreamRoom", dim);
       socket.emit("joinStreamRoom", message);
