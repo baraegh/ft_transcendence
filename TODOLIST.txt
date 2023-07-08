@@ -15,5 +15,3 @@
 => hash of group
 
 => test if the private group is work`
-
-=> fix the search of chat history
