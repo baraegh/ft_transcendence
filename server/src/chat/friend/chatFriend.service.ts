@@ -40,7 +40,17 @@ export class ChatFriendService {
       const deletechat = await this.prisma.messages.deleteMany({
         where: { channelID: dto.channelId },
       });
-      if (!deletechat) throw new NotFoundException('error on delete');
+      const removechannel = await this.prisma.channel.delete({
+        where:{}
+      })
+
+      const clearparticipants = await this.prisma.participants.deleteMany({
+        where: { channelID: dto.channelId },
+      });
+
+      const deletGroup = await this.prisma.channel.delete({
+        where: { id: dto.channelId },
+      });
     }
   }
 

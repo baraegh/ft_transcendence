@@ -118,9 +118,6 @@ export class ChatOwnerService {
     const clearchat = await this.prisma.messages.deleteMany({
       where: { channelID: dto.channelid },
     });
-    if (!clearchat) throw new NotFoundException('error on delete');
-    if (clearchat.count === 0)
-      throw new NotFoundException('Message already cleared');
   }
 
   async deletgroup(userId: number, dto: CHANNELIDDTO) {
