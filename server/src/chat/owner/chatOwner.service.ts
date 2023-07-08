@@ -134,6 +134,7 @@ export class ChatOwnerService {
     if (!findChannel) throw new NotFoundException('channel not found');
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
+      
     }
     const clearchat = await this.prisma.messages.deleteMany({
       where: { channelID: dto.channelid },
@@ -170,13 +171,13 @@ export class ChatOwnerService {
     if (existingUser.length !== dto.members.length) {
       throw new NotFoundException('One or more users not found');
     }
-
+   const allmembers =  dto.members.map((userId) => ({
+      channelID: dto.channelid,
+      userID: userId,
+    }))
     const updateParticipant = await this.prisma.participants.updateMany({
       where: {
-        AND: dto.members.map((userId) => ({
-          channelID: dto.channelid,
-          userID: userId,
-        })),
+        AND: allmembers,
       },
       data: {
         role: dto.role,
