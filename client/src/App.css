@@ -6,7 +6,7 @@
   justify-content: center;
 
   min-width: 78.13em;
-  min-height: 37.5em;
+  /* min-height: 37.5em; */
 }
 
 ::-webkit-scrollbar {

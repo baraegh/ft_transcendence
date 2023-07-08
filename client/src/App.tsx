@@ -11,10 +11,13 @@ import FA from './front-end/tsx/2FA'
 import MyProfileUser from './front-end/tsx/myProfileUser';
 import Play from './front-end/tsx/play'
 import myProfileUser from './front-end/tsx/myProfileUser';
-import AuthPage from './auth/AuthPage'
+import AuthPage from './auth/AuthPage';
+import GamePlay from './front-end/tsx/gamePlay';
 import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import ErrorPage from './front-end/tsx/ErrorPage';
+import InviteFriend from './front-end/tsx/inviteFriend';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -76,6 +79,18 @@ function App() {
         <Route
           path="/profile"
           element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
+        />
+        <Route
+          path="/gamePlay"
+          element={isLoggedIn ? <GamePlay /> : <Navigate to="/loginPage" replace />}
+        />
+        <Route
+          path="/inviteFriend"
+          element={isLoggedIn ? <InviteFriend /> : <Navigate to="/loginPage" replace />}
+        />
+        <Route
+          path="/errorPage"
+          element={<ErrorPage />}
         />
       </Routes>
     </Router>

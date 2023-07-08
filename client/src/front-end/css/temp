@@ -14,14 +14,13 @@
   100% { border-color: black; }
 }
 
+.slide-in-modal {
+  /* Existing styles... */
+  animation: slideIn 10s forwards blink 1s infinite; /* Combine animations into a single property */
+  /* Remaining styles... */
+}
 
 @keyframes slideIn {
-  0% {
-    -webkit-transform: translateX(100%);
-  }
-  100% {
-    -webkit-transform: translateX(0);
-  }
   /* Existing keyframe styles... */
 }
 
@@ -45,7 +44,15 @@
   }
 }
 
-
+@-ms-keyframes slideIn {
+  /* Duplicate slideIn keyframes for ms */
+  0% {
+    -ms-transform: translateX(100%);
+  }
+  100% {
+    -ms-transform: translateX(0);
+  }
+}
 
 .slide-in-modal {
   position: relative;
@@ -54,9 +61,10 @@
   width: 300px;
   height: 112px;
   background-color: #fff;
+  animation: slideIn 1.8s forwards; /* Remove the 'blink' animation and set the duration to 10 seconds */
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.7s forwards; /* Combine animations into a single property */
+  animation: slideIn 10s forwards blink 1s infinite; /* Combine animations into a single property */
   z-index: 9999;
   border: 2px solid black;
   border-radius: 5px;

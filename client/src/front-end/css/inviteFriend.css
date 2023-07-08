@@ -31,29 +31,3 @@
     left: 990px;
     top : 20px;
 }
-
-.IQ a
-{
-    text-decoration: none;
-    color : white;
-    letter-spacing: 3px;
-}
-
- #triangleImg {
-    opacity: 0;
-    margin: 10px;
-    border-radius: 0px !important;
-    width: 43px;
-    height: 43px;
-    transition: opacity 0.1s;
-  }
-  
-  .inviteFriendContainer:hover #triangleImg    {
-    opacity: 1;
-  }
-  
-  .quickGameContainer:hover #triangleImg
-  {
-    opacity: 1;
-    
-  }
