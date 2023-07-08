@@ -2,6 +2,7 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
@@ -27,28 +28,42 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = Array.isArray(client.handshake.query.user)
       ? client.handshake.query.user[0]
       : client.handshake.query.user;
+     
       if(decodeURIComponent(user) != "undefined"  )
       {
+        
         const decodedUser = JSON.parse(decodeURIComponent(user));
-        client.data.userId = decodedUser.id;
-        const token = this.auth.generateToken(client.data.userId);
-        console.log('New client connected:', client.data.userId);
-        client.data.token = token;
-        this.connectedUsers.set( client.data.userId, client);
+        const userSocket = this.getUserSocket( client.data.userId);
+        if(!userSocket){
+          client.data.userId = decodedUser.id;
+          const token = this.auth.generateToken(client.data.userId);
+          console.log('New client connected:', client.data.userId);
+          client.data.token = token;
+          this.connectedUsers.set( client.data.userId, client);
+        }
       }
    
   }
   handleDisconnect(client: Socket) {
-    this.auth.verifyToken(client.data.token, client);
+    // this.auth.verifyToken(client.data.token, client);
+    console.log("client: ",client.data.userId," just left");
     this.connectedUsers.delete(client.data.userId);
   }
 
-  sendGameRequest(userId: number, data:object): void {
-    const userSocket = this.connectedUsers.get(userId);
+  
+  @SubscribeMessage('sendGameRequest')
+  sendGameRequest(userId: number, data: object): void {
+    const userSocket = this.getUserSocket(userId);
     if (userSocket) {
-      userSocket.emit('sendGameRequest', data);
+      userSocket.emit('gameRequestResponse', data);
     }
+    console.log(`User ${userId} sent:`, data);
   }
+  
+  getUserSocket(userId: number): Socket | undefined {
+    return this.connectedUsers.get(userId);
+  }
+
   // Inject the socket.io server instance
   afterInit(server: Server) {
     this.server = server;
