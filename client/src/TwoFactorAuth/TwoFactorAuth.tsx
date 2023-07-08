@@ -3,59 +3,46 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const TwoFactorAuth: React.FC = () => {
-  const check = () => {
-    axios
-      .get("http://localhost:3000/auth/check", { withCredentials: true })
-      .then((response) => {
-        if (response.status === 200) {
-          navigate("/home");
-        }
-      })
-  };
-  
-  
+  const [input, setInput] = useState("");
+
+
+
   const queryParams = new URLSearchParams(window.location.search);
   const imageParam = queryParams.get("image");
   const navigate = useNavigate();
   const [logo, setLogo] = useState(imageParam);
 
   const submitForm = () => {
-    const inputElement = document.getElementById("inputText");
-    if (inputElement instanceof HTMLInputElement) {
-      const inputText = inputElement.value;
-      const data = {
-        secret: inputText,
-      };
-      axios
-        .post("http://localhost:3000/2fa/verified", data, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            axios
-              .post("http://localhost:3000/auth/refresh", null, {
-                withCredentials: true,
-              })
-              .then((response) => {
-                if (response.status === 200) {
-                  navigate("/home");
-                } else {
-                  throw new Error("Request failed");
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-                navigate("/");
-              });
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+    console.log(input);
+    axios
+      .post("http://localhost:3000/2fa/verified", {"secret": input}, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          axios
+            .post("http://localhost:3000/auth/refresh", null, {
+              withCredentials: true,
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                // navigate("/home");
+                location.reload();
+              } else {
+                throw new Error("Request failed");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              navigate("/");
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  check();
   return (
     <div className="container">
       <div
@@ -74,7 +61,7 @@ const TwoFactorAuth: React.FC = () => {
         />
       </div>
       <br />
-      <input type="text" id="inputText" placeholder="Enter your text" />
+      <input type="text" id="inputText" placeholder="Enter your text" value={input} onChange={(e) => setInput(e.target.value)} />
       <br />{" "}
       <button
         onClick={submitForm}

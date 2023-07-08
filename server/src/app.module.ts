@@ -20,6 +20,7 @@ import { _2faModule } from './2fa/2fa.module';
 import { GatwayModule } from './gateway/gateway.module';
 import { AuthLogic } from './gateway/getwayLogic';
 import { OtherProfileModule } from './other_profile/other_profile.module';
+import { GameGateway } from './gateway/game.gateway';
 
 
 @Module({
@@ -36,6 +37,7 @@ import { OtherProfileModule } from './other_profile/other_profile.module';
     _2faModule,
     GatwayModule,
     OtherProfileModule,
+    GameGateway
   ],
   providers: [
     {

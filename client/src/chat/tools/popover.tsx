@@ -1,9 +1,17 @@
-import React from "react";
+import React, {useEffect} from "react";
 import * as Popover from '@radix-ui/react-popover';
 import "./popover.css"
 
 const PopoverComp = (props : {Trigger: JSX.Element, Content: JSX.Element}) => {
     
+    // useEffect(()=>{
+    //     document.addEventListener('scroll', () => {});
+    //     // Specify how to clean up after the effect:
+    //     return () => {
+    //       document.removeEventListener('scroll', () => {});
+    //     };
+    //   })
+
     return (
         <div className="popover-container">
             <Popover.Root>
