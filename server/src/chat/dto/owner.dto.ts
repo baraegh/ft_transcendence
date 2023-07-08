@@ -58,8 +58,8 @@ export class OWNEADDADMINRDTO {
     type: 'PUBLIC'  | 'PRIVATE' | 'PROTECTED';
   
     @ApiProperty({ description: 'Channel id' })
-    @IsNotEmpty()
     @IsString()
+    @IsOptional()
     name: string;
   
     @ApiProperty({ description: 'IsOptional' })
