@@ -112,9 +112,7 @@ function MyHeader(): JSX.Element {
           <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
             <span>Chat</span>
           </a>
-          <a onClick={() =>  navigate('/play')} id="Cbutton" href="#">
-            <span>Play</span>
-          </a>
+
         </div>
           <div className="bell">
             <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>

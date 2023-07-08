@@ -13,7 +13,7 @@ const AuthPage = () => {
       .get("http://localhost:3000/auth/check", { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
-          navigate("/home");
+          navigate("/");
         }
       })
   };
