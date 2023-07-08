@@ -1,6 +1,8 @@
 import  { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-
+const socket = io('http://localhost:3000/');
+type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
+type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 const Game = () => {
   const canvasRef = useRef(null);
   const animationFrameIdRef : number = 0;
@@ -31,26 +33,34 @@ const Game = () => {
     // canvas.style.borderRadius = '25px';
     // canvas.style.position = 'relative';
     // canvas.style.top = window.innerHeight / 120 + 'px';
-    var ratio = window.devicePixelRatio || 1;
+    let ratio = window.devicePixelRatio || 1;
     canvas.width = canvas.offsetWidth * ratio;
     canvas.height = canvas.width * 0.5;
-    var player1 = {
+    type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+    let modeControl : modeType =  {pColor: 'WHITE',
+                bColor: 'GRAY',
+                fColor:'BLACK',
+                bMode:''};
+    socket.on('initGame', (eMode: modeType) => {
+        modeControl = eMode;
+    });
+    let player1: playerType = {
         x: 0,
         y: canvas.height / 2 - (canvas.height/4)/2,
         width: canvas.width/70,
         height: canvas.height/4,
-        color: "WHITE",
+        color: modeControl.pColor,
         score: 0
     };
-    var player2 = {
+    let player2: playerType = {
         x: canvas.width - canvas.width/70,
         y: canvas.height / 2 - (canvas.height/4)/2,
         width: canvas.width/70,
         height: canvas.height/4,
-        color: "WHITE",
+        color: modeControl.pColor,
     score: 0
     };
-    var net = {
+    let net = {
         x: canvas.width / 2,
         y: 10,
         width: 2,
@@ -58,14 +68,14 @@ const Game = () => {
         color: "WHITE",
         score: 0
     };
-    var ball = {
+    let ball: ballType = {
         x: canvas.width / 2 - (canvas.width/380),
         y: canvas.height / 2,
         radius: canvas.width/60,
         speed: 15,
         velocityX: 5,
         velocityY: 5,
-        color: "GRAY"
+        color: modeControl.bColor
     };
     let dy:number = 0;
 
@@ -92,10 +102,14 @@ const Game = () => {
 
     function drawCircle(x:number, y:number, r:number, color:string) :void{
         context.fillStyle = color;
-        context.beginPath();
-        context.arc(x, y, r, 0, Math.PI*2, false);
-        context.closePath();
-        context.fill();
+        if(modeControl.bMode == '1')
+            context.fillRect(x - r, y - r, r * 2, r * 2);
+        else{
+            context.beginPath();
+            context.arc(x, y, r, 0, Math.PI*2, false);
+            context.fill();
+            context.closePath();
+        }
     }
     function drawText(text : any, x: number, y: number, color:string) :void{
         context.fillStyle = color;
@@ -110,7 +124,7 @@ const Game = () => {
     }
 
     function render() : void{
-        drawRect(0, 0, canvas.width, canvas.height, "BLACK");
+        drawRect(0, 0, canvas.width, canvas.height, modeControl.fColor);
         drawRect(player1.x, player1.y, player1.width, player1.height, player1.color);
         drawRect(player2.x, player2.y, player2.width, player2.height, player2.color);
         drawText(player1.score, canvas.width/4, canvas.height/5, "WHITE");
@@ -133,7 +147,6 @@ const Game = () => {
         else if (player2.y < 0)
             player2.y = 0;
     }
-    const socket = io('http://localhost:3000/');
     type dataForm = {y: number};
     function game() {
         let data: dataForm = {
@@ -154,8 +167,10 @@ const Game = () => {
     socket.on('ServerToClient', (data: dataForm) => {
         player2.y = data.y;
     });
-    socket.on('ballMove', (message) => {
+    socket.on('ballMove', (message: {ball: ballType, player1: playerType, player2: playerType, dim:{W:number, H: number}}) => {
         ball = message.ball;
+        player1.score = message.player1.score;
+        player2.score = message.player2.score;
     });
     socket.on('thisIsStream', (message) => {
         document.onkeydown = (event: KeyboardEvent) => {
