@@ -10,6 +10,7 @@ import Axios from 'axios';
 import { chatInfoType, membersDataType } from '../chat';
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
+
 import { userMe } from '../../App';
 
 type UserProps =

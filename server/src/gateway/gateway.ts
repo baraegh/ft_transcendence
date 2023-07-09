@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 type modeType = {
   pColor: string;
@@ -21,7 +22,7 @@ type modeType = {
   },
 })
 export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private readonly auth: AuthLogic) {}
+  constructor(private readonly auth: AuthLogic,private prisma:PrismaService) {}
   private server: Server;
 
 
@@ -126,6 +127,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.rooms.delete(room);
     }
   }
+
 
   afterInit(server: Server) {
     this.server = server;

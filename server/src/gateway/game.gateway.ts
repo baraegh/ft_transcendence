@@ -38,6 +38,7 @@ export class GameGateway implements OnGatewayDisconnect{
     data.numplayer1Id
     data.numplayer2Id
     await this.creatGame( data.numplayer1Id,idp2);
+    this.logger.log("hello this is a new game");
     this.gameId++;
 
 
@@ -56,6 +57,8 @@ export class GameGateway implements OnGatewayDisconnect{
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
     for (let i: number = 0; i < this.games.size;i++){
+      // if (!this.games.get(i))
+      //   return undefined
       if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
         return this.games.get(i);
     }
@@ -63,6 +66,8 @@ export class GameGateway implements OnGatewayDisconnect{
   }
   getMatchID(client: Socket): number{
     for (let i: number = 0; i < this.games.size;i++){
+      // if (!this.games.get(i))
+      //   return undefined;
       if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
         return i;
     }
@@ -168,7 +173,7 @@ export class GameGateway implements OnGatewayDisconnect{
 
   @SubscribeMessage('exploreRooms')
   creatingRoom(client: Socket){
-    this.server.to(client.id).emit('allRoomsData',this.streaming)
+    this.server.to(client.id).emit('allRoomsData', this.streaming)
   }
 
   @SubscribeMessage('joinStreamRoom')

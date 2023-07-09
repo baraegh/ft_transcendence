@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
 import { socketInstance } from "../socket/socket";
+import { io } from "socket.io-client";
+import { socket } from "../App";
+import { Socket } from "socket.io-client/debug";
 import { useNavigate } from "react-router-dom";
 
-const socket = socketInstance;
 function init_check(): boolean | undefined
 {
   if (!socket){
@@ -31,13 +33,13 @@ type playerType = {
 };
 const Game = () => {
 
-`  // if(!init_check())
+  // if(!init_check())
   // {
   //   console.log("log");
   //   return (<div>
 
   //   </div>);
-  // }`
+  // }
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;
@@ -83,9 +85,10 @@ const Game = () => {
       fColor: "BLACK",
       bMode: "",
     };
+    // console.log(">>>>" + socket)
     socket?.on("initGame", (eMode: modeType) => {
       if (eMode) modeControl = eMode;
-      navigate("/home");
+      // navigate("/home");
       console.log("hellllllllllo");
     });
     let player1: playerType = {
@@ -259,10 +262,13 @@ const Game = () => {
         player1:0,
         player2:0
       };
-      socket.emit("newStreamRoom", dim);
-      socket.emit("joinStreamRoom", message);
+      socket?.emit("newStreamRoom", dim);
+      socket?.emit("joinStreamRoom", message);
     });
     socket?.on("streaming", (message) => {
+      document.onkeydown = (event: KeyboardEvent) => {
+        event.preventDefault();
+      };
       ball = message.ball;
       player1 = message.player1;
       player2 = message.player2;
