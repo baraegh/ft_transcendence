@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
@@ -7,7 +7,7 @@ type playerType={x: number, y: number, width: number, height: number, color: str
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 type streaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
 @WebSocketGateway()
-export class GameGateway{
+export class GameGateway implements OnGatewayDisconnect{
   private logger: Logger = new Logger("GameGateway");
   games = new Map<number, {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}>();
   socketId = new Map<number, Socket>();
@@ -28,6 +28,15 @@ export class GameGateway{
       player2Id: data.numplayer2Id
     })
     this.gameId++;
+  }
+  handleDisconnect(client: Socket){
+    if (this.games.get(this.getMatchID(client)).player1Id == client.id){
+      this.server.to(this.games.get(this.getMatchID(client)).player2Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player1Id);
+    }
+    else if  (this.games.get(this.getMatchID(client)).player2Id == client.id){
+      this.server.to(this.games.get(this.getMatchID(client)).player1Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player2Id);
+    }
+    this.games.delete(this.getMatchID(client))
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
     for (let i: number = 0; i < this.games.size;i++){
@@ -122,6 +131,13 @@ export class GameGateway{
     let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
     if (clientOb){
       message.ball = ballMovement(message.ball, message.player1, message.player2, message.dim);
+      if (message.player1.score == 5 || message.player2.score == 5){
+        this.server.to(clientOb.player1Id).emit('GameEnd', message);
+        this.server.to(clientOb.player2Id).emit('GameEnd', message);
+        this.games.delete(this.getMatchID(client));
+        this.streaming.delete(this.getMatchID(client));
+        this.gameId--;
+      }
       if (client.id == clientOb.player1Id){
         this.server.to(clientOb.player1Id).emit('ballMove', message);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('streaming', message);

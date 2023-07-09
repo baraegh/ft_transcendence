@@ -119,7 +119,8 @@ const Game = () => {
         }
       };
     }
-
+    if(modeControl.bMode == "2")
+      ball.radius = (ball.radius * 2)/3;
     function drawRect(
       x: number,
       y: number,

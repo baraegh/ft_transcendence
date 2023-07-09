@@ -24,7 +24,7 @@ const Notification = () => {
       image: string;
     } = {
       player2Id: 90498,
-      mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
+      mode: { pColor:"GRAY", bColor:  "BLACK", fColor: "WHITE", bMode: "" },
       name: "von",
       image: "image",
     };
