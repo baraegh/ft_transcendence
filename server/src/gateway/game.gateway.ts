@@ -4,22 +4,28 @@ import { Server, Socket } from 'socket.io';
 
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
+type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 @WebSocketGateway()
 export class GameGateway{
   private logger: Logger = new Logger("GameGateway");
-  games = new Map<number, {player1Id: string, player2Id: string, mode: string}>();
+  games = new Map<number, {player1Id: string, player2Id: string, mode: modeType}>();
   socketId = new Map<number, Socket>();
   streaming = new Map<number, string>();
   users: number = 0;
   gameId: number = 0;
   @WebSocketServer() server: Server;
   @SubscribeMessage('gameStart')
-  handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: string}):void {
-    this.logger.log(`client connecter ${client.id}`);
+  handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType}):void {
+    this.logger.log("helllllllo");
+    this.logger.log(`client connecter1 ${data.player1Id}`);
+    this.logger.log(`client connecter2 ${data.player2Id}`);
+    this.logger.log(`client connecter3 ${client.id}`);
     this.games.set(this.gameId, data);
+    this.server.to(data.player1Id).emit('initGame', data.mode)
+    this.server.to(client.id).emit('initGame', data.mode)
     this.gameId++;
   }
-  getClientId(client: Socket): {player1Id: string, player2Id: string, mode: string}{
+  getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
     for (let i: number = 0; i < this.games.size;i++){
       if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
         return this.games.get(i);
@@ -36,12 +42,12 @@ export class GameGateway{
   getRoom(roomID: number): string{
     if  (this.streaming.get(roomID))
         return this.streaming.get(roomID);
-    return undefined;
+    return undefined; 
   }
   
   @SubscribeMessage('ServerToClient')
   handleMessage( @ConnectedSocket() client: Socket, @MessageBody() message: {y: number, bVX: number, bVY: number}): void {
-    let clientOb : {player1Id:string, player2Id: string,mode: string } = this.getClientId(client)
+    let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
     if (clientOb){
       if (client.id == clientOb.player1Id){
         this.server.to(clientOb.player2Id).emit('ServerToClient', message);
@@ -109,7 +115,7 @@ export class GameGateway{
         }
       return ball;
     }
-    let clientOb : {player1Id:string, player2Id: string,mode: string } = this.getClientId(client)
+    let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
     if (clientOb){
       message.ball = ballMovement(message.ball, message.player1, message.player2, message.dim);
       if (client.id == clientOb.player1Id){

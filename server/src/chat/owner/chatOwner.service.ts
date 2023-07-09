@@ -118,9 +118,6 @@ export class ChatOwnerService {
     const clearchat = await this.prisma.messages.deleteMany({
       where: { channelID: dto.channelid },
     });
-    if (!clearchat) throw new NotFoundException('error on delete');
-    if (clearchat.count === 0)
-      throw new NotFoundException('Message already cleared');
   }
 
   async deletgroup(userId: number, dto: CHANNELIDDTO) {
@@ -177,7 +174,7 @@ export class ChatOwnerService {
     }))
     const updateParticipant = await this.prisma.participants.updateMany({
       where: {
-        AND: allmembers,
+        OR: allmembers,
       },
       data: {
         role: dto.role,
@@ -259,24 +256,34 @@ export class ChatOwnerService {
         dto.hash = null;
         break;
       case 'PROTECTED':
-        if (!dto.hash) {
-          throw new ForbiddenException('enter password');
-        } else dto.hash = await argon.hash(dto.hash);
-        break;
+        if (dto.hash) {
+          dto.hash = await argon.hash(dto.hash);
+        }  
+          break;
       case 'PUBLIC':
         dto.hash = null;
         break;
       default:
         throw new ForbiddenException('Acces Denied');
     }
+
+    const updateChannelData: any = {
+      type: dto.type,
+    };
+    
+    if (dto.image !== null) {
+      updateChannelData.image = dto.image;
+    }
+    if (dto.hash !== null) {
+      updateChannelData.hash = dto.hash;
+    }
+    if (dto.name !== null) {
+      updateChannelData.hash = dto.name;
+    }
+    
     const updatechannel = await this.prisma.channel.update({
       where: { id: dto.channelid },
-      data: {
-        type: dto.type,
-        image: dto.image,
-        hash: dto.hash,
-        name: dto.name,
-      },
+      data: updateChannelData,
       select: {
         id: true,
         ownerId: true,
@@ -286,6 +293,7 @@ export class ChatOwnerService {
         updatedAt: true,
       },
     });
+
     return updatechannel;
   }
 }

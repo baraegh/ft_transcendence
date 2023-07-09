@@ -1,0 +1,322 @@
+/* Header Styles */
+.header {
+   width: 1142px;
+   height: 59px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 5%;
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 8px 0px 2px rgba(0, 0, 0, 1);
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 1px;
+  }
+  
+.discoverTeam
+{
+  display: flex;
+  justify-content: center;
+  padding-right: 60px;
+}
+
+.discover-team-h2 {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.play-button {
+  width: 70px;
+  font-size: 30px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.discover-this-amazing-team {
+  display: flex;
+  margin: auto;
+  height: 750px;
+  width: 1142px;
+  border: 2px solid black;
+  border-radius: 20px;
+  background-color: rgb(6, 6, 6);
+  box-shadow: 6px 6px 0px 2px rgb(172, 169, 169);
+  flex-direction: column;
+  font-size: 130px;
+}
+
+.discover-this-amazing-team p
+{
+  position: relative;
+  left : 100px;
+  color : white;
+  display : flex;
+  margin-bottom: -60px;
+
+}
+  
+.ping-pong-reboot {
+  margin: auto;
+  width: 1142px;
+  height: 430px;
+  border: 2px solid black;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px 2px black;
+}
+
+.ping-ping-reboot-h1 {
+  margin-left: 50px;
+  margin-top: 31px;
+}
+
+.ping-pong-reboot-text {
+  font-size: 24px;
+  width: 680px;
+
+
+  margin-left: 50px;
+  display: inline-block;
+  padding-bottom: 10px;
+}
+  
+.ping-pong-photo {
+  position: relative;
+  background-color: green;
+  height: 100px;
+  width: 100px;
+  display: inline-block;
+  margin-left: 20px;
+  bottom: 150px;
+  /* left: 10%; */
+}
+
+.discover-this-amazing-team-title {
+  font-size: 120px;
+  margin-top: 1%;
+  color: white;
+  margin-left: 7%;
+  line-height: 0.98;
+}
+  
+.meet-the-team
+{
+  margin: auto;
+  width: 1142px;
+
+  height: 460px;
+  border: 2px solid black;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px 2px black;
+}
+  
+  .meet-the-team-h1 {
+    position: relative;
+    text-align: center;
+    font-size: 100px;
+    bottom: 20px;
+  }
+  
+  .meet-the-team-h3 {
+    text-align: center;
+    font-size: 40px;
+    position: relative;
+    bottom: 15%;
+  }
+  
+  .meet-the-team-line {
+    position: relative;
+    border-bottom: 5px solid;
+    background-color: black;
+    bottom: 12%;
+  }
+  
+
+
+.dsFooter {
+  position: relative;
+  bottom: 30px;
+  flex-direction: column;
+  display: flex;
+  margin: auto;
+  width: 1142px;
+
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  border: 2px solid black;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0px 2px black;
+}
+  
+  .footer-h2 {
+    position: relative;
+    text-align: center;
+  }
+  
+  .footer-text {
+    position: relative;
+    top: -10px;
+    right: 0.17%;
+    line-height: 1;
+    font-family: 'Mplus 1p';
+  }
+  
+
+.button_animation a{
+  display: block;
+  width: 104px;
+  height: 45px;
+  line-height: 40px;
+  font-size: 25px;
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #333;
+  border: 2px solid #333;
+  letter-spacing: 2px;
+  text-align: center;
+  position: relative;
+  transition: all .35s;
+  border-radius: 9px;
+}
+
+.button_animation a span{
+  position: relative;
+  z-index: 2;
+}
+
+.button_animation  a:after{
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: black;
+  transition: all .20s;
+}
+
+.button_animation a:hover{
+  color: #fff;
+}
+
+.button_animation a:hover:after{
+  width: 100%;
+}
+
+.discoverTeam h2
+{
+  position: relative;
+  display: inline-block;
+  text-decoration: none; 
+}
+.discoverTeam h2:before {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #000; /* Change the color as desired */
+  transform: scaleX(0);
+  /* transition: transform 0.1s ease-in-out; */
+  transition: opacity .2s, visibility .2s;
+
+}
+
+.discoverTeam h2:hover:before {
+  transform: scaleX(1);
+}
+
+
+
+
+.meet-the-team-images {
+  position: relative;
+  bottom: 13%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+  padding: 20px;
+}
+
+.meet-the-team-image img {
+  border-radius: 20px;
+  width: 249px;
+  height: 249px;
+  cursor: pointer;
+}
+.meet-the-team-image {
+  margin: 10px;
+  width: 250px;
+  height: 250px;
+  position: relative;
+  border: 1px solid black;
+  box-shadow: 6px 6px 0px 2px black;
+  border-radius: 25px;
+  transform: translateZ(0); /* Add this line */
+
+}
+
+
+.overlay {
+  position: absolute;
+  transition: all 0.3s ease;
+  opacity: 0;
+  background-color: rgba(239, 239, 240, 0); /* Set transparent background */
+}
+
+.meet-the-team-image:hover .overlay {
+  opacity: 1;
+}
+
+.overlayBottom {
+  border-radius: 20px;
+  width: 250px;
+  height: 0;
+  bottom: 0;
+  right: 0px;
+  background-color: rgba(239, 239, 240, 1); /* Solid color for non-hover state */
+}
+
+.meet-the-team-image:hover .overlayBottom {
+  height: 250px;
+}
+
+.ping-pong-reboot .button_animation
+{
+  position: relative;
+  top: 10px;
+  width : 100px;
+}
+
+#header_text
+{
+  position: relative;
+  text-align: center;
+  top : 20px;
+  font-size: 26px;
+}
+
+#paragraphImg
+{
+  display: flex;
+  position: relative;
+  text-align: center;
+  top: 30px;
+  
+}
+
+#gif
+{
+    position: relative;
+    left : 440px;
+    bottom : 660px;
+    width: 700px;
+    height: 700px;
+}
+
