@@ -4,8 +4,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { Button, Modal } from 'react-bootstrap';
 import Notification from './notification'
+import "../css/home.css";
+import Game from "../../game/example";
+import  {socketInstance, initializeSocket, getSocket } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
 
 interface User {
   id: number;
@@ -18,8 +20,84 @@ interface User {
 
 
 function MyHeader(): JSX.Element {
-  const [userData, setUserData] = useState<User | null>(null);
+  type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+
   const navigate = useNavigate();
+  const [logo, setLogo] = useState<string>(
+    " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
+  );
+  const socket = socketInstance;
+  const [getid, setid] = useState<number | null>(null);
+  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+
+
+
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/user/me", {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setLogo(response.data.image);
+          setLogin("Welcome " + response.data.username);
+          setid(response.data.id);
+        } else {
+          throw new Error("Request failed");
+        }
+      } catch (error) {
+        console.log(error);
+        navigate("/");
+      }
+    };
+
+    fetchdata();
+  }, []);
+
+
+  useEffect(() => {
+    if (getid !== null) {
+      console.log(getid);
+      initializeSocket(getid);
+    }
+    let socket:any;
+    if(getid !== null) 
+    {
+       socket = getSocket();
+
+    }
+
+    if (socket) {
+      socket.on("connect", () => {
+        const requestData = {
+          event: "userConnected",
+          user: { id: getid },
+        };
+        socket.emit("requestData", requestData);
+      });
+      // socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType}) =>{
+      //   console.log("gameRequestResponse"+data);
+      //   // setShowNotification(true);
+      //   // t_data = data;
+      //   // socket.emit('gameStart', data);
+      // });
+      socket.on("FriendRequestResponse", (data) => {
+        console.log("Received data from server:", data);
+        // Perform actions with the received data
+      });
+
+      socket.on("chatToClient", (msg) => {
+        console.log(msg);
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [getid]);
+  const [userData, setUserData] = useState<User | null>(null);
   const [bellDropdownOpen, setBellDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 

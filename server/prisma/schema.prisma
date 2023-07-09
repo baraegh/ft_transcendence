@@ -71,24 +71,22 @@ model Friendship {
 }
 
 // Participants model
-const allmembers = dto.members.map((userId) => ({
-  channelID: dto.channelid,
-  userID: userId,
-}));
+model Participants {
+  channelID  String
+  userID     Int
+  channel    Channel   @relation(fields: [channelID], references: [id])
+  user       User      @relation(fields: [userID], references: [id])
+  role       Role      @default(USER)
+  blocked    Boolean   @default(false)
+  mut        Mut       @default(NAN)
+  blocked_at DateTime?
 
-console.log(allmembers, dto.role);
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-const updateParticipant = await this.prisma.participants.updateMany({
-  where: {
-    OR: allmembers.map((member) => ({
-      channelID: member.channelID,
-      userID: member.userID,
-    })),
-  },
-  data: {
-    role: dto.role,
-  },
-});
+  @@id([channelID, userID])
+  @@map("participants")
+}
 
 enum Role {
   ADMIN

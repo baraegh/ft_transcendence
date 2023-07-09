@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 type modeType = {
   pColor: string;
@@ -21,7 +22,7 @@ type modeType = {
   },
 })
 export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private readonly auth: AuthLogic) {}
+  constructor(private readonly auth: AuthLogic,private prisma:PrismaService) {}
   private server: Server;
 
 
@@ -61,15 +62,18 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   sendGameRequest(client:Socket,  data: {player2Id: number, mode: modeType ,name: string;image: string}) {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.player2Id);
-
-    const dataTogame = {
-      player1Id: client.id,
-      player2Id: userSocket.id,
-      mode: data.mode,
-    };
-    if (userSocket) {
-      this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame); 
-      console.log(`User ${client.data.userId} sent:`, dataTogame);
+    console.log("sendGameRequest");
+    if( userSocket)
+    {
+      const dataTogame = {
+        player1Id: client.id,
+        player2Id: userSocket.id,
+        mode: data.mode,
+      };
+      if (userSocket) {
+        this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame); 
+        console.log(`User ${client.data.userId} sent:`, dataTogame);
+      }
     }
   }
   
@@ -124,6 +128,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.rooms.delete(room);
     }
   }
+
 
   afterInit(server: Server) {
     this.server = server;

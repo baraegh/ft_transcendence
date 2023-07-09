@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import "../css/notification.css"; // CSS file for styling the notification
 import me from "../img/rimney.jpeg";
-import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { socketInstance } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
 const Notification = () => {
+  type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+  var t_data : {player1Id: string, player2Id: string, mode: modeType} = {
+    player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""}
+  };
   const [showNotification, setShowNotification] = useState(false);
+  const [data, setData]  = useState({
+    player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""}
+  });
   const socket = socketInstance;
   const challenge = () => {
     console.log("challenge");
-    // const requestData = {
-    //   challengerId: 99030, // User ID of barae
-    //   login: "mohammed",
-    // };
     type modeType = {
       pColor: string;
       bColor: string;
@@ -23,24 +26,26 @@ const Notification = () => {
       name: string;
       image: string;
     } = {
-      player2Id: 90498,
+      player2Id: 99053,
       mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
       name: "von",
       image: "image",
     };
     if (socket) {
-      // let data = {
-      //   userId: 99030, //barae
-      //   cData: requestData,
-      // };
       console.log("send from:" + socket);
       socket.emit("sendGameRequest", dataToSend);
     }
   };
 
+  socket?.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType}) =>{
+    console.log("gameRequestResponse"+data);
+    setShowNotification(true);
+    setData(data);
+  });
+
   useEffect(() => {
+    
     if (showNotification) {
-      challenge();
       const timer = setTimeout(() => {
         setShowNotification(false);
       }, 10000);
@@ -67,12 +72,12 @@ const Notification = () => {
             <img id="profileImgNotif" src={me} alt="" />
           </div>
           <div className='notifButons'>
-          <a onClick={() => {console.log("Accept Button")}}>Accept</a>
+          <a onClick={() => {socket?.emit('gameStart', data);console.log("accept")}}>Accept</a>
           <a onClick={() => {console.log("Reject Button")}}>Reject</a>
         </div>
         </div>
       )}
-      <button onClick={() => setShowNotification(true)}>
+      <button onClick={() => challenge()}>
         Show Notification
       </button>
     </>
