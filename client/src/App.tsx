@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 import React, { useContext, useEffect, useState, } from 'react';
 import Chat from './chat/chat';
 import LoginPage from "./front-end/tsx/loginPage";
-import DSTeam from '../src/front-end/tsx/discoverTeam'
-import Home from './front-end/tsx/home'
-import LeaderBoard from './front-end/tsx/leaderBoard';
+import DSTeam from "../src/front-end/tsx/discoverTeam";
+import Home from "./front-end/tsx/home";
+import LeaderBoard from "./front-end/tsx/leaderBoard";
 import MyHeader from "./front-end/tsx/header";
 import 'bootstrap/dist/css/bootstrap.css';
 import FA from './front-end/tsx/2FA';
