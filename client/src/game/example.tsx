@@ -31,13 +31,13 @@ type playerType = {
 };
 const Game = () => {
 
-  // if(!init_check())
+`  // if(!init_check())
   // {
   //   console.log("log");
   //   return (<div>
 
   //   </div>);
-  // }
+  // }`
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;
