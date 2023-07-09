@@ -6,3 +6,11 @@
 => hash of group
 
 => test if the private group is work`
+
+=> unblock
+
+=> in the group area if a click on 'message' it doesn't set with who I message
+
+=> private key appears in the {value} of the input
+
+=> mute member
