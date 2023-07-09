@@ -1,14 +1,5 @@
 
 
-
-=>  the 'clear chat' button return '404 not found' when the chat is already clear.
-
-=>  the 'delete chat' of personnel chat doesn't remove the channel from the database
-
-=> if I edit a group -> no parameter should be mandatory
-
-
-
 ----------------------- ME ------------------------
 => handle: if the group privacy is 'public' the 'hash' should be ''
 
