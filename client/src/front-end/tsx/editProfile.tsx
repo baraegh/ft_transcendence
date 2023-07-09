@@ -26,12 +26,12 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
           <div className='editModalPic'>
             <p id='editModalPicTitle'>Choose Profile Picture</p>
             <input id="editModalPicInput" type="text" />
-            <Button id="editModalBrowse"> </Button>
+            <Button id="editModalBrowse">Browse</Button>
           </div>
           
         </div>
         <div className='editModalFooter'>
-          <Button></Button>
+          <Button></Button>      
           <Button></Button>
         </div>
         {/* Add your custom content here */}

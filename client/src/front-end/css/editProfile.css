@@ -2,11 +2,11 @@
 .editModal .modal-content
 {
     width: 500px;
-    height: 330px;
+    height: 300px;
     /* background-color:; */
     border: 2px black solid;
     box-shadow: 3px 2px 0px 0px rgba(0,0,0,1);
-    background-color: azure;
+    background-color: white;
 
 }
 
@@ -27,7 +27,7 @@
     justify-content: space-between;
     /* background-color: green; */
     width : 470px; 
-    height: 50px;
+    height: 40px;
 }
 
 #editModalTitle
@@ -81,25 +81,29 @@
 
 #editModalNameInput
 {
+    border : 0.5px solid black;
     position: relative;
-    left: 9px;
-    bottom : 10px;
+    top : 2px;
+    left : 8px;
     border-radius: 4px;
-    width: 450px;
+    width: 400px;
 }
 
 #editModalPicTitle
 {
     position: relative;
     left : 9px;
+
     letter-spacing: 5px;
 }
 
 #editModalPicInput
 {
+    border : 0.5px solid black;
+
     position: relative;
     left: 9px;
-    bottom : 10px;
+    /* bottom : 10px; */
     border-radius: 4px;
     width: 350px;
     
@@ -107,24 +111,36 @@
 
 #editModalBrowse
 {
+    /* display: flex; */
+    color: black;
+    font-size: 20px;
+    text-align: center;
+    align-items: center;
+    background-color: white;
+    border : 1px solid black;
     position: relative;
-    bottom: 10px;
-    width: 90px;
-    height: 35px;
-    position:relative;
+    width: 88px;
+    bottom : 2px;
+    height: 34px;
     left: 30px;
+    box-shadow: 3px 2px 0px 1px rgba(0,0,0,1);
+    transition: 0.3s;
+}
+
+#editModalBrowse:hover
+{
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+
 }
 
 .editModalFooter
 {
-
+    
     display: flex;
     justify-content: space-between;
-    padding: 10px;
 }
 .editModalFooter button
 {
-    
     position: relative;
     /* top : 10px; */
     width: 90px;

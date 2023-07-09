@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import './play.css'
-import tvGif from './giphy.gif'
-import Header from './header'
+import '../css/play.css'
+import tvGif from '../img/giphy.gif'
+import Header from '../tsx/header'
 
-function Home() : JSX.Element
+function Play() : JSX.Element
 {
     return (<div>
         <Header/>        
@@ -20,4 +20,4 @@ function Home() : JSX.Element
     </div>)
 }
 
-export default Home;
+export default Play;

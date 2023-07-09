@@ -136,6 +136,8 @@ export class FetchChatService {
         updatedAt: channel.updatedAt,
         channelName: channel?.name,
         channelImage: channel?.image,
+        blocked:channel.blocked,
+        hasblocked:channel.hasblocked,
         lastMessage: lastMessage
           ? {
               messageId: lastMessage.id,
@@ -195,6 +197,8 @@ export class FetchChatService {
         otherUserId: otherUser?.id,
         otherUserName: otherUser?.username,
         otherUserImage: otherUser?.image,
+        blocked:channel.blocked,
+        hasblocked:channel.hasblocked,
         lastMessage: lastMessage
           ? {
               messageId: lastMessage.id,
@@ -317,6 +321,8 @@ export class FetchChatService {
         otherUserId: otherUser.id,
         otherUserName: otherUser.username,
         otherUserImage: otherUser.image,
+        blocked:channel.blocked,
+        hasblocked:channel.hasblocked,
         lastMessage: lastMessage
           ? {
               messageId: lastMessage.id,
