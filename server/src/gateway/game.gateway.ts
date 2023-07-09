@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
