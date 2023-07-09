@@ -64,7 +64,6 @@ function MyHeader(): JSX.Element {
     if(getid !== null) 
     {
        socket = getSocket();
-
     }
 
     if (socket) {

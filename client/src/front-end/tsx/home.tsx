@@ -7,6 +7,24 @@ import axios from "axios";
 import  {socketInstance, initializeSocket, getSocket } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
 function Home(): JSX.Element {
   const socket = socketInstance;
+
+  // if(socket )
+  // {
+  //   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+  //   socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
+      
+  //     socket.emit('gameStart', data);
+  //   });
+
+  //   socket.on("FriendRequestResponse", (data: any) => {
+  //     console.log("Received data from server:", data);
+  //     // Perform actions with the received data
+  //   });
+
+  //   socket.on("chatToClient", (msg: any) => {
+  //     console.log(msg);
+  //   });
+  // }
   const leaveroom = () =>{
 
     if (socket) {
@@ -22,16 +40,24 @@ function Home(): JSX.Element {
       }
     }
     const joiroom = () =>{
+      console.log(socket);
       if (socket) {
         socket.emit('joinRoom', "1");
         console.log("join");
       }
     }
+    const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
+
+    useEffect(() => {
+      // Simulating a delay for the header to load
+      setTimeout(() => {
+        setIsHeaderLoaded(true);
+      }, 2000); // Adjust the delay time as needed
+    }, [])
   return (
     <div>
-      <MyHeader />
-      
-      <Game />
+        {isHeaderLoaded ? <MyHeader /> : null}
+        {isHeaderLoaded ? <Game /> : null}
       <div className="P_W">
         <a id="Play" href="#">
           <span>Play</span>

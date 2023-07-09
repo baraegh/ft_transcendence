@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Chat from './chat/chat';
 import LoginPage from "./front-end/tsx/loginPage";
 import DSTeam from "../src/front-end/tsx/discoverTeam";
@@ -10,18 +10,38 @@ import 'bootstrap/dist/css/bootstrap.css'
 import FA from './front-end/tsx/2FA'
 import MyProfileUser from './front-end/tsx/myProfileUser';
 import Play from './front-end/tsx/play'
-import myProfileUser from './front-end/tsx/myProfileUser';
 import AuthPage from './auth/AuthPage'
 import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import io, { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
 
+//  let socket: Socket | null; 
+//  export let socket: Socket | null = null;
+const [socket, setSocket] = useState(null);
 function App() {
+
+  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  const [getid, setid] = useState<number>();
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     // Check if the user is logged in based on the value in local storage
     const storedLoggedIn = localStorage.getItem('isLoggedIn');
     return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
   });
+  // useEffect(() => {
+  //   const newSocket = io(`http://${window.location.hostname}:3000`);
+  //   setSocket(newSocket);
+  //   return () => newSocket.close();
+  // }, [setSocket]);
+  useEffect(() => {
+    // Initialize the socket when the component mounts
+    const newSocket = io(`http://${window.location.hostname}:3000`);
+    setSocket(newSocket); 
+    return () => {
+      newSocket.close();
+    };
+  }, [setSocket]);
 
   useEffect(() => {
     const checkLoggedInStatus = async () => {
@@ -44,7 +64,7 @@ function App() {
     // Update local storage whenever the isLoggedIn state changes
     localStorage.setItem('isLoggedIn', isLoggedIn);
   }, [isLoggedIn]);
-
+  
   return (
     <Router>
       <Routes>
@@ -82,4 +102,5 @@ function App() {
   );
 }
 
+export { socket };
 export default App;

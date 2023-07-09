@@ -62,18 +62,17 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   sendGameRequest(client:Socket,  data: {player2Id: number, mode: modeType ,name: string;image: string}) {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.player2Id);
-    console.log("sendGameRequest");
-    if( userSocket)
-    {
-      const dataTogame = {
-        player1Id: client.id,
-        player2Id: userSocket.id,
-        mode: data.mode,
-      };
-      if (userSocket) {
-        this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame); 
-        console.log(`User ${client.data.userId} sent:`, dataTogame);
-      }
+
+    const dataTogame = {
+      player1Id: client.id,
+      player2Id: userSocket.id,
+      mode: data.mode,
+      numplayer1Id : client.data.userId,
+      numplayer2Id : data.player2Id
+    };
+    if (userSocket) {
+      this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame); 
+      console.log(`User ${client.data.userId} sent:`, dataTogame);
     }
   }
   

@@ -1,32 +1,63 @@
-import { Logger } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Logger, NotFoundException } from '@nestjs/common';
+import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Match_History } from '@prisma/client';
 import { Server, Socket } from 'socket.io';
+import { CREAT_GAME_DTO } from 'src/game/game.dto';
+import { GameService } from 'src/game/game.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+type streaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
 @WebSocketGateway()
-export class GameGateway{
+export class GameGateway implements OnGatewayDisconnect{
+  constructor(private prisma:PrismaService){}
   private logger: Logger = new Logger("GameGateway");
-  games = new Map<number, {player1Id: string, player2Id: string, mode: modeType}>();
+  games = new Map<number, {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}>();
   socketId = new Map<number, Socket>();
-  streaming = new Map<number, string>();
+  streaming = new Map<number,streaming>();
   users: number = 0;
   gameId: number = 0;
   @WebSocketServer() server: Server;
   @SubscribeMessage('gameStart')
-  handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType}):void {
-    this.logger.log("helllllllo");
-    this.logger.log(`client connecter1 ${data.player1Id}`);
-    this.logger.log(`client connecter2 ${data.player2Id}`);
-    this.logger.log(`client connecter3 ${client.id}`);
+  async handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) {
     this.games.set(this.gameId, data);
-    this.server.to(data.player1Id).emit('initGame', data.mode)
-    this.server.to(client.id).emit('initGame', data.mode)
+    this.server.to(data.player1Id).emit('initGame', data.mode);
+    this.server.to(client.id).emit('initGame', data.mode);
+    this.streaming.set(this.gameId,{
+      roomName: ("room_"+this.gameId ),
+      client1Id: data.player1Id,
+      client2Id: data.player2Id,
+      player1Id: data.numplayer1Id,
+      player2Id: data.numplayer2Id
+    })
+    let idp2 = {
+      userid: data.numplayer2Id
+    }
+    data.numplayer1Id
+    data.numplayer2Id
+    await this.creatGame( data.numplayer1Id,idp2);
+    this.logger.log("hello this is a new game");
     this.gameId++;
+
+
+  }
+  handleDisconnect(client: Socket){
+    if (this.games.get(this.getMatchID(client))){
+      if (this.games.get(this.getMatchID(client)).player1Id == client.id){
+        this.server.to(this.games.get(this.getMatchID(client)).player2Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player1Id);
+      }
+      else if  (this.games.get(this.getMatchID(client)).player2Id == client.id){
+        this.server.to(this.games.get(this.getMatchID(client)).player1Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player2Id);
+      }
+      this.games.delete(this.getMatchID(client))
+    }
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
     for (let i: number = 0; i < this.games.size;i++){
+      // if (!this.games.get(i))
+      //   return undefined
       if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
         return this.games.get(i);
     }
@@ -34,6 +65,8 @@ export class GameGateway{
   }
   getMatchID(client: Socket): number{
     for (let i: number = 0; i < this.games.size;i++){
+      // if (!this.games.get(i))
+      //   return undefined;
       if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
         return i;
     }
@@ -41,7 +74,7 @@ export class GameGateway{
   }
   getRoom(roomID: number): string{
     if  (this.streaming.get(roomID))
-        return this.streaming.get(roomID);
+        return this.streaming.get(roomID).roomName;
     return undefined; 
   }
   
@@ -118,6 +151,14 @@ export class GameGateway{
     let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
     if (clientOb){
       message.ball = ballMovement(message.ball, message.player1, message.player2, message.dim);
+      if (message.player1.score == 5 || message.player2.score == 5){
+        this.server.to(clientOb.player1Id).emit('GameEnd', message);
+        this.server.to(clientOb.player2Id).emit('GameEnd', message);
+        this.games.delete(this.getMatchID(client));
+        this.streaming.delete(this.getMatchID(client));
+        this.gameId--;
+      }
+      // database
       if (client.id == clientOb.player1Id){
         this.server.to(clientOb.player1Id).emit('ballMove', message);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('streaming', message);
@@ -129,20 +170,37 @@ export class GameGateway{
     }
   }
 
-  @SubscribeMessage('newStreamRoom')
-  creatingRoom(client: Socket, roomData: {room: string, matchID: number}){
-    this.streaming.set(roomData.matchID, roomData.room);
+  @SubscribeMessage('exploreRooms')
+  creatingRoom(client: Socket){
+    this.server.to(client.id).emit('allRoomsData',this.streaming)
   }
 
   @SubscribeMessage('joinStreamRoom')
   handleJoinRoom(client: Socket, room: string){
     client.join(room);
-    // client.emit('joinedRoom', room);
   }
 
   @SubscribeMessage('leaveStreamRoom')
   handleLeaveRoom(client: Socket, room: string){
     client.leave(room);
-    // client.emit('leftRoom', room);
   }
+
+  async creatGame(userid: number, dto: CREAT_GAME_DTO): Promise<Match_History> {
+    const findotheruser = await this.prisma.user.findFirst({
+      where: { id: dto.userid },
+    });
+
+    if (!findotheruser) throw new NotFoundException('other user not found');
+
+    const creatmatch = await this.prisma.match_History.create({
+      data: {
+        user1Id: userid,
+        user2Id: dto.userid,
+        user1P: 0,
+        user2P: 0,
+      },
+    });
+    return creatmatch;
+  }
+
 }
