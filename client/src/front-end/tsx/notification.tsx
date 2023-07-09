@@ -23,7 +23,7 @@ const Notification = () => {
       name: string;
       image: string;
     } = {
-      player2Id: 90498,
+      player2Id: 99030,
       mode: { pColor:"GRAY", bColor:  "BLACK", fColor: "WHITE", bMode: "" },
       name: "von",
       image: "image",

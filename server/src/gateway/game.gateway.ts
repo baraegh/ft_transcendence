@@ -51,6 +51,7 @@ export class GameGateway implements OnGatewayDisconnect{
         this.server.to(this.games.get(this.getMatchID(client)).player1Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player2Id);
       }
       this.games.delete(this.getMatchID(client))
+      this.gameId--;
     }
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
