@@ -166,7 +166,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
 
     return (
         <>
-            <label className='dialog-label' key="group-name" >
+            <div className='dialog-label' key="group-name" >
                 <div className='create-group-name-warn'>
                     <p className='dialog-MPLUS-font'>Group name</p>
                     {nameWarn?  <p className='create-group-warn-name'>
@@ -185,7 +185,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
                         type='text'
                         autoComplete='off'
                         placeholder="Insert the group name" />
-            </label>
+            </div>
             <div key="profile-img-upload">
                 <p className='dialog-MPLUS-font'>Choose profile picture</p>
                 {
@@ -646,7 +646,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     }
 
     return (
-        <form onSubmit={handleOnSubmit}>
+        <form onSubmit={handleOnSubmit} className='create-group-form'>
             {
                 showFirstDialog && <CreateGroupFirstDialog  nameExist={nameExist}
                                                             nameWarn={nameWarn}

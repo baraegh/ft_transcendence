@@ -1,9 +1,7 @@
 .leaderBoard
 {
-    /* position: relative; */
-    /* top : 20px; */
-    width : 1058px;
-    height: 800px;
+    width: 1050px;
+    height: 100%;
     border : 2px solid black;
     border-radius: 20px;
     margin: auto;

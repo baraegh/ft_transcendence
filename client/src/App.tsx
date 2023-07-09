@@ -34,6 +34,11 @@ const userMe = React.createContext<meType | null>(null);
 
 function App() {
   const [me, setMe] = useState<meType | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    // Check if the user is logged in based on the value in local storage
+    const storedLoggedIn = localStorage.getItem('isLoggedIn');
+    return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
+  });
 
   useEffect(() => {
     Axios.get('http://localhost:3000/user/me', {withCredentials: true})
@@ -44,10 +49,9 @@ function App() {
         console.log(error);
       })
   }, []);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const check = () => {
+    // const check = () => {
       Axios
         .get("http://localhost:3000/auth/check", { withCredentials: true })
         .then((response) => {
@@ -55,9 +59,9 @@ function App() {
             setIsLoggedIn(true);
           }
         });
-    };
+    // };
 
-    checkLoggedInStatus();
+    // checkLoggedInStatus();
   }, []);
 
   useEffect(() => {

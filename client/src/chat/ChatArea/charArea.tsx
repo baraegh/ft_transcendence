@@ -749,7 +749,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                 </div>
                 {   searchQuery === '' ?
                         <div className="chat-area-group-owner">
-                            <p className="header">Owner</p>
+                            <p className="header-role">Owner</p>
                             <PopoverComp    Trigger={<MemberCard   img={props.membersData?.owner.image}
                                                                 username={props.membersData?.owner.username} />}
                                             Content={<MemberCardPopOverContent  role=''
@@ -764,7 +764,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                     : ''
                 }
                 <div className="chat-area-group-admins-members">
-                    <p className="header">Admins</p>
+                    <p className="header-role">Admins</p>
                     <div className="chat-area-group-admins">
                         <div className="chat-area-group-admins-list">
                             {filteredAdmins && filteredAdmins.length !== 0 ? filteredAdmins: <p className="No-data">No admin</p>}
@@ -772,7 +772,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                     </div>
 
                     <div className="chat-area-group-members">
-                        <p className="header">Members</p>
+                        <p className="header-role">Members</p>
                         <div className="chat-area-group-members-list">
                             {filteredUsers && filteredUsers.length !== 0 ? filteredUsers: <p className="No-data">No member</p>}
                         </div>

@@ -60,16 +60,16 @@ const Notification = () => {
       {showNotification && (
         <div className="slide-in-modal">
           <div className="content">
-            <span className="message">rimney has sent you a friend request</span>
-            <button className="close-button" onClick={closeNotification}>
+            <p className="close-button" onClick={closeNotification}>
               X
-            </button>
-            <img id="profileImgNotif" src={me} alt="" />
+            </p>
+            <span className="message">rimney has sent you a friend request</span>
+            <div className="notifButons">
+              <a onClick={() => {console.log("Accept Button")}}>Accept</a>
+              <a onClick={() => {console.log("Reject Button")}}>Reject</a>
+            </div>
           </div>
-          <div className='notifButons'>
-          <a onClick={() => {console.log("Accept Button")}}>Accept</a>
-          <a onClick={() => {console.log("Reject Button")}}>Reject</a>
-        </div>
+          <img id="profileImgNotif" src={me} alt="" />
         </div>
       )}
       <button onClick={() => setShowNotification(true)}>

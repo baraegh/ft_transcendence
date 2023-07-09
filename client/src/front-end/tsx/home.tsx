@@ -84,18 +84,20 @@ function Home(): JSX.Element {
     };
   }, [getid]);
   return (
-    <div>
+    <>
       <MyHeader />
-      <Game />
-      <div className="P_W">
-        <a id="Play" href="#">
-          <span>Play</span>
-        </a>
-        <a id="WatchStream" href="#">
-          <span>Watch Stram</span>
-        </a>
+      <div className="home-game">
+        <Game />
+        <div className="P_W">
+          <a id="Play" href="#">
+            <span>Play</span>
+          </a>
+          <a id="WatchStream" href="#">
+            <span>Watch Stram</span>
+          </a>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
