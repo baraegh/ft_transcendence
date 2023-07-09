@@ -1,7 +1,17 @@
 import { useEffect, useRef } from "react";
 import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
 import { useNavigate } from "react-router-dom";
+
 const socket = socketInstance;
+function init_check(): boolean | undefined
+{
+  if (!socket){
+      return (
+        false
+      );
+  }
+
+}
 type ballType = {
   x: number;
   y: number;
@@ -20,6 +30,14 @@ type playerType = {
   score: number;
 };
 const Game = () => {
+
+  if(!init_check())
+  {
+    console.log("log");
+    return (<div>
+
+    </div>);
+  }
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;
@@ -267,5 +285,6 @@ const Game = () => {
     </div>
   );
 };
+
 
 export default Game;

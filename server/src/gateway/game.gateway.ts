@@ -1,6 +1,10 @@
-import { Logger } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Match_History } from '@prisma/client';
 import { Server, Socket } from 'socket.io';
+import { CREAT_GAME_DTO } from 'src/game/game.dto';
+import { GameService } from 'src/game/game.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
@@ -8,6 +12,7 @@ type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 type streaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
 @WebSocketGateway()
 export class GameGateway implements OnGatewayDisconnect{
+  constructor(private prisma:PrismaService){}
   private logger: Logger = new Logger("GameGateway");
   games = new Map<number, {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}>();
   socketId = new Map<number, Socket>();
@@ -16,7 +21,7 @@ export class GameGateway implements OnGatewayDisconnect{
   gameId: number = 0;
   @WebSocketServer() server: Server;
   @SubscribeMessage('gameStart')
-  handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}):void {
+  async handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) {
     this.games.set(this.gameId, data);
     this.server.to(data.player1Id).emit('initGame', data.mode);
     this.server.to(client.id).emit('initGame', data.mode);
@@ -27,16 +32,26 @@ export class GameGateway implements OnGatewayDisconnect{
       player1Id: data.numplayer1Id,
       player2Id: data.numplayer2Id
     })
+    let idp2 = {
+      userid: data.numplayer2Id
+    }
+    data.numplayer1Id
+    data.numplayer2Id
+    await this.creatGame( data.numplayer1Id,idp2);
     this.gameId++;
+
+
   }
   handleDisconnect(client: Socket){
-    if (this.games.get(this.getMatchID(client)).player1Id == client.id){
-      this.server.to(this.games.get(this.getMatchID(client)).player2Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player1Id);
+    if (this.games.get(this.getMatchID(client))){
+      if (this.games.get(this.getMatchID(client)).player1Id == client.id){
+        this.server.to(this.games.get(this.getMatchID(client)).player2Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player1Id);
+      }
+      else if  (this.games.get(this.getMatchID(client)).player2Id == client.id){
+        this.server.to(this.games.get(this.getMatchID(client)).player1Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player2Id);
+      }
+      this.games.delete(this.getMatchID(client))
     }
-    else if  (this.games.get(this.getMatchID(client)).player2Id == client.id){
-      this.server.to(this.games.get(this.getMatchID(client)).player1Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player2Id);
-    }
-    this.games.delete(this.getMatchID(client))
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
     for (let i: number = 0; i < this.games.size;i++){
@@ -164,4 +179,23 @@ export class GameGateway implements OnGatewayDisconnect{
   handleLeaveRoom(client: Socket, room: string){
     client.leave(room);
   }
+
+  async creatGame(userid: number, dto: CREAT_GAME_DTO): Promise<Match_History> {
+    const findotheruser = await this.prisma.user.findFirst({
+      where: { id: dto.userid },
+    });
+
+    if (!findotheruser) throw new NotFoundException('other user not found');
+
+    const creatmatch = await this.prisma.match_History.create({
+      data: {
+        user1Id: userid,
+        user2Id: dto.userid,
+        user1P: 0,
+        user2P: 0,
+      },
+    });
+    return creatmatch;
+  }
+
 }
