@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../css/home.css";
 import MyHeader from "./header";
 import { useNavigate } from "react-router-dom";
 import Game from "../../game/example";
 import axios from "axios";
-
-import  {socketInstance, initializeSocket, getSocket } from  "../../socket/socket";
+import { SocketContext } from "../../socket/socketContext";
 function Home(): JSX.Element {
-  const socket = socketInstance;
+  const { socket } = useContext(SocketContext);
+
 
   // if(socket )
   // {

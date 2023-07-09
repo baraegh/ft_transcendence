@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../css/notification.css"; // CSS file for styling the notification
 import me from "../img/rimney.jpeg";
-import socket from './App'
+import { SocketContext } from "../../socket/socketContext";
 
 // import { socketInstance,getSocket } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
 const Notification = () => {
-
+  const { socket } = useContext(SocketContext);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
   const [showNotification, setShowNotification] = useState(false);
   const [data, setData]  = useState({
@@ -32,10 +32,13 @@ const Notification = () => {
     };
     if (socket) {
       
-      console.log("send from:" + socket);
+      console.log(">>>>>>send from:" + socket);
+      console.log(socket.id);
       socket.emit("sendGameRequest", dataToSend);
+      socket.emit("connect01" );
     }
   };
+ 
 if(socket)
 {
   socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
