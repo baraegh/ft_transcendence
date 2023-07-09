@@ -14,7 +14,7 @@ type ChatListHeaderProps = {
                         chatType: string, userId: number | null) => void,
     searchQuery:    string,
     setSearchQuery: (searchQuery: string) => void,
-    setFilter:      (filter: string) => void,
+    setFilter:      (filter: string) => void,        
 }
 
 function ChatListHeader({setChat, searchQuery, setSearchQuery, setFilter} : ChatListHeaderProps)
@@ -43,21 +43,21 @@ export const format = (str: string, n: number): string => {
 type HistoryListProps = {
     data:           channel,
     selected:       boolean
-    setChat:        (chatId: string, chatImage: string,
-                    chatName: string, chatType: string, userId: number | null) => void,
+    setChat:        (chatId: string, chatImage: string, chatName: string,
+                        chatType: string, userId: number | null,
+                        blocked?: boolean, whoblock?: number | null) => void,
     updateGroup:    boolean,
     setUpdateGroup: (update: boolean) => void,
 }
 
 const HistoryList = ({data, setChat, selected, updateGroup, setUpdateGroup}: HistoryListProps) =>
 {
-    // console.log('selected: ', selected, 'GroupData: ', data);
-
     const handleOnClick = () => {
         if (data.type === 'PERSONEL')
-                setChat(data.channelId,
-                        data.otherUserImage? data.otherUserImage: defaultUserImage,
-                        data.otherUserName, data.type, data.otherUserId);
+            setChat(data.channelId,
+                    data.otherUserImage? data.otherUserImage: defaultUserImage,
+                    data.otherUserName, data.type, data.otherUserId, data.blocked,
+                    data.hasblocked);
         else
         {
             setChat(data.channelId,
@@ -117,13 +117,16 @@ export type channel = {
         content:    string,
         timeSent:   string,
         senderId:   number,
-    },   
+    },
+    blocked:        boolean,
+    hasblocked:       number,
 }
 
 type chatHistoryListProps =
 {
     setChat:            (chatId: string, chatImage: string, chatName: string,
-                        chatType: string, userId: number | null) => void,
+                        chatType: string, userId: number | null,
+                        blocked?: boolean, whoblock?: number | null) => void,
     setIsProfileOpen:   (isOpen: boolean) => void,
     chatInfo:           chatInfoType,
     setRole:            (role: string) => void;
@@ -157,14 +160,13 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                     setFriendList(response.data);
                 else if (filter === 'Groups')
                     setGroupList(response.data);
-                console.log('response.data: ', response.data);
-            })
-            .catch((error) => {
+                })
+                .catch((error) => {
                     console.log(error);
                 }
-            );
-    }, [chatInfo, searchQuery, filter]);
-
+                );
+            }, [chatInfo, searchQuery, filter]);
+            
     useEffect(() => {
         if (chatInfo.chatId === '')
             return;
@@ -179,10 +181,11 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
             );
     }, [chatInfo.chatId]);
 
-    const handleSetChat = (chatId: string,chatImage: string,
-                            chatName: string, chatType: string,
-                            userId: number | null) => {
-        setChat(chatId, chatImage, chatName, chatType, userId);
+    const handleSetChat = (chatId: string,chatImage: string, chatName: string,
+                            chatType: string, userId: number | null,  blocked?: boolean,
+                            whoblock?: number | null) => {
+        setChat(chatId, chatImage, chatName, chatType,
+                    userId, blocked, whoblock);
         setIsProfileOpen(false);
     };
 

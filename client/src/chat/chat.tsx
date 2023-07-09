@@ -8,6 +8,7 @@ import Axios from "axios";
 import Image from "./barae.jpg";
 import { useNavigate } from "react-router-dom";
 import { createGroupType } from "./tools/Dialog";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 type msgListType = {
   id: number;
@@ -180,6 +181,8 @@ export type chatInfoType = {
   chatImage:  string,
   chatName:   string,
   chatUserId: number | null,
+  blocked:    boolean,
+  whoblock:   number | null,
 }
 
 export function Chat() {
@@ -190,6 +193,8 @@ export function Chat() {
     chatImage:  '',
     chatName:   '',
     chatUserId: null,
+    blocked:    false,
+    whoblock:   null,
   });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
@@ -203,31 +208,17 @@ export function Chat() {
   const [role, setRole] = useState('user');
   const [updateGroup, setUpdateGroup] = useState(false);
 
-  const setChat = (Id: string, Image: string,
-                    Name: string, Type: string, userId: number | null) => {
+  const setChat = (Id: string, Image: string, Name: string,
+                    Type: string, userId: number | null,
+                    blocked?: boolean, whoblock?: number | null) => {
 
     setChatInfo({chatId: Id, chatImage: Image,
                 chatName: Name, chatType: Type,
-                chatUserId: userId
+                chatUserId: userId,
+                blocked: blocked? blocked: false, 
+                whoblock:whoblock? whoblock: null,
               })
   }
-
-  // const navigate = useNavigate();
-  // const fetchdata = () => {
-  //   Axios
-  //     .post("http://localhost:3000/auth/refresh", null, 
-  //       { withCredentials: true })
-  //     .then((response) => {
-  //       if (response.status !== 200) {
-  //         throw new Error("Request failed");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       navigate("/");
-  //     });
-  // };
-  // fetchdata();
 
   return (
     <div className="chat-page">

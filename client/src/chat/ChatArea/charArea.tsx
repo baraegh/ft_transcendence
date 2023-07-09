@@ -17,8 +17,6 @@ import { format } from "../chatHistory/chatHistoryList";
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
 
-const settingsList = ['Profile', 'Delete', 'Block'];
-
 type chatAreaHeaderProps =
 {
     chatInfo:           chatInfoType,
@@ -28,6 +26,13 @@ type chatAreaHeaderProps =
 }
 
 const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend, msgSend} : chatAreaHeaderProps) => {
+    const me = useContext(userMe);
+    const settingsList = chatInfo.blocked?(
+            me?.id === chatInfo.whoblock?
+                ['Profile', 'Delete', 'Unblock']
+            : ['Delete']
+        )
+        :['Profile', 'Delete', 'Block'];
 
     return (
         <div className='chat-area-header'>
@@ -100,7 +105,7 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
 
     const handleOnSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        if (checkNameInput(msg))
+        if (checkNameInput(msg) || chatInfo.blocked)
             return;
         Axios.post("http://localhost:3000/chat/send-msg",
                 {   
@@ -123,11 +128,15 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
                     id="chat-area-input-text"
                     value={msg} 
                     className='chat-area-input-text'
-                    onChange={handleOnChange}/>
-            {!isClicked &&<ThreeSquare />}
-            <button className="chat-area-send-btn" type="submit">
-                <SendOutlined style={{color: '#000', fontSize: '18px'}} />
-            </button>
+                    onChange={handleOnChange}
+                    readOnly={chatInfo.blocked}/>
+            {!isClicked && !chatInfo.blocked && <ThreeSquare />}
+            {
+                !chatInfo.blocked && 
+                    <button className="chat-area-send-btn" type="submit">
+                        <SendOutlined style={{color: '#000', fontSize: '18px'}} />
+                    </button>
+            }
         </form>
     );
 }
@@ -822,6 +831,7 @@ type ChatAreaProps = {
 export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
     const [msgList, setmsgList] = useState<msgListType | null>(null);
     const [msgSend, setMsgSend] = useState(false);
+    const me = useContext(userMe);
 
     useEffect(() => {
         if (!chatInfo.chatId)
@@ -847,7 +857,14 @@ export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
 
             <ChatAreaMessages   ListOfMsg={msgList}
                                 chatInfo={chatInfo}/>
-
+            {
+                chatInfo.blocked && me?.id === chatInfo.whoblock ? 
+                    <p  className="No-data"
+                        style={{textAlign: 'center', fontSize: '12px'}}>
+                        You blocked this user
+                    </p>
+                : ''
+            }
             <ChatAreaInput  setMsgSend={setMsgSend}
                             msgSend={msgSend}
                             chatInfo={chatInfo}/>

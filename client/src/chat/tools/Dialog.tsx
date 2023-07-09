@@ -439,15 +439,6 @@ const CreateGroupSecondDialog = ({  GroupData, handleOnChange, type,
 //     );
 // }
 
-type groupInfoType ={
-    id:         string,
-    image:      string,
-    name:       string,
-    ownerId:    number | null,
-    type:       string,
-    updatedAt:  string,
-}
-
 const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     
     const   [showFirstDialog, setShowFirstDialog] = useState(true);
@@ -1069,6 +1060,40 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) =
     );
 }
 
+const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => {
+
+    const handleOnClick = () => {
+        if (chatInfo && !chatInfo.blocked)
+            return;
+
+        Axios.patch("http://localhost:3000/chat/friend/block_friend",
+            {FriendId: chatInfo.chatUserId},
+            {withCredentials: true})
+            .then((response) => {
+                if (setMsgSend)
+                    setMsgSend(!msgSend);
+                if (closeDialog)
+                    closeDialog();
+                console.log('response.data: ', response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
+
+    return (
+        <div className='dialog-remove-group'>
+            <FontAwesomeIcon icon={faTriangleExclamation} size='3x' style={{color: "#000000",}} />
+            <p className='dialog-remove-group-msg'>Are you sure you want to unblock {chatInfo?.chatName} ?</p>
+            <div className='dialog-remove-group-cancel-yes'>
+                <button onClick={closeDialog}>Cancel</button>
+                <button className='dialog-remove-group-yes-btn'
+                        onClick={handleOnClick}>Yes</button>
+            </div>
+        </div>
+    )
+}
+
 type DialogProps =
 {
     title?:             string;
@@ -1163,6 +1188,11 @@ export function Dialog({title, closeDialog, setChat,
             break;
         case 'Clear chat':
             ItemComponent = () => <ClearChat    closeDialog={closeDialog}
+                                                chatInfo={chatInfo}/>
+            break;
+        
+        case 'Unblock':
+                ItemComponent = () => <UnBlock  closeDialog={closeDialog}
                                                 chatInfo={chatInfo}/>
             break;
         
