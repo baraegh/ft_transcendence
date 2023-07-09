@@ -138,6 +138,7 @@ export class GameGateway implements OnGatewayDisconnect{
         this.streaming.delete(this.getMatchID(client));
         this.gameId--;
       }
+      // database
       if (client.id == clientOb.player1Id){
         this.server.to(clientOb.player1Id).emit('ballMove', message);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('streaming', message);
