@@ -16,14 +16,15 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
+import { SocketContextProvider } from './socket/socketContext';
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
-const [socket, setSocket] = useState(null);
 function App() {
-
-  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
-  const [getid, setid] = useState<number>();
+  
+  // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  // const [getid, setid] = useState<number>();
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     // Check if the user is logged in based on the value in local storage
     const storedLoggedIn = localStorage.getItem('isLoggedIn');
@@ -34,14 +35,14 @@ function App() {
   //   setSocket(newSocket);
   //   return () => newSocket.close();
   // }, [setSocket]);
-  useEffect(() => {
-    // Initialize the socket when the component mounts
-    const newSocket = io(`http://${window.location.hostname}:3000`);
-    setSocket(newSocket); 
-    return () => {
-      newSocket.close();
-    };
-  }, [setSocket]);
+  // useEffect(() => {
+  //   // Initialize the socket when the component mounts
+  //   const newSocket = io(`http://${window.location.hostname}:3000`);
+  //   setSocket(newSocket); 
+  //   return () => {
+  //     newSocket.close();
+  //   };
+  // }, [setSocket]);
 
   useEffect(() => {
     const checkLoggedInStatus = async () => {
@@ -66,6 +67,7 @@ function App() {
   }, [isLoggedIn]);
   
   return (
+    <SocketContextProvider>
     <Router>
       <Routes>
         <Route path="/" element={<DSTeam />} />
@@ -99,8 +101,8 @@ function App() {
         />
       </Routes>
     </Router>
+    </SocketContextProvider>
   );
 }
 
-export { socket };
 export default App;

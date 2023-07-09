@@ -1,12 +1,11 @@
-import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
-import { socket } from "../App";
-import { Socket } from "socket.io-client/debug";
+import { useContext, useEffect, useRef } from "react";
+import { Socket, io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../socket/socketContext";
 
-function init_check(): boolean | undefined
+function init_check(s:Socket<any, any> | null): boolean | undefined
 {
-  if (!socket){
+  if (!s){
       return (
         false
       );
@@ -31,14 +30,14 @@ type playerType = {
   score: number;
 };
 const Game = () => {
+  const { socket } = useContext(SocketContext);
+  if(!init_check(socket))
+  {
+    console.log("log");
+    return (<div>
 
-  // if(!init_check())
-  // {
-  //   console.log("log");
-  //   return (<div>
-
-  //   </div>);
-  // }
+    </div>);
+  }
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;

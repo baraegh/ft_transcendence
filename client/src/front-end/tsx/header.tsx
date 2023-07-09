@@ -1,13 +1,14 @@
 import Bell from '../img/bell.png';
 import '../css/header.css';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Notification from './notification'
 import "../css/home.css";
 import Game from "../../game/example";
 import  {socketInstance, initializeSocket, getSocket } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
+import { SocketContext } from '../../socket/socketContext';
 
 interface User {
   id: number;
@@ -20,13 +21,14 @@ interface User {
 
 
 function MyHeader(): JSX.Element {
+  const { socket } = useContext(SocketContext);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 
   const navigate = useNavigate();
   const [logo, setLogo] = useState<string>(
     " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
   );
-  const socket = socketInstance;
+
   const [getid, setid] = useState<number | null>(null);
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
 
@@ -57,23 +59,29 @@ function MyHeader(): JSX.Element {
 
   useEffect(() => {
     if (getid !== null) {
-      console.log(getid);
-      initializeSocket(getid);
     }
-    let socket:any;
     if(getid !== null) 
     {
-       socket = getSocket();
+      if(socket)
+      {
+        console.log("active: "+socket);
+        let data = {
+          playerid : 1111111111111111,
+        }
+        socket.emit("connect01", data);
+        socket.emit("zzz");
+        console.log("connect "+ getid);
+      }
     }
 
     if (socket) {
-      socket.on("connect", () => {
-        const requestData = {
-          event: "userConnected",
-          user: { id: getid },
-        };
-        socket.emit("requestData", requestData);
-      });
+      // socket.on("connect", () => {
+      //   const requestData = {
+      //     event: "userConnected",
+      //     user: { id: getid },
+      //   };
+      //   console.log(getid);
+      // });
       // socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType}) =>{
       //   console.log("gameRequestResponse"+data);
       //   // setShowNotification(true);
