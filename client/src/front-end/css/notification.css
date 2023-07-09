@@ -1,45 +1,84 @@
-.slide-in-modal {
-    position: relative;
-    top: 20px;
-    left: 500px;
-    width: 300px;
-    height: 112px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    animation: slideIn 0.5s forwards;
-    z-index: 9999;
-    border: 2px solid black ;
-    border-radius: 5px;
-  }
-  
-  .content {
-    display: flex;
-    /* padding: 10px; */
-    text-align: center;
-    /* margin:; */
-  }
+@-webkit-keyframes blink {
+  0%   { border-color: white; }
+  50%  { border-color: rgb(212, 206, 206); }
+  100% { border-color: black; }
+}
+@-moz-keyframes blink {
+  0%   { border-color: white; }
+  50%  { border-color: rgb(135, 123, 123); }
+  100% { border-color: black; }
+}
+@-ms-keyframes blink {
+  0%   { border-color: white; }
+  50%  { border-color: rgb(252, 0, 0); }
+  100% { border-color: black; }
+}
 
-  .message
-  {
-    margin-left: 35px;
-    margin-top: 10px;
+.slide-in-modal {
+  position: relative;
+  top: 20px;
+  left: 500px;
+  width: 300px;
+  height: 112px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.5s forwards;
+  z-index: 9999;
+  border: 2px solid black;
+  border-radius: 5px;
+  -webkit-animation: blink 1s infinite;
+  -moz-animation: blink 1s infinite;
+  -ms-animation: blink 1s infinite;
+}
+
+.content {
+  display: flex;
+  text-align: center;
+}
+
+.message {
+  margin-left: 35px;
+  margin-top: 10px;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateX(100%);
   }
-  
-  @keyframes slideIn {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(0);
-    }
+  100% {
+    transform: translateX(0);
   }
-  
-  #profileImgNotif
-  {
-    border-top-right-radius:  3px;
-    border-bottom-right-radius:  3px;
-    margin-left:50px ;
-    /* padding-left: 30px; */
-    width : 110px;
-    height: 110px;;
-  }
+}
+
+#profileImgNotif {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  margin-left: 50px;
+  width: 110px;
+  height: 110px;
+}
+
+.notifButons {
+  left: 10px;
+  position: relative;
+  bottom: 30px;
+  width: 160px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.notifButons a {
+  border: 0.5px solid black;
+  border-radius: 5px;
+  margin: -3px;
+  text-align: center;
+  width: 60px;
+  transition: .06s;
+  color: black; /* Add this line to set the initial text color */
+}
+
+.notifButons a:hover {
+  border: 0.5px solid white;
+  color: white !important;
+  background-color: black;
+}

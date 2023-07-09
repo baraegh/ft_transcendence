@@ -8,8 +8,6 @@ services:
       context: ${PWD}/server/src/postgresql_df
     ports:
       - 5432:5432
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
     env_file:
       - ${PWD}/server/.env
     networks:
@@ -32,19 +30,21 @@ services:
     networks:
       - ft_transcendence
 
-  # react:
-  #   image: react
-  #   container_name: react
-  #   build:
-  #     context: ./client
-  #   ports:
-  #     - 5173:5173
-  #   depends_on:
-  #     - nestjs
-  #   volumes:
-  #     - react:/app
-  #   networks:
-  #     - ft_transcendence
+ react:
+    image: react
+    container_name: react
+    build:
+      context: ./client
+    command: vite --host 0.0.0.0
+    ports:
+      - 5173:5173
+    depends_on:
+      - nestjs
+    # volumes:
+    #   - react:/app
+    networks:
+      - ft_transcendence
+
 volumes:
   postgres-data:
     driver: local
@@ -58,12 +58,12 @@ volumes:
       type: none
       o: bind
       device: ./server
-  react:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./client
+  # react:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: ./client
 
 networks:
   ft_transcendence:
