@@ -11,16 +11,14 @@
     background-color: black;
 }
 
-.IQ
-{
+.IQ {
+    margin: auto;
+    width : 650px;
     font-size: 50px;
     display: flex;
     justify-content: space-between;
-    padding: 210px;
-    position: relative;
-    bottom : 50px;
-}
-
+    /* padding: 0 50px; Adjust the padding value as needed */
+  }
 #X
 {
     text-decoration: none;

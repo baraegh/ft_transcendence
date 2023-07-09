@@ -56,8 +56,14 @@ function App() {
           }
         });
     };
-    check();
+
+    checkLoggedInStatus();
   }, []);
+
+  useEffect(() => {
+    // Update local storage whenever the isLoggedIn state changes
+    localStorage.setItem('isLoggedIn', isLoggedIn);
+  }, [isLoggedIn]);
 
   return (
     <userMe.Provider value={me}>
