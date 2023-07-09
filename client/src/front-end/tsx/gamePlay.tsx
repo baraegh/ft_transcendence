@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import '../css/gamePlay.css'
@@ -6,6 +6,8 @@ import tvGif from '../img/giphy.gif'
 import MyHeader from './header'
 import { useNavigate } from 'react-router-dom';
 import Game from '../../game/example'
+import { getSocket, initializeSocket, socketInstance } from '../../socket/socket'
+import axios from 'axios'
 
 function gamePlay() : JSX.Element
 {

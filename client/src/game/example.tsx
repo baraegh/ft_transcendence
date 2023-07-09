@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { socketInstance } from "/Users/rimney/Desktop/ft_transcendence/client/src/socket/socket.tsx";
 import { useNavigate } from "react-router-dom";
 const socket = socketInstance;
 type ballType = {

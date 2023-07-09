@@ -1,8 +1,11 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import '../css/editProfile.css'
 import Edit from '../img/edit.png'
+import { FormFloating } from 'react-bootstrap';
+import axios from 'axios';
+import me from '../img/rimney.jpeg'
 
 interface BlankModalProps {
   show: boolean;
@@ -38,36 +41,35 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
   
   const OnEdit = (event: FormEvent) => {
     event.preventDefault();
-    console.log('profileData: ', profileData);
+    
 
-    // const formData = new FormData();
+    const formData = new FormData();
 
-    // formData.append('type', GroupData.type);
-    // formData.append('name', GroupData.name);
+    formData.append('name', profileData.name);
+    if (profileData.image !== null)
+      formData.append('image', profileData.image);    // formData.append('name', GroupData.name);
     // formData.append('hash', GroupData.hash)
     // formData.append('members', JSON.stringify(GroupData.members));
     // if (GroupData.image !== null)
     //     formData.append('image', GroupData.image);
 
-    // try
-    // {
-    //     const response = await Axios.post("http://localhost:3000/chat/create-group", 
-    //                         formData, 
-    //                         { 
-    //                             withCredentials: true,
-    //                             headers: {
-    //                                 'Content-Type': 'multipart/form-data',
-    //                             }
-    //                         });
-    //     if (setChat)
-    //         setChat(response.data.id, response.data.image? response.data.image :defaultGroupImage,
-    //                 response.data.name, response.data.type, null);
-    // }
-    // catch(error)
-    // {
-    //     console.log(error);
-  // }
+    axios.post(
+      'http://localhost:3000/profile/edite',
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    ).then(res => {
 
+      console.log(res.data);
+      onHide();
+    }).catch(error => {
+      console.error(error);
+    });
+  
   }
 
   return (
