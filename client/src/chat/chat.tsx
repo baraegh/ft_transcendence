@@ -8,6 +8,7 @@ import Axios from "axios";
 import Image from "./barae.jpg";
 import { useNavigate } from "react-router-dom";
 import MyHeader from "../front-end/tsx/header";
+import { createGroupType } from "./tools/Dialog";
 
 type msgListType = {
   id: number;
@@ -168,39 +169,66 @@ const chatArray: chatArrayType = [
   { chatId: 27, chat: generateArrayOfMsg(100), type: "normal" },
 ];
 
+export type membersDataType = {
+  owner : {id: number, username: string, image: string };
+  admins: {id: number, username: string, image: string }[];
+  users: {id: number, username: string, image: string }[];
+}
+
+export type chatInfoType = {
+  chatId:     string,
+  chatType:   string,
+  chatImage:  string,
+  chatName:   string,
+  chatUserId: number | null,
+}
+
 export function Chat() {
-  const [chatId, setChatId] = useState<string | null>(null);
-  const [chatType, setChatType] = useState<string | null>(null);
-  const [chatImage, setChatImage] = useState<string | null>(null);
-  const [chatName, setChatName] = useState<string | null>(null);
+
+  const [chatInfo, setChatInfo] = useState<chatInfoType>({
+    chatId:     '',
+    chatType:   '',
+    chatImage:  '',
+    chatName:   '',
+    chatUserId: null,
+  });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
+  const [membersData, setMembersData] = useState<membersDataType>(
+    {
+      owner: { id: 0, username: "", image: "" },
+      admins: [],
+      users: [],
+    }
+  );
+  const [role, setRole] = useState('user');
+  const [updateGroup, setUpdateGroup] = useState(false);
 
+  const setChat = (Id: string, Image: string,
+                    Name: string, Type: string, userId: number | null) => {
 
-  const setChat = (chatId: string, chatImage: string,
-                    chatName: string, chatType: string) => {
-    setChatId(chatId);
-    setChatImage(chatImage);
-    setChatName(chatName);
-    setChatType(chatType);
+    setChatInfo({chatId: Id, chatImage: Image,
+                chatName: Name, chatType: Type,
+                chatUserId: userId
+              })
   }
 
-  const navigate = useNavigate();
-  const fetchdata = () => {
-    Axios
-      .post("http://localhost:3000/auth/refresh",null, { withCredentials: true })
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error("Request failed");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        navigate("/");
-      });
-  };
-  fetchdata();
-
+  // const navigate = useNavigate();
+  // const fetchdata = () => {
+  //   Axios
+  //     .post("http://localhost:3000/auth/refresh", null, 
+  //       { withCredentials: true })
+  //     .then((response) => {
+  //       if (response.status !== 200) {
+  //         throw new Error("Request failed");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       navigate("/");
+  //     });
+  // };
+  // fetchdata();
 
   return (
     <div>
@@ -208,19 +236,18 @@ export function Chat() {
     <div className="chat-page">
       {!isChatSettingOpen ? (
         <>
-          <ChatHistoryList
-            chatId={chatId}
-            setChat={setChat}
-            setIsProfileOpen={setIsProfileOpen}
-          />
+          <ChatHistoryList  chatInfo={chatInfo}
+                            setChat={setChat}
+                            setIsProfileOpen={setIsProfileOpen}
+                            setRole={setRole}
+                            updateGroup={updateGroup}
+                            setUpdateGroup={setUpdateGroup}/>
+
           <div className="chat-area">
-            {chatId !== null ? (
+            {chatInfo.chatId !== '' ? (
               <ChatArea
-                chatId={chatId}
-                chatImage={chatImage}
-                chatName={chatName}
+                chatInfo={chatInfo} 
                 setIsProfileOpen={setIsProfileOpen}
-                type={chatType}
               />
             ) : (
               <div className="chat-area-default">
@@ -229,16 +256,30 @@ export function Chat() {
             )}
           </div>
 
-          {/* {chatId !== null && chatType === "group" ? (
-            <ChatAreaGroup setIsChatSettingOpen={setIsChatSettingOpen} />
+          {chatInfo.chatId !== null && chatInfo.chatType !== '' && chatInfo.chatType !== "PERSONEL" ? (
+            <ChatAreaGroup  chatInfo={chatInfo} 
+                            setIsChatSettingOpen={setIsChatSettingOpen}
+                            membersData={membersData}
+                            setMembersData={setMembersData}
+                            role={role}
+                            setChat={setChat}
+                            update={updateGroup}
+                            setUpdate={setUpdateGroup}/>
           ) : isProfileOpen ? (
-            <ChatAreaProfile setIsProfileOpen={setIsProfileOpen} />
-          ) : ( */}
+            <ChatAreaProfile  chatInfo={chatInfo}
+                              setIsProfileOpen={setIsProfileOpen} />
+          ) : (
             <FriendList />
-          {/* )} */}
+          )}
         </>
       ) : (
-        <ChatGroupSettings setIsChatSettingOpen={setIsChatSettingOpen} />
+        <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
+                            membersData={membersData}
+                            setMembersData={setMembersData}
+                            chatInfo={chatInfo}
+                            setChatInfo={setChatInfo}
+                            role={role}
+                            setChat={setChat}/>
       )}
     </div>
     </div>

@@ -43,7 +43,7 @@ const Notification = () => {
       challenge();
       const timer = setTimeout(() => {
         setShowNotification(false);
-      }, 10000);
+      }, 30000);
 
       return () => {
         clearTimeout(timer);
@@ -68,6 +68,10 @@ const Notification = () => {
             </button> */}
             <img id="profileImgNotif" src={me} alt="" />
           </div>
+          <div className='notifButons'>
+          <a onClick={() => {console.log("Accept Button")}}>Accept</a>
+          <a onClick={() => {console.log("Reject Button")}}>Reject</a>
+        </div>
         </div>
       )}
       <button onClick={() => setShowNotification(true)}>

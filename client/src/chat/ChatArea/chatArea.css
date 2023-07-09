@@ -364,7 +364,7 @@
     align-items: center;
 }
 
-.Ranking-1, .Ranking-2, .Ranking-3
+.Ranking-1, .Ranking-2
 {
     display: flex;
 
@@ -373,7 +373,7 @@
     margin: 5px;
 }
 
-.Ranking-1-number, .Ranking-2-number, .Ranking-3-number
+.Ranking-1-number, .Ranking-2-number
 {
     display: flex;
     border-right: 1px solid var(--secondary-color);
@@ -390,7 +390,7 @@
     font-size: 20px;
 }
 
-.Ranking-1-img-username, .Ranking-2-img-username, .Ranking-3-img-username
+.Ranking-1-img-username, .Ranking-2-img-username
 {
     display: flex;
     border-right: 1px solid var(--secondary-color);
@@ -411,7 +411,7 @@
     box-shadow: 2px 2px 0px var(--secondary-color);
 }
 
-.Ranking-1-stat, .Ranking-2-stat, .Ranking-3-stat
+.Ranking-1-stat, .Ranking-2-stat
 {
     text-align: center;
     align-items: center;
@@ -419,9 +419,10 @@
     padding: 3px;
 }
 
-.Ranking-2, .Ranking-3
+.Ranking-2
 {
     font-size: 15px;
+    width: 150px;
 }
 
 .Ranking-2 img, .Ranking-3 img
@@ -446,7 +447,15 @@
     padding: 10px;
     border-left: 1px solid var(--secondary-color);
 
-    /* position: relative; */
+}
+
+.group-owner-admins-members
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow: auto;
 }
 
 .chat-area-group-search
@@ -459,25 +468,34 @@
     width: 100%;
 }
 
-.chat-area-group-members
+.chat-area-group-admins-members
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: auto;
+}
+
+.chat-area-group-members, .chat-area-group-admins
 {
     display: grid;
     overflow: auto;
-    /* position: relative;  */
+    min-height: 30px;
 }
 
-.chat-area-group-members-list
+.chat-area-group-members-list, .chat-area-group-admins-list
 {
     display: grid;
     overflow-y: auto;
 }
 
-.chat-area-group-owner, .chat-area-group-members
+
+.chat-area-group-owner, .chat-area-group-members, .chat-area-group-admins
 {
     margin-top: 10px;
 }
 
-.chat-area-group-owner .header, .chat-area-group-members .header
+.header
 {
     font-family: 'Mouse Memoirs';
     letter-spacing: 0.2em;
@@ -632,6 +650,8 @@
 {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 .chat-group-settings-header
@@ -727,13 +747,6 @@
     align-items: center;
 }
 
-.chat-group-settings-owner-btn
-{
-    display: flex;
-    justify-content: space-around;
-    width: 20%;
-}
-
 .chat-group-settings-owner-btn button
 {
     font-family: 'Mouse Memoirs';
@@ -756,6 +769,7 @@
     display: flex;
     flex-wrap: wrap;
     overflow-y: auto;
+    max-height: 100px;
 }
 
 .chat-group-settings-clear-delete

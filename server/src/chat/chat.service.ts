@@ -170,7 +170,6 @@ export class ChatService {
     if (!existingChannel) {
       throw new ForbiddenException('The Channel Not Exist');
     }
-
     if (existingChannel.type === 'PERSONEL')
       throw new ForbiddenException('Forbiden acces');
 

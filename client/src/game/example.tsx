@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { socketInstance } from "../socket/socket";
 import { useNavigate } from "react-router-dom";
 
 const socket = socketInstance;
@@ -31,13 +31,13 @@ type playerType = {
 };
 const Game = () => {
 
-  if(!init_check())
-  {
-    console.log("log");
-    return (<div>
+  // if(!init_check())
+  // {
+  //   console.log("log");
+  //   return (<div>
 
-    </div>);
-  }
+  //   </div>);
+  // }
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;

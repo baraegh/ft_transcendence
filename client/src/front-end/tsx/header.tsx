@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Button, Modal } from 'react-bootstrap';
-import Notification from './notification'
+import Notification from './notification';
 
 interface User {
   id: number;

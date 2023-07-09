@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faCaretUp, faEllipsisVertical} from '@fortawesome/free-solid-svg-icons' ;
 import { Dialog } from "./Dialog";
 import './dropMenu.css'
+import { chatInfoType } from "../chat";
 
 type DropMenuProps =
 {
@@ -14,12 +15,17 @@ type DropMenuProps =
   size?:              string,
   triggerIconSize?:   string,
   setIsProfileOpen?:  (isOpen: boolean) => void,
-  setChat?: (chatId: string, chatImage: string, chatName: string, chatType: string) => void
+  setChat?:           (chatId: string, chatImage: string,
+                        chatName: string, chatType: string, userId: number | null) => void,
+  chatInfo?:          chatInfoType,
+  setMsgSend?:        (msgSend: boolean) => void,
+  msgSend?:           boolean,
+  setFilter?:         (filter: string) => void,  
 }
 
 const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, 
                   size='14px', triggerIconSize='9px', setIsProfileOpen,
-                  setChat} : DropMenuProps) => {
+                  setChat, chatInfo, setMsgSend, msgSend, setFilter} : DropMenuProps) => {
 
     const [selectedDropMenu, setSelectedDropMenu] = useState(list[0]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -27,10 +33,9 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false,
 
     const items = list.map(item => {
       return (
-            <Dropdown.Item
-              className="DropMenu-item"
-              key={item}
-              onSelect={() => handleDropMenuChange(item)} >
+            <Dropdown.Item  className="DropMenu-item"
+                            key={item}
+                            onSelect={() => handleDropMenuChange(item)}>
                 {item}
             </Dropdown.Item>
       );
@@ -38,18 +43,20 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false,
 
     const handleDropMenuChange = (value: string) => {
       if (!settings)
+      {
         setSelectedDropMenu(value);
+        if (setFilter)
+          setFilter(value);
+      }
       
-        if (settings)
-        {
-          setIsDialogOpen(true);
-          setItem(value);
-        }
+      if (settings && value !== 'Profile')
+      {
+        setIsDialogOpen(true);
+        setItem(value);
+      }
 
-        if (value === 'Profile')
-          setIsProfileOpen && setIsProfileOpen(true);
-      // Apply filtering logic based on the selected filter
-      // For example, update the state or trigger a filtering function
+      if (value === 'Profile')
+        setIsProfileOpen && setIsProfileOpen(true);
     };
 
     const closeDialog = () => {
@@ -85,7 +92,12 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false,
           </Dropdown.Content>
         </Dropdown.Root>
         {
-          isDialogOpen && <Dialog title={Item} closeDialog={closeDialog} setChat={setChat} />
+          isDialogOpen && <Dialog title={Item}
+                                  closeDialog={closeDialog}
+                                  setChat={setChat}
+                                  chatInfo={chatInfo}
+                                  setMsgSend={setMsgSend}
+                                  msgSend={msgSend}/>
         }
       </>
     );
