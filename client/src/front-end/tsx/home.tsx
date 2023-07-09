@@ -4,7 +4,8 @@ import MyHeader from "./header";
 import { useNavigate } from "react-router-dom";
 import Game from "../../game/example";
 import axios from "axios";
-import  {socketInstance, initializeSocket, getSocket } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { socketInstance, initializeSocket, getSocket } from "../../socket/socket";
+
 function Home(): JSX.Element {
 
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { socketInstance } from "../socket/socket";
 import { Socket } from "socket.io-client/debug";
 import { useNavigate } from "react-router-dom";
 const socket = socketInstance;

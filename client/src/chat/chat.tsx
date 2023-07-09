@@ -57,58 +57,58 @@ export function Chat() {
   }
 
   return (
-    <div>
-    <MyHeader/>
-    <div className="chat-page">
-      {!isChatSettingOpen ? (
-        <>
-          <ChatHistoryList  chatInfo={chatInfo}
-                            setChat={setChat}
-                            setIsProfileOpen={setIsProfileOpen}
-                            setRole={setRole}
-                            updateGroup={updateGroup}
-                            setUpdateGroup={setUpdateGroup}/>
+    <>
+      <MyHeader/>
+      <div className="chat-page">
+        {!isChatSettingOpen ? (
+          <>
+            <ChatHistoryList  chatInfo={chatInfo}
+                              setChat={setChat}
+                              setIsProfileOpen={setIsProfileOpen}
+                              setRole={setRole}
+                              updateGroup={updateGroup}
+                              setUpdateGroup={setUpdateGroup}/>
 
-          <div className="chat-area">
-            {chatInfo.chatId !== '' ? (
-              <ChatArea
-                chatInfo={chatInfo} 
-                setIsProfileOpen={setIsProfileOpen}
-              />
+            <div className="chat-area">
+              {chatInfo.chatId !== '' ? (
+                <ChatArea
+                  chatInfo={chatInfo} 
+                  setIsProfileOpen={setIsProfileOpen}
+                />
+              ) : (
+                <div className="chat-area-default">
+                  <p>Getting no message is also a message</p>
+                </div>
+              )}
+            </div>
+
+            {chatInfo.chatId !== null && chatInfo.chatType !== '' && chatInfo.chatType !== "PERSONEL" ? (
+              <ChatAreaGroup  chatInfo={chatInfo} 
+                              setIsChatSettingOpen={setIsChatSettingOpen}
+                              membersData={membersData}
+                              setMembersData={setMembersData}
+                              role={role}
+                              setChat={setChat}
+                              update={updateGroup}
+                              setUpdate={setUpdateGroup}/>
+            ) : isProfileOpen ? (
+              <ChatAreaProfile  chatInfo={chatInfo}
+                                setIsProfileOpen={setIsProfileOpen} />
             ) : (
-              <div className="chat-area-default">
-                <p>Getting no message is also a message</p>
-              </div>
+              <FriendList />
             )}
-          </div>
-
-          {chatInfo.chatId !== null && chatInfo.chatType !== '' && chatInfo.chatType !== "PERSONEL" ? (
-            <ChatAreaGroup  chatInfo={chatInfo} 
-                            setIsChatSettingOpen={setIsChatSettingOpen}
-                            membersData={membersData}
-                            setMembersData={setMembersData}
-                            role={role}
-                            setChat={setChat}
-                            update={updateGroup}
-                            setUpdate={setUpdateGroup}/>
-          ) : isProfileOpen ? (
-            <ChatAreaProfile  chatInfo={chatInfo}
-                              setIsProfileOpen={setIsProfileOpen} />
-          ) : (
-            <FriendList />
-          )}
-        </>
-      ) : (
-        <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
-                            membersData={membersData}
-                            setMembersData={setMembersData}
-                            chatInfo={chatInfo}
-                            setChatInfo={setChatInfo}
-                            role={role}
-                            setChat={setChat}/>
-      )}
-    </div>
-    </div>
+          </>
+        ) : (
+          <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
+                              membersData={membersData}
+                              setMembersData={setMembersData}
+                              chatInfo={chatInfo}
+                              setChatInfo={setChatInfo}
+                              role={role}
+                              setChat={setChat}/>
+        )}
+      </div>
+    </>
   );
 }
 

@@ -1,12 +1,16 @@
 .App {
   width: 100vw;
+  height: 100vh;
 
-  display: flex;
-  align-items: center;
+  /* display: flex; */
+  
+  display: grid;
   justify-content: center;
+  grid-template-rows: 100px 200px;
+  
 
-  min-width: 78.13em;
-  min-height: 37.5em;
+  /* min-width: 78.13em;
+  min-height: 37.5em; */
 }
 
 ::-webkit-scrollbar {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../css/notification.css"; // CSS file for styling the notification
 import me from "../img/rimney.jpeg";
-import { socketInstance } from "/Users/mait-aad/Desktop/ft_transcendence/client/src/socket/socket.tsx";
+import { socketInstance } from "../../socket/socket";
 const Notification = () => {
   const [showNotification, setShowNotification] = useState(false);
   const socket = socketInstance;

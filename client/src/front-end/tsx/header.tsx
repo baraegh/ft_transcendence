@@ -99,7 +99,7 @@ function MyHeader(): JSX.Element {
   };
   
   return (
-    <div>
+    <>
       <header>
         <h3 onClick={() => navigate('/home')} className="logo">
           KIR
@@ -160,7 +160,7 @@ function MyHeader(): JSX.Element {
         </div>
         <Notification />
       </header>
-    </div>
+    </>
   );
 }
 
