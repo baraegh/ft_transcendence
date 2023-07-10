@@ -8,6 +8,7 @@ type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 type streaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
+type datatype = {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number};
 @WebSocketGateway()
 export class GameGateway implements OnGatewayDisconnect{
   constructor(private prisma:PrismaService){}
@@ -23,8 +24,6 @@ export class GameGateway implements OnGatewayDisconnect{
     this.games.set(this.gameId, data);
     this.server.to(data.player1Id).emit('startGame', data.mode);
     this.server.to(client.id).emit('startGame', data.mode);
-    this.server.to(data.player1Id).emit('initGame', data.mode);
-    this.server.to(client.id).emit('initGame', data.mode);
     this.streaming.set(this.gameId,{
       roomName: ("room_"+this.gameId ),
       client1Id: data.player1Id,
@@ -40,8 +39,12 @@ export class GameGateway implements OnGatewayDisconnect{
     await this.creatGame( data.numplayer1Id,idp2);
     this.logger.log("hello this is a new game");
     this.gameId++;
-
-
+    
+    
+  }
+  @SubscribeMessage('initGameToStart')
+  handleGameInit(client: Socket, data: modeType){
+    this.server.to(client.id).emit('initGame', data);
   }
   handleDisconnect(client: Socket){
     if (this.games.get(this.getMatchID(client))){
@@ -56,18 +59,24 @@ export class GameGateway implements OnGatewayDisconnect{
     }
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
+    let game: datatype;
     this.games.forEach((value, key) => {
-      if (value.player1Id == client.id || value.player2Id == client.id)
-        return value;
-      
+      if (value.player1Id == client.id || value.player2Id == client.id){
+        game =  value;
+      }
     });
+    if (game)
+      return game;
     return undefined;
   }
   getMatchID(client: Socket): number{
+    let mKey = undefined;
     this.games.forEach((value, key) => {
       if (value.player1Id == client.id || value.player2Id == client.id)
-        return key;
+        mKey = key;
     });
+    if (mKey)
+      return mKey;
     return undefined;
   }
   getRoom(roomID: number): string{
@@ -96,7 +105,7 @@ export class GameGateway implements OnGatewayDisconnect{
       ball.y = message.dim.H / 2;
       ball.velocityY = 5;
       ball.velocityX = -ball.velocityX;
-      ball.speed = 15;
+      ball.speed = dim.W/ 100;
     }
     function collision(b, p):boolean{
       // players
@@ -123,7 +132,7 @@ export class GameGateway implements OnGatewayDisconnect{
                 let angleRad = (Math.PI / 4) * collidePoint;
                 ball.velocityX = ball.speed * Math.cos(angleRad);
                 ball.velocityY = ball.speed * Math.sin(angleRad);
-                ball.speed += 0.5;
+                ball.speed += dim.W/ 500;
             }
         }
         else if (ball.x >= dim.W / 2) {
@@ -133,7 +142,7 @@ export class GameGateway implements OnGatewayDisconnect{
                 let angleRad = (Math.PI / 4) * collidePoint;
                 ball.velocityX = (ball.speed * Math.cos(angleRad)) * -1;
                 ball.velocityY = ball.speed * Math.sin(angleRad);
-                ball.speed += 0.5;
+                ball.speed += dim.W/ 500;
             }
         }
         if (ball.x - ball.radius < 0 && (ball.y < player1.y || ball.y > player1.y + player1.height)) {
@@ -149,13 +158,13 @@ export class GameGateway implements OnGatewayDisconnect{
     let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
     if (clientOb){
       message.ball = ballMovement(message.ball, message.player1, message.player2, message.dim);
-      if (message.player1.score == 5 || message.player2.score == 5){
-        this.server.to(clientOb.player1Id).emit('GameEnd', message);
-        this.server.to(clientOb.player2Id).emit('GameEnd', message);
-        this.games.delete(this.getMatchID(client));
-        this.streaming.delete(this.getMatchID(client));
-        this.gameId--;
-      }
+      // if (message.player1.score == 5 || message.player2.score == 5){
+      //   this.server.to(clientOb.player1Id).emit('GameEnd', message);
+      //   this.server.to(clientOb.player2Id).emit('GameEnd', message);
+      //   this.games.delete(this.getMatchID(client));
+      //   this.streaming.delete(this.getMatchID(client));
+      //   this.gameId--;
+      // }
       // database
       if (client.id == clientOb.player1Id){
         this.server.to(clientOb.player1Id).emit('ballMove', message);

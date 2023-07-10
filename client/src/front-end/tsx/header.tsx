@@ -48,7 +48,8 @@ function MyHeader(): JSX.Element {
     if (socket) {
       {
         console.log("CREATED >> ");
-        socket.on("startGame", (msg) => {
+        socket.on("startGame", (msg: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) => {
+          socket.emit('initGameToStart', msg.mode)
           navigate('/gamePlay');
           console.log('connected to Game');
         });
