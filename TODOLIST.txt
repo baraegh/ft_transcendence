@@ -24,3 +24,4 @@
 => check von work
 
 => format the date - time
+=> check clear chat
