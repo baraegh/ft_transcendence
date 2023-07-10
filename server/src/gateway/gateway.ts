@@ -49,12 +49,12 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.connectedUsers.delete(client.data.userId);
   }
   @SubscribeMessage('connect01')
-  handleconnect(client: Socket, data: { userId: number }) {
-    console.log(' client connected:' + "hiii");
-    // client.data.userId = data.userId;
-    // console.log(' client connected:', data.userId);
-    // if( !this.connectedUsers.get(data.userId))
-    //   this.connectedUsers.set(client.data.userId, client);
+  handleconnect(client: Socket, cdata: { userId: number }) {
+    console.log(' client connected:' + cdata.userId);
+    client.data.userId = cdata.userId;
+    console.log(' client connected:', cdata.userId);
+    if( !this.connectedUsers.get(cdata.userId))
+      this.connectedUsers.set(client.data.userId, client);
   }
 
   @SubscribeMessage('sendGameRequest')
@@ -64,7 +64,11 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.player2Id);
-
+    if(!userSocket)
+    {
+      console.log("faild sendGameRequest");
+      return;
+    }
     const dataTogame = {
       player1Id: client.id,
       player2Id: userSocket.id,

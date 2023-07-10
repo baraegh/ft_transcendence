@@ -19,7 +19,6 @@ interface User {
   achievements: string[];
 }
 
-
 function MyHeader(): JSX.Element {
   const { socket } = useContext<any | undefined>(SocketContext);
 
@@ -29,9 +28,9 @@ function MyHeader(): JSX.Element {
       {
         console.log("CREATED >> ");
         socket.on("chatToClient", (msg) => {
-          console.log(msg);
+          console.log("msg");
         });
-      console.log(socket);
+      // console.log(socket);
       }
     }
   }, [socket]);
@@ -39,11 +38,8 @@ function MyHeader(): JSX.Element {
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 
   const navigate = useNavigate();
-  const [logo, setLogo] = useState<string>(
-    " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
-  );
 
-  const [getid, setid] = useState<number | null>(null);
+
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   const [userData, setUserData] = useState<User | null>(null);
   const [bellDropdownOpen, setBellDropdownOpen] = useState(false);
@@ -82,7 +78,10 @@ function MyHeader(): JSX.Element {
 
         if (response.status === 200) {
           const data = response.data;
-
+          
+          // const cdata = { userId: data.id };
+          // socket.emit('connect01',cdata);
+          // console.log("connect01");
           const fetchedUser: User = {
             id: data.id,
             username: data.username,
@@ -109,7 +108,7 @@ function MyHeader(): JSX.Element {
     useEffect(() => {
       const timer = setTimeout(() => {
         onClose();
-      }, 10000);
+      }, 0);
   
       return () => clearTimeout(timer);
     }, [onClose]);
@@ -123,7 +122,13 @@ function MyHeader(): JSX.Element {
       </div>
     );
   };
-  
+
+
+
+
+
+
+
   return (
     <div>
       <header>

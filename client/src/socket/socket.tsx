@@ -13,13 +13,3 @@ export const getSocket = () => {
   return socketInstance;
 };
 
-export const maketest = (id: number) =>{
-  if(socketInstance){
-    console.log("active: "+socketInstance);
-    let data = {
-      userId : id,
-    }
-    socketInstance.emit("connect01", data);
-  }
-
-}

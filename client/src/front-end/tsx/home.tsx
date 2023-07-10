@@ -15,8 +15,7 @@ function Home(): JSX.Element {
     // Use the socket instance here
     if (socket) {
       {
-        console.log("CREATED >> ");
-      console.log(socket);
+        console.log("CREATED AT Home >> ");
       }
     }
   }, [socket]);
@@ -28,25 +27,43 @@ function Home(): JSX.Element {
   }, [])
 
 
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/user/me", {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          console.log(response.data.id);
+          const cdata = { userId: response.data.id};
+          socket.emit('connect01',cdata);
+          console.log("connect01");
+        } else {
+          throw new Error("Request failed");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchdata();
+  }, []);
 
 
-  // if(socket )
-  // {
-  //   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-  //   socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
-      
-  //     socket.emit('gameStart', data);
-  //   });
+  if(socket )
+  {
+    socket.on("chatToClient", (msg) => {
+      console.log(msg);
+    });
+    socket.on("FriendRequestResponse", (data: any) => {
+      console.log("Received data from server:", data);
+      // Perform actions with the received data
+    });
 
-  //   socket.on("FriendRequestResponse", (data: any) => {
-  //     console.log("Received data from server:", data);
-  //     // Perform actions with the received data
-  //   });
-
-  //   socket.on("chatToClient", (msg: any) => {
-  //     console.log(msg);
-  //   });
-  // }
+    // socket.on("chatToClient", (msg: any) => {
+    //   console.log("msg");
+    // });
+  }
   const leaveroom = () =>{
 
     if (socket) {
@@ -70,8 +87,8 @@ function Home(): JSX.Element {
 
   return (
     <div>
-        {isHeaderLoaded ? <MyHeader /> : null}
-        {isHeaderLoaded ? <Game /> : null}
+         <MyHeader />
+         <Game />
       <div className="P_W">
         <a id="Play" href="#">
           <span>Play</span>

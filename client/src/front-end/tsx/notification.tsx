@@ -30,10 +30,10 @@ const Notification : React.FC = () => {
   });
   const challenge = () => {
 
-  if (socket) {
-    console.log("wwwwwaaaaaaa")
-    socket.emit('connect01');
-  }
+  // if (socket) {
+  //   console.log("wwwwwaaaaaaa")
+  //   socket.emit('connect01');
+  // }
     // console.log(storedSocket);
     type modeType = {
       pColor: string;
@@ -47,7 +47,7 @@ const Notification : React.FC = () => {
       name: string;
       image: string;
     } = {
-      player2Id: 98782,
+      player2Id: 99053,
       mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
       name: "von",
       image: "image"
@@ -57,7 +57,6 @@ const Notification : React.FC = () => {
       console.log(">>>>>>send from:" + socket);
       console.log(socket.id);
       socket.emit("sendGameRequest", dataToSend);
-      socket.emit("connect01" );
     }
   };
  
@@ -100,7 +99,7 @@ if(socket)
             <img id="profileImgNotif" src={me} alt="" />
           </div>
           <div className='notifButons'>
-          <a onClick={() => {socket?.emit('gameStart', data);console.log("accept")}}>Accept</a>
+          <a onClick={() => {socket?.emit(' dd', data);console.log("accept")}}>Accept</a>
           <a onClick={() => {console.log("Reject Button")}}>Reject</a>
         </div>
         </div>
