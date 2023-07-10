@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Game from '../../game/example'
 import axios from 'axios'
 import { SocketContext } from '../../socket/socketContext'
-
+import Maps from './maps'
 function Home() : JSX.Element
 {
     const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
