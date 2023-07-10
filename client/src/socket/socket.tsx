@@ -2,11 +2,8 @@ import { io, Socket } from "socket.io-client";
 
 export let socketInstance: Socket | null = null;
 
-export const initializeSocket = (userId: number) => {
-
-  socketInstance = io("http://localhost:3000", {
-    query: { user: encodeURIComponent(JSON.stringify({ id: userId })) },
-  });
+export const initializeSocket = () => {
+  socketInstance = io("http://localhost:3000");
 };
 
 export const getSocket = () => {
@@ -15,3 +12,14 @@ export const getSocket = () => {
   }
   return socketInstance;
 };
+
+export const maketest = (id: number) =>{
+  if(socketInstance){
+    console.log("active: "+socketInstance);
+    let data = {
+      userId : id,
+    }
+    socketInstance.emit("connect01", data);
+  }
+
+}

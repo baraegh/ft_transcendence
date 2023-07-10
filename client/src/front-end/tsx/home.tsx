@@ -4,9 +4,30 @@ import MyHeader from "./header";
 import { useNavigate } from "react-router-dom";
 import Game from "../../game/example";
 import axios from "axios";
+import { getSocket, initializeSocket, socketInstance } from "../../socket/socket";
+import { Socket } from "socket.io-client";
 import { SocketContext } from "../../socket/socketContext";
 function Home(): JSX.Element {
-  const { socket } = useContext(SocketContext);
+  const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
+  const { socket } = useContext<any | undefined>(SocketContext);
+
+  useEffect(() => {
+    // Use the socket instance here
+    if (socket) {
+      {
+        console.log("CREATED >> ");
+      console.log(socket);
+      }
+    }
+  }, [socket]);
+  useEffect(() => {
+    // Simulating a delay for the header to load
+    setTimeout(() => {
+      setIsHeaderLoaded(true);
+    }, 10000); // Adjust the delay time as needed
+  }, [])
+
+
 
 
   // if(socket )
@@ -41,20 +62,12 @@ function Home(): JSX.Element {
       }
     }
     const joiroom = () =>{
-      console.log(socket);
       if (socket) {
         socket.emit('joinRoom', "1");
         console.log("join");
       }
     }
-    const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
 
-    useEffect(() => {
-      // Simulating a delay for the header to load
-      setTimeout(() => {
-        setIsHeaderLoaded(true);
-      }, 2000); // Adjust the delay time as needed
-    }, [])
   return (
     <div>
         {isHeaderLoaded ? <MyHeader /> : null}

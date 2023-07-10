@@ -7,7 +7,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Notification from './notification'
 import "../css/home.css";
 import Game from "../../game/example";
-import  {socketInstance, initializeSocket, getSocket } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
+import  { getSocket, initializeSocket, maketest } from'/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx'
 import { SocketContext } from '../../socket/socketContext';
 
 interface User {
@@ -21,7 +21,21 @@ interface User {
 
 
 function MyHeader(): JSX.Element {
-  const { socket } = useContext(SocketContext);
+  const { socket } = useContext<any | undefined>(SocketContext);
+
+  useEffect(() => {
+    // Use the socket instance here
+    if (socket) {
+      {
+        console.log("CREATED >> ");
+        socket.on("chatToClient", (msg) => {
+          console.log(msg);
+        });
+      console.log(socket);
+      }
+    }
+  }, [socket]);
+  
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
 
   const navigate = useNavigate();
@@ -31,79 +45,6 @@ function MyHeader(): JSX.Element {
 
   const [getid, setid] = useState<number | null>(null);
   const [login, setLogin] = useState<string>("Welcome to the Home Page!");
-
-
-
-  useEffect(() => {
-    const fetchdata = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/user/me", {
-          withCredentials: true,
-        });
-        if (response.status === 200) {
-          setLogo(response.data.image);
-          setLogin("Welcome " + response.data.username);
-          setid(response.data.id);
-        } else {
-          throw new Error("Request failed");
-        }
-      } catch (error) {
-        console.log(error);
-        navigate("/");
-      }
-    };
-
-    fetchdata();
-  }, []);
-
-
-  useEffect(() => {
-    if (getid !== null) {
-    }
-    if(getid !== null) 
-    {
-      if(socket)
-      {
-        console.log("active: "+socket);
-        let data = {
-          playerid : 1111111111111111,
-        }
-        socket.emit("connect01", data);
-        socket.emit("zzz");
-        console.log("connect "+ getid);
-      }
-    }
-
-    if (socket) {
-      // socket.on("connect", () => {
-      //   const requestData = {
-      //     event: "userConnected",
-      //     user: { id: getid },
-      //   };
-      //   console.log(getid);
-      // });
-      // socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType}) =>{
-      //   console.log("gameRequestResponse"+data);
-      //   // setShowNotification(true);
-      //   // t_data = data;
-      //   // socket.emit('gameStart', data);
-      // });
-      socket.on("FriendRequestResponse", (data) => {
-        console.log("Received data from server:", data);
-        // Perform actions with the received data
-      });
-
-      socket.on("chatToClient", (msg) => {
-        console.log(msg);
-      });
-    }
-
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [getid]);
   const [userData, setUserData] = useState<User | null>(null);
   const [bellDropdownOpen, setBellDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);

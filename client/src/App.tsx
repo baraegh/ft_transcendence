@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
-import { SocketContextProvider } from './socket/socketContext';
+import SocketProvider from './socket/socketContext';
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
@@ -67,7 +67,7 @@ function App() {
   }, [isLoggedIn]);
   
   return (
-    <SocketContextProvider>
+    <SocketProvider>
     <Router>
       <Routes>
         <Route path="/" element={<DSTeam />} />
@@ -101,7 +101,7 @@ function App() {
         />
       </Routes>
     </Router>
-    </SocketContextProvider>
+    </SocketProvider>
   );
 }
 

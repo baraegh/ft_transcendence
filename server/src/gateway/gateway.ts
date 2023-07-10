@@ -4,12 +4,10 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   MessageBody,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { connected } from 'process';
 
 type modeType = {
   pColor: string;
@@ -50,19 +48,13 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('client: ', client.data.userId, ' just left');
     this.connectedUsers.delete(client.data.userId);
   }
-  
   @SubscribeMessage('connect01')
-  handleconnect01( client: Socket,data: {playerid : number}) {
-    console.log(' client connected: ' + data.playerid + client.id);
+  handleconnect(client: Socket, data: { userId: number }) {
+    console.log(' client connected:' + "hiii");
     // client.data.userId = data.userId;
     // console.log(' client connected:', data.userId);
     // if( !this.connectedUsers.get(data.userId))
     //   this.connectedUsers.set(client.data.userId, client);
-  }
-  @SubscribeMessage('zzz')
-  c(client: Socket) {
-    console.log(' client connected:');
-   
   }
 
   @SubscribeMessage('sendGameRequest')
