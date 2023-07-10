@@ -23,6 +23,8 @@ export class GameGateway implements OnGatewayDisconnect{
   @SubscribeMessage('gameStart')
   async handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) {
     this.games.set(this.gameId, data);
+    this.server.to(data.player1Id).emit('startGame', data.mode);
+    this.server.to(client.id).emit('startGame', data.mode);
     this.server.to(data.player1Id).emit('initGame', data.mode);
     this.server.to(client.id).emit('initGame', data.mode);
     this.streaming.set(this.gameId,{
@@ -51,25 +53,23 @@ export class GameGateway implements OnGatewayDisconnect{
       else if  (this.games.get(this.getMatchID(client)).player2Id == client.id){
         this.server.to(this.games.get(this.getMatchID(client)).player1Id).emit('playerDisconnected', this.streaming.get(this.getMatchID(client)).player2Id);
       }
-      this.games.delete(this.getMatchID(client))
+      this.games.delete(this.getMatchID(client));
+      this.gameId--;
     }
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
-    for (let i: number = 0; i < this.games.size;i++){
-      // if (!this.games.get(i))
-      //   return undefined
-      if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
-        return this.games.get(i);
-    }
+    this.games.forEach((value, key) => {
+      if (value.player1Id == client.id || value.player2Id == client.id)
+        return value;
+      
+    });
     return undefined;
   }
   getMatchID(client: Socket): number{
-    for (let i: number = 0; i < this.games.size;i++){
-      // if (!this.games.get(i))
-      //   return undefined;
-      if (this.games.get(i).player1Id == client.id || this.games.get(i).player2Id == client.id)
-        return i;
-    }
+    this.games.forEach((value, key) => {
+      if (value.player1Id == client.id || value.player2Id == client.id)
+        return key;
+    });
     return undefined;
   }
   getRoom(roomID: number): string{

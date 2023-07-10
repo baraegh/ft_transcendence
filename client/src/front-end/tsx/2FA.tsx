@@ -15,7 +15,6 @@ function FA() : JSX.Element {
             <p className='userName'>rimney</p>
             <input placeholder='OTP' type="tel" className="otp" />
         </div>
-
     );
 }
 

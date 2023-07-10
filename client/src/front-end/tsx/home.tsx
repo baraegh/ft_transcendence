@@ -52,7 +52,6 @@ function Home(): JSX.Element {
   useEffect(() => {
     if(socket )
   {
-
     socket.on("chatToClient", (msg) => {
       console.log(msg);
     });
@@ -65,8 +64,6 @@ function Home(): JSX.Element {
     //   console.log("msg");
     // });
   }
-
-    
   }, []);
   // if(socket )
   // {
@@ -93,7 +90,7 @@ function Home(): JSX.Element {
     const sendingroup = () =>{
   
     if (socket) {
-      socket.emit('chatToServer', { sender: "this.username", room: "1", message: "this.text" });
+      socket.emit('chatToServer', { sender: 123, room: "1", message: "this.text" });
       console.log("send");
       }
     }

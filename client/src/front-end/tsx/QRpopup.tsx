@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import '../css/QRpopup.css';
@@ -19,47 +19,56 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const [error, setError] = useState("");
 
   const submitQR = (event: KeyboardEvent) => {
+    
     axios.post('http://localhost:3000/2fa/verified', { "secret": QRvalue }, { withCredentials: true })
-      .then(res => {
-        console.log(res);
-        setQRisEnabled(true); // Update the QRisEnabled value using the callback
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.code === "ERR_BAD_REQUEST") {
-          setError("Wrong Auth Code !");
-        }
-      });
-
+    .then(res => {
+      console.log(res);
+      setQRisEnabled(true); // Update the QRisEnabled value using the callback
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err.code === "ERR_BAD_REQUEST") {
+        setError("Wrong Auth Code !");
+      }
+    });
+    
     event.preventDefault();
     setError("");
     if (QRvalue.length !== 6) {
       setError("error akhay");
     }
     console.log(QRvalue);
+    
+    console.log("QR generated !");
     axios.post('http://localhost:3000/2fa/verified_first_time', { "secret": QRvalue }, { withCredentials: true })
-      .then(res => {
-        console.log(res);
-        setError("");
-        onHide();
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.code === "ERR_BAD_REQUEST") {
-          setError("Wrong Auth Code !");
-        }
-      });
+    .then(res => {
+      console.log(res);
+      setError("");
+      onHide();
+    })
+    .catch((err) => {
+      console.log(err);
+      if (err.code === "ERR_BAD_REQUEST") {
+        setError("Wrong Auth Code !");
+      }
+    });
   };
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    console.log(QRisEnabled);
-
-    axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
-      .then(res => {
-        fetchQR = res;
-        setSource(res.data);
-      });
+    if (isMounted.current) {
+      console.log("CLEAN");
+      axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
+        .then(res => {
+          fetchQR = res;
+          setSource(res.data);
+        });
+    } else {
+      isMounted.current = true;
+    }
   }, [QRisEnabled]);
+
+
 
   return (
     <Modal className="QRmodal" show={show} onHide={onHide} centered>
