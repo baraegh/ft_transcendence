@@ -1,4 +1,10 @@
 
+----------------------- VON ------------------------
+=> handle bolck of all users not only friends in chat 
+
+=> the end-point ../unblock not working
+
+
 
 ----------------------- ME ------------------------
 => handle: if the group privacy is 'public' the 'hash' should be ''
@@ -14,3 +20,7 @@
 => private key appears in the {value} of the input
 
 => mute member
+
+=> check von work
+
+=> format the date - time
