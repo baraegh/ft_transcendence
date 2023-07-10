@@ -52,7 +52,6 @@ function Home(): JSX.Element {
   useEffect(() => {
     if(socket )
   {
-
     socket.on("chatToClient", (msg) => {
       console.log(msg);
     });
@@ -65,8 +64,6 @@ function Home(): JSX.Element {
     //   console.log("msg");
     // });
   }
-
-    
   }, []);
   // if(socket )
   // {
