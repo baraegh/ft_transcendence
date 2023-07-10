@@ -37,7 +37,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
       setError("error akhay");
     }
     console.log(QRvalue);
-    axios.post('http://localhost:3000/2fa/verified_first_time', { "secret": QRvalue }, { withCredentials: true })
+
+      axios.post('http://localhost:3000/2fa/verified_first_time', { "secret": QRvalue }, { withCredentials: true })
       .then(res => {
         console.log(res);
         setError("");
@@ -93,7 +94,6 @@ const QRpopup: React.FC = () => {
       setShowModal(false);
     setQRisEnabled(false);
     console.log(QRisEnabled);
-    console.log("EEE");
   };
 
   useEffect(() => {

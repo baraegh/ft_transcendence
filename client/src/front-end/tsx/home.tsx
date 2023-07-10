@@ -13,7 +13,7 @@ function Home() : JSX.Element
     return (<div>
         <MyHeader/>
         <div className="mainDisplay">
-            <img  src={tvGif} alt="" />
+            <img  id="tvGif" src={tvGif} alt="" />
         </div>
         <div className="P_W" >
             <a id="Play" onClick={() => {navigate('/Play')}}><span>Play</span></a>

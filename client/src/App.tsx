@@ -19,6 +19,7 @@ import axios from 'axios';
 import ErrorPage from './front-end/tsx/ErrorPage';
 import InviteFriend from './front-end/tsx/inviteFriend';
 import Axios from 'axios';
+import Maps from '/front-end/tsx/gamePlay';
 export {userMe};
 
 type meType = {

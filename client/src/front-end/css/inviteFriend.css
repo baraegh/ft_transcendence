@@ -11,16 +11,7 @@
     background-color: black;
 }
 
-.IQ {
-    position: relative;
-    top : 120px;
-    margin: 100px;
-    width : 700px;
-    font-size: 50px;
-    display: flex;
-    justify-content: space-between;
-    /* padding: 0 50px; Adjust the padding value as needed */
-  }
+
 #X
 {
     text-decoration: none;
@@ -30,4 +21,69 @@
     position: relative;
     left: 990px;
     top : 20px;
+}
+
+
+.search-input-container
+{
+    top : 30px;
+    position: relative;
+    left : 220px;
+    margin: 20px;
+    display: flex;
+    height: 30px;
+    /* background-color: green; */
+
+}
+
+.search-input
+{
+
+    /* justify-content: center; */
+    text-align: center;
+    border-radius: 6px;
+
+    width: 500px;
+}
+
+
+    /* background-color: white; */
+ 
+.friendList {
+    font-size: 40px;
+    margin: 97px 17px 3px -339px;
+    height: 413px;
+    width: 621px;
+    bottom: 13px;
+    text-align: left;
+    color: white;
+    position: relative;
+    border-radius: 20px;
+    flex-direction: row-reverse;
+    box-shadow: 6px 8px 0px 2px rgb(255, 255, 255);
+    overflow: auto;
+}
+
+.friendList p
+{
+    
+    letter-spacing: 4px;
+    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+}
+
+.friendsSearch
+{
+
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
+
+.friendsSearchImg
+{
+    width : 60px;
+    height: 60px;
+    border-radius: 60px;
+    margin-right:20px ;
+    /* height : px; */
 }

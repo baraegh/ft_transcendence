@@ -66,7 +66,6 @@ function myProfileUser(): JSX.Element {
         
         const randomId = Math.floor(Math.random() * 1000);
         const randomImage = 'https://random.imagecdn.app/500/150';
-        console.log(randomImage);
         const randomUsername = `Other ${index}`;
         return { id: randomId, image: randomImage, username: randomUsername };
     };
