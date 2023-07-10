@@ -103,7 +103,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('chatToServer')
   handleMessage(
     client: Socket,
-    message: { sender: string; room: string; message: string },
+    message: { sender: number; room: string; message: string },
   ) {
     this.auth.verifyToken(client.data.token, client);
     if (client.rooms.has(message.room)) {

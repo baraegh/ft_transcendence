@@ -40,9 +40,9 @@ export class ChatFriendService {
       const deletechat = await this.prisma.messages.deleteMany({
         where: { channelID: dto.channelId },
       });
-      const removechannel = await this.prisma.channel.delete({
-        where:{}
-      })
+      // const removechannel = await this.prisma.channel.delete({
+      //   where:{id : dto.channelId},
+      // })
 
       const clearparticipants = await this.prisma.participants.deleteMany({
         where: { channelID: dto.channelId },
