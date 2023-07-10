@@ -47,7 +47,7 @@ const Notification : React.FC = () => {
       name: string;
       image: string;
     } = {
-      player2Id: 98782,
+      player2Id: 99030,
       mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
       name: "von",
       image: "image"
