@@ -40,7 +40,6 @@
     "@nestjs/swagger": "^7.0.12",
     "@nestjs/websockets": "^9.0.0",
     "@prisma/client": "^4.15.0",
-    "@types/cookie-parser": "^1.4.3",
     "@types/qr-image": "^3.2.5",
     "argon2": "^0.30.3",
     "axios": "^1.4.0",

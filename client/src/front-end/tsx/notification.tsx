@@ -76,7 +76,7 @@ if(socket)
     if (showNotification) {
       const timer = setTimeout(() => {
         setShowNotification(false);
-      }, 10000);
+      }, 30000);
 
       return () => {
         clearTimeout(timer);
@@ -112,3 +112,4 @@ if(socket)
 };
 
 export default Notification;
+

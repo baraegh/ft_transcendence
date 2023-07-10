@@ -7,7 +7,6 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Notification from './notification'
 import "../css/home.css";
 import Game from "../../game/example";
-import  { getSocket, initializeSocket, maketest } from'/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx'
 import { SocketContext } from '../../socket/socketContext';
 
 interface User {
@@ -23,11 +22,34 @@ function MyHeader(): JSX.Element {
   const { socket } = useContext<any | undefined>(SocketContext);
 
   useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/user/me", {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          console.log(response.data.id);
+          const cdata = { userId: response.data.id};
+          socket.emit('connect01',cdata);
+          console.log("connect01");
+        } else {
+          throw new Error("Request failed");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchdata();
+  }, []);
+
+  useEffect(() => {
     // Use the socket instance here
     if (socket) {
       {
         console.log("CREATED >> ");
-        socket.on("startGame", (msg) => {
+        socket.on("startGame", (msg: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) => {
+          socket.emit('initGameToStart', msg.mode)
           navigate('/gamePlay');
           console.log('connected to Game');
         });

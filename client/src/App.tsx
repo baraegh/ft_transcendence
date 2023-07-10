@@ -17,9 +17,23 @@ import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import SocketProvider from './socket/socketContext';
+import GamePlay from './front-end/tsx/gamePlay';
+import InviteFriend from './front-end/tsx/inviteFriend';
+import ErrorPage from './front-end/tsx/ErrorPage';
+import React from 'react';
+export {userMe}
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
+type meType = {
+  id:           number,
+  username:     string,
+  image:        string,
+  gameWon:      number,
+  gameLost:     number,
+  achievements: string[],
+}
+const userMe = React.createContext<meType | null>(null);
 function App() {
   
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
@@ -65,42 +79,68 @@ function App() {
     // Update local storage whenever the isLoggedIn state changes
     localStorage.setItem('isLoggedIn', isLoggedIn);
   }, [isLoggedIn]);
+  const [me, setMe] = useState<meType | null>(null)
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/user/me', {withCredentials: true})
+      .then((response) => {
+        setMe(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, []);
+
   
   return (
     <SocketProvider>
+      <userMe.Provider value={me}>
     <Router>
-      <Routes>
-        <Route path="/" element={<DSTeam />} />
-        <Route
-          path="/loginPage"
-          element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
-        />
-        <Route
-          path="/home"
-          element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
-        />
-        <Route
-          path="/play"
-          element={isLoggedIn ? <Play /> : <Navigate to="/loginPage" replace />}
-        />
-        <Route
-          path="/TwoFactorAuth"
-          element={isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />}
-        />
-        <Route
-          path="/chat"
-          element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />}
-        />
-        <Route
-          path="/leaderboard"
-          element={isLoggedIn ? <LeaderBoard /> : <Navigate to="/loginPage" replace />}
-        />
-        <Route
-          path="/profile"
-          element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
-        />
-      </Routes>
+    <Routes>
+          <Route path="/" element={<DSTeam />} />
+          <Route
+            path="/loginPage"
+            element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
+          />
+          <Route
+            path="/home"
+            element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/play"
+            element={isLoggedIn ? <Play /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/TwoFactorAuth"
+            element={isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />}
+          />
+          <Route
+            path="/chat"
+            element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/leaderboard"
+            element={isLoggedIn ? <LeaderBoard /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/profile"
+            element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/gamePlay"
+            element={isLoggedIn ? <GamePlay /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/inviteFriend"
+            element={isLoggedIn ? <InviteFriend /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/errorPage"
+            element={<ErrorPage />}
+          />
+        </Routes>
     </Router>
+    </userMe.Provider>
     </SocketProvider>
   );
 }

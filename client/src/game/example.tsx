@@ -1,17 +1,7 @@
 import { useContext, useEffect, useRef } from "react";
-import { Socket, io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../socket/socketContext";
 
-function init_check(s:Socket<any, any> | null): boolean | undefined
-{
-  if (!s){
-      return (
-        false
-      );
-  }
-
-}
 type ballType = {
   x: number;
   y: number;
@@ -31,43 +21,12 @@ type playerType = {
 };
 const Game = () => {
   const { socket } = useContext<any | undefined>(SocketContext);
-  if(!init_check(socket))
-  {
-    console.log("log");
-    return (<div>
-
-    </div>);
-  }
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;
   useEffect(() => {
     const canvas = canvasRef.current as unknown as HTMLCanvasElement;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-    // if (window.innerWidth >= 1600 && window.innerHeight > 800)
-    // canvas.style.width = '1600px';
-    // else if (window.innerWidth >= 1000 && window.innerHeight > 500)
-    // canvas.style.width = '1000px';
-    // else if (window.innerWidth >= 700 && window.innerHeight > 350)
-    // canvas.style.width = '700px';
-    // else
-    // canvas.style.width = '300px';
-
-    // window.addEventListener('resize', handleResize=>{
-    //     if (window.innerWidth >= 1600 && window.innerHeight > 800)
-    //     canvas.style.width = '1400px';
-    //     else if (window.innerWidth >= 1000 && window.innerHeight > 500)
-    //     canvas.style.width = '800px';
-    //     else if (window.innerWidth >= 700 && window.innerHeight > 350)
-    //     canvas.style.width = '600px';
-    //     else
-    //     canvas.style.width = '300px';
-    //     canvas.style.top = window.innerHeight / 6 + 'px';
-    // });
-    // canvas.style.border = '3px solid black';
-    // canvas.style.borderRadius = '25px';
-    // canvas.style.position = 'relative';
-    // canvas.style.top = window.innerHeight / 120 + 'px';
     let ratio = window.devicePixelRatio || 1;
     canvas.width = canvas.offsetWidth * ratio;
     canvas.height = canvas.width * 0.5;
@@ -81,13 +40,13 @@ const Game = () => {
       pColor: "WHITE",
       bColor: "GRAY",
       fColor: "BLACK",
-      bMode: "",
+      bMode: "2",
     };
-    // console.log(">>>>" + socket)
-    socket?.on("initGame", (eMode: modeType) => {
-      if (eMode) modeControl = eMode;
-      // navigate("/home");
-      console.log("hellllllllllo");
+    
+    socket.on("initGame", (eMode: modeType) => {
+      // console.log("hello from game");
+      if (eMode)
+        modeControl = eMode;
     });
     let player1: playerType = {
       x: 0,
@@ -117,7 +76,7 @@ const Game = () => {
       x: canvas.width / 2 - canvas.width / 380,
       y: canvas.height / 2,
       radius: canvas.width / 60,
-      speed: 15,
+      speed: ((3 * canvas.width) / 4) / 60,
       velocityX: 5,
       velocityY: 5,
       color: modeControl.bColor,
@@ -221,58 +180,50 @@ const Game = () => {
         W: canvas.width,
         H: canvas.height,
       };
-      socket?.emit("ServerToClient", data);
       let message = {
         ball: ball,
         player1: player1,
         player2: player2,
         dim: dim,
       };
-      socket?.emit("ballMove", message);
       update();
       render();
+      socket.emit("ballMove", message);
+      socket.emit("ServerToClient", data);
       requestAnimationFrame(game);
     }
     userInputs();
-    socket?.on("ServerToClient", (data: dataForm) => {
-      player2.y = data.y;
+    socket.on("ServerToClient", (pdata: dataForm) => {
+      player2.y = pdata.y;
     });
-    socket?.on(
-      "ballMove",
-      (message: {
-        ball: ballType;
-        player1: playerType;
-        player2: playerType;
-        dim: { W: number; H: number };
-      }) => {
+    socket.on( "ballMove", (message: {
+                                      ball: ballType;
+                                      player1: playerType;
+                                      player2: playerType;
+                                      dim: { W: number; H: number };}) => {
         ball = message.ball;
         player1.score = message.player1.score;
         player2.score = message.player2.score;
       }
     );
-    socket?.on("thisIsStream", (message) => {
-      document.onkeydown = (event: KeyboardEvent) => {
-        event.preventDefault();
-      };
-      let dim = {
-        room: message,
-        matchID: 0,
-        player1:0,
-        player2:0
-      };
-      socket?.emit("newStreamRoom", dim);
-      socket?.emit("joinStreamRoom", message);
-    });
-    socket?.on("streaming", (message) => {
+    socket.on("streaming", (message) => {
       ball = message.ball;
       player1 = message.player1;
       player2 = message.player2;
     });
-
-    socket?.on("gameRequestResponse", (data) => {
-      console.log("Received data from server:", data);
-      // Perform actions with the received data
-    });
+    // socket.on("thisIsStream", (message) => {
+    //   document.onkeydown = (event: KeyboardEvent) => {
+    //     event.preventDefault();
+    //   };
+    //   let dim = {
+    //     room: message,
+    //     matchID: 0,
+    //     player1:0,
+    //     player2:0
+    //   };
+    //   socket.emit("newStreamRoom", dim);
+    //   socket.emit("joinStreamRoom", message);
+    // });
     game();
     return () => {
       cancelAnimationFrame(animationFrameIdRef);

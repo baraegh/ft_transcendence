@@ -36,16 +36,27 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   >();
 
   handleConnection(client: Socket) {
-    const token = this.auth.generateToken(client.data.userId);
-    console.log('New client connected:', client.id);
-    client.data.token = token;
-    this.connectedhandelconnect.set(client.id, client);
+    const user = Array.isArray(client.handshake.query.user)
+    ? client.handshake.query.user[0]
+    : client.handshake.query.user;
+    console.log(decodeURIComponent(user) );
+     
+      if (decodeURIComponent(user) !== "undefined") {
+        const decodedUser = JSON.parse(decodeURIComponent(user));
+        const userSocket = this.getUserSocket(client.data.userId);
+        if (!userSocket) {
+          client.data.userId = decodedUser.id;
+          const token = this.auth.generateToken(client.data.userId);
+          console.log('New client connected:', client.data.userId);
+          console.log('New client connected:', client.data.userId);
+          client.data.token = token;
+          this.connectedUsers.set(client.data.userId, client);
+        } 
+      }
   }
-
-
   handleDisconnect(client: Socket) {
-    // this.auth.verifyToken(client.data.token, client);
-    console.log('client: ', client.data.userId, ' just left');
+    // this.auth.verifyToken(client.data.token, client); 
+    console.log("client: ",client.data.userId," just left");
     this.connectedUsers.delete(client.data.userId);
   }
   @SubscribeMessage('connect01')

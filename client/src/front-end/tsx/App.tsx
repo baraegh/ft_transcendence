@@ -10,7 +10,7 @@ import OtherProfileUser from "./otherProfileUser";
 import LeaderBoard from './leaderBoard';
 import Play from './play'
 import QRpopup from './QRpopup'
-
+import InviteFriend from './inviteFriend'
 
 function App()
 {
