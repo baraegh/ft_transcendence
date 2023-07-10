@@ -71,49 +71,51 @@ function App() {
 
   return (
     <userMe.Provider value={me}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<DSTeam />}></Route>
-          <Route
-            path="/loginPage"
-            element={
-              !isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />
-            }
-          ></Route>
-          <Route
-            path="/home"
-            element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
-          />
-          <Route
-            path="/TwoFactorAuth"
-            element={
-              isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />
-            }
-          />
-          <Route
-            path="/chat"
-            element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />}
-          />
-          <Route
-            path="/leaderboard"
-            element={
-              isLoggedIn ? <LeaderBoard /> : <Navigate to="/loginPage" replace />
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              isLoggedIn ? (
-                <MyProfileUser />
-              ) : (
-                <Navigate to="/loginPage" replace />
-              )
-            }
-          />
-          {/* <Route path='/DSTeam' element={isLoggedIn ? <DSTeam /> : <Navigate to="/" replace />} /> */}
-        </Routes>
-      </Router>
-      {/* // <LoginPage/> */}
+      <div className="the-app" style={{}} >
+        <Router>
+          <Routes>
+            <Route path="/" element={<DSTeam />}></Route>
+            <Route
+              path="/loginPage"
+              element={
+                !isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />
+              }
+            ></Route>
+            <Route
+              path="/home"
+              element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
+            />
+            <Route
+              path="/TwoFactorAuth"
+              element={
+                isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />
+              }
+            />
+            <Route
+              path="/chat"
+              element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />}
+            />
+            <Route
+              path="/leaderboard"
+              element={
+                isLoggedIn ? <LeaderBoard /> : <Navigate to="/loginPage" replace />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                isLoggedIn ? (
+                  <MyProfileUser />
+                ) : (
+                  <Navigate to="/loginPage" replace />
+                )
+              }
+            />
+            {/* <Route path='/DSTeam' element={isLoggedIn ? <DSTeam /> : <Navigate to="/" replace />} /> */}
+          </Routes>
+        </Router>
+        {/* // <LoginPage/> */}
+      </div>
     </userMe.Provider>
   );
 }

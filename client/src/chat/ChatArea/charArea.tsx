@@ -23,9 +23,14 @@ type chatAreaHeaderProps =
     setIsProfileOpen:   (isopen: boolean) => void,
     setMsgSend:         (msgSend: boolean) => void,
     msgSend:            boolean,
+    setUpdateChatInfo:  (update: boolean) => void,
+    setChat:            (Id: string, Image: string, Name: string,
+                            Type: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null) => void,
 }
 
-const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend, msgSend} : chatAreaHeaderProps) => {
+const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
+                            setUpdateChatInfo, msgSend, setChat} : chatAreaHeaderProps) => {
     const me = useContext(userMe);
     const settingsList = chatInfo.blocked?(
             me?.id === chatInfo.whoblock?
@@ -33,6 +38,7 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend, msgSend} : chat
             : ['Delete']
         )
         :['Profile', 'Delete', 'Block'];
+
 
     return (
         <div className='chat-area-header'>
@@ -57,7 +63,9 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend, msgSend} : chat
                                         list={settingsList}
                                         size="18px"
                                         setMsgSend={setMsgSend}
-                                        msgSend={msgSend}/>
+                                        msgSend={msgSend}
+                                        setUpdateChatInfo={setUpdateChatInfo}
+                                        setChat={setChat}/>
                         </>
                     : ''
                 }
@@ -302,7 +310,7 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }, [chatInfo.chatId]);
 
     const rankCard = profileData.rank.length !== 0?
                         profileData.rank.map((data) => {
@@ -412,7 +420,6 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                     withCredentials: true,
                 })
             .then((response) => {
-                // console.log('response.data: ', response.data);
                 if (setChat )
                     setChat(response.data.channelID, img, username,
                             'PERSONEL', id);
@@ -826,11 +833,17 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
 type ChatAreaProps = {
     chatInfo:           chatInfoType,
     setIsProfileOpen:   (isOpen: boolean) => void,
+    setUpdateChatInfo:  (update: boolean) => void,
+    setChat:            (Id: string, Image: string, Name: string,
+                            Type: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null) => void,
+                            
 }
 
-export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
+export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo, setChat} : ChatAreaProps) => {
     const [msgList, setmsgList] = useState<msgListType | null>(null);
     const [msgSend, setMsgSend] = useState(false);
+
     const me = useContext(userMe);
 
     useEffect(() => {
@@ -853,7 +866,9 @@ export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
             <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} 
                             chatInfo={chatInfo}
                             setMsgSend={setMsgSend}
-                            msgSend={msgSend}/>
+                            msgSend={msgSend}
+                            setUpdateChatInfo={setUpdateChatInfo}
+                            setChat={setChat}/>
 
             <ChatAreaMessages   ListOfMsg={msgList}
                                 chatInfo={chatInfo}/>

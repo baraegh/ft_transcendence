@@ -4,6 +4,7 @@ import { FriendList } from "./chatFriendList/friendList";
 import { ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from "./ChatArea/charArea";
 import "./chat.css";
 import MyHeader from "../front-end/tsx/header";
+export {updateChatInfoCntext};
 
 export type membersDataType = {
   owner : {id: number, username: string, image: string };
@@ -20,6 +21,8 @@ export type chatInfoType = {
   blocked:    boolean,
   whoblock:   number | null,
 }
+
+const updateChatInfoCntext = React.createContext<boolean>(false);
 
 export function Chat() {
 
@@ -43,6 +46,7 @@ export function Chat() {
   );
   const [role, setRole] = useState('user');
   const [updateGroup, setUpdateGroup] = useState(false);
+  const [updateChatInfo, setUpdateChatInfo] = useState(false);
 
   const setChat = (Id: string, Image: string, Name: string,
                     Type: string, userId: number | null,
@@ -57,8 +61,8 @@ export function Chat() {
   }
 
   return (
-    <>
-      <MyHeader/>
+    <updateChatInfoCntext.Provider value={updateChatInfo}>
+      <MyHeader />
       <div className="chat-page">
         {!isChatSettingOpen ? (
           <>
@@ -67,14 +71,16 @@ export function Chat() {
                               setIsProfileOpen={setIsProfileOpen}
                               setRole={setRole}
                               updateGroup={updateGroup}
-                              setUpdateGroup={setUpdateGroup}/>
+                              setUpdateGroup={setUpdateGroup}
+                              updateChatInfo={updateChatInfo}/>
 
             <div className="chat-area">
               {chatInfo.chatId !== '' ? (
                 <ChatArea
                   chatInfo={chatInfo} 
                   setIsProfileOpen={setIsProfileOpen}
-                />
+                  setUpdateChatInfo={setUpdateChatInfo}
+                  setChat={setChat}/>
               ) : (
                 <div className="chat-area-default">
                   <p>Getting no message is also a message</p>
@@ -108,7 +114,7 @@ export function Chat() {
                               setChat={setChat}/>
         )}
       </div>
-    </>
+    </updateChatInfoCntext.Provider>
   );
 }
 

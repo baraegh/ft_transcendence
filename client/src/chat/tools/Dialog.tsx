@@ -7,7 +7,7 @@ import DropMenu from './DropMenu';
 import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
 import Axios from 'axios';
-import { chatInfoType, membersDataType } from '../chat';
+import { chatInfoType, membersDataType, updateChatInfoCntext } from '../chat';
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
 import { userMe } from '../../App';
@@ -457,10 +457,9 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         });
     const me = useContext(userMe);
 
-    useEffect((() => {
-        if (me)
-            GroupData.members[0] = me.id.toString();
-    }), []);
+
+    if (me && GroupData.members !== null)
+        GroupData.members[0] = me.id.toString();
     
     const checkNameInput = (groupName : string): boolean =>
     {
@@ -610,8 +609,10 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
 
     const  handleOnSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        if (GroupData.members.length > 1 && GroupData.members[0] !== '')
-        {
+
+        if (GroupData.members.length > 1 && 
+            GroupData.members[0] !== '')
+        {    
             const formData = new FormData();
 
             formData.append('type', GroupData.type);
@@ -1027,7 +1028,8 @@ const DeleteGroup = ({closeDialog, chatInfo, setChat, closeGroupSetting} : Dialo
     );
 }
 
-const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => {
+const BlockUser = ({closeDialog, chatInfo, setMsgSend,
+                    msgSend, setChat} : DialogProps) => {
 
     const handleOnClick = () => {
         if (!chatInfo)
@@ -1040,7 +1042,16 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) =
                     setMsgSend(!msgSend);
                 if (closeDialog)
                     closeDialog();
-                console.log('response.data: ', response.data);
+                console.log('response.status: ', response.status, 'setChat: ', setChat)
+                if (response.status === 200 && setChat)
+                {
+                    console.log('here')
+                    setChat(chatInfo.chatId, chatInfo.chatImage,
+                            chatInfo.chatName, chatInfo.chatType,
+                            chatInfo.chatUserId, true,
+                            chatInfo.chatUserId);
+
+                }
             })
             .catch((error) => {
                 console.log(error);
@@ -1063,9 +1074,9 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) =
 const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => {
 
     const handleOnClick = () => {
-        if (chatInfo && !chatInfo.blocked)
+        if (chatInfo === undefined
+                || !chatInfo.blocked)
             return;
-
         Axios.patch("http://localhost:3000/chat/friend/block_friend",
             {FriendId: chatInfo.chatUserId},
             {withCredentials: true})
@@ -1074,7 +1085,6 @@ const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => 
                     setMsgSend(!msgSend);
                 if (closeDialog)
                     closeDialog();
-                console.log('response.data: ', response.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -1099,7 +1109,8 @@ type DialogProps =
     title?:             string;
     closeDialog?:       () => void;
     setChat?:           (chatId: string, chatImage: string,
-                            chatName: string, chatType: string, userId: number | null) => void,
+                            chatName: string, chatType: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null) => void,
     chatInfo?:          chatInfoType,
     msgSend?:           boolean,
     setMsgSend?:        (msgSend: boolean) => void,
@@ -1110,13 +1121,14 @@ type DialogProps =
     setMembersWarn?:    (membersWarn: boolean) => void,
     setUpdatedAdmins?:  (updateAdmins: boolean) => void,
     closeGroupSetting?: () => void,
+    setUpdateChatInfo?: (update: boolean) => void,
 }
 
 export function Dialog({title, closeDialog, setChat,
                         chatInfo, msgSend, setMsgSend,
                         setUpdate, update, membersData,
-                        membersWarn, setMembersWarn, 
-                        setUpdatedAdmins, closeGroupSetting} : DialogProps)
+                        membersWarn, setMembersWarn, setUpdatedAdmins,
+                        closeGroupSetting, setUpdateChatInfo} : DialogProps)
 {
     let ItemComponent :React.ComponentType = () => <p>Invalid Choose</p>;
 
@@ -1177,7 +1189,9 @@ export function Dialog({title, closeDialog, setChat,
             ItemComponent = () => <BlockUser    closeDialog={closeDialog}
                                                 chatInfo={chatInfo}
                                                 setMsgSend={setMsgSend}
-                                                msgSend={msgSend}/>
+                                                msgSend={msgSend}
+                                                setUpdateChatInfo={setUpdateChatInfo}
+                                                setChat={setChat}/>
             break;
 
         case 'Delete Group':

@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FilterBtn, Search, Settings } from "../tools/filterSearchSettings";
 import '../chat';
 import Axios from "axios";
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
 import { chatInfoType } from "../chat";
+import { userMe } from "../../App";
 
 const filterList = ['All chats', 'Friends', 'Groups'];
-const settingsList = ['New Chat', 'Create Group', 'Invite'];
+const settingsList = ['New Chat', 'Create Group'];
 
 type ChatListHeaderProps = {
     setChat:        (chatId: string, chatImage: string, chatName: string,
@@ -86,7 +87,7 @@ const HistoryList = ({data, setChat, selected, updateGroup, setUpdateGroup}: His
                             : format(data.otherUserName, 8)
                         }
                     </p>
-                    <div className='status-circle online'></div>
+                    {isGroup? '': <div className='status-circle online'></div>}
                 </div>
                 { 
                     data.lastMessage?
@@ -132,10 +133,12 @@ type chatHistoryListProps =
     setRole:            (role: string) => void;
     setUpdateGroup:     (update: boolean) => void,
     updateGroup:        boolean,
+    updateChatInfo:     boolean,
 }
 
 const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
-                            setRole, setUpdateGroup, updateGroup}: chatHistoryListProps) =>
+                            setRole, setUpdateGroup, updateGroup,
+                            updateChatInfo}: chatHistoryListProps) =>
 {
     const [channelList, setChannelList] = useState<channel[]| null>(null);
     const [groupList, setGroupList] = useState<channel[]| null>(null);
@@ -165,10 +168,11 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                     console.log(error);
                 }
                 );
-            }, [chatInfo, searchQuery, filter]);
+            }, [chatInfo, searchQuery, filter, updateChatInfo]);
             
     useEffect(() => {
-        if (chatInfo.chatId === '')
+        if (chatInfo.chatId === '' ||
+            chatInfo.chatId === undefined)
             return;
         Axios.get(`http://localhost:3000/chat/roleOfuser/${chatInfo.chatId}`,
                 { withCredentials: true })

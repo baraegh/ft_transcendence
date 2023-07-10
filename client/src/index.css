@@ -36,10 +36,6 @@
 
 body {
   margin: 0;
-  overflow: auto;
-  display: flex;
-
-  place-items: center;
 }
 
 img {

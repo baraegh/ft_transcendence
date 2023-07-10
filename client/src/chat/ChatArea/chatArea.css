@@ -107,7 +107,8 @@
 .chat-area-send-btn
 {
     position: absolute;
-    left: 94.5%;
+    left: 90%;
+    top: 1px;
 }
 
 .chat-area-send-btn:hover
@@ -119,7 +120,7 @@
 {
     display: flex;
     position: absolute;
-    right:  94%;
+    right:  89%;
 }
 
 .square
@@ -246,7 +247,7 @@
     border-left: 1px solid var(--secondary-color);
     width: 250px;
     display: grid;
-    grid-template-rows: 200px auto;
+    grid-template-rows: 220px auto;
     /* justify-content: space-between; */
 }
 
@@ -257,8 +258,9 @@
     justify-content: center;
     align-items: center;
 
+    /* padding-top: 20px;
+    padding-bottom: 20px; */
     border-bottom: 0.5px solid var(--secondary-color);
-    padding-bottom: 5px;
 }
 
 .chat-area-profile-about img
