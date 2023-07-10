@@ -47,7 +47,7 @@ const Notification : React.FC = () => {
       name: string;
       image: string;
     } = {
-      player2Id: 99053,
+      player2Id: 98782,
       mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
       name: "von",
       image: "image"
@@ -99,7 +99,7 @@ if(socket)
             <img id="profileImgNotif" src={me} alt="" />
           </div>
           <div className='notifButons'>
-          <a onClick={() => {socket?.emit(' dd', data);console.log("accept")}}>Accept</a>
+          <a onClick={() => {socket?.emit('gameStart', data);console.log("accept")}}>Accept</a>
           <a onClick={() => {console.log("Reject Button")}}>Reject</a>
         </div>
         </div>

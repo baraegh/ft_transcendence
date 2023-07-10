@@ -49,9 +49,10 @@ function Home(): JSX.Element {
     fetchdata();
   }, []);
 
-
-  if(socket )
+  useEffect(() => {
+    if(socket )
   {
+
     socket.on("chatToClient", (msg) => {
       console.log(msg);
     });
@@ -64,6 +65,24 @@ function Home(): JSX.Element {
     //   console.log("msg");
     // });
   }
+
+    
+  }, []);
+  // if(socket )
+  // {
+
+  //   socket.on("chatToClient", (msg) => {
+  //     console.log(msg);
+  //   });
+  //   socket.on("FriendRequestResponse", (data: any) => {
+  //     console.log("Received data from server:", data);
+  //     // Perform actions with the received data
+  //   });
+
+  //   // socket.on("chatToClient", (msg: any) => {
+  //   //   console.log("msg");
+  //   // });
+  // }
   const leaveroom = () =>{
 
     if (socket) {

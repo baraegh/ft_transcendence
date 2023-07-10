@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef } from "react";
 import { Socket, io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../socket/socketContext";
 
 function init_check(s:Socket<any, any> | null): boolean | undefined
 {
@@ -29,7 +30,7 @@ type playerType = {
   score: number;
 };
 const Game = () => {
-  const  socket = null;
+  const { socket } = useContext<any | undefined>(SocketContext);
   if(!init_check(socket))
   {
     console.log("log");

@@ -50,11 +50,12 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   @SubscribeMessage('connect01')
   handleconnect(client: Socket, cdata: { userId: number }) {
-    console.log(' client connected:' + cdata.userId);
     client.data.userId = cdata.userId;
-    console.log(' client connected:', cdata.userId);
-    if( !this.connectedUsers.get(cdata.userId))
+    if(this.connectedUsers.get(cdata.userId) == undefined)
+    {
       this.connectedUsers.set(client.data.userId, client);
+      console.log(' client connected:', cdata.userId);
+    }
   }
 
   @SubscribeMessage('sendGameRequest')

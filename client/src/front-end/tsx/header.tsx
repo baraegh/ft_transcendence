@@ -26,10 +26,10 @@ function MyHeader(): JSX.Element {
     // Use the socket instance here
     if (socket) {
       {
-        console.log("CREATED >> ");
-        socket.on("chatToClient", (msg) => {
-          console.log("msg");
-        });
+        // console.log("CREATED >> ");
+        // socket.on("chatToClient", (msg) => {
+        //   console.log("msg");
+        // });
       // console.log(socket);
       }
     }
