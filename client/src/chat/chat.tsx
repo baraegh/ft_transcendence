@@ -47,6 +47,7 @@ export function Chat() {
   const [role, setRole] = useState('user');
   const [updateGroup, setUpdateGroup] = useState(false);
   const [updateChatInfo, setUpdateChatInfo] = useState(false);
+  const [updateUserCard, setUpdateUserCard] = useState(false);
 
   const setChat = (Id: string, Image: string, Name: string,
                     Type: string, userId: number | null,
@@ -72,7 +73,8 @@ export function Chat() {
                               setRole={setRole}
                               updateGroup={updateGroup}
                               setUpdateGroup={setUpdateGroup}
-                              updateChatInfo={updateChatInfo}/>
+                              updateChatInfo={updateChatInfo}
+                              updateUserCard={updateUserCard}/>
 
             <div className="chat-area">
               {chatInfo.chatId !== '' ? (
@@ -80,7 +82,9 @@ export function Chat() {
                   chatInfo={chatInfo} 
                   setIsProfileOpen={setIsProfileOpen}
                   setUpdateChatInfo={setUpdateChatInfo}
-                  setChat={setChat}/>
+                  setChat={setChat}
+                  setUpdateUserCard={setUpdateUserCard}
+                  updateUserCard={updateUserCard}/>
               ) : (
                 <div className="chat-area-default">
                   <p>Getting no message is also a message</p>

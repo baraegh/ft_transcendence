@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons' ;
 import DropMenu from './DropMenu';
 import { chatInfoType } from "../chat";
+import { channel } from "../chatHistory/chatHistoryList";
 
 type searchProps = {
     searchQuery:    string,
@@ -67,11 +68,12 @@ type SettingsProps =
     msgSend?:               boolean,
     setMsgSend?:            (msgSend: boolean) => void,
     setUpdateChatInfo?:     (update: boolean) => void,
+    joinRoom?:               (channelId: string) => void,
 }
 
 export function Settings({list, size='14px', setIsProfileOpen,
                             setChat, chatInfo, msgSend, setMsgSend,
-                            setUpdateChatInfo} : SettingsProps)
+                            setUpdateChatInfo, joinRoom} : SettingsProps)
 {
     return (
         <div className="chat-settings">
@@ -84,7 +86,8 @@ export function Settings({list, size='14px', setIsProfileOpen,
                         chatInfo={chatInfo}
                         msgSend={msgSend}
                         setMsgSend={setMsgSend}
-                        setUpdateChatInfo={setUpdateChatInfo}/>
+                        setUpdateChatInfo={setUpdateChatInfo}
+                        joinRoom={joinRoom}/>
         </div>
     );
 }

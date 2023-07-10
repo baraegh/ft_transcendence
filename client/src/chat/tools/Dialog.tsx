@@ -11,6 +11,7 @@ import { chatInfoType, membersDataType, updateChatInfoCntext } from '../chat';
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
 import { userMe } from '../../App';
+import { channel } from '../chatHistory/chatHistoryList';
 
 type UserProps =
 {
@@ -27,10 +28,14 @@ type UserProps =
                             | { name: string; value: string; isChecked: boolean }
                             | { id: number; isChecked: boolean}) => void,
     type?:               string,
+    joinRoom?:          (channelId: string) => void,
 }
 
-const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) => {
+const UsersCard = ({user, checkbox = false, setChat,
+                    closeDialog, joinRoom}: UserProps) => {
     const [isChecked, setIsChecked] = useState(false);
+
+    console.log('setChat: ', setChat);
 
     const handleOnClickCheckBox = () => {
         setIsChecked(!isChecked);
@@ -44,9 +49,14 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
                     withCredentials: true,
                 })
             .then((response) => {
+
+                console.log('response.data: ', response.data);
+
                 if (setChat )
-                    setChat(response.data.channelID, user.image, user.username,
+                    setChat(response.data.id, user.image, user.username,
                             'PERSONEL', user.id);
+                if (joinRoom)
+                    joinRoom(response.data.id);
                 if (closeDialog)
                     closeDialog();
             })
@@ -83,9 +93,10 @@ type NewChatProps = {
     setChat?: (chatId: string, chatImage: string,
                 chatName: string, chatType: string, userId: number | null) => void
     closeDialog?:       () => void,
+    joinRoom?:           (channelID: string) => void,
 }
 
-const NewChat = ({setChat, closeDialog} : NewChatProps) => {
+const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
     const [usersList, setUsersList] = useState<userListType[] | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -119,7 +130,8 @@ const NewChat = ({setChat, closeDialog} : NewChatProps) => {
                                 filteredUsersList.map(user => <UsersCard    key={user.id}
                                                                             user={user}     
                                                                             setChat={setChat}
-                                                                            closeDialog={closeDialog} />) 
+                                                                            closeDialog={closeDialog}
+                                                                            joinRoom={joinRoom}/>) 
                             : <p className='No-data' style={{textAlign: 'center'}}>NO RESULT</p>
                         }
             </div>
@@ -1122,20 +1134,23 @@ type DialogProps =
     setUpdatedAdmins?:  (updateAdmins: boolean) => void,
     closeGroupSetting?: () => void,
     setUpdateChatInfo?: (update: boolean) => void,
+    joinRoom?:          (channelId: string) => void,
 }
 
 export function Dialog({title, closeDialog, setChat,
                         chatInfo, msgSend, setMsgSend,
                         setUpdate, update, membersData,
                         membersWarn, setMembersWarn, setUpdatedAdmins,
-                        closeGroupSetting, setUpdateChatInfo} : DialogProps)
+                        closeGroupSetting, setUpdateChatInfo, joinRoom} : DialogProps)
 {
     let ItemComponent :React.ComponentType = () => <p>Invalid Choose</p>;
 
     switch(title)
     {
         case 'New Chat':
-            ItemComponent = () => <NewChat setChat={setChat} closeDialog={closeDialog} />;
+            ItemComponent = () => <NewChat  setChat={setChat}
+                                            closeDialog={closeDialog}
+                                            joinRoom={joinRoom}/>;
             break;
         
         case 'Create Group':

@@ -22,12 +22,13 @@ type DropMenuProps =
   msgSend?:           boolean,
   setFilter?:         (filter: string) => void,
   setUpdateChatInfo?: (update: boolean) => void, 
+  joinRoom?:          (channelId: string) => void,
 }
 
 const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, 
                   size='14px', triggerIconSize='9px', setIsProfileOpen,
                   setChat, chatInfo, setMsgSend, msgSend, setFilter,
-                  setUpdateChatInfo} : DropMenuProps) => {
+                  setUpdateChatInfo, joinRoom} : DropMenuProps) => {
 
     const [selectedDropMenu, setSelectedDropMenu] = useState(list[0]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -100,7 +101,8 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false,
                                   chatInfo={chatInfo}
                                   setMsgSend={setMsgSend}
                                   msgSend={msgSend}
-                                  setUpdateChatInfo={setUpdateChatInfo}/>
+                                  setUpdateChatInfo={setUpdateChatInfo}
+                                  joinRoom={joinRoom}/>
         }
       </>
     );

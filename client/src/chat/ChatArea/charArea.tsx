@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import Axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faKhanda, faXmark, faGear} from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +13,7 @@ import "./chatArea.css"
 import defaultUserImage from '../../assets/person.png';
 import dfaultGroupImage from '../../assets/group.png';
 import { format } from "../chatHistory/chatHistoryList";
+import { SocketContext } from "../../socket/socketContext";
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
@@ -86,12 +87,13 @@ const ThreeSquare = () => {
 }
 
 type chatAreaInputProps ={
-    chatInfo:   chatInfoType,
-    setMsgSend: (msgSend: boolean) => void,
-    msgSend:    boolean,
+    chatInfo:       chatInfoType,
+    setMsgSend:     (msgSend: boolean) => void,
+    msgSend:        boolean,
+    sendingroup:    (msg: string) => void,
 }
 
-const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
+const ChatAreaInput = ({chatInfo, setMsgSend, msgSend, sendingroup}: chatAreaInputProps) => {
     const [isClicked, setIsClicked] = useState(false);
     const [msg, setMsg] = useState<string>('');
 
@@ -122,6 +124,7 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
                 },
                 {withCredentials: true})
             .then(() => {
+                sendingroup(msg);
                 setMsgSend(!msgSend);
                 setMsg('');
             })
@@ -199,15 +202,22 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
 
 type chatAreaMessagesProps =
 {
-    ListOfMsg:  msgListType | null,
+    ListOfMsg:  msgListType,
     chatInfo:   chatInfoType,
 }
 
 const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
     const me = useContext(userMe);
     let i = 0;
+    const chatAreaRef = useRef(null);
 
-    const msgCard = ListOfMsg? ListOfMsg.map( msg =>
+    useEffect(() => {
+
+        if (chatAreaRef)
+            chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }, [ListOfMsg]);
+
+    const msgCard = ListOfMsg.length !== 0? ListOfMsg.map( msg =>
                     {
                         return    me?.id === msg.userId ?
                                 (<MsgCardMe key={msg.userId + i++}
@@ -220,7 +230,7 @@ const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
                 ) : ''
 
     return (
-        <div className='chat-area-messages'>
+        <div className='chat-area-messages' ref={chatAreaRef}>
             {msgCard}
         </div>
     );
@@ -421,7 +431,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                 })
             .then((response) => {
                 if (setChat )
-                    setChat(response.data.channelID, img, username,
+                    setChat(response.data.id, img, username,
                             'PERSONEL', id);
                 if (closeDialog)
                     closeDialog();
@@ -706,6 +716,8 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
             })
         }, [props.update]);
 
+    
+
     const admins = props.membersData?.admins.length !== 0 ? props.membersData?.admins.map((admin) => {
         return  <PopoverComp    Trigger={<MemberCard    img={admin.image}
                                                         username={admin.username} />}
@@ -830,6 +842,12 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     );
 }
 
+type responseType = {
+    sender:             number,
+    room:               string,
+    message:            string,
+}
+
 type ChatAreaProps = {
     chatInfo:           chatInfoType,
     setIsProfileOpen:   (isOpen: boolean) => void,
@@ -837,14 +855,25 @@ type ChatAreaProps = {
     setChat:            (Id: string, Image: string, Name: string,
                             Type: string, userId: number | null,
                             blocked?: boolean, whoblock?: number | null) => void,
-                            
+    setUpdateUserCard:  (update: boolean) => void,
+    updateUserCard:     boolean,
 }
 
-export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo, setChat} : ChatAreaProps) => {
-    const [msgList, setmsgList] = useState<msgListType | null>(null);
-    const [msgSend, setMsgSend] = useState(false);
 
+export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
+                            setChat, setUpdateUserCard, updateUserCard} : ChatAreaProps) => {
+    const [msgList, setmsgList] = useState<msgListType>([]);
+    const [msgSend, setMsgSend] = useState(false);
     const me = useContext(userMe);
+    const {socket} = useContext<any | undefined>(SocketContext);
+    
+    const sendingroup = (msg: string) => {
+        if (socket) 
+        {
+            socket.emit('chatToServer', { sender: me?.id, room: chatInfo.chatId, message: msg });
+            console.log("send");
+        }
+    }
 
     useEffect(() => {
         if (!chatInfo.chatId)
@@ -852,14 +881,39 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo, setChat
         Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
                 {withCredentials: true})
             .then((response) => {
-                setmsgList(response.data);
+                setmsgList(response.data || []);
               }
             )
             .catch((error) => {
                 console.log(error);
               }
             );
-      }, [chatInfo.chatId, msgSend]);
+      }, [chatInfo.chatId]);
+
+    
+
+    useEffect(() => {
+
+        const chatToClientListener = (response: responseType) => {
+            setmsgList(prevMsgList => [...prevMsgList, 
+                                        {userId: response.sender,
+                                        content: response.message,
+                                        timeSend: 'to be fixed',
+                                        image: chatInfo.chatImage}]);
+            setUpdateUserCard(!updateUserCard);
+        }
+
+        if (socket)
+            socket.on("chatToClient", chatToClientListener);
+
+        return () => {
+            if (socket) {
+              socket.off("chatToClient", chatToClientListener);
+            }
+          };
+
+    }, []);
+
 
     return (
         <div className='chat-area-container'>
@@ -882,7 +936,8 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo, setChat
             }
             <ChatAreaInput  setMsgSend={setMsgSend}
                             msgSend={msgSend}
-                            chatInfo={chatInfo}/>
+                            chatInfo={chatInfo}
+                            sendingroup={sendingroup}/>
         </div>
     );
 }

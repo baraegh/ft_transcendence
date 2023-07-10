@@ -89,44 +89,47 @@ function App() {
   }, [isLoggedIn]);
   
   return (
-    <SocketProvider>
-      <userMe.Provider value={me}>
-        <Router>
-          <Routes>
-            <Route path="/" element={<DSTeam />} />
-            <Route
-              path="/loginPage"
-              element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
-            />
-            <Route
-              path="/home"
-              element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
-            />
-            <Route
-              path="/play"
-              element={isLoggedIn ? <Play /> : <Navigate to="/loginPage" replace />}
-            />
-            <Route
-              path="/TwoFactorAuth"
-              element={isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />}
-            />
-            <Route
-              path="/chat"
-              element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />}
-            />
-            <Route
-              path="/leaderboard"
-              element={isLoggedIn ? <LeaderBoard /> : <Navigate to="/loginPage" replace />}
-            />
-            <Route
-              path="/profile"
-              element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
-            />
-          </Routes>
-        </Router>
-      </userMe.Provider>
-    </SocketProvider>
-  );
+    <div className="the-app">
+      <SocketProvider>
+        <userMe.Provider value={me}>
+          <Router>
+            <Routes>
+              <Route path="/" element={<DSTeam />} />
+              <Route
+                path="/loginPage"
+                element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
+              />
+              <Route
+                path="/home"
+                element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
+              />
+              <Route
+                path="/play"
+                element={isLoggedIn ? <Play /> : <Navigate to="/loginPage" replace />}
+              />
+              <Route
+                path="/TwoFactorAuth"
+                element={isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />}
+              />
+              <Route
+                path="/chat"
+                element={isLoggedIn ? <Chat /> : <Navigate to="/loginPage" replace />}
+              />
+              <Route
+                path="/leaderboard"
+                element={isLoggedIn ? <LeaderBoard /> : <Navigate to="/loginPage" replace />}
+              />
+              <Route
+                path="/profile"
+                element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
+              />
+            </Routes>
+          </Router>
+        </userMe.Provider>
+      </SocketProvider>
+    </div>
+    );
+
 }
 
 export default App;
