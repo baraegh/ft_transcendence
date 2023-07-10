@@ -33,10 +33,9 @@ export class CHANNELIDDTO {
 }
 
 export class OWNEADDADMINRDTO {
-  @ApiProperty({ description: 'must be array of string of id' })
-@IsArray()
-@ArrayNotEmpty()
-@Transform(({ value }) => JSON.parse(value).map((v: string) => Number(v)), { toClassOnly: true })
+  @ApiProperty({ type: [Number] })
+  @IsArray()
+  @IsNumber({}, { each: true })
   members: number[];
   
     @ApiProperty()
@@ -59,8 +58,8 @@ export class OWNEADDADMINRDTO {
     type: 'PUBLIC'  | 'PRIVATE' | 'PROTECTED';
   
     @ApiProperty({ description: 'Channel id' })
-    @IsNotEmpty()
     @IsString()
+    @IsOptional()
     name: string;
   
     @ApiProperty({ description: 'IsOptional' })

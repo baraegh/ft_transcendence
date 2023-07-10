@@ -32,12 +32,31 @@ type meType = {
 }
 const userMe = React.createContext<meType | null>(null);
 
+//  let socket: Socket | null; 
+//  export let socket: Socket | null = null;
 function App() {
+  
+  // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  // const [getid, setid] = useState<number>();
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     // Check if the user is logged in based on the value in local storage
     const storedLoggedIn = localStorage.getItem('isLoggedIn');
     return storedLoggedIn ? JSON.parse(storedLoggedIn) : false;
   });
+  // useEffect(() => {
+  //   const newSocket = io(`http://${window.location.hostname}:3000`);
+  //   setSocket(newSocket);
+  //   return () => newSocket.close();
+  // }, [setSocket]);
+  // useEffect(() => {
+  //   // Initialize the socket when the component mounts
+  //   const newSocket = io(`http://${window.location.hostname}:3000`);
+  //   setSocket(newSocket); 
+  //   return () => {
+  //     newSocket.close();
+  //   };
+  // }, [setSocket]);
 
   useEffect(() => {
     const checkLoggedInStatus = async () => {

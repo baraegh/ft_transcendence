@@ -40,7 +40,17 @@ export class ChatFriendService {
       const deletechat = await this.prisma.messages.deleteMany({
         where: { channelID: dto.channelId },
       });
-      if (!deletechat) throw new NotFoundException('error on delete');
+      const removechannel = await this.prisma.channel.delete({
+        where:{}
+      })
+
+      const clearparticipants = await this.prisma.participants.deleteMany({
+        where: { channelID: dto.channelId },
+      });
+
+      const deletGroup = await this.prisma.channel.delete({
+        where: { id: dto.channelId },
+      });
     }
   }
 
@@ -66,7 +76,7 @@ export class ChatFriendService {
       },
     });
     if (!fetchUsers) throw new NotFoundException('Not Your Friend');
-    if (fetchUsers.blocked === true) throw new NotFoundException('Is blocked');
+    if (fetchUsers.blocked === true) return;
     const foundPersonalChannel = await this.prisma.channel.findFirst({
       where: {
         type: 'PERSONEL',

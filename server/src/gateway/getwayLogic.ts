@@ -17,7 +17,7 @@ export class AuthLogic {
   verifyToken(token: string,client:Socket) {
     try {
         if (!client.data.token || !jwt.verify(token, this.secretKey) ) {
-          throw new ForbiddenException('Unauthorized WebSocket connection');
+          return
         }
       } catch (error) {
         // Handle the ForbiddenException or other errors
@@ -25,7 +25,7 @@ export class AuthLogic {
             message: error.message,
             code: error.getStatus(),
           });
-        console.error('Error occurred during WebSocket disconnect:', error.message);
+        // console.error('Error occurred during WebSocket disconnect:', error.message);
       }
   }
 }
