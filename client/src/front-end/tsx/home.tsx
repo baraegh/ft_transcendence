@@ -93,7 +93,7 @@ function Home(): JSX.Element {
     const sendingroup = () =>{
   
     if (socket) {
-      socket.emit('chatToServer', { sender: "this.username", room: "1", message: "this.text" });
+      socket.emit('chatToServer', { sender: 123, room: "1", message: "this.text" });
       console.log("send");
       }
     }
