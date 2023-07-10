@@ -2,7 +2,7 @@
   "name": "ft_transcendence",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "von",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -29,12 +29,12 @@
     "test:e2e": "dotenv -e .env.test -- jest --watch --no-cache --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^9.0.0",
+    "@nestjs/common": "^10.0.5",
     "@nestjs/config": "^2.3.2",
-    "@nestjs/core": "^9.0.0",
+    "@nestjs/core": "^10.0.5",
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/passport": "^9.0.3",
-    "@nestjs/platform-express": "^9.4.3",
+    "@nestjs/platform-express": "^10.0.5",
     "@nestjs/platform-socket.io": "^9.0.0",
     "@nestjs/platform-ws": "^10.0.5",
     "@nestjs/swagger": "^7.0.12",

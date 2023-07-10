@@ -1,9 +1,17 @@
-import { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
-import { socketInstance } from "../socket/socket";
-import { Socket } from "socket.io-client/debug";
+import { useContext, useEffect, useRef } from "react";
+import { Socket, io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-const socket = socketInstance;
+import { SocketContext } from "../socket/socketContext";
+
+function init_check(s:Socket<any, any> | null): boolean | undefined
+{
+  if (!s){
+      return (
+        false
+      );
+  }
+
+}
 type ballType = {
   x: number;
   y: number;
@@ -22,6 +30,14 @@ type playerType = {
   score: number;
 };
 const Game = () => {
+  const { socket } = useContext<any | undefined>(SocketContext);
+  if(!init_check(socket))
+  {
+    console.log("log");
+    return (<div>
+
+    </div>);
+  }
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const animationFrameIdRef: number = 0;
@@ -67,9 +83,10 @@ const Game = () => {
       fColor: "BLACK",
       bMode: "",
     };
+    // console.log(">>>>" + socket)
     socket?.on("initGame", (eMode: modeType) => {
       if (eMode) modeControl = eMode;
-      navigate("/home");
+      // navigate("/home");
       console.log("hellllllllllo");
     });
     let player1: playerType = {
@@ -121,7 +138,8 @@ const Game = () => {
         }
       };
     }
-
+    if(modeControl.bMode == "2")
+      ball.radius = (ball.radius * 2)/3;
     function drawRect(
       x: number,
       y: number,
@@ -239,9 +257,11 @@ const Game = () => {
       let dim = {
         room: message,
         matchID: 0,
+        player1:0,
+        player2:0
       };
-      socket.emit("newStreamRoom", dim);
-      socket.emit("joinStreamRoom", message);
+      socket?.emit("newStreamRoom", dim);
+      socket?.emit("joinStreamRoom", message);
     });
     socket?.on("streaming", (message) => {
       ball = message.ball;
@@ -266,5 +286,6 @@ const Game = () => {
     </div>
   );
 };
+
 
 export default Game;

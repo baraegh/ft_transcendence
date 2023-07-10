@@ -1,21 +1,30 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../css/home.css";
 import MyHeader from "./header";
 import { useNavigate } from "react-router-dom";
 import Game from "../../game/example";
 import axios from "axios";
-import { socketInstance, initializeSocket, getSocket } from "../../socket/socket";
-
+import { getSocket, initializeSocket, socketInstance } from "../../socket/socket";
+import { Socket } from "socket.io-client";
+import { SocketContext } from "../../socket/socketContext";
 function Home(): JSX.Element {
+  const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
+  const { socket } = useContext<any | undefined>(SocketContext);
 
-  const navigate = useNavigate();
-  const [logo, setLogo] = useState<string>(
-    " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
-  );
-  const socket = socketInstance;
-  const [getid, setid] = useState<number | null>(null);
-  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
-
+  useEffect(() => {
+    // Use the socket instance here
+    if (socket) {
+      {
+        console.log("CREATED AT Home >> ");
+      }
+    }
+  }, [socket]);
+  useEffect(() => {
+    // Simulating a delay for the header to load
+    setTimeout(() => {
+      setIsHeaderLoaded(true);
+    }, 10000); // Adjust the delay time as needed
+  }, [])
 
 
   useEffect(() => {
@@ -25,79 +34,130 @@ function Home(): JSX.Element {
           withCredentials: true,
         });
         if (response.status === 200) {
-          setLogo(response.data.image);
-          setLogin("Welcome " + response.data.username);
-          setid(response.data.id);
+          console.log(response.data.id);
+          const cdata = { userId: response.data.id};
+          socket.emit('connect01',cdata);
+          console.log("connect01");
         } else {
           throw new Error("Request failed");
         }
       } catch (error) {
         console.log(error);
-        navigate("/");
       }
     };
 
     fetchdata();
   }, []);
 
-
   useEffect(() => {
-    if (getid !== null) {
-      console.log(getid);
-      initializeSocket(getid);
-    }
-    let socket:any;
-    if(getid !== null) 
-    {
-       socket = getSocket();
+    if(socket )
+  {
 
-    }
+    socket.on("chatToClient", (msg) => {
+      console.log(msg);
+    });
+    socket.on("FriendRequestResponse", (data: any) => {
+      console.log("Received data from server:", data);
+      // Perform actions with the received data
+    });
+
+    // socket.on("chatToClient", (msg: any) => {
+    //   console.log("msg");
+    // });
+  }
+
+    
+  }, []);
+  // if(socket )
+  // {
+
+  //   socket.on("chatToClient", (msg) => {
+  //     console.log(msg);
+  //   });
+  //   socket.on("FriendRequestResponse", (data: any) => {
+  //     console.log("Received data from server:", data);
+  //     // Perform actions with the received data
+  //   });
+
+  //   // socket.on("chatToClient", (msg: any) => {
+  //   //   console.log("msg");
+  //   // });
+  // }
+  const leaveroom = () =>{
 
     if (socket) {
-      socket.on("connect", () => {
-        const requestData = {
-          event: "userConnected",
-          user: { id: getid },
-        };
-        socket.emit("requestData", requestData);
-      });
-      type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-      socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType}) =>{
-        
-        socket.emit('gameStart', data);
-      });
-
-      socket.on("FriendRequestResponse", (data) => {
-        console.log("Received data from server:", data);
-        // Perform actions with the received data
-      });
-
-      socket.on("chatToClient", (msg) => {
-        console.log(msg);
-      });
+      socket.emit('leaveRoom', '1');
+      console.log("leaved");
+      }
+    }
+    const sendingroup = () =>{
+  
+    if (socket) {
+      socket.emit('chatToServer', { sender: "this.username", room: "1", message: "this.text" });
+      console.log("send");
+      }
+    }
+    const joiroom = () =>{
+      if (socket) {
+        socket.emit('joinRoom', "1");
+        console.log("join");
+      }
     }
 
-    return () => {
-      if (socket) {
-        socket.disconnect();
-      }
-    };
-  }, [getid]);
   return (
-    <>
-      <MyHeader />
-      <div className="home-game">
-        <Game />
-        <div className="P_W">
-          <a id="Play" href="#">
-            <span>Play</span>
-          </a>
-          <a id="WatchStream" href="#">
-            <span>Watch Stram</span>
-          </a>
-        </div>
-      </div>
-    </>
+    <div>
+         <MyHeader />
+         <Game />
+      <div className="P_W">
+        <a id="Play" href="#">
+          <span>Play</span>
+        </a>
+        <a id="WatchStream" href="#">
+          <span>Watch Stram</span>
+        </a>
+        <button
+        onClick={ joiroom}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        joiroom
+      </button>
+
+      <button
+        onClick={ leaveroom}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        leaverrom
+      </button>
+
+      <button
+        onClick={ sendingroup}
+        style={{
+          backgroundColor: "blue",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        sendingroup
+      </button>
+    </div>
+    </div>
   );
 }
 

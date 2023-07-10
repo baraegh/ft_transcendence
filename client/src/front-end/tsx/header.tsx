@@ -1,11 +1,14 @@
 import Bell from '../img/bell.png';
 import '../css/header.css';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { Button, Modal } from 'react-bootstrap';
 import Notification from './notification'
+import "../css/home.css";
+import Game from "../../game/example";
+import  { getSocket, initializeSocket, maketest } from'/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx'
+import { SocketContext } from '../../socket/socketContext';
 
 interface User {
   id: number;
@@ -16,10 +19,29 @@ interface User {
   achievements: string[];
 }
 
-
 function MyHeader(): JSX.Element {
-  const [userData, setUserData] = useState<User | null>(null);
+  const { socket } = useContext<any | undefined>(SocketContext);
+
+  useEffect(() => {
+    // Use the socket instance here
+    if (socket) {
+      {
+        // console.log("CREATED >> ");
+        // socket.on("chatToClient", (msg) => {
+        //   console.log("msg");
+        // });
+      // console.log(socket);
+      }
+    }
+  }, [socket]);
+  
+  type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+
   const navigate = useNavigate();
+
+
+  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  const [userData, setUserData] = useState<User | null>(null);
   const [bellDropdownOpen, setBellDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
@@ -56,7 +78,10 @@ function MyHeader(): JSX.Element {
 
         if (response.status === 200) {
           const data = response.data;
-
+          
+          // const cdata = { userId: data.id };
+          // socket.emit('connect01',cdata);
+          // console.log("connect01");
           const fetchedUser: User = {
             id: data.id,
             username: data.username,
@@ -84,7 +109,7 @@ function MyHeader(): JSX.Element {
     useEffect(() => {
       const timer = setTimeout(() => {
         onClose();
-      }, 10000);
+      }, 0);
   
       return () => clearTimeout(timer);
     }, [onClose]);
@@ -98,7 +123,13 @@ function MyHeader(): JSX.Element {
       </div>
     );
   };
-  
+
+
+
+
+
+
+
   return (
       <header>
         <div className='header-left'>

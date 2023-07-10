@@ -22,7 +22,7 @@ export class AuthService {
       where: { email: dto.email },
     });
     if (existingUser) {
-      throw new ForbiddenException('Email is already taken');
+      return;
     }
     const user = await this.prisma.user.create({
       data: {
@@ -96,12 +96,12 @@ export class AuthService {
     const secret_refresh = this.config.get('SECRETE_TOKEN_REFRESH');
     const [at, rt] = await Promise.all([
       await this.jwt.signAsync(payload, {
-        expiresIn: '60m',
+        expiresIn: '600m',
         secret: secret,
         jwtid: this.config.get<string>('SECRETE_JWT_ID'),
       }),
       await this.jwt.signAsync(payload, {
-        expiresIn: '60m',
+        expiresIn: '600m',
         secret: secret_refresh,
         jwtid: this.config.get<string>('SECRETE_JWT_ID'),
       }),

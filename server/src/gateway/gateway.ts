@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthLogic } from './getwayLogic';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 type modeType = {
   pColor: string;
@@ -21,68 +22,80 @@ type modeType = {
   },
 })
 export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private readonly auth: AuthLogic) {}
+  constructor(
+    private readonly auth: AuthLogic,
+    private prisma: PrismaService,
+  ) {}
   private server: Server;
-
 
   private rooms: Set<string> = new Set<string>();
   private connectedUsers: Map<number, Socket> = new Map<number, Socket>();
+  private connectedhandelconnect: Map<string, Socket> = new Map<
+    string,
+    Socket
+  >();
 
   handleConnection(client: Socket) {
-    const user = Array.isArray(client.handshake.query.user)
-    ? client.handshake.query.user[0]
-    : client.handshake.query.user;
-    console.log(decodeURIComponent(user) );
-     
-      if (decodeURIComponent(user) !== "undefined") {
-        const decodedUser = JSON.parse(decodeURIComponent(user));
-        const userSocket = this.getUserSocket(client.data.userId);
-        if (!userSocket) {
-          client.data.userId = decodedUser.id;
-          const token = this.auth.generateToken(client.data.userId);
-          console.log('New client connected:', client.data.userId);
-          console.log('New client connected:', client.data.userId);
-          client.data.token = token;
-          this.connectedUsers.set(client.data.userId, client);
-        } 
-      }
+    const token = this.auth.generateToken(client.data.userId);
+    console.log('New client connected:', client.id);
+    client.data.token = token;
+    this.connectedhandelconnect.set(client.id, client);
   }
+
+
   handleDisconnect(client: Socket) {
-    // this.auth.verifyToken(client.data.token, client); 
-    console.log("client: ",client.data.userId," just left");
+    // this.auth.verifyToken(client.data.token, client);
+    console.log('client: ', client.data.userId, ' just left');
     this.connectedUsers.delete(client.data.userId);
   }
-  @SubscribeMessage('connect')
-  handleconnect(client:Socket,  data:{ userId: number, cData: object}){
-
+  @SubscribeMessage('connect01')
+  handleconnect(client: Socket, cdata: { userId: number }) {
+    client.data.userId = cdata.userId;
+    if(this.connectedUsers.get(cdata.userId) == undefined)
+    {
+      this.connectedUsers.set(client.data.userId, client);
+      console.log(' client connected:', cdata.userId);
+    }
   }
-  
+
   @SubscribeMessage('sendGameRequest')
-  sendGameRequest(client:Socket,  data: {player2Id: number, mode: modeType ,name: string;image: string}) {
+  sendGameRequest(
+    client: Socket,
+    data: { player2Id: number; mode: modeType; name: string; image: string },
+  ) {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.player2Id);
-
+    if(!userSocket)
+    {
+      console.log("faild sendGameRequest");
+      return;
+    }
     const dataTogame = {
       player1Id: client.id,
       player2Id: userSocket.id,
       mode: data.mode,
+      numplayer1Id: client.data.userId,
+      numplayer2Id: data.player2Id,
     };
     if (userSocket) {
-      this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame); 
+      this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame);
       console.log(`User ${client.data.userId} sent:`, dataTogame);
     }
   }
-  
+
   @SubscribeMessage('sendFriendRequest')
-  sendFriendRequest(client:Socket, data:{ userId: number, cData: object}): void {
+  sendFriendRequest(
+    client: Socket,
+    data: { userId: number; cData: object },
+  ): void {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
-      this.server.to(userSocket.id).emit('FriendRequestResponse', data); 
+      this.server.to(userSocket.id).emit('FriendRequestResponse', data);
       console.log(`User ${data.userId} sent:`, data);
     }
   }
-  
+
   getUserSocket(userId: number): Socket | undefined {
     return this.connectedUsers.get(userId);
   }
