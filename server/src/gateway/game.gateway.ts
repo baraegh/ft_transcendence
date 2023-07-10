@@ -23,6 +23,8 @@ export class GameGateway implements OnGatewayDisconnect{
   @SubscribeMessage('gameStart')
   async handleGameStart(client: Socket, data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) {
     this.games.set(this.gameId, data);
+    this.server.to(data.player1Id).emit('startGame', data.mode);
+    this.server.to(client.id).emit('startGame', data.mode);
     this.server.to(data.player1Id).emit('initGame', data.mode);
     this.server.to(client.id).emit('initGame', data.mode);
     this.streaming.set(this.gameId,{
