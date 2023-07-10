@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import '../css/home.css'
@@ -6,9 +6,32 @@ import tvGif from '../img/giphy.gif'
 import MyHeader from './header'
 import { useNavigate } from 'react-router-dom';
 import Game from '../../game/example'
+import axios from 'axios'
+import { SocketContext } from '../../socket/socketContext'
 
 function Home() : JSX.Element
 {
+    const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
+    const { socket } = useContext<any | undefined>(SocketContext);
+  
+    useEffect(() => {
+      // Use the socket instance here
+      if (socket) {
+        {
+          console.log("CREATED AT Home >> ");
+        }
+      }
+    }, [socket]);
+    useEffect(() => {
+      // Simulating a delay for the header to load
+      setTimeout(() => {
+        setIsHeaderLoaded(true);
+      }, 10000); // Adjust the delay time as needed
+    }, [])
+  
+  
+ 
+  
     const navigate = useNavigate();
     return (<div>
         <MyHeader/>

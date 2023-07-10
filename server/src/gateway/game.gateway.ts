@@ -2,6 +2,8 @@ import { Logger, NotFoundException } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Match_History } from '@prisma/client';
 import { Server, Socket } from 'socket.io';
+import { CREAT_GAME_DTO } from 'src/game/game.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
