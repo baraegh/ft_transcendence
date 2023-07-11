@@ -6,6 +6,7 @@ import tvGif from '../img/giphy.gif'
 import Header from '../tsx/header'
 import { useNavigate } from 'react-router-dom';
 import triangle from '../img/pngwing.com.png'
+import Maps from './maps'
 
 
 function Play(): JSX.Element {
@@ -18,11 +19,12 @@ function Play(): JSX.Element {
                 <div className="inviteFriendContainer">
                     <img id="triangleImg" src={triangle} alt="" />
                     <a id='inviteFriend' onClick={() => {navigate('/InviteFriend')}} >Invite Friend</a>
+
                 </div>
                 <div className="quickGameContainer">
 
+                     <Maps/>
                     <img id="triangleImg" src={triangle} alt="" />
-                    <a id='quickGame' >Quick Game</a>
                 </div>
             </div>
         </div>

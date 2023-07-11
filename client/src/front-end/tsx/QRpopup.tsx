@@ -17,6 +17,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const [source, setSource] = useState("");
   const [QRvalue, setQRvalue] = useState("");
   const [error, setError] = useState("");
+  const [effectExecuted, setEffectExecuted] = useState(false);
 
   const submitQR = (event: KeyboardEvent) => {
     
@@ -52,6 +53,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
         }
       });
   };
+  const isMounted = useRef(false);
+
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -97,8 +100,7 @@ const QRpopup: React.FC = () => {
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
-    if(QRisEnabled)
-      setShowModal(false);
+
     setQRisEnabled(false);
     console.log(QRisEnabled);
   };

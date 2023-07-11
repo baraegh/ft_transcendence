@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, useParams, Routes, Navigate } from 'react-router-dom';
 import Chat from './chat/chat';
 import LoginPage from "./front-end/tsx/loginPage";
 import DSTeam from "../src/front-end/tsx/discoverTeam";
@@ -22,6 +22,7 @@ import InviteFriend from './front-end/tsx/inviteFriend';
 import ErrorPage from './front-end/tsx/ErrorPage';
 import React from 'react';
 export {userMe}
+import OtherProfileUser from './front-end/tsx/otherProfileUser';
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
@@ -33,6 +34,7 @@ type meType = {
   gameLost:     number,
   achievements: string[],
 }
+
 const userMe = React.createContext<meType | null>(null);
 function App() {
   
@@ -103,8 +105,20 @@ function App() {
             element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
           />
           <Route
+            path="/FA"
+            element={isLoggedIn ? <FA /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
             path="/home"
             element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/user"
+            element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/user/:userId"
+            element={isLoggedIn ? <OtherProfileUser /> : <Navigate to="/loginPage" replace />}
           />
           <Route
             path="/play"

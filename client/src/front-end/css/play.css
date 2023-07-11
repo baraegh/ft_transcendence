@@ -35,7 +35,7 @@
 .IQ a
 {
     text-decoration: none;
-    color : white;
+    color : white !important;
     letter-spacing: 3px;
 }
 
@@ -48,6 +48,21 @@
     transition: opacity 0.1s;
   }
   
+.quickGameContainer img
+{
+  position: relative;
+  top : 9px;
+}
+
+  .quickGameContainer
+  {
+    display: flex;
+    flex-direction: row-reverse;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
   .inviteFriendContainer:hover #triangleImg    {
     opacity: 1;
   }
