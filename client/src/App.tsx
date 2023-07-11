@@ -103,6 +103,10 @@ function App() {
             element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
           />
           <Route
+            path="/FA"
+            element={isLoggedIn ? <FA /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
             path="/home"
             element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
           />

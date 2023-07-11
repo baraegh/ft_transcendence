@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import '../css/QRpopup.css';
@@ -17,6 +17,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const [source, setSource] = useState("");
   const [QRvalue, setQRvalue] = useState("");
   const [error, setError] = useState("");
+  const [effectExecuted, setEffectExecuted] = useState(false);
 
   const submitQR = (event: KeyboardEvent) => {
     axios.post('http://localhost:3000/2fa/verified', { "secret": QRvalue }, { withCredentials: true })
@@ -52,14 +53,19 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
       });
   };
 
-  useEffect(() => {
-    console.log(QRisEnabled);
+  const isMounted = useRef(false);
 
-    axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
-      .then(res => {
-        fetchQR = res;
-        setSource(res.data);
-      });
+  useEffect(() => {
+    if (isMounted.current) {
+      console.log("CLEAN");
+      axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
+        .then(res => {
+          fetchQR = res;
+          setSource(res.data);
+        });
+    } else {
+      isMounted.current = true;
+    }
   }, [QRisEnabled]);
 
   return (
@@ -90,8 +96,7 @@ const QRpopup: React.FC = () => {
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
-    if(QRisEnabled)
-      setShowModal(false);
+
     setQRisEnabled(false);
     console.log(QRisEnabled);
   };
