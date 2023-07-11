@@ -1,12 +1,27 @@
 .App {
   width: 100vw;
+  height: 100vh;
 
-  display: flex;
-  align-items: center;
+  display: grid;
   justify-content: center;
+  /* overflow: auto; */
+  min-width: 1105px;
+  /* position: absolute; */
+  /* left: -300px; */
+}
 
-  min-width: 78.13em;
-  /* min-height: 37.5em; */
+.the-app {
+  /* width: calc(100vw - 40px);
+  height: calc(100vh - 80px);*/
+  
+  width: calc(100vw - 40px);
+  height: calc(100vh - 80px);
+
+  display: grid;
+  justify-content: center;
+  grid-template-rows: 80px 800px;
+  /* grid-template-rows: 80px 1fr;  */
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
@@ -34,4 +49,5 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: black;
+  border: 1px solid white;
 }

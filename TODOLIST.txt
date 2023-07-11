@@ -1,11 +1,8 @@
 
+----------------------- VON ------------------------
+=> handle bolck of all users not only friends in chat 
 
-
-=>  the 'clear chat' button return '404 not found' when the chat is already clear.
-
-=>  the 'delete chat' of personnel chat doesn't remove the channel from the database
-
-=> if I edit a group -> no parameter should be mandatory
+=> the end-point ../unblock not working
 
 
 
@@ -15,3 +12,16 @@
 => hash of group
 
 => test if the private group is work`
+
+=> unblock
+
+=> in the group area if a click on 'message' it doesn't set with who I message
+
+=> private key appears in the {value} of the input
+
+=> mute member
+
+=> check von work
+
+=> format the date - time
+=> check clear chat
