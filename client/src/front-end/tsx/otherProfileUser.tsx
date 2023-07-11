@@ -1,12 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
-import './OtherProfileUser.css'
-import me from './rimney.jpeg'
-import ach from '../ach.jpeg'
+import '../css/OtherProfileUser.css'
+import me from '../img/rimney.jpeg'
+import ach from '../img/pic.jpeg'
 import MyHeader from './header'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+
 
 function otherProfileUser(): JSX.Element {
+    const [otherUser, setOtherUser] = Usestate("");
+    const {userId} = useParams();
+    console.log(userId + " <<");
+    useEffect(() => {
+        axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
+        .then((res) => {console.log(res)});
+    }, []);
     return (
         <div>
             <MyHeader />
@@ -79,3 +88,7 @@ function otherProfileUser(): JSX.Element {
 }
 
 export default otherProfileUser;
+
+function Usestate(arg0: string): [any, any] {
+    throw new Error('Function not implemented.')
+}

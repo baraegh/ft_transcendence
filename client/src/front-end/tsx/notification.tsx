@@ -15,7 +15,7 @@ const Notification : React.FC = () => {
     // Use the socket instance here
     if (socket) {
       {
-        console.log("CREATED >> ");
+        // console.log("CREATED >> ");
       console.log(socket);
       }
     }

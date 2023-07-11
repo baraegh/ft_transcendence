@@ -158,9 +158,8 @@ function myProfileUser(): JSX.Element {
       };
     useEffect(() => {
         pollUserData();
-
     }, []);
-
+    // console.log(userData?.id + " <<");
     const friends: friend[] = Array.from({ length: 30 }, (_, index) => ({
         id: index + 1,
         username: `rimney ${index + 2}`,
