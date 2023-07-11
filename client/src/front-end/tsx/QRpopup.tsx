@@ -55,8 +55,6 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   };
   const isMounted = useRef(false);
 
-  const isMounted = useRef(false);
-
   useEffect(() => {
     if (isMounted.current) {
       console.log("CLEAN");
