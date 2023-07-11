@@ -95,6 +95,14 @@ export class ChatFriendService {
     //
     if (!fetchUsers) {
       fetchUsers = await this.freindservice.sendFriendRequest(FriendId,userId);
+      fetchUsers =  await this.prisma.friendship.update({
+        where:{
+            id:fetchUsers.id,
+        },
+        data:{
+          isRequested:false,
+        }
+      })
     };
 
     if (fetchUsers && fetchUsers.blocked === true) return;
