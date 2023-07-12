@@ -10,87 +10,120 @@ import square from '../img/square.png'
 import circle from '../img/circle.png'
 
 interface BlankModalProps {
-    show: boolean;
-    onHide: () => void;
+  show: boolean;
+  onHide: () => void;
 }
 
-type profileType = {
-    name: string,
-    image: File | null,
-}
-
-type ballType = 
-{
-
-}
-
-const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
-    return (
-        <Modal id="mapsPopup" show={show} onHide={onHide} centered>
-            <Modal.Body  >
-                <div className="mapsHeader">
-                    Pick Your Map
-                </div>
-                <div className='maps'>
-                    <div className='map'>
-                        <div className='ballType'>
-                            <div className='smallBall'>
-                            <img src={circle} alt="" />
-                            </div>
-                            <div className='bigBall'>
-                            <img src={circle} alt="" />
-                            </div>
-                            <div className='blockBall'>
-                            <img src={square} alt="" />
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className='map'>
-                        <div className='ballType'>
-                            <div className='smallBall'></div>
-                            <div className='bigBall'></div>
-                            <div className='blockBall'></div>
-                        </div>
-
-                    </div>
-                    <div className='map'>
-                        <div className='ballType'>
-                            <div className='smallBall'>
-                            </div>
-                            <div className='bigBall'></div>
-                            <div className='blockBall'></div>
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* Add your custom content here */}
-            <a >Launch Game</a>
-            </Modal.Body>
-
-        </Modal>
-    );
+const maps = {
+  Maptype: 0,
+  BallType: ""
 };
 
-const Maps: React.FC = () => {
-    const [showModal, setShowModal] = useState(false);
+const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
+  const [Maps, setMaps] = useState(maps);
 
-    const handleImageClick = () => {
-        setShowModal(true);
-    };
+  useEffect(() => {
+    console.log("Maps updated:", Maps);
+    // Perform any additional actions when Maps changes
+  }, [Maps]);
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+  const SetMapType = (mapType: number, ballType: string) => {
+    setMaps(prevMaps => ({
+      ...prevMaps,
+      Maptype: mapType,
+      BallType: ballType
+    }));
+  };
 
-    return (
-        <div>
-            <a id='quickGame' onClick={handleImageClick}>Quick Game </a>
-
-            {showModal && <BlankModal show={showModal} onHide={handleCloseModal} />}
+  return (
+    <Modal id="mapsPopup" show={show} onHide={onHide} centered>
+      <Modal.Body>
+        <div className="mapsHeader">Pick Your Map</div>
+        <div className="maps">
+          <div
+            onClick={() => SetMapType(1, "example ball type")}
+            className="map"
+            style={{ border: Maps.Maptype === 1 ? "6px solid red" : "" }}
+          >
+            <div className="ballType">
+              <div className="smallBall">
+                <img src={circle} alt="" />
+              </div>
+              <div className="bigBall">
+                <img src={circle} alt="" />
+              </div>
+              <div className="blockBall">
+                <img src={square} alt="" />
+              </div>
+            </div>
+            <p id="map1">map 1</p>
+          </div>
+          <div
+            onClick={() => SetMapType(2, "")}
+            className="map"
+            style={{ border: Maps.Maptype === 2 ? "6px solid red" : "" }}
+          >
+            <div  className="ballType">
+              <div onClick={() =>  SetMapType(2, "smallball")}
+              className="smallBall"
+              style={{ border: Maps.BallType === "smallBall" ? "6px solid red" : "" }}
+              >
+              
+                <img src={circle} alt="" />
+              </div>
+              <div className="bigBall">
+                <img src={circle} alt="" />
+              </div>
+              <div className="blockBall">
+                <img src={square} alt="" />
+              </div>
+            </div>
+            <p id="map2">map 2</p>
+          </div>
+          <div
+            onClick={() => SetMapType(3, "example ball type")}
+            className="map"
+            style={{ border: Maps.Maptype === 3 ? "6px solid red" : "" }}
+          >            <div className="ballType">
+              <div className="smallBall">
+                <img src={circle} alt="" />
+              </div>
+              <div className="bigBall">
+                <img src={circle} alt="" />
+              </div>
+              <div className="blockBall">
+                <img src={square} alt="" />
+              </div>
+            </div>
+            <p id="map3">map 3</p>
+          </div>
         </div>
-    );
+
+        {/* Add your custom content here */}
+        <a>Launch Game</a>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleImageClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  return (
+    <div>
+      <a onClick={handleImageClick}>{buttonText}</a>
+
+      {showModal && <BlankModal show={showModal} onHide={handleCloseModal} />}
+    </div>
+  );
 };
 
 export default Maps;

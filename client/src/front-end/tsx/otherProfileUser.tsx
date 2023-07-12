@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import '../css/OtherProfileUser.css'
 import me from '../img/rimney.jpeg'
@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom'
 import axios, { AxiosResponse } from 'axios'
 import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
+import Maps from './maps'
+
 interface User {
     id: number;
     username: string;
@@ -53,6 +55,12 @@ interface OtherUser {
     username: string;
 }
 
+const Buttons = 
+{
+    isFriend : false,
+    isBlocked : false
+}
+
 const otherUserTemplate = {
     id: 0,
     username: 'string',
@@ -61,26 +69,24 @@ const otherUserTemplate = {
     achievements: ['string'],
     updatedAt: '2023-07-11T15:52:29.338Z',
     friend: {
-      id: 0,
-      username: 'string',
-      image: 'string'
+        id: 0,
+        username: 'string',
+        image: 'string'
     }
-  };
+};
 
 
 function otherProfileUser(): JSX.Element {
+    const matches: Match[] = [];
+    const { userId } = useParams();
     const [otherUser, setOtherUser] = useState(otherUserTemplate);
-    const {userId} = useParams();
+
     const generateRandomUser = (index: number): OtherUser => {
-        
         const randomId = Math.floor(Math.random() * 1000);
         const randomImage = 'https://random.imagecdn.app/500/150';
         const randomUsername = `Other ${index}`;
         return { id: randomId, image: randomImage, username: randomUsername };
     };
-
-    const matches: Match[] = [];
-
     for (let i = 0; i < 64; i++) {
         const match: Match = {
             matchId: `match${i}`,
@@ -103,7 +109,6 @@ function otherProfileUser(): JSX.Element {
     const [showPopup, setShowPopup] = useState(false);
     const [scrollFlag, setScrollFlag] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-
     const handlePrevClick = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? matches.length - 4 : prevIndex - 4));
     };
@@ -164,7 +169,7 @@ function otherProfileUser(): JSX.Element {
     const pollUserData = () => {
         fetchData(); // Fetch the latest userData from the server
         setTimeout(pollUserData, 1000); // Poll every 5 seconds (adjust the interval as needed)
-      };
+    };
     useEffect(() => {
         pollUserData();
     }, []);
@@ -174,24 +179,30 @@ function otherProfileUser(): JSX.Element {
         username: `rimney ${index + 2}`,
         image: me,
     }));
+    function sendFriendRequest()
+    {
+        console.log("Friend Request Sent");
+    }
     useEffect(() => {
         axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
-          .then(res => {
-            // Extract the desired data from the response
-            const userData = res.data;
-      
-            // Update the state with the extracted data
-            setOtherUser(userData);
-        })
-        .catch(error => {
-            // Handle any errors
-            
-            console.log(error);
-        });
+            .then(res => {
+                // Extract the desired data from the response
+                const userData = res.data;
+
+                // Update the state with the extracted data
+                setOtherUser(userData);
+            })
+            .catch(error => {
+                // Handle any errors
+
+                console.log(error);
+            });
         console.log(otherUser);
     }, []);
     otherUser.gameWon = 160;
     otherUser.gameLost = 160;
+    const [bbuttons, setButtons] = useState(Buttons);
+
     return (
         <div>
             <MyHeader />
@@ -218,14 +229,10 @@ function otherProfileUser(): JSX.Element {
                             <img src={ach} alt="" />
                         </div>
                         <div className='fourButtons'>
-                            <div className='leftButtons'>
-                                <a id="challenge" href="#"><span>Challenge</span></a>
-                                <a id="message" href="#"><span>Message</span></a>
-                            </div>
-                            <div className='rightButtons'>
-                                <a id="invite" href="#"><span>Invite</span></a>
-                                <a id="block" href="#"><span>Block</span></a>
-                            </div>
+                                {bbuttons.isFriend && <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                                <a className="message2" href="#"><span>Message</span></a>
+                               {!bbuttons.isFriend && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
+                               { bbuttons.isFriend && <a className="block2" href="#"><span>Block</span></a> }
                         </div>
                     </div>
                 </div>
@@ -265,16 +272,16 @@ function otherProfileUser(): JSX.Element {
                         <button onClick={handlePrevClick}>
                             <img id='backButton' src={backButton} alt="" />
                             back
-                            </button>
+                        </button>
                         <p>{currentIndex} - {currentIndex + 8} of {matchElements.length}</p>
                         <button onClick={handleNextClick}>Next
-                        <img id='nextButton' src={nextButton} alt="" />
+                            <img id='nextButton' src={nextButton} alt="" />
 
                         </button>
                     </div>
-                    </div>
                 </div>
             </div>
+        </div>
 
     )
 }

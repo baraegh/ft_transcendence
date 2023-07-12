@@ -15,13 +15,12 @@ const Notification : React.FC = () => {
     // Use the socket instance here
     if (socket) {
       {
-        console.log("CREATED >> ");
+        console.log("<< socket created successfully ! >> ");
       console.log(socket);
       }
     }
   }, [socket]);
 
-  
   
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
   const [showNotification, setShowNotification] = useState(false);
