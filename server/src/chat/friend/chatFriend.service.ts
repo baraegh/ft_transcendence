@@ -42,9 +42,9 @@ export class ChatFriendService {
       const deletechat = await this.prisma.messages.deleteMany({
         where: { channelID: dto.channelId },
       });
-      // const removechannel = await this.prisma.channel.delete({
-      //   where:{id : dto.channelId},
-      // })
+      const removechannel = await this.prisma.channel.delete({
+        where:{}
+      })
 
       const clearparticipants = await this.prisma.participants.deleteMany({
         where: { channelID: dto.channelId },
@@ -152,6 +152,7 @@ export class ChatFriendService {
   }
 
   async unblock_user(userId: number, FriendId: number) {
+    console.log("hi");
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -184,9 +185,12 @@ export class ChatFriendService {
           },
         },
       },
+      include: {
+        messages: true, // Include the messages in the query result
+      },
     });
-
-    if(finde_same_channel)
+    const messages = finde_same_channel.messages;
+    if(finde_same_channel && messages && messages.length == 0)
     {
       await this.prisma.participants.deleteMany({
         where:{
@@ -198,6 +202,24 @@ export class ChatFriendService {
           id: finde_same_channel.id
         }
       })
+    }
+    else if(finde_same_channel){
+      const clearparticipants = await this.prisma.participants.update({
+        where: { channelID_userID:{
+          channelID: finde_same_channel.id,
+          userID:FriendId,
+        }},
+        data:{
+          blocked:false,
+        }
+      });
+        const updatechannel = await this.prisma.channel.update({
+          where: { id: finde_same_channel.id },
+          data: {
+            blocked: false,
+            hasblocked: null,
+          },
+        });
     }
     //
     if(fetchUsers)

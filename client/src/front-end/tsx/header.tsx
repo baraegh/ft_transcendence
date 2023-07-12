@@ -26,7 +26,6 @@ function MyHeader(): JSX.Element {
     // Use the socket instance here
     if (socket) {
       {
-        console.log("CREATED >> ");
         socket.on("startGame", (msg) => {
           navigate('/gamePlay');
           console.log('connected to Game');

@@ -68,12 +68,16 @@ type SettingsProps =
     msgSend?:               boolean,
     setMsgSend?:            (msgSend: boolean) => void,
     setUpdateChatInfo?:     (update: boolean) => void,
-    joinRoom?:               (channelId: string) => void,
+    joinRoom?:              (channelId: string) => void,
+    setUpdateGroup?:        (update: boolean) => void,
+    updateGroup?:           boolean,
+    leaveRoom?:             () => void,
 }
 
 export function Settings({list, size='14px', setIsProfileOpen,
                             setChat, chatInfo, msgSend, setMsgSend,
-                            setUpdateChatInfo, joinRoom} : SettingsProps)
+                            setUpdateChatInfo, joinRoom, setUpdateGroup,
+                            updateGroup, leaveRoom} : SettingsProps)
 {
     return (
         <div className="chat-settings">
@@ -87,7 +91,10 @@ export function Settings({list, size='14px', setIsProfileOpen,
                         msgSend={msgSend}
                         setMsgSend={setMsgSend}
                         setUpdateChatInfo={setUpdateChatInfo}
-                        joinRoom={joinRoom}/>
+                        joinRoom={joinRoom}
+                        updateGroup={updateGroup}
+                        setUpdateGroup={setUpdateGroup}
+                        leaveRoom={leaveRoom}/>
         </div>
     );
 }

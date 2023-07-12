@@ -4,7 +4,7 @@ import '../chat';
 import Axios from "axios";
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
-import { chatInfoType } from "../chat";
+import { chatInfoType, formatDate } from "../chat";
 import { userMe } from "../../App";
 import { SocketContext } from "../../socket/socketContext";
 
@@ -18,10 +18,13 @@ type ChatListHeaderProps = {
     setSearchQuery: (searchQuery: string) => void,
     setFilter:      (filter: string) => void,
     joinRoom:       (channelId: string) => void,
+    setUpdateGroup: (update: boolean) => void,
+    updateGroup:    boolean,
 }
 
 function ChatListHeader({setChat, searchQuery, setSearchQuery,
-                            setFilter, joinRoom} : ChatListHeaderProps)
+                        setFilter, joinRoom, setUpdateGroup,
+                        updateGroup} : ChatListHeaderProps)
 {
     return (
         <div className="chat-list-header">
@@ -30,7 +33,9 @@ function ChatListHeader({setChat, searchQuery, setSearchQuery,
                 <p>Chat</p>
                 <Settings   list={settingsList}
                             setChat={setChat}
-                            joinRoom={joinRoom} />
+                            joinRoom={joinRoom}
+                            setUpdateGroup={setUpdateGroup}
+                            updateGroup={updateGroup}/>
             </div>
             <div className="filter-search">
                 <FilterBtn list={filterList} setFilter={setFilter}/>
@@ -51,7 +56,8 @@ type HistoryListProps = {
     selected:       boolean
     setChat:        (chatId: string, chatImage: string, chatName: string,
                         chatType: string, userId: number | null,
-                        blocked?: boolean, whoblock?: number | null) => void,
+                        blocked?: boolean, whoblock?: number | null,
+                        muted?: string) => void,
     updateGroup:    boolean,
     setUpdateGroup: (update: boolean) => void,
     chatInfo:       chatInfoType,
@@ -66,7 +72,6 @@ const HistoryList = ({data, setChat, selected, updateGroup,
     const handleOnClick = () => {
         if (chatInfo.chatId !== '')
             leaveRoom();
-        console.log('data.channelId: ', data.channelId);
         joinRoom(data.channelId);
         if (data.type === 'PERSONEL')
             setChat(data.channelId,
@@ -77,7 +82,7 @@ const HistoryList = ({data, setChat, selected, updateGroup,
         {
             setChat(data.channelId,
                     data.channelImage? data.channelImage : defaultGroupImage,
-                    data.channelName, data.type, null)
+                    data.channelName, data.type, null, false, null, data.mut);
             setUpdateGroup(!updateGroup)
         }
     } 
@@ -112,7 +117,7 @@ const HistoryList = ({data, setChat, selected, updateGroup,
                 }
             </div>
             <div className="item-time">
-               {data.lastMessage? <p>{data.lastMessage.timeSent}</p> : ''}
+               {data.lastMessage? <p>{formatDate(data.lastMessage.timeSent)}</p> : ''}
             </div>
         </div>
     );
@@ -128,20 +133,22 @@ export type channel = {
     channelName:    string,
     channelImage:   string,
     lastMessage:    {
-        messageId:  string,
-        content:    string,
-        timeSent:   string,
-        senderId:   number,
-    },
+            messageId:      string,
+            content:        string,
+            timeSent:       string,
+            senderId:       number,
+        },
     blocked:        boolean,
-    hasblocked:       number,
+    hasblocked:     number,
+    mut:            string,
 }
 
 type chatHistoryListProps =
 {
     setChat:            (chatId: string, chatImage: string, chatName: string,
                         chatType: string, userId: number | null,
-                        blocked?: boolean, whoblock?: number | null) => void,
+                        blocked?: boolean, whoblock?: number | null,
+                        muted?: string) => void,
     setIsProfileOpen:   (isOpen: boolean) => void,
     chatInfo:           chatInfoType,
     setRole:            (role: string) => void;
@@ -149,11 +156,12 @@ type chatHistoryListProps =
     updateGroup:        boolean,
     updateChatInfo:     boolean,
     updateUserCard:     boolean,
+    leaveRoom:          () => void,
 }
 
 const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                             setRole, setUpdateGroup, updateGroup,
-                            updateChatInfo, updateUserCard}: chatHistoryListProps) =>
+                            updateChatInfo, updateUserCard, leaveRoom}: chatHistoryListProps) =>
 {
     const [channelList, setChannelList] = useState<channel[]| null>(null);
     const [groupList, setGroupList] = useState<channel[]| null>(null);
@@ -162,12 +170,6 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
     const [filter, setFilter] = useState('');
     let   msgCard: React.ReactNode;
     const {socket} = useContext<any | undefined>(SocketContext);
-
-    const leaveRoom = () => {
-
-        if (socket)
-            socket.emit('leaveRoom', chatInfo.chatId);
-    }
 
     const joinRoom = (channelId: string) =>{
         if (socket) {
@@ -196,13 +198,14 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                 .catch((error) => {
                     console.log(error);
                 }
-                );
+            );
             }, [chatInfo, searchQuery, filter,
                     updateChatInfo, updateUserCard]);
             
     useEffect(() => {
         if (chatInfo.chatId === '' ||
-            chatInfo.chatId === undefined)
+            chatInfo.chatId === undefined ||
+            chatInfo.chatType === 'PERSONEL')
             return;
         Axios.get(`http://localhost:3000/chat/roleOfuser/${chatInfo.chatId}`,
                 { withCredentials: true })
@@ -217,9 +220,9 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
 
     const handleSetChat = (chatId: string,chatImage: string, chatName: string,
                             chatType: string, userId: number | null,  blocked?: boolean,
-                            whoblock?: number | null) => {
+                            whoblock?: number | null,  muted?: string) => {
         setChat(chatId, chatImage, chatName, chatType,
-                    userId, blocked, whoblock);
+                    userId, blocked, whoblock, muted);
         setIsProfileOpen(false);
     };
 
@@ -274,7 +277,9 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                             setFilter={setFilter}
-                            joinRoom={joinRoom}/>
+                            joinRoom={joinRoom}
+                            setUpdateGroup={setUpdateGroup}
+                            updateGroup={updateGroup}/>
             <div className="list-scroll">
                 {msgCard}
             </div>

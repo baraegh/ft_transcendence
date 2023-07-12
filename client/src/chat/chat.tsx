@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ChatHistoryList from "./chatHistory/chatHistoryList";
 import { FriendList } from "./chatFriendList/friendList";
 import { ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from "./ChatArea/charArea";
 import "./chat.css";
 import MyHeader from "../front-end/tsx/header";
+import { SocketContext } from "../socket/socketContext";
 export {updateChatInfoCntext};
 
 export type membersDataType = {
@@ -20,9 +21,48 @@ export type chatInfoType = {
   chatUserId: number | null,
   blocked:    boolean,
   whoblock:   number | null,
+  mute:       string,
 }
 
 const updateChatInfoCntext = React.createContext<boolean>(false);
+
+export const formatDate = (sentTime: string): string => {
+
+  const currentTime = new Date();
+  const sentTimestamp = new Date(sentTime).getTime();
+  const currentTimestamp = currentTime.getTime();
+  const timeDifferenceInMilliseconds = currentTimestamp - sentTimestamp;
+  const millisecondsPerMinute = 1000 * 60;
+  const millisecondsPerHour = millisecondsPerMinute * 60;
+  const millisecondsPerDay = millisecondsPerHour * 24;
+
+  let timePassedText = "";
+
+  if (timeDifferenceInMilliseconds < millisecondsPerMinute)
+    timePassedText = "Just now";
+  else if (timeDifferenceInMilliseconds < millisecondsPerHour)
+  {
+    const minutesPassed = Math.floor(timeDifferenceInMilliseconds / millisecondsPerMinute);
+    timePassedText = `${minutesPassed} minute${minutesPassed !== 1 ? 's' : ''} ago`;
+  }
+  else if (timeDifferenceInMilliseconds < millisecondsPerDay)
+  {
+    const hoursPassed = Math.floor(timeDifferenceInMilliseconds / millisecondsPerHour);
+    timePassedText = `${hoursPassed} hour${hoursPassed !== 1 ? 's' : ''} ago`;
+  }
+  else if (timeDifferenceInMilliseconds < millisecondsPerDay * 10)
+  {
+    const daysPassed = Math.floor(timeDifferenceInMilliseconds / millisecondsPerDay);
+    timePassedText = `${daysPassed} day${daysPassed !== 1 ? 's' : ''} ago`;
+  }
+  else
+  {
+    const formattedDate = currentTime.toISOString().split('T')[0]; // Format the current date as "yyyy-mm-dd"
+    timePassedText = formattedDate.replace(/-/g, '/'); // Replace "-" with "/" to get "yyyy/mm/dd" format
+  }
+
+  return timePassedText;
+}
 
 export function Chat() {
 
@@ -34,9 +74,8 @@ export function Chat() {
     chatUserId: null,
     blocked:    false,
     whoblock:   null,
+    mute:       'NAN',
   });
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
   const [membersData, setMembersData] = useState<membersDataType>(
     {
       owner: { id: 0, username: "", image: "" },
@@ -44,22 +83,33 @@ export function Chat() {
       users: [],
     }
   );
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isChatSettingOpen, setIsChatSettingOpen] = useState(false);
   const [role, setRole] = useState('user');
   const [updateGroup, setUpdateGroup] = useState(false);
   const [updateChatInfo, setUpdateChatInfo] = useState(false);
   const [updateUserCard, setUpdateUserCard] = useState(false);
+  const {socket} = useContext<any | undefined>(SocketContext);
 
   const setChat = (Id: string, Image: string, Name: string,
                     Type: string, userId: number | null,
-                    blocked?: boolean, whoblock?: number | null) => {
+                    blocked?: boolean, whoblock?: number | null, muted?: string) => {
 
     setChatInfo({chatId: Id, chatImage: Image,
                 chatName: Name, chatType: Type,
                 chatUserId: userId,
                 blocked: blocked? blocked: false, 
-                whoblock:whoblock? whoblock: null,
+                whoblock: whoblock? whoblock: null,
+                mute: muted? muted: 'NAN',
               })
   }
+
+  const leaveRoom = () => {
+
+    if (socket)
+        socket.emit('leaveRoom', chatInfo.chatId);
+  }
+
 
   return (
     <updateChatInfoCntext.Provider value={updateChatInfo}>
@@ -74,7 +124,8 @@ export function Chat() {
                               updateGroup={updateGroup}
                               setUpdateGroup={setUpdateGroup}
                               updateChatInfo={updateChatInfo}
-                              updateUserCard={updateUserCard}/>
+                              updateUserCard={updateUserCard}
+                              leaveRoom={leaveRoom}/>
 
             <div className="chat-area">
               {chatInfo.chatId !== '' ? (
@@ -84,7 +135,9 @@ export function Chat() {
                   setUpdateChatInfo={setUpdateChatInfo}
                   setChat={setChat}
                   setUpdateUserCard={setUpdateUserCard}
-                  updateUserCard={updateUserCard}/>
+                  updateUserCard={updateUserCard}
+                  updateChatInfo={updateChatInfo}
+                  leaveRoom={leaveRoom}/>
               ) : (
                 <div className="chat-area-default">
                   <p>Getting no message is also a message</p>
@@ -105,7 +158,10 @@ export function Chat() {
               <ChatAreaProfile  chatInfo={chatInfo}
                                 setIsProfileOpen={setIsProfileOpen} />
             ) : (
-              <FriendList />
+              <FriendList setChat={setChat}
+                          chatInfo={chatInfo}
+                          update={updateGroup}
+                          setUpdate={setUpdateGroup}/>
             )}
           </>
         ) : (
