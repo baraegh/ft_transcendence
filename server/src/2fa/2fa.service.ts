@@ -12,6 +12,7 @@ export class _2faService {
 
   async generateTwoFactorAuthenticationSecret(user: User) {
     const secret = authenticator.generateSecret();
+
     const finduser =   await this.prisma.user.findUnique({
       where: { id: user.id },
     })
@@ -42,8 +43,7 @@ export class _2faService {
       throw new BadRequestException("the 2FA is disable");
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { isTwoFactorAuthenticationEnabled: false ,twoFactorAuthenticationSecret 
-      : null},
+      data: { isTwoFactorAuthenticationEnabled: false },
     });
   }
 

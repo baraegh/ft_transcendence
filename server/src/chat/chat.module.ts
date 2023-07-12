@@ -6,7 +6,6 @@ import { ChatOwnerService } from './owner/chatOwner.service';
 import { ChaOwnertController } from './owner/chatOwner.controller';
 import { ChaFriendController } from './friend/chatFriend.controller';
 import { ChatFriendService } from './friend/chatFriend.service';
-import { FriendsService } from 'src/friends/friends.service';
 
 @Module({
   controllers: [ChatController, ChaOwnertController, ChaFriendController],
@@ -16,7 +15,6 @@ import { FriendsService } from 'src/friends/friends.service';
     FetchChatService,
     ChatOwnerService,
     ChatFriendService,
-    FriendsService
   ],
 })
 export class ChatModule {}

@@ -30,8 +30,7 @@ model User {
 
   participants Participants[]
 
-  channels Channel[] 
-  hasblockedtable Channel[] @relation("hasblockedtable")
+  channels Channel[]
   messages Messages[]
 
   @@map("users")
@@ -112,9 +111,7 @@ model Channel {
   hash       String?
   image      String?
   blocked    Boolean        @default(false)
-
-  hasblockedtable User? @relation("hasblockedtable",fields: [hasblocked], references: [id])
-  hasblocked  Int?      
+  hasblocked Int?
   chanelID   Participants[]
   messages   Messages[]
 

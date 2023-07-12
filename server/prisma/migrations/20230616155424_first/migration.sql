@@ -19,8 +19,6 @@ CREATE TABLE "users" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "achievements" TEXT[],
-    "twoFactorAuthenticationSecret" TEXT,
-    "isTwoFactorAuthenticationEnabled" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -30,7 +28,6 @@ CREATE TABLE "Match_History" (
     "id" TEXT NOT NULL,
     "user1Id" INTEGER NOT NULL,
     "user2Id" INTEGER NOT NULL,
-    "game_end" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user1P" INTEGER NOT NULL,
     "user2P" INTEGER NOT NULL,
@@ -60,7 +57,6 @@ CREATE TABLE "participants" (
     "role" "Role" NOT NULL DEFAULT 'USER',
     "blocked" BOOLEAN NOT NULL DEFAULT false,
     "mut" "Mut" NOT NULL DEFAULT 'NAN',
-    "blocked_at" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -75,8 +71,6 @@ CREATE TABLE "channels" (
     "name" TEXT,
     "hash" TEXT,
     "image" TEXT,
-    "blocked" BOOLEAN NOT NULL DEFAULT false,
-    "hasblocked" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -103,6 +97,9 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "channels_name_key" ON "channels"("name");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "msgs_channelID_key" ON "msgs"("channelID");
+
 -- AddForeignKey
 ALTER TABLE "Match_History" ADD CONSTRAINT "Match_History_user1Id_fkey" FOREIGN KEY ("user1Id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -123,9 +120,6 @@ ALTER TABLE "participants" ADD CONSTRAINT "participants_userID_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "channels" ADD CONSTRAINT "channels_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "channels" ADD CONSTRAINT "channels_hasblocked_fkey" FOREIGN KEY ("hasblocked") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "msgs" ADD CONSTRAINT "msgs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

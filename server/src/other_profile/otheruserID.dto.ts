@@ -29,9 +29,6 @@ export class ABOUOTHERTDTO {
     @IsString()
     username: string;
   
-    @ApiProperty()
-    @IsString()
-    image: string;
     @ApiProperty({ nullable: true })
     @IsOptional()
     @IsNumber()
@@ -51,22 +48,6 @@ export class ABOUOTHERTDTO {
     updatedAt: Date;
 
     @ApiProperty()
-    @IsBoolean()
-    blocked: boolean;
-
-    @ApiProperty()
-    @IsNumber()
-    hosblocked:number;
-  
-    @IsBoolean()
-    @ApiProperty()
-    isRequested: boolean;
-  
-    @IsBoolean()
-    @ApiProperty()
-    isFriend: boolean;
-  
-    @IsBoolean()
-    @ApiProperty()
-    requestAccepted: boolean;
+    @IsOptional()
+    friend?: Friend;
   }

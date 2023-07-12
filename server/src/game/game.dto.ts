@@ -50,6 +50,8 @@ export class EDIT_GAME_DTO{
     @IsNumber()
     @IsNotEmpty()
     user2P: number;
+
+
 }
 
 

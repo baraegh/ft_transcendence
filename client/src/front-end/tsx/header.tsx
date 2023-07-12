@@ -19,6 +19,7 @@ interface User {
 }
 
 function MyHeader(): JSX.Element {
+  
   const { socket } = useContext<any | undefined>(SocketContext);
 
   useEffect(() => {
@@ -213,7 +214,6 @@ function MyHeader(): JSX.Element {
             </Dropdown>
           )}
         </div>
-        <Notification />
       </header>
     </div>
   );

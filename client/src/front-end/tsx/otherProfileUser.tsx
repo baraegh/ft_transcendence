@@ -9,6 +9,7 @@ import axios, { AxiosResponse } from 'axios'
 import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
 import Maps from './maps'
+import Notification from './notification'
 
 interface User {
     id: number;
@@ -80,7 +81,7 @@ function otherProfileUser(): JSX.Element {
     const matches: Match[] = [];
     const { userId } = useParams();
     const [otherUser, setOtherUser] = useState(otherUserTemplate);
-
+    // console.log(useId)
     const generateRandomUser = (index: number): OtherUser => {
         const randomId = Math.floor(Math.random() * 1000);
         const randomImage = 'https://random.imagecdn.app/500/150';
@@ -230,9 +231,11 @@ function otherProfileUser(): JSX.Element {
                         </div>
                         <div className='fourButtons'>
                                 {bbuttons.isFriend && <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                                <Notification />
                                 <a className="message2" href="#"><span>Message</span></a>
                                {!bbuttons.isFriend && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
                                { bbuttons.isFriend && <a className="block2" href="#"><span>Block</span></a> }
+
                         </div>
                     </div>
                 </div>

@@ -9,12 +9,10 @@ import {
   CHATFRIENDDTO,
   FILTER_USERS_DTO,
 } from './chatfried.dto';
-import { FriendsService } from 'src/friends/friends.service';
-import { ChatService } from '../chat.service';
 
 @Injectable()
 export class ChatFriendService {
-  constructor(private prisma: PrismaService,private freindservice : FriendsService,private chatserv : ChatService ) {}
+  constructor(private prisma: PrismaService) {}
 
   async delet_Chat_With_Frid(UserId: number, dto: CHATFRIENDDTO) {
     const finduser = await this.prisma.user.findUnique({
@@ -71,42 +69,15 @@ export class ChatFriendService {
       throw new NotFoundException('user not found');
     }
 
-    let fetchUsers = await this.prisma.friendship.findFirst({
+    const fetchUsers = await this.prisma.friendship.findFirst({
       where: {
         userID: userId,
         friendID: FriendId,
       },
     });
-
-    let seeifimfriendwithit = await this.prisma.friendship.findFirst({
-      where: {
-        userID:  FriendId,
-        friendID: userId,
-      },
-    });
-    if(seeifimfriendwithit)
-    {
-      await this.prisma.friendship.delete({
-        where:{
-          id:seeifimfriendwithit.id,
-        }
-      })
-    }
-    //
-    if (!fetchUsers) {
-      fetchUsers = await this.freindservice.sendFriendRequest(FriendId,userId);
-      fetchUsers =  await this.prisma.friendship.update({
-        where:{
-            id:fetchUsers.id,
-        },
-        data:{
-          isRequested:false,
-        }
-      })
-    };
-
-    if (fetchUsers && fetchUsers.blocked === true) return;
-    let foundPersonalChannel = await this.prisma.channel.findFirst({
+    if (!fetchUsers) throw new NotFoundException('Not Your Friend');
+    if (fetchUsers.blocked === true) return;
+    const foundPersonalChannel = await this.prisma.channel.findFirst({
       where: {
         type: 'PERSONEL',
         chanelID: {
@@ -116,22 +87,9 @@ export class ChatFriendService {
         },
       },
     });
-    if(!foundPersonalChannel)
-    {
-      await this.chatserv.joinchatwithFriend(userId, FriendId);
-      foundPersonalChannel = await this.prisma.channel.findFirst({
-        where: {
-          type: 'PERSONEL',
-          chanelID: {
-            every: {
-              OR: [{ userID: userId }, { userID: FriendId }],
-            },
-          },
-        },
-      });
-    }
+
     if (foundPersonalChannel) {
-      foundPersonalChannel = await this.prisma.channel.update({
+       await this.prisma.channel.update({
         where: { id: foundPersonalChannel.id },
         data: {
           blocked: true,
@@ -139,7 +97,6 @@ export class ChatFriendService {
         },
       });
     }
-    console.log(foundPersonalChannel.id);
     await this.prisma.friendship.update({
       where: {
         id: fetchUsers.id,
@@ -148,19 +105,9 @@ export class ChatFriendService {
         blocked: true,
       },
     });
-    const clearparticipants = await this.prisma.participants.update({
-      where: { channelID_userID:{
-        channelID: foundPersonalChannel.id,
-        userID:FriendId,
-      }},
-      data:{
-        blocked:true,
-      }
-    });
   }
 
   async unblock_user(userId: number, FriendId: number) {
-    console.log("hi");
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -181,63 +128,16 @@ export class ChatFriendService {
         friendID: FriendId,
       },
     });
-    console.log(fetchUsers,userId);
-    if (fetchUsers && fetchUsers.blocked === false) return;
-
-    const finde_same_channel = await this.prisma.channel.findFirst({
+    if (!fetchUsers) throw new NotFoundException('Not Your Friend');
+    if (fetchUsers.blocked === false) throw new NotFoundException('Is Unblock');
+    await this.prisma.friendship.update({
       where: {
-        type: 'PERSONEL',
-        chanelID: {
-          every: {
-            OR: [{ userID: userId }, { userID: FriendId }],
-          },
-        },
+        id: fetchUsers.id,
       },
-      include: {
-        messages: true, // Include the messages in the query result
+      data: {
+        blocked: false,
       },
     });
-    const messages = finde_same_channel.messages;
-    if(finde_same_channel && messages && messages.length == 0)
-    {
-      await this.prisma.participants.deleteMany({
-        where:{
-          channelID:finde_same_channel.id,
-        }
-      })
-      await this.prisma.channel.delete({
-        where:{
-          id: finde_same_channel.id
-        }
-      })
-    }
-    else if(finde_same_channel){
-      const clearparticipants = await this.prisma.participants.update({
-        where: { channelID_userID:{
-          channelID: finde_same_channel.id,
-          userID:FriendId,
-        }},
-        data:{
-          blocked:false,
-        }
-      });
-        const updatechannel = await this.prisma.channel.update({
-          where: { id: finde_same_channel.id },
-          data: {
-            blocked: false,
-            hasblocked: null,
-          },
-        });
-    }
-    //
-    if(fetchUsers)
-    {
-      await this.prisma.friendship.delete({
-        where: {
-          id :fetchUsers.id,
-        },
-      });
-    }
   }
 
   async Friends_Ho_Blocked(userId: number): Promise<FILTER_USERS_DTO[]> {
@@ -281,7 +181,7 @@ export class ChatFriendService {
       throw new NotFoundException('user not found');
     }
 
-    const find_pending = await this.prisma.friendship.findMany({
+    const find_blocker = await this.prisma.friendship.findMany({
       where: {
         userID: userId,
         isRequested: true,
@@ -297,12 +197,12 @@ export class ChatFriendService {
       },
     });
 
-    const pendingFriends: FILTER_USERS_DTO[] = find_pending.map((pending) => ({
-      id: pending.friend.id,
-      username: pending.friend.username,
-      image: pending.friend.image,
+    const blockedFriends: FILTER_USERS_DTO[] = find_blocker.map((blocker) => ({
+      id: blocker.friend.id,
+      username: blocker.friend.username,
+      image: blocker.friend.image,
     }));
 
-    return pendingFriends;
+    return blockedFriends;
   }
 }

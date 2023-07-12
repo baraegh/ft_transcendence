@@ -21,7 +21,6 @@ import { GatwayModule } from './gateway/gateway.module';
 import { AuthLogic } from './gateway/getwayLogic';
 import { OtherProfileModule } from './other_profile/other_profile.module';
 import { GameGateway } from './gateway/game.gateway';
-import { NotificationModule } from './notification/notification.module';
 
 
 @Module({
@@ -38,8 +37,7 @@ import { NotificationModule } from './notification/notification.module';
     _2faModule,
     GatwayModule,
     OtherProfileModule,
-    GameGateway,
-    NotificationModule,
+    GameGateway
   ],
   providers: [
     {

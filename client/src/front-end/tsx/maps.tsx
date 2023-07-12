@@ -22,6 +22,7 @@ const maps = {
 const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
   const [Maps, setMaps] = useState(maps);
 
+    
   useEffect(() => {
     console.log("Maps updated:", Maps);
     // Perform any additional actions when Maps changes
