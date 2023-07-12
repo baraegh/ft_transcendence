@@ -20,17 +20,17 @@ import {
 } from './dto';
 import { createWriteStream } from 'fs';
 import * as path from 'path';
+import { FRIEND_RES } from 'src/friends/dtos';
 
 @Injectable()
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
   /*********************************************************/
-  async joinchatwithFriend(senderId, receiverId) {
+  async joinchatwithFriend(senderId, receiverId):Promise<FRIEND_RES> {
     const existingUser = await this.prisma.user.findUnique({
       where: { id: receiverId },
     });
-    console.log('existingUser', existingUser);
     if (!existingUser) {
       throw new ForbiddenException('The Friend Not Exist');
     }
@@ -48,18 +48,18 @@ export class ChatService {
     });
 
     if (finde_same_channel) {
-      const findchannel = await this.prisma.channel.findFirst({
+      const findchannel = await this.prisma.channel.findUnique({
         where: { id: finde_same_channel['id'] },
       });
       console.log('findchannel', findchannel);
-      return findchannel;
+      return {channelID : findchannel.id} ;
     }
     const createChanell = await this.prisma.channel.create({
       data: {
         ownerId: null,
       },
     }); 
-    await this.prisma.participants.createMany({
+    const partisepents = await this.prisma.participants.createMany({
       data: [
         {
           channelID: createChanell.id,
@@ -71,7 +71,9 @@ export class ChatService {
         },
       ],
     });
-    return createChanell.id;
+   
+    return  {channelID : createChanell.id};
+
   }
 
   /*********************************************************/
@@ -98,22 +100,28 @@ export class ChatService {
     if (!existingChannel) {
       throw new ForbiddenException('The Channel Not Exist');
     }
-    const existingmumber: Prisma.ParticipantsWhereUniqueInput = {
-      channelID_userID: {
-        channelID: dto.channelId,
-        userID: userId,
-      },
-    };
-    if (existingmumber) {
-      throw new ForbiddenException('The user already member');
-    }
+    if(existingChannel.type === 'PRIVATE')
+      return;
+    if(existingChannel.type === 'PERSONEL')
+      return;
 
-    if (existingChannel.type === 'PROTECTED' && !dto.password)
+    const existmember = await this.prisma.participants.findUnique({
+      where:{
+        channelID_userID: {
+          channelID: dto.channelId,
+          userID: userId
+        }
+      }
+    })
+    if (existmember) {
+      return;
+    }
+    if (existingChannel.type === 'PROTECTED' && dto.password === '')
       throw new ForbiddenException('Password Must be');
     else if (existingChannel.type === 'PROTECTED' && dto.password) {
-      const PMatch = argon.verify(existingChannel.hash, dto.password);
+      const PMatch = await argon.verify(existingChannel.hash, dto.password);
       if (!PMatch) {
-        throw new ForbiddenException('Password not correct');
+       return {is_password_true : false}
       }
     }
 
@@ -219,7 +227,9 @@ export class ChatService {
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: channelID },
     });
-    if (!findChannel) throw new ForbiddenException('Channel Not Exist');
+    // console.log(">>>>>>>>",channelID);
+    if (!findChannel) return;
+    // throw new ForbiddenException('Channel Not Exist');
 
     let find_user_and_channel_in_particepents =
       await this.prisma.participants.findFirst({
@@ -227,8 +237,9 @@ export class ChatService {
       });
 
     const currentDate = new Date();
-
-    if (find_user_and_channel_in_particepents.blocked_at) {
+      if(!find_user_and_channel_in_particepents)/////
+        return;
+    if (find_user_and_channel_in_particepents.blocked_at != null) {
       const diff_on_min = Math.round(
         (currentDate.getTime() -
           find_user_and_channel_in_particepents.blocked_at.getTime()) /
@@ -261,8 +272,7 @@ export class ChatService {
       find_user_and_channel_in_particepents.blocked ||
       find_user_and_channel_in_particepents.mut != 'NAN'
     )
-      throw new ForbiddenException('U Dont have The Permetion To Send Msg');
-
+     return;
     const creatmsg = await this.prisma.messages.create({
       data: {
         channelID,
@@ -284,6 +294,7 @@ export class ChatService {
   ): Promise<RETUR_OF_CHANNEL_DTO> {
     console.log(typeof dto.members);
     if (dto.hash) {
+      console.log(dto.hash + "<<< hash");
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
     }

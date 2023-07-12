@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, isNumber } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, isNumber } from "class-validator";
 
 export class FRIEND_REQ{
 
@@ -7,4 +7,12 @@ export class FRIEND_REQ{
     @IsNotEmpty()
     @IsNumber()
     receiverId : number
+}
+
+export class FRIEND_RES{
+
+    @ApiProperty({ description: 'channel id' })
+    @IsNotEmpty()
+    @IsString()
+    channelID : string
 }

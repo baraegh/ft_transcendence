@@ -23,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtGuard } from 'src/auth/guard';
-import { FRIEND_REQ } from 'src/friends/dtos';
+import { FRIEND_REQ, FRIEND_RES } from 'src/friends/dtos';
 import { ChatService } from './chat.service';
 import {
   ABOUTDTO,
@@ -68,11 +68,11 @@ export class ChatController {
   @ApiResponse({
     description:
       'Returns id of channel string like: 794c9ac3-fa09-4a2d-9d7e-0dd2a531624e',
-    type: FRIEND_REQ,
+    type: FRIEND_RES,
   })
   @HttpCode(HttpStatus.OK)
   @Post('join-friend')
-  async joinchat(@Req() req: Request, @Body() body: FRIEND_REQ) {
+  async joinchat(@Req() req: Request, @Body() body: FRIEND_REQ):Promise<FRIEND_RES> {
     const senderId = req.user['id'];
     const receiverId = body.receiverId;
     return await this.chat.joinchatwithFriend(senderId, receiverId);
@@ -113,6 +113,7 @@ export class ChatController {
   @HttpCode(HttpStatus.OK)
   @Post('send-msg')
   async SendMsg(@Req() req: Request, @Body() body: MSGDTO) {
+    console.log("send-msg");
     const senderId = req.user['id'];
     const channelId = body.channelID;
     const content = body.content;

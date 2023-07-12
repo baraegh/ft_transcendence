@@ -218,21 +218,29 @@ export class JOINGROUPDTO{
 }
 
 export class JOINGROUPRTURNDTO{
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
+  @IsOptional()
   @IsString()
-  id:string;
+  id?:string;
 
-  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED', 'PERSONEL'] })
-  type: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
+  @ApiProperty({ enum: ['PUBLIC', 'PRIVATE', 'PROTECTED', 'PERSONEL'] , nullable: true})
+  @IsOptional()
+  type?: 'PUBLIC' | 'PERSONEL' | 'PRIVATE' | 'PROTECTED';
 
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   @IsString()
-  name:string;
+  name?:string;
 
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
   image?:string;
+
+  @ApiProperty({ nullable: true })
+  @IsOptional()
+  @IsString()
+  is_password_true?:boolean;
+
 }
  
 

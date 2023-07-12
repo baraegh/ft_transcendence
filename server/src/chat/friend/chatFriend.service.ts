@@ -25,7 +25,7 @@ export class ChatFriendService {
       where: { id: dto.channelId },
     });
 
-    if (!findChannel) throw new ForbiddenException('The Channel Not Fround');
+    if (!findChannel) return;
     if (findChannel.type != 'PERSONEL')
       throw new ForbiddenException('Access Denied');
     else {
@@ -39,20 +39,16 @@ export class ChatFriendService {
       });
       if (!findInparticipants)
         throw new NotFoundException('Your Not Exist in This Channel');
-      const deletechat = await this.prisma.messages.deleteMany({
-        where: { channelID: dto.channelId },
-      });
-      const removechannel = await this.prisma.channel.delete({
-        where:{}
-      })
+        const clearparticipants = await this.prisma.participants.deleteMany({
+          where: { channelID: dto.channelId },
+        });
+        const deletechat = await this.prisma.messages.deleteMany({
+          where: { channelID: dto.channelId },
+        });
+        const deletGroup = await this.prisma.channel.delete({
+          where: { id: dto.channelId },
+        });
 
-      const clearparticipants = await this.prisma.participants.deleteMany({
-        where: { channelID: dto.channelId },
-      });
-
-      const deletGroup = await this.prisma.channel.delete({
-        where: { id: dto.channelId },
-      });
     }
   }
 
@@ -131,7 +127,6 @@ export class ChatFriendService {
         },
       });
     }
-    console.log(foundPersonalChannel.id);
     await this.prisma.friendship.update({
       where: {
         id: fetchUsers.id,
