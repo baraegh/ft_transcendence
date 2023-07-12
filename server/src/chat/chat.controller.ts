@@ -33,6 +33,7 @@ import {
   FETCHMSG,
   GROUP_INFO_DTO,
   INVETUSERDTO,
+  IS_BLOCKED_DTO,
   JOINGROUPDTO,
   JOINGROUPRTURNDTO,
   LEAVEGROUPDTO,
@@ -334,5 +335,23 @@ export class ChatController {
   async leave_group(@Req() req: Request, @Body() body: LEAVEGROUPDTO) {
     const userID = req.user['id'];
     await this.fetshchat.leave_group(userID, body);
+  }
+
+  @ApiOperation({ summary: 'get msg  ' })
+  @ApiResponse({
+    description: 'true or false',
+    type: Boolean
+  })
+  @ApiBody({
+    type: IS_BLOCKED_DTO,
+    required: true,
+  })
+  @Post('is_muted')
+  async isBlocked(
+    @Req() req: Request,
+    @Body() dto: IS_BLOCKED_DTO,
+  ){
+    const userid = req.user['id'];
+    return await this.fetshchat.isBlocked(userid,dto);
   }
 }
