@@ -211,14 +211,6 @@ const Game = () => {
       player1 = message.player1;
       player2 = message.player2;
     });
-    socket.on("playerDisconnected", (message: string) => {
-     console.log(message);
-     navigate('/home')
-    });
-    socket.on("GameEnd", (message: string) => {
-     console.log(message);
-     navigate('/home')
-    });
     // socket.on("thisIsStream", (message) => {
     //   document.onkeydown = (event: KeyboardEvent) => {
     //     event.preventDefault();

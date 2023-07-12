@@ -127,7 +127,6 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     fetchData();
   }, []);
-
   const SlideInModal = ({ onClose }) => {
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -154,71 +153,69 @@ function MyHeader(): JSX.Element {
 
 
   return (
+    <div>
       <header>
-        <div className='header-left'>
-          <h3 onClick={() => navigate('/home')} className="logo">
-            KIR
-          </h3>
-          <div className="vertical-line"></div>
-          <div className="header_buttons">
-            <a className='header-btn' onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
-              <span>LeaderBoard</span>
-            </a>
-            <a className='header-btn' onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
-              <span>Chat</span>
-            </a>
-          </div>
-        </div>
+        <h3 onClick={() => navigate('/home')} className="logo">
+          KIR
+        </h3>
+        <div className="vertical-line"></div>
+        <div className="header_buttons">
+          <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
+            <span>LeaderBoard</span>
+          </a>
+          <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
+            <span>Chat</span>
+          </a>
 
-        {/* <div className="bell">
-          <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
-            <Dropdown.Toggle className="bellImg" variant="light">
-              <img className="bellImg" src={Bell} alt="" />
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="dropDownMenu">
-              <Dropdown.Item id="drop" href="#action1" onClick={() =>  {console.log("EE")}}>
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action1">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action1">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action1">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action3">
-
-              </Dropdown.Item>
-              
-            </Dropdown.Menu>
-          </Dropdown>
-        </div> */}
-        <div className='header-right'>
-          <Notification />
-          <div className="profileImg">
-            {userData && (
-              <Dropdown
-              show={profileDropdownOpen}
-              onToggle={toggleProfileDropdown}
-              >
-                <Dropdown.Toggle variant="light">
-                  <img src={userData.image} alt="" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropDownMenu">
-                  <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
-                    Profile
-                  </Dropdown.Item>
-                  <Dropdown.Item id="drop" onClick={handleLogout} >
-                    Logout
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            )}
-          </div>
         </div>
+          <div className="bell">
+            <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
+              <Dropdown.Toggle className="bellImg" variant="light">
+                <img className="bellImg" src={Bell} alt="" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropDownMenu">
+                <Dropdown.Item id="drop" href="#action1" onClick={() =>  {console.log("EE")}}>
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" href="#action1">
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" href="#action1">
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" href="#action1">
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" href="#action3">
+
+                </Dropdown.Item>
+                
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        <div className="profileImg">
+          {userData && (
+            <Dropdown
+            show={profileDropdownOpen}
+            onToggle={toggleProfileDropdown}
+            >
+              <Dropdown.Toggle variant="light">
+                <img src={userData.image} alt="" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropDownMenu">
+                <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" onClick={handleLogout} >
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+        </div>
+        <Notification />
       </header>
+    </div>
   );
 }
 
