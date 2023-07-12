@@ -103,6 +103,13 @@
   /* color: #8D8D8D; */
 }
 
+/* CREATE GROUP */
+
+.create-group-form
+{
+  display: grid;
+}
+
 .private-key-input
 {
   margin-top: 0px;
@@ -121,7 +128,7 @@
   width: 89%;
   background: var(--thired-color);
   border-radius: 9px;
-  padding: 6px;
+  padding: 4px;
   margin: 10px 5px 10px 0;
 
   font-family: 'MPLUS 1p regular';
@@ -143,7 +150,6 @@
   cursor: pointer;
 }
 
-
 .browse-image-label:hover
 {
   box-shadow: none;
@@ -151,6 +157,7 @@
 
 .group-privacy-type
 {
+  width: 97%;
   display: flex;
   justify-content: space-between;
   margin-top: 10px;

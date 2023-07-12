@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
 import { CREAT_GAME_DTO, EDIT_GAME_DTO, END_GAME_DTO, RETURN_OF_CREAT_GAME_DTO } from './game.dto';
@@ -58,4 +58,9 @@ export class GameController {
       return await this.gameServise.endMatch(userid,dto);
     }
 
+    @ApiResponse({type:Boolean , description:""})
+    @Get('isplaying')
+    async leaderboard(@Req() req:Request) {
+      return await this.gameServise.isplaying(req['id']);
+    }
 }

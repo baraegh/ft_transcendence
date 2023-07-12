@@ -1,18 +1,29 @@
 
 .mainDisplay
 {
-  
-    position: relative;
-    top : 50px;
-    width: 1058px;
-    margin: auto;
-    height: 500px;
+    display: grid;
+    width: fit-content;
+    height: fit-content;
     border-radius: 20px;
     border: 2px solid black;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-    background-color: black !important;
+    box-sizing: border-box;
 }
 
+.home-game
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.mainDisplay #pong
+{
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+}
 
 
 .mainDisplay #tvGif {

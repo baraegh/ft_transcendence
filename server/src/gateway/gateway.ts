@@ -69,6 +69,18 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('send_status')
+  send_status(client: Socket,userid:number) {
+    const userSocket = this.connectedUsers.get(userid);
+    let st:string;
+    if(userSocket)
+      st = 'online';
+    else
+      st = 'ofline';
+      this.server.to(client.id).emit('get_status', st);
+  }
+
+
   @SubscribeMessage('sendGameRequest')
   sendGameRequest(
     client: Socket,

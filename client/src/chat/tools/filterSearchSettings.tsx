@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons' ;
 import DropMenu from './DropMenu';
 import { chatInfoType } from "../chat";
+import { channel } from "../chatHistory/chatHistoryList";
 
 type searchProps = {
     searchQuery:    string,
@@ -57,18 +58,22 @@ export function FilterBtn({list, setFilter} : FilterBtnProps)
 
 type SettingsProps =
 {
-    list:               string[];
-    size?:              string,
-    setIsProfileOpen?:  (isOpen: boolean) => void
-    setChat?:           (chatId: string, chatImage: string,
-                            chatName: string, chatType: string, userId: number | null) => void,
-    chatInfo?:          chatInfoType,
-    msgSend?:            boolean,
-    setMsgSend?:         (msgSend: boolean) => void,
+    list:                   string[];
+    size?:                  string,
+    setIsProfileOpen?:      (isOpen: boolean) => void
+    setChat?:               (chatId: string, chatImage: string,
+                                chatName: string, chatType: string, userId: number | null,
+                                blocked?: boolean, whoblock?: number | null) => void,
+    chatInfo?:              chatInfoType,
+    msgSend?:               boolean,
+    setMsgSend?:            (msgSend: boolean) => void,
+    setUpdateChatInfo?:     (update: boolean) => void,
+    joinRoom?:               (channelId: string) => void,
 }
 
 export function Settings({list, size='14px', setIsProfileOpen,
-                            setChat, chatInfo, msgSend, setMsgSend} : SettingsProps)
+                            setChat, chatInfo, msgSend, setMsgSend,
+                            setUpdateChatInfo, joinRoom} : SettingsProps)
 {
     return (
         <div className="chat-settings">
@@ -80,7 +85,9 @@ export function Settings({list, size='14px', setIsProfileOpen,
                         setChat={setChat}
                         chatInfo={chatInfo}
                         msgSend={msgSend}
-                        setMsgSend={setMsgSend}/>
+                        setMsgSend={setMsgSend}
+                        setUpdateChatInfo={setUpdateChatInfo}
+                        joinRoom={joinRoom}/>
         </div>
     );
 }

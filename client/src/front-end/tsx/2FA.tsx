@@ -60,7 +60,6 @@ function FA() : JSX.Element {
                 {error && <p id='Error_message'>{error}</p>}
             </form>
         </div>
-
     );
 }
 

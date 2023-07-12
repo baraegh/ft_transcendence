@@ -20,8 +20,6 @@ const Notification : React.FC = () => {
       }
     }
   }, [socket]);
-
-  
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
   const [showNotification, setShowNotification] = useState(false);
   const [data, setData]  = useState({
@@ -111,3 +109,4 @@ if(socket)
 };
 
 export default Notification;
+
