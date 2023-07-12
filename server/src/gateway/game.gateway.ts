@@ -106,20 +106,22 @@ export class GameGateway implements OnGatewayDisconnect{
     return undefined; 
   }
   
-  @SubscribeMessage('ServerToClient')
-  handleMessage( @ConnectedSocket() client: Socket, @MessageBody() message: {y: number, bVX: number, bVY: number}): void {
+  @SubscribeMessage('clientToServer')
+  handleMessage(client: Socket,message: number): void {
     let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
+    this.logger.log(client.id);
     if (clientOb){
+      let nb = message;
       if (client.id == clientOb.player1Id){
-        this.server.to(clientOb.player2Id).emit('ServerToClient', message);
+        this.server.to(clientOb.player2Id).emit('ServerToClient', nb);
       }
       else if (client.id == clientOb.player2Id){
-        this.server.to(clientOb.player1Id).emit('ServerToClient', message);
+        this.server.to(clientOb.player1Id).emit('ServerToClient', nb);
       }
     }
   }
   @SubscribeMessage('ballMove')
-  async handelBall( @ConnectedSocket() client: Socket, @MessageBody() message:{ball: ballType, player1: playerType, player2: playerType, dim:{W:number, H: number}}){
+  async handelBall( client: Socket,message:{ball: ballType, player1: playerType, player2: playerType, dim:{W:number, H: number}}){
     const getMatchID = this.getMatchID.bind(this);
     const gameIds = this.gameIds;
     const editMatch = this.editMatch.bind(this);
@@ -129,20 +131,20 @@ export class GameGateway implements OnGatewayDisconnect{
       ball.y = message.dim.H / 2;
       ball.velocityY = 5;
       ball.velocityX = -ball.velocityX;
-      ball.speed = dim.W/ 100;
+      ball.speed = ((3 * dim.W) / 4) / 300;
     }
      function collision(b, p):boolean{
       // players
-      p.top = p.y;
-      p.bottom = p.y + p.height;
-      p.left = p.x;
-      p.right = p.x + p.width;
+      let pTop = p.y;
+      let pbottom = p.y + p.height;
+      let pleft = p.x;
+      let pright = p.x + p.width;
       // ball
-      b.top = b.y - b.radius;
-      b.bottom = b.y + b.radius;
-      b.left = b.x - b.radius;
-      b.right = b.x + b.radius;
-      return b.right > p.left && b.top < p.bottom && b.left < p.right && b.bottom > p.top;
+      let btop = b.y - b.radius;
+      let bbottom = b.y + b.radius;
+      let bleft = b.x - b.radius;
+      let bright = b.x + b.radius;
+      return bright > pleft && btop < pbottom && bleft < pright && bbottom > pTop;
     }
       if (ball.y + ball.radius >= message.dim.H || ball.y - ball.radius <= 0) {
         ball.velocityY = -ball.velocityY;
@@ -156,7 +158,7 @@ export class GameGateway implements OnGatewayDisconnect{
                 let angleRad = (Math.PI / 4) * collidePoint;
                 ball.velocityX = ball.speed * Math.cos(angleRad);
                 ball.velocityY = ball.speed * Math.sin(angleRad);
-                ball.speed += dim.W/ 500;
+                ball.speed += dim.W/ 2000;
             }
         }
         else if (ball.x >= dim.W / 2) {
@@ -166,7 +168,7 @@ export class GameGateway implements OnGatewayDisconnect{
                 let angleRad = (Math.PI / 4) * collidePoint;
                 ball.velocityX = (ball.speed * Math.cos(angleRad)) * -1;
                 ball.velocityY = ball.speed * Math.sin(angleRad);
-                ball.speed += dim.W/ 500;
+                ball.speed += dim.W/ 2000;
             }
         }
         if (ball.x - ball.radius < 0 && (ball.y < player1.y || ball.y > player1.y + player1.height)) {
@@ -195,10 +197,6 @@ export class GameGateway implements OnGatewayDisconnect{
             }
             return ball;
           }
-    // if(client)
-    //     console.log(this.getMatchID(client))
-    // else{
-      // }
       let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
       if (clientOb){
         message.ball = await ballMovement(message.ball, message.player1, message.player2, message.dim);
@@ -210,12 +208,16 @@ export class GameGateway implements OnGatewayDisconnect{
             losser = this.games.get(this.getMatchID(client)).numplayer2Id;
             this.server.to(clientOb.player1Id).emit('GameEnd',"winner  " + message.player1.score +"-"+message.player2.score);
             this.server.to(clientOb.player2Id).emit('GameEnd',"losser  " + message.player2.score +"-"+message.player1.score);
+            message.player1.score = 0
+            message.player2.score = 0
           }
           else{
             win = this.games.get(this.getMatchID(client)).numplayer2Id;
             losser = this.games.get(this.getMatchID(client)).numplayer1Id;
             this.server.to(clientOb.player1Id).emit('GameEnd', "losser  " + message.player1.score +"-"+message.player2.score);
             this.server.to(clientOb.player2Id).emit('GameEnd', "winner  " + message.player2.score +"-"+message.player1.score);
+            message.player1.score = 0
+            message.player2.score = 0
           }
           const dto = {
             GameId: gameIds.get(getMatchID(client)),
@@ -227,12 +229,9 @@ export class GameGateway implements OnGatewayDisconnect{
             this.streaming.delete(this.getMatchID(client));
             this.gameIds.delete(this.getMatchID(client));
           }
-          // database
       if (client.id == clientOb.player1Id){
         this.server.to(clientOb.player1Id).emit('ballMove', message);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('streaming', message);
-      }
-      if (client.id == clientOb.player1Id){
         message.ball.x = message.dim.W - message.ball.x;
         this.server.to(clientOb.player2Id).emit('ballMove', message);
       }
