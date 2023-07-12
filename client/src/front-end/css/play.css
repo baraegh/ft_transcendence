@@ -12,8 +12,10 @@
 }
 
 .IQ {
-    margin: auto;
-    width : 650px;
+    position: relative;
+    top : 120px;
+    margin: 100px;
+    width : 700px;
     font-size: 50px;
     display: flex;
     justify-content: space-between;
@@ -33,6 +35,40 @@
 .IQ a
 {
     text-decoration: none;
-    color : white;
+    color : white !important;
     letter-spacing: 3px;
 }
+
+ #triangleImg {
+    opacity: 0;
+    margin: 10px;
+    border-radius: 0px !important;
+    width: 43px;
+    height: 43px;
+    transition: opacity 0.1s;
+  }
+  
+.quickGameContainer img
+{
+  position: relative;
+  top : 9px;
+}
+
+  .quickGameContainer
+  {
+    display: flex;
+    flex-direction: row-reverse;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
+  .inviteFriendContainer:hover #triangleImg    {
+    opacity: 1;
+  }
+  
+  .quickGameContainer:hover #triangleImg
+  {
+    opacity: 1;
+    
+  }

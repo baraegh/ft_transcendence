@@ -14,14 +14,13 @@
   100% { border-color: black; }
 }
 
+.slide-in-modal {
+  /* Existing styles... */
+  animation: slideIn 10s forwards blink 1s infinite; /* Combine animations into a single property */
+  /* Remaining styles... */
+}
 
 @keyframes slideIn {
-  0% {
-    -webkit-transform: translateX(100%);
-  }
-  100% {
-    -webkit-transform: translateX(0);
-  }
   /* Existing keyframe styles... */
 }
 
@@ -45,45 +44,40 @@
   }
 }
 
-
+@-ms-keyframes slideIn {
+  /* Duplicate slideIn keyframes for ms */
+  0% {
+    -ms-transform: translateX(100%);
+  }
+  100% {
+    -ms-transform: translateX(0);
+  }
+}
 
 .slide-in-modal {
-  position: absolute;
+  position: relative;
   top: 20px;
-  right: 10px;
+  left: 500px;
   width: 300px;
   height: 112px;
   background-color: #fff;
+  animation: slideIn 1.8s forwards; /* Remove the 'blink' animation and set the duration to 10 seconds */
 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.7s forwards; /* Combine animations into a single property */
+  animation: slideIn 10s forwards blink 1s infinite; /* Combine animations into a single property */
   z-index: 9999;
   border: 2px solid black;
   border-radius: 5px;
-  -webkit-animation: blink 1s infinite;
-  -moz-animation: blink 1s infinite;
-  -ms-animation: blink 1s infinite;
-
-  display: flex;
-}
-
-.slide-in-modal .close-button
-{
-  display: flex;
-  align-items: start;
-  padding-left: 5px;
 }
 
 .content {
   display: flex;
-  flex-direction: column;
   text-align: center;
-  justify-content: space-between;
-  padding: 0 0 10px 0;
 }
 
 .message {
-
+  margin-left: 35px;
+  margin-top: 10px;
 }
 
 @keyframes slideIn {
@@ -98,18 +92,18 @@
 #profileImgNotif {
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
-  /* margin-left: 50px; */
+  margin-left: 50px;
   width: 110px;
   height: 110px;
 }
 
 .notifButons {
-  /* left: 10px;
-  position: relative; */
-  /* bottom: 30px; */
-  /* width: 160px; */
+  left: 10px;
+  position: relative;
+  bottom: 30px;
+  width: 160px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .notifButons a {

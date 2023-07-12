@@ -1,39 +1,27 @@
 
-.mainDisplay
+.mainDisplay 
 {
-    display: grid;
-    width: fit-content;
-    height: fit-content;
+    display: flex;
+    position: relative;
+    top : 50px;
+    width: 1058px;
+    margin: auto;
+    height: 500px;
     border-radius: 20px;
     border: 2px solid black;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-    box-sizing: border-box;
-}
+    background-color: green;
 
-.home-game
-{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
 }
 
 .mainDisplay #pong
 {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 18px;
+  width: 1200px;
+  height: 500px;
+  border-radius: 20px;
 }
 
 
-.mainDisplay #tvGif {
-    width: 1058px;
-    height: 500px;
-    border-radius: 20px;
-    position: relative;
-    bottom : 1px;
-
- }
 
 #Play
 {
@@ -102,3 +90,4 @@
   .P_W a:hover:after{
     width: 100%;
   } 
+

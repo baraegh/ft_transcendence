@@ -346,3 +346,11 @@ export class LEAVEGROUPDTO {
   @IsString()
   channelid: string;
 }
+
+export class IS_BLOCKED_DTO{
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  channelId: string;
+
+}

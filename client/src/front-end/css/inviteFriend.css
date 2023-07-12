@@ -1,0 +1,89 @@
+.mainDisplay
+{
+    position: relative;
+    top : 50px;
+    width: 1058px;
+    margin: auto;
+    height: 500px;
+    border-radius: 20px;
+    border: 2px solid black;
+    box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
+    background-color: black;
+}
+
+
+#X
+{
+    text-decoration: none;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 40px;
+    position: relative;
+    left: 990px;
+    top : 20px;
+}
+
+
+.search-input-container
+{
+    top : 30px;
+    position: relative;
+    left : 220px;
+    margin: 20px;
+    display: flex;
+    height: 30px;
+    /* background-color: green; */
+
+}
+
+.search-input
+{
+
+    /* justify-content: center; */
+    text-align: center;
+    border-radius: 6px;
+
+    width: 500px;
+}
+
+
+    /* background-color: white; */
+ 
+.friendList {
+    font-size: 40px;
+    margin: 97px 17px 3px -339px;
+    height: 413px;
+    width: 621px;
+    bottom: 13px;
+    text-align: left;
+    color: white;
+    position: relative;
+    border-radius: 20px;
+    flex-direction: row-reverse;
+    box-shadow: 6px 8px 0px 2px rgb(255, 255, 255);
+    overflow: auto;
+}
+
+.friendList p
+{
+    
+    letter-spacing: 4px;
+    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+}
+
+.friendsSearch
+{
+
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
+
+.friendsSearchImg
+{
+    width : 60px;
+    height: 60px;
+    border-radius: 60px;
+    margin-right:20px ;
+    /* height : px; */
+}

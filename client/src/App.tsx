@@ -23,9 +23,14 @@ import axios from 'axios';
 import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import SocketProvider from './socket/socketContext';
-
+import GamePlay from './front-end/tsx/gamePlay';
+import InviteFriend from './front-end/tsx/inviteFriend';
+import ErrorPage from './front-end/tsx/ErrorPage';
 export {userMe}
+import OtherProfileUser from './front-end/tsx/otherProfileUser';
 
+//  let socket: Socket | null; 
+//  export let socket: Socket | null = null;
 type meType = {
   id:           number,
   username:     string,
@@ -34,10 +39,8 @@ type meType = {
   gameLost:     number,
   achievements: string[],
 }
-const userMe = React.createContext<meType | null>(null);
 
-//  let socket: Socket | null; 
-//  export let socket: Socket | null = null;
+const userMe = React.createContext<meType | null>(null);
 function App() {
   const [me, setMe] = useState<meType | null>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -83,10 +86,6 @@ function App() {
     // checkLoggedInStatus();
   }, []);
 
-  useEffect(() => {
-    // Update local storage whenever the isLoggedIn state changes
-    localStorage.setItem('isLoggedIn', isLoggedIn);
-  }, [isLoggedIn]);
   
   return (
     <div className="the-app">

@@ -94,7 +94,7 @@ function getActualWindowDientions() {
       <div className="meet-the-team-line"></div>
       <div className="meet-the-team-images">
   <div  className="meet-the-team-image">
-      <img src={me} alt="" />
+      <img src="https://cdn.intra.42.fr/users/56b6ef5fd87645cbc5179e01683d4b80/eel-ghan.jpg" alt="" />
       <div className="overlay overlayBottom">
         <p id='header_text'>Riyad Mney</p>
         <p id='paragraphImg'>
@@ -117,8 +117,31 @@ function getActualWindowDientions() {
         </p>
       </div>
     </div>
-  <div className="meet-the-team-image"  />
-  <div className="meet-the-team-image"  />
+  <div className="meet-the-team-image" >
+  <img src="https://cdn.intra.42.fr/users/49c9f954c68d136b2b41e8da9fbd4f30/mait-aad.jpg" alt="" />
+      <div className="overlay overlayBottom">
+        <p id='header_text'>Riyad Mney</p>
+        <p id='paragraphImg'>
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+        </p>
+      </div>
+    </div>
+  <div className="meet-the-team-image" >
+  <img src="https://cdn.intra.42.fr/users/43a0c860ec59fd992226a7dfb151af7e/brmohamm.jpg" alt="" />
+      <div className="overlay overlayBottom">
+        <p id='header_text'>Riyad Mney</p>
+        <p id='paragraphImg'>
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+          Bla Bla Bla BlaBla Bla Bla Bla Bla Bla Bla Bla Bla
+        </p>
+      </div>
+    </div>
+
 </div>
 
     </div>

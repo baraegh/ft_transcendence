@@ -63,8 +63,9 @@ function myProfileUser(): JSX.Element {
         console.log(!scrollFlag + ' < switched');
     };
     const generateRandomUser = (index: number): OtherUser => {
+        
         const randomId = Math.floor(Math.random() * 1000);
-        const randomImage = me;
+        const randomImage = 'https://random.imagecdn.app/500/150';
         const randomUsername = `Other ${index}`;
         return { id: randomId, image: randomImage, username: randomUsername };
     };
@@ -151,12 +152,14 @@ function myProfileUser(): JSX.Element {
                 console.log(error);
             });
     };
-
+    const pollUserData = () => {
+        fetchData(); // Fetch the latest userData from the server
+        setTimeout(pollUserData, 1000); // Poll every 5 seconds (adjust the interval as needed)
+      };
     useEffect(() => {
-        fetchData();
-        console.log(matches);
-
+        pollUserData();
     }, []);
+    // console.log(userData?.id + " <<");
     const friends: friend[] = Array.from({ length: 30 }, (_, index) => ({
         id: index + 1,
         username: `rimney ${index + 2}`,
@@ -171,7 +174,7 @@ function myProfileUser(): JSX.Element {
                     <h3 id="profileScore">score : 200</h3>
                     <div className="ProfilePictureUsername">
                         <img id="profileImg" src={userData?.image} alt="" />
-                        <p>{userData?.username}</p>
+                        <p id='profileUsername'>{userData?.username}</p>
                         <EditProfileIcon />
                     </div>
                     <div className='WinLoss'>

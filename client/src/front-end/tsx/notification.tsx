@@ -19,9 +19,6 @@ const Notification : React.FC = () => {
       }
     }
   }, [socket]);
-
-  
-  
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
   const [showNotification, setShowNotification] = useState(false);
   const [data, setData]  = useState({
@@ -75,7 +72,7 @@ if(socket)
     if (showNotification) {
       const timer = setTimeout(() => {
         setShowNotification(false);
-      }, 10000);
+      }, 30000);
 
       return () => {
         clearTimeout(timer);
@@ -111,3 +108,4 @@ if(socket)
 };
 
 export default Notification;
+

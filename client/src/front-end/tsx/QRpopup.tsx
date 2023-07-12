@@ -17,6 +17,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const [source, setSource] = useState("");
   const [QRvalue, setQRvalue] = useState("");
   const [error, setError] = useState("");
+  const [effectExecuted, setEffectExecuted] = useState(false);
 
   const submitQR = (event: KeyboardEvent) => {
     
@@ -38,20 +39,19 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
       setError("error akhay");
     }
     console.log(QRvalue);
-    
-    console.log("QR generated !");
-    axios.post('http://localhost:3000/2fa/verified_first_time', { "secret": QRvalue }, { withCredentials: true })
-    .then(res => {
-      console.log(res);
-      setError("");
-      onHide();
-    })
-    .catch((err) => {
-      console.log(err);
-      if (err.code === "ERR_BAD_REQUEST") {
-        setError("Wrong Auth Code !");
-      }
-    });
+
+      axios.post('http://localhost:3000/2fa/verified_first_time', { "secret": QRvalue }, { withCredentials: true })
+      .then(res => {
+        console.log(res);
+        setError("");
+        onHide();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.code === "ERR_BAD_REQUEST") {
+          setError("Wrong Auth Code !");
+        }
+      });
   };
   const isMounted = useRef(false);
 
@@ -98,11 +98,9 @@ const QRpopup: React.FC = () => {
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
-    if(QRisEnabled)
-      setShowModal(false);
+
     setQRisEnabled(false);
     console.log(QRisEnabled);
-    console.log("EEE");
   };
 
   useEffect(() => {

@@ -91,6 +91,14 @@ export class ChatFriendService {
     //
     if (!fetchUsers) {
       fetchUsers = await this.freindservice.sendFriendRequest(FriendId,userId);
+      fetchUsers =  await this.prisma.friendship.update({
+        where:{
+            id:fetchUsers.id,
+        },
+        data:{
+          isRequested:false,
+        }
+      })
     };
 
     if (fetchUsers && fetchUsers.blocked === true) return;
@@ -268,7 +276,7 @@ export class ChatFriendService {
       throw new NotFoundException('user not found');
     }
 
-    const find_blocker = await this.prisma.friendship.findMany({
+    const find_pending = await this.prisma.friendship.findMany({
       where: {
         userID: userId,
         isRequested: true,
@@ -284,12 +292,12 @@ export class ChatFriendService {
       },
     });
 
-    const blockedFriends: FILTER_USERS_DTO[] = find_blocker.map((blocker) => ({
-      id: blocker.friend.id,
-      username: blocker.friend.username,
-      image: blocker.friend.image,
+    const pendingFriends: FILTER_USERS_DTO[] = find_pending.map((pending) => ({
+      id: pending.friend.id,
+      username: pending.friend.username,
+      image: pending.friend.image,
     }));
 
-    return blockedFriends;
+    return pendingFriends;
   }
 }

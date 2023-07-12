@@ -4,17 +4,28 @@ import App from './App'
 import '../css/play.css'
 import tvGif from '../img/giphy.gif'
 import Header from '../tsx/header'
+import { useNavigate } from 'react-router-dom';
+import triangle from '../img/pngwing.com.png'
+import Maps from './maps'
 
-function Play() : JSX.Element
-{
+
+function Play(): JSX.Element {
+    const navigate = useNavigate();
     return (<div>
-        <Header/>        
+        <Header />
         <div className="mainDisplay">
-            <a id="X" href="">X</a>
+            <a onClick={() => { navigate('/home') }} id="X" >X</a>
             <div className='IQ'>
-            <a id='inviteFriend' href="">Invite Friend</a>
-            <a id='quickGame' href="">Quick Game</a>
-            {/* <img  src={tvGif} alt="" /> */}
+                <div className="inviteFriendContainer">
+                    <img id="triangleImg" src={triangle} alt="" />
+                    <a id='inviteFriend' onClick={() => {navigate('/InviteFriend')}} >Invite Friend</a>
+
+                </div>
+                <div className="quickGameContainer">
+
+                     <Maps/>
+                    <img id="triangleImg" src={triangle} alt="" />
+                </div>
             </div>
         </div>
     </div>)
