@@ -32,7 +32,7 @@ interface Friends extends Array<{
     isFriend: boolean;
     requestAccepted: boolean;
     friend: friend;
-  }> {}
+}> { }
 
 
 interface Match {
@@ -53,10 +53,10 @@ interface OtherUser {
     username: string;
 }
 
-const Buttons = 
+const Buttons =
 {
-    isFriend : false,
-    isBlocked : false
+    isFriend: false,
+    isBlocked: false
 }
 
 const otherUserTemplate = {
@@ -68,12 +68,12 @@ const otherUserTemplate = {
     // achievements: {
     //   ach : "string"
     // },
-    updatedAt : "2023-07-13T03:31:40.829Z",
-     blocked : true,
-     hosblocked : 0,
-     isRequested : true,
-     isFriend : true,
-     requestAccepted : true
+    updatedAt: "2023-07-13T03:31:40.829Z",
+    blocked: true,
+    hosblocked: 0,
+    isRequested: true,
+    isFriend: true,
+    requestAccepted: true
 };
 
 
@@ -81,8 +81,8 @@ function otherProfileUser(): JSX.Element {
     const { socket } = useContext<any | undefined>(SocketContext);
 
     const [showNotification, setShowNotification] = useState(false);
-    const [data, setData]  = useState({
-      player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
+    const [data, setData] = useState({
+        player1Id: "", player2Id: "", mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
     });
 
     const challenge = () => {
@@ -91,33 +91,33 @@ function otherProfileUser(): JSX.Element {
         //   console.log("wwwwwaaaaaaa")
         //   socket.emit('connect01');
         // }
-          // console.log(storedSocket);
-          type modeType = {
+        // console.log(storedSocket);
+        type modeType = {
             pColor: string;
             bColor: string;
             fColor: string;
             bMode: string;
-          };
-          let dataToSend: {
+        };
+        let dataToSend: {
             player2Id: number;
             mode: modeType;
             name: string;
             image: string;
-          } = {
+        } = {
             player2Id: Number(userId),
             mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
             name: "von",
             image: "image"
-          };
-          if (socket) {
-            
+        };
+        if (socket) {
+
             console.log(">>>>>>send from:" + socket);
             console.log(socket.id);
             socket.emit("sendGameRequest", dataToSend);
-            
-          }
-        };
-       
+
+        }
+    };
+
     const matches: Match[] = [];
     const { userId } = useParams();
     const [otherUser, setOtherUser] = useState(otherUserTemplate);
@@ -177,28 +177,28 @@ function otherProfileUser(): JSX.Element {
                 if (userDataResponse.status === 200 && additionalDataResponse.status === 200) {
                     const userData = userDataResponse.data;
                     const friendData = additionalDataResponse.data;
-          
+
                     const fetchedUser: User = {
-                      id: userData.id,
-                      username: userData.username,
-                      image: userData.image,
-                      gameWon: userData.gameWon,
-                      gameLost: userData.gameLost,
-                      achievements: userData.achievements,
+                        id: userData.id,
+                        username: userData.username,
+                        image: userData.image,
+                        gameWon: userData.gameWon,
+                        gameLost: userData.gameLost,
+                        achievements: userData.achievements,
                     };
-          
+
                     setUserData(fetchedUser);
                     setFriendData(friendData);
-                  //   console.log(friendData[0].friend);
-                  //   console.log(friendData[1].friend);
-                  } else {
+                    //   console.log(friendData[0].friend);
+                    //   console.log(friendData[1].friend);
+                } else {
                     throw new Error('Request failed');
-                  }
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            };
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
     const pollUserData = () => {
         fetchData(); // Fetch the latest userData from the server
         setTimeout(pollUserData, 1000); // Poll every 5 seconds (adjust the interval as needed)
@@ -212,33 +212,51 @@ function otherProfileUser(): JSX.Element {
         username: `rimney ${index + 2}`,
         image: me,
     }));
-    function sendFriendRequest()
-    {
-        axios.post(`http://localhost:3000/friends/send-friend-request/`, {"receiverId" : Number(userId)}, {withCredentials: true});
+    function sendFriendRequest() {
+        axios.post(`http://localhost:3000/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true });
         console.log("Friend Request Sent");
     }
+
     useEffect(() => {
         axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
             .then(res => {
-                // Extract the desired data from the response
                 const userData = res.data;
-
-                // Update the state with the extracted data
                 setOtherUser(userData);
             })
             .catch(error => {
-                // Handle any errors
-
                 console.log(error);
             });
-       
     }, []);
+
+    function blockFriend() {
+        axios.patch(`http://localhost:3000/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+            .then(() => {
+                // Update the UI or perform any other necessary actions
+                console.log("blocked");
+                setButtons({ ...bbuttons, isBlocked: true });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function unblockFriend() {
+        axios.patch(`http://localhost:3000/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+            .then(() => {
+                console.log("unblocked");
+                setButtons({ ...bbuttons, isBlocked: false });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     otherUser.gameWon = 160;
     otherUser.gameLost = 160;
     const [bbuttons, setButtons] = useState(Buttons);
     const navigate = useNavigate();
     const friendDataLength = friendData ? friendData.length : 0;
-
+    console.log(otherUser);
 
     return (
         <div>
@@ -266,11 +284,20 @@ function otherProfileUser(): JSX.Element {
                             <img src={ach} alt="" />
                         </div>
                         <div className='fourButtons'>
-                                {otherUser.isFriend && <a className="challenge"><Maps buttonText='Challenge' /></a>}
-                                {/* <a onClick={() => {challenge()}} > aaa</a> */}
-                                <a className="message2" href="#"><span>Message</span></a>
-                               {!otherUser.isFriend && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
-                               { otherUser.isFriend && <a className="block2" href="#"><span>Block</span></a> }
+                            {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                            {/* <a onClick={() => {challenge()}} > aaa</a> */}
+                            {otherUser.isFriend && !otherUser.blocked &&  <a className="message2" href="#"><span>Message</span></a>}
+                            {!otherUser.isFriend &&  !otherUser.blocked && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
+                            {!otherUser.blocked && !otherUser.blocked && (
+                                <a onClick={blockFriend} className="block2" href="#">
+                                    <span>Block</span>
+                                </a>
+                            )}
+                            { otherUser.blocked && (
+                                <a onClick={unblockFriend} className="block2" href="#">
+                                    <span>Unblock</span>
+                                </a>
+                            )}
 
                         </div>
                     </div>
@@ -278,16 +305,25 @@ function otherProfileUser(): JSX.Element {
                 <div className="friends">
                     <h1>Friends</h1>
                     <div className="friendslistScrollBar">
-                    {!scrollFlag ? 
-                friendData && friendData.map((data: { friend: {
-                    id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; 
-}; }, index: React.Key | null | undefined) => (
-                    <div onClick={() => {data.friend.id === userData?.id ? navigate('/user') :navigate(`/user/${data.friend.id?.toString()}`)}} key={data.friend.id} className="friend">
-                      <img src={data.friend.image} alt="" />
-                      <p> {data.friend.username === userData?.username ? "me" : data.friend.username }</p>
-                    </div>
-                  )): ""}
-            {  friendDataLength > 5 && <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
+                        {!scrollFlag ?
+                            friendData && friendData.map((data: {
+                                friend: {
+                                    id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined;
+                                };
+                            }, index: React.Key | null | undefined) => (
+                                <div onClick={() => {
+                                    {
+                                        if (data.friend.id !== userData?.id) {
+                                            navigate(`/user/${data.friend.id?.toString()}`);
+                                            document.location.reload();
+                                        }
+                                    }
+                                }} key={data.friend.id} className="friend">
+                                    <img src={data.friend.image} alt="" />
+                                    <p> {data.friend.username === userData?.username ? "me" : data.friend.username}</p>
+                                </div>
+                            )) : ""}
+                        {friendDataLength > 5 && <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
                     </div>
                 </div>
                 <div className='matches'>

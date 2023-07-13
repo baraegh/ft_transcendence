@@ -20,18 +20,17 @@ interface User {
   achievements: string[];
 }
 
-interface Notification
-{
-  id : number;
-  image : string;
-  username : string;
+interface Notification {
+  id: number;
+  image: string;
+  username: string;
 }
 
 function MyHeader(): JSX.Element {
   
   const { socket } = useContext<any | undefined>(SocketContext);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-  const [notificationData, setNotificationData] = useState({id: 0, username: "", image: ""});
+  const [notificationData, setNotificationData] = useState<Notification[]>([]);
   const navigate = useNavigate();
   
   
@@ -90,21 +89,20 @@ function MyHeader(): JSX.Element {
       });
     }
   }, [socket,showNotification]);
+  const holder : any = useState([]);
   useEffect(() => {
     axios
       .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
       .then((res) => {
-        setNotificationData(res.data[0]);
-        console.log(res.data[0].username); // Log the username inside the callback
+        setNotificationData(res.data);
+        holder.push(res.data);
+        console.log(res.data[0]?.username); // Log the username of the first notification (optional)
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [showNotification]);
-  
-
-
-    
+  }, []);
+  // console.log(holder[0]);
   const toggleBellDropdown = () => {
     setBellDropdownOpen(!bellDropdownOpen);
   };
@@ -112,6 +110,7 @@ function MyHeader(): JSX.Element {
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
   };
+  
   const handleLogout = () => {
     axios
       .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
@@ -164,6 +163,7 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     fetchData();
   }, []);
+  
   const SlideInModal = ({ onClose }) => {
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -183,20 +183,28 @@ function MyHeader(): JSX.Element {
     );
   };
 
-  function acceptFriendRequest(userId : string)
-  {
+  function acceptFriendRequest(userId: string) {
     console.log("Accept ! << " + userId);
-    axios.patch('http://localhost:3000/friends/accept-friend-request', {"receiverId" : Number(userId)}, {withCredentials: true})
-    .then((res) => {
-      console.log(res)
-      if(res.status === 200)
-        console.log("Accepted succesfully !");
-    });
-  }
-  
-  function declineFriendRequest(userId : string)
-  {
-    console.log("Decline !" + userId);
+    axios.patch('http://localhost:3000/friends/accept-friend-request', { "receiverId": Number(userId) }, { withCredentials: true })
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200)
+          console.log("Accepted successfully!");
+          document.location.reload();
+        });
+      }
+      
+      function declineFriendRequest(userId: string) {
+        
+        console.log("Decline !" + userId);
+        axios.patch('http://localhost:3000/notification/delet-friend-request', { "receiverId": Number(userId) }, { withCredentials: true })
+        .then((res) => {
+          console.log(res)
+          if (res.status === 200)
+            console.log("Rejected successfully!");
+            document.location.reload();
+          });
+        document.location.reload();
     // axios.get('')
   }
 
@@ -218,29 +226,33 @@ function MyHeader(): JSX.Element {
           <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
             <span>Chat</span>
           </a>
-
         </div>
-          <div className="bell">
-            <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
-              <Dropdown.Toggle className="bellImg" variant="light">
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="dropDownMenu">
-                <Dropdown.Item id="drop" href="#action1" onClick={() =>  {console.log("EE")}}>
+        <div className="bell">
+          <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
+            <Dropdown.Toggle className="bellImg" variant="light">
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="dropDownMenu">
+            <Dropdown.Item  id="drop" href="#action1" onClick={() => console.log("EE")}>
+              <p>Invitations</p>
+            </Dropdown.Item>
+              {notificationData.map((notification) => (
+                <Dropdown.Item key={notification.id} id="drop" href="#action1" onClick={() => console.log("EE")}>
                   <div className="friendRequest">
-                    <img id="friendRequestImg" src="" alt="" />
-                    <p> {notificationData?.username} has sent you a friend request</p>
-                    <img onClick={() => {acceptFriendRequest(notificationData.id.toString())}} id='acceptImg' src={accept} alt="" />
-                    <img onClick={() => {declineFriendRequest(notificationData.id.toString())}} id='declineImg' src={decline} alt="" />
+                    {/* <img id="friendRequestImg" src={notification.image} alt="" /> */}
+                    <p>{notification.username} has sent you a friend request</p>
+                    <img onClick={() => acceptFriendRequest(notification.id.toString())} id='acceptImg' src={accept} alt="" />
+                    <img onClick={() => declineFriendRequest(notification.id.toString())} id='declineImg' src={decline} alt="" />
                   </div>
                 </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
         <div className="profileImg">
           {userData && (
             <Dropdown
-            show={profileDropdownOpen}
-            onToggle={toggleProfileDropdown}
+              show={profileDropdownOpen}
+              onToggle={toggleProfileDropdown}
             >
               <Dropdown.Toggle variant="light">
                 <img src={userData.image} alt="" />
@@ -249,7 +261,7 @@ function MyHeader(): JSX.Element {
                 <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
                   Profile
                 </Dropdown.Item>
-                <Dropdown.Item id="drop" onClick={handleLogout} >
+                <Dropdown.Item id="drop" onClick={handleLogout}>
                   Logout
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -262,19 +274,3 @@ function MyHeader(): JSX.Element {
 }
 
 export default MyHeader;
-
-// function setShowNotification(arg0: boolean) {
-//   throw new Error('Function not implemented.');
-// }
-
-// function setData(data: { player1Id: string; player2Id: string; mode: { pColor: string; bColor: string; fColor: string; bMode: string; }; numplayer1Id: number; numplayer2Id: number; }) {
-//   throw new Error('Function not implemented.');
-// }
-// function setShowNotification(arg0: boolean) {
-//   throw new Error('Function not implemented.');
-// }
-
-// function setData(data: { player1Id: string; player2Id: string; mode: { pColor: string; bColor: string; fColor: string; bMode: string; }; numplayer1Id: number; numplayer2Id: number; }) {
-//   throw new Error('Function not implemented.');
-// }
-
