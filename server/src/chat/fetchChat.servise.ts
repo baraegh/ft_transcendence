@@ -13,6 +13,7 @@ import {
   ChannelGroupInfoDTO,
   ChannelInfoDTO,
   GROUP_INFO_DTO,
+  IS_BLOCKED_DTO,
   LEAVEGROUPDTO,
   PersonelChannelInfoDTO,
   RANKINFIDTO,
@@ -138,6 +139,7 @@ export class FetchChatService {
         channelImage: channel?.image,
         blocked:channel.blocked,
         hasblocked:channel.hasblocked,
+        mut:participant.mut,
         lastMessage: lastMessage
           ? {
               messageId: lastMessage.id,
@@ -146,6 +148,7 @@ export class FetchChatService {
               senderId: lastMessage.userId,
             }
           : null,
+        
       };
     });
 
@@ -259,6 +262,7 @@ export class FetchChatService {
         updatedAt: channel.updatedAt,
         channelName: channel?.name,
         channelImage: channel?.image,
+        mut:participant.mut,
         lastMessage: lastMessage
           ? {
               messageId: lastMessage.id,
@@ -571,6 +575,47 @@ export class FetchChatService {
     });
     if (!updateParticipant) throw new NotFoundException('Entity not found');
   }
+
+  async isBlocked(userid:number,dto:IS_BLOCKED_DTO)
+  {
+    let findparticipants = await this.prisma.participants.findUnique({
+      where: { channelID_userID:{
+        channelID:dto.channelId,
+        userID:userid
+      } },
+    });
+    const currentDate = new Date();
+    if (findparticipants?.blocked_at) {
+      const diff_on_min = Math.round(
+        (currentDate.getTime() - findparticipants.blocked_at.getTime()) /
+          60000,
+      );
+      if (
+        (diff_on_min >= 15 && findparticipants.mut == 'M15') ||
+        (diff_on_min >= 45 && findparticipants.mut == 'M45') ||
+        (diff_on_min >= 480 && findparticipants.mut == 'M15')
+      ) {
+        findparticipants = await this.prisma.participants.update({
+          where: {
+            channelID_userID: {
+              channelID: dto.channelId,
+              userID: userid,
+            },
+          },
+          data: {
+            mut: 'NAN',
+            blocked_at: null,
+          },
+        });
+      }
+    }
+    if(findparticipants?.mut === 'NAN')
+    {
+      return false;
+    }
+    return true;
+  }
+
 }
 
 

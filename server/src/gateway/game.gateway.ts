@@ -7,14 +7,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 type ballType ={x: number, y:number,radius:number , velocityY: number, velocityX: number, speed: number, color: string};
 type playerType={x: number, y: number, width: number, height: number, color: string, score: number};
 type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-type Tstreaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
+type streaming = {roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number};
 type datatype = {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number};
 @WebSocketGateway()
 export class GameGateway implements OnGatewayDisconnect{
   constructor(private prisma:PrismaService){}
   private logger: Logger = new Logger("GameGateway");
   games = new Map<number, {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}>();
-  streaming = new Map<number,Tstreaming>();
+  streaming = new Map<number,streaming>();
   gameIds = new Map<number, string>();
   gameId: number = 0;
   @WebSocketServer() server: Server;
@@ -34,26 +34,9 @@ export class GameGateway implements OnGatewayDisconnect{
       client2Id: data.player2Id,
       player1Id: data.numplayer1Id,
       player2Id: data.numplayer2Id
-    });
+    })
     this.gameId++;
   }
-  @SubscribeMessage('exploreRooms')
-  creatingRoom(client: Socket, msg: string){
-    this.streaming.forEach((value, key) => {
-      this.server.to(client.id).emit('allRoomsData',value)
-    });
-  }
-
-  @SubscribeMessage('joinStreamRoom')
-  handleJoinRoom(client: Socket, room: string){
-    client.join(room);
-  }
-
-  @SubscribeMessage('leaveStreamRoom')
-  handleLeaveRoom(client: Socket, room: string){
-    client.leave(room);
-  }
-
   @SubscribeMessage('initGameToStart')
   handleGameInit(client: Socket, data: modeType){
     this.server.to(client.id).emit('initGame', data);
@@ -95,7 +78,7 @@ export class GameGateway implements OnGatewayDisconnect{
       this.gameIds.delete(this.getMatchID(client));
       this.streaming.delete(this.getMatchID(client));
 
-      console.log("rah mxa")
+
     }
   }
   getClientId(client: Socket): {player1Id: string, player2Id: string, mode: modeType}{
@@ -126,6 +109,7 @@ export class GameGateway implements OnGatewayDisconnect{
   @SubscribeMessage('clientToServer')
   handleMessage(client: Socket,message: number): void {
     let clientOb : {player1Id:string, player2Id: string,mode: modeType } = this.getClientId(client)
+    this.logger.log(client.id);
     if (clientOb){
       let nb = message;
       if (client.id == clientOb.player1Id){
@@ -254,6 +238,20 @@ export class GameGateway implements OnGatewayDisconnect{
     }
   }
 
+  @SubscribeMessage('exploreRooms')
+  creatingRoom(client: Socket){
+    this.server.to(client.id).emit('allRoomsData',this.streaming)
+  }
+
+  @SubscribeMessage('joinStreamRoom')
+  handleJoinRoom(client: Socket, room: string){
+    client.join(room);
+  }
+
+  @SubscribeMessage('leaveStreamRoom')
+  handleLeaveRoom(client: Socket, room: string){
+    client.leave(room);
+  }
 
 
   async editMatch( dto: EDIT_GAME_DTO): Promise<Match_History> {

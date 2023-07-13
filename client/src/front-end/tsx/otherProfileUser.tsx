@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useId, useState } from 'react'
+import React, { Key, useContext, useEffect, useId, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import '../css/OtherProfileUser.css'
 import me from '../img/rimney.jpeg'
 import ach from '../img/pic.jpeg'
 import MyHeader from './header'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios, { AxiosResponse } from 'axios'
 import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
@@ -26,18 +26,14 @@ interface friend {
     username: string;
     image: string;
 }
-
-interface Friends {
+interface Friends extends Array<{
     blocked: boolean;
     isRequested: boolean;
     isFriend: boolean;
     requestAccepted: boolean;
-    friend: {
-        id: number,
-        username: string;
-        image: string;
-    }
-}
+    friend: friend;
+  }> {}
+
 
 interface Match {
     matchId: string;
@@ -171,7 +167,7 @@ function otherProfileUser(): JSX.Element {
 
     const fetchData = () => {
         const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
-        const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
+        const fetchAdditionalData = axios.get(`http://localhost:3000/other-profile/friends/${userId}`, { withCredentials: true });
 
         Promise.all([fetchUserData, fetchAdditionalData])
             .then((responses) => {
@@ -181,36 +177,28 @@ function otherProfileUser(): JSX.Element {
                 if (userDataResponse.status === 200 && additionalDataResponse.status === 200) {
                     const userData = userDataResponse.data;
                     const friendData = additionalDataResponse.data;
-
+          
                     const fetchedUser: User = {
-                        id: userData.id,
-                        username: userData.username,
-                        image: userData.image,
-                        gameWon: userData.gameWon,
-                        gameLost: userData.gameLost,
-                        achievements: userData.achievements,
+                      id: userData.id,
+                      username: userData.username,
+                      image: userData.image,
+                      gameWon: userData.gameWon,
+                      gameLost: userData.gameLost,
+                      achievements: userData.achievements,
                     };
-
-                    const fetchedFriends: Friends = {
-                        blocked: friendData.blocked,
-                        isRequested: friendData.isRequested,
-                        isFriend: friendData.isFriend,
-                        requestAccepted: friendData.requestAccepted,
-                        friend: friendData.friend,
-                    };
-
-
+          
                     setUserData(fetchedUser);
-                    setFriendData(fetchedFriends);
-                    // console.log(friendData);
-                } else {
+                    setFriendData(friendData);
+                  //   console.log(friendData[0].friend);
+                  //   console.log(friendData[1].friend);
+                  } else {
                     throw new Error('Request failed');
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            };
     const pollUserData = () => {
         fetchData(); // Fetch the latest userData from the server
         setTimeout(pollUserData, 1000); // Poll every 5 seconds (adjust the interval as needed)
@@ -243,11 +231,14 @@ function otherProfileUser(): JSX.Element {
 
                 console.log(error);
             });
-        console.log(otherUser);
+       
     }, []);
     otherUser.gameWon = 160;
     otherUser.gameLost = 160;
     const [bbuttons, setButtons] = useState(Buttons);
+    const navigate = useNavigate();
+    const friendDataLength = friendData ? friendData.length : 0;
+
 
     return (
         <div>
@@ -287,22 +278,16 @@ function otherProfileUser(): JSX.Element {
                 <div className="friends">
                     <h1>Friends</h1>
                     <div className="friendslistScrollBar">
-                        {!scrollFlag ? (
-                            Array.from({ length: 5 }).map((_, index) => (
-                                <div key={index} className="friend">
-                                    <img src={friends[index].image} alt="" />
-                                    <p>{friends[index].username}</p>
-                                </div>
-                            ))
-                        ) : (
-                            friends.map((friend, index) => (
-                                <div key={index} className="friend">
-                                    <img src={friend.image} alt="" />
-                                    <p>{friend.username}</p>
-                                </div>
-                            ))
-                        )}
-                        <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friends.length - 5} More` : "Show Less"}</a>
+                    {!scrollFlag ? 
+                friendData && friendData.map((data: { friend: {
+                    id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; 
+}; }, index: React.Key | null | undefined) => (
+                    <div onClick={() => {data.friend.id === userData?.id ? navigate('/user') :navigate(`/user/${data.friend.id?.toString()}`)}} key={data.friend.id} className="friend">
+                      <img src={data.friend.image} alt="" />
+                      <p> {data.friend.username === userData?.username ? "me" : data.friend.username }</p>
+                    </div>
+                  )): ""}
+            {  friendDataLength > 5 && <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
                     </div>
                 </div>
                 <div className='matches'>

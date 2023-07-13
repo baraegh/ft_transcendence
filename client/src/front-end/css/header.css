@@ -27,12 +27,15 @@ header h3{
 }
 
 .bellImg {
-    position: relative;
-    width: 27px;
-    height: 27px;
-    /* left: 600px; */
-    top: 5px;
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  left: 500px;
+  background-color: white;
+  top: 5px;
+  z-index: 999;
 }
+
 
 .profileImg {
     bottom: 5px;
@@ -144,12 +147,15 @@ header h3{
 
   #drop
   {
+
     position: relative;
     bottom: 10px;
     text-align: center;
-    border : 1px solid black;
+    border: 1px solid black;
     box-shadow: 1px 1px 0px 2px rgba(0,0,0,1);
     transition: 0.2s;
+    background-color: white;
+
   }
 
   #drop:hover
@@ -167,3 +173,36 @@ header h3{
     /* right: 20px !important; */
   }
 
+.bell #drop
+{
+  display: flex;
+  height: 40px;
+  width : 300px;
+  justify-content: center;
+  align-items: center;
+}
+
+.friendRequest
+{
+  display: flex;
+
+  /* align-items: baseline; */
+}
+
+.friendRequest p
+{
+  margin-right: 10px;
+  /* align-items: baseline; */
+}
+
+#acceptImg
+{
+  width : 20px;
+  height : 20px;
+  margin-right: 10px;
+}
+#declineImg
+{
+  width : 20px;
+  height : 20px;
+}

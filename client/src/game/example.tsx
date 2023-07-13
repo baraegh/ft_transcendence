@@ -242,14 +242,35 @@ const Game = () => {
                     player2.score = message.player2.score;
                   }
                   );
-                  // socket.on("streaming", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number }}) => {
-                    //   document.onkeydown = null;
-                    //   document.onkeyup = null;
-                    //   socket.off("ServerToClient");
-                    //   ball = message.ball;
-                    //   player1.y = message.player1.y;
-                    //   player2.y = message.player2.y;
-                    // });
+                  socket.on("streaming", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number }}) => {
+                      document.onkeydown = null;
+                      document.onkeyup = null;
+                      socket.off("ServerToClient");
+                                          if (message.dim.W != canvas.width || message.dim.H != canvas.height){
+                      const widthScale = canvas.width / message.dim.W;
+                      const heightScale = canvas.height / message.dim.H;
+                      const newX = (message.ball.x / message.dim.W) * canvas.width;
+                      const newY = (message.ball.y / message.dim.H) * canvas.height;
+                      const newSpeedX = (message.ball.velocityX / message.dim.W) * canvas.width;
+                      const newSpeedY = (message.ball.velocityY / message.dim.H) * canvas.height;
+                      message.ball.x = newX;
+                      message.ball.y = newY;
+                      message.ball.velocityX = newSpeedX;
+                      message.ball.velocityY = newSpeedY;        
+                    }
+                    ball.x =  message.ball.x;
+                    ball.y =  message.ball.y;
+                    ball.radius =  message.ball.radius;
+                    ball.speed =  message.ball.speed;
+                    ball.velocityX =  message.ball.velocityX;
+                    ball.velocityY =  message.ball.velocityY;
+                    ball.color = message.ball.color;
+                    player1.y = message.player1.y;
+                    player2.y = message.player2.y;
+                    player1.score = message.player1.score;
+                    player2.score = message.player2.score;
+                      game();
+                    });
                     socket.on("playerDisconnected", (message: string) => {
                       document.onkeydown = null;
                       document.onkeyup = null;

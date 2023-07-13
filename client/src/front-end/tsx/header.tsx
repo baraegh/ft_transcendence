@@ -8,6 +8,8 @@ import Notification from './notification'
 import "../css/home.css";
 import Game from "../../game/example";
 import { SocketContext } from '../../socket/socketContext';
+import accept from '../img/accept.png'
+import decline from '../img/decline.png'
 
 interface User {
   id: number;
@@ -29,7 +31,7 @@ function MyHeader(): JSX.Element {
   
   const { socket } = useContext<any | undefined>(SocketContext);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-  // const notification : Notification;
+  const [notificationData, setNotificationData] = useState({id: 0, username: "", image: ""});
   const navigate = useNavigate();
   
   
@@ -88,10 +90,18 @@ function MyHeader(): JSX.Element {
       });
     }
   }, [socket,showNotification]);
-  useEffect(() => { 
-        axios.get('http://localhost:3000/notification/all_friend_req', {withCredentials : true})
-        .then((res) => {console.log(res.data)})
-    },[showNotification])
+  useEffect(() => {
+    axios
+      .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
+      .then((res) => {
+        setNotificationData(res.data[0]);
+        console.log(res.data[0].username); // Log the username inside the callback
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [showNotification]);
+  
 
 
     
@@ -173,11 +183,22 @@ function MyHeader(): JSX.Element {
     );
   };
 
-
-
-
-
-
+  function acceptFriendRequest(userId : string)
+  {
+    console.log("Accept ! << " + userId);
+    axios.patch('http://localhost:3000/friends/accept-friend-request', {"receiverId" : Number(userId)}, {withCredentials: true})
+    .then((res) => {
+      console.log(res)
+      if(res.status === 200)
+        console.log("Accepted succesfully !");
+    });
+  }
+  
+  function declineFriendRequest(userId : string)
+  {
+    console.log("Decline !" + userId);
+    // axios.get('')
+  }
 
   return (
     <div>
@@ -202,25 +223,16 @@ function MyHeader(): JSX.Element {
           <div className="bell">
             <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
               <Dropdown.Toggle className="bellImg" variant="light">
-                <img className="bellImg" src={Bell} alt="" />
               </Dropdown.Toggle>
               <Dropdown.Menu className="dropDownMenu">
                 <Dropdown.Item id="drop" href="#action1" onClick={() =>  {console.log("EE")}}>
-                  Profile
+                  <div className="friendRequest">
+                    <img id="friendRequestImg" src="" alt="" />
+                    <p> {notificationData?.username} has sent you a friend request</p>
+                    <img onClick={() => {acceptFriendRequest(notificationData.id.toString())}} id='acceptImg' src={accept} alt="" />
+                    <img onClick={() => {declineFriendRequest(notificationData.id.toString())}} id='declineImg' src={decline} alt="" />
+                  </div>
                 </Dropdown.Item>
-                <Dropdown.Item id="drop" href="#action1">
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item id="drop" href="#action1">
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item id="drop" href="#action1">
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item id="drop" href="#action3">
-
-                </Dropdown.Item>
-                
               </Dropdown.Menu>
             </Dropdown>
           </div>

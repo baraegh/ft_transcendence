@@ -50,6 +50,10 @@ export class ChannelInfoDTO {
   @IsNumber()
   hasblocked: number;
 
+  @ApiProperty({ enum: ['NAN', 'M15', 'M45', 'H8','FOREVER'],nullable: true })
+  @IsOptional()
+  mut?: 'NAN' | 'M15' | 'M45' | 'H8' | 'FOREVER';
+  
   @ApiProperty({ nullable: true })
   @IsOptional()
   lastMessage?: LastMessage;
@@ -73,6 +77,10 @@ export class ChannelGroupInfoDTO {
   @ApiProperty({ nullable: true })
   @IsOptional()
   channelImage?: string;
+
+  @ApiProperty({ enum: ['NAN', 'M15', 'M45', 'H8','FOREVER'],nullable: true })
+  @IsOptional()
+  mut?: 'NAN' | 'M15' | 'M45' | 'H8' | 'FOREVER';
 
   @ApiProperty({ nullable: true })
   @IsOptional()
@@ -329,4 +337,12 @@ export class LEAVEGROUPDTO {
   @ApiProperty()
   @IsString()
   channelid: string;
+}
+
+export class IS_BLOCKED_DTO{
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  channelId: string;
+
 }
