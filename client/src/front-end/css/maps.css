@@ -2,7 +2,7 @@
 }
 
 #mapsPopup .modal-body {
-    height: 880px;
+    height: 930px;
   }
 
 #mapsPopup a
@@ -53,13 +53,15 @@
     border: 1px solid black;
     border-radius: 20px;
     width: 100%;
-    height: 650px;
+    height: 700px;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin-top: 25px;
-}
+    margin-top: 23px;
+    flex-direction: row;
+    align-content: space-around;
 
+}
 .map:hover
 {
     border: 4px solid red;
@@ -72,6 +74,7 @@
     width: 60%;
     height: 160px;
     background-color: black;
+    border : 1px solid black;
 }
 
 .ballType
@@ -104,8 +107,8 @@
 
 .blockBall img
 {
-    width: 98px;
-    height: 74px;
+    width: 77px;
+    height: 70px;
 }
 
 .blockBall:hover img
@@ -149,8 +152,8 @@
 
 .bigBall img
 {
-    width: 98px;
-    height: 74px;
+    width: 77px;
+    height: 70px;
 }
 
 .bigBall:hover img
@@ -176,6 +179,19 @@
 
 .smallBall img
 {
-    width: 54px;
-    height: 53px;
+    width: 34px;
+    height: 33px;
+}
+
+.balls
+{
+    background-color: black;
+    display: flex;
+    width: 100%;
+    height: 80px;
+    /* background-color: green; */
+    border-radius: 8px;
+    border: 0.8px solid black;
+    align-content: flex-start;
+    justify-content: center;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from 'react'
+import React, { useContext, useEffect, useId, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import '../css/OtherProfileUser.css'
 import me from '../img/rimney.jpeg'
@@ -10,6 +10,7 @@ import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
 import Maps from './maps'
 import Notification from './notification'
+import { SocketContext } from '../../socket/socketContext'
 
 interface User {
     id: number;
@@ -78,6 +79,46 @@ const otherUserTemplate = {
 
 
 function otherProfileUser(): JSX.Element {
+    const { socket } = useContext<any | undefined>(SocketContext);
+
+    const [showNotification, setShowNotification] = useState(false);
+    const [data, setData]  = useState({
+      player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
+    });
+
+    const challenge = () => {
+
+        // if (socket) {
+        //   console.log("wwwwwaaaaaaa")
+        //   socket.emit('connect01');
+        // }
+          // console.log(storedSocket);
+          type modeType = {
+            pColor: string;
+            bColor: string;
+            fColor: string;
+            bMode: string;
+          };
+          let dataToSend: {
+            player2Id: number;
+            mode: modeType;
+            name: string;
+            image: string;
+          } = {
+            player2Id: Number(userId),
+            mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
+            name: "von",
+            image: "image"
+          };
+          if (socket) {
+            
+            console.log(">>>>>>send from:" + socket);
+            console.log(socket.id);
+            socket.emit("sendGameRequest", dataToSend);
+            
+          }
+        };
+       
     const matches: Match[] = [];
     const { userId } = useParams();
     const [otherUser, setOtherUser] = useState(otherUserTemplate);
@@ -230,8 +271,8 @@ function otherProfileUser(): JSX.Element {
                             <img src={ach} alt="" />
                         </div>
                         <div className='fourButtons'>
-                                {bbuttons.isFriend && <a className="challenge"><Maps buttonText='Challenge' /></a>}
-                                <Notification />
+                                { <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                                {/* <a onClick={() => {challenge()}} > aaa</a> */}
                                 <a className="message2" href="#"><span>Message</span></a>
                                {!bbuttons.isFriend && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
                                { bbuttons.isFriend && <a className="block2" href="#"><span>Block</span></a> }

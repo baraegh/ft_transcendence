@@ -53,6 +53,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.connectedUsers.set(client.data.userId, client);
         } 
       }
+    // this.server.to(client.id).emit("ToHome");
   }
   handleDisconnect(client: Socket) {
     // this.auth.verifyToken(client.data.token, client); 
@@ -66,6 +67,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     {
       this.connectedUsers.set(client.data.userId, client);
       console.log(' client connected:', cdata.userId);
+      console.log("clients logs" + client.id)
     }
   }
 
@@ -89,6 +91,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       numplayer2Id: data.player2Id,
     };
     if (userSocket) {
+      console.log("clients logs"+ userSocket.id)
       this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame);
       console.log(`User ${client.data.userId} sent:`, dataTogame);
     }
