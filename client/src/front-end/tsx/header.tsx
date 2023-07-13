@@ -18,11 +18,18 @@ interface User {
   achievements: string[];
 }
 
+interface Notification
+{
+  id : number;
+  image : string;
+  username : string;
+}
+
 function MyHeader(): JSX.Element {
   
   const { socket } = useContext<any | undefined>(SocketContext);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-  
+  // const notification : Notification;
   const navigate = useNavigate();
   
   
@@ -81,7 +88,10 @@ function MyHeader(): JSX.Element {
       });
     }
   }, [socket,showNotification]);
-  
+  useEffect(() => { 
+        axios.get('http://localhost:3000/notification/all_friend_req', {withCredentials : true})
+        .then((res) => {console.log(res.data)})
+    },[showNotification])
 
 
     

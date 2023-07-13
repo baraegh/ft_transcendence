@@ -65,16 +65,19 @@ const Buttons =
 
 const otherUserTemplate = {
     id: 0,
-    username: 'string',
+    username: "string",
+    image: "string",
     gameWon: 0,
     gameLost: 0,
-    achievements: ['string'],
-    updatedAt: '2023-07-11T15:52:29.338Z',
-    friend: {
-        id: 0,
-        username: 'string',
-        image: 'string'
-    }
+    // achievements: {
+    //   ach : "string"
+    // },
+    updatedAt : "2023-07-13T03:31:40.829Z",
+     blocked : true,
+     hosblocked : 0,
+     isRequested : true,
+     isFriend : true,
+     requestAccepted : true
 };
 
 
@@ -223,6 +226,7 @@ function otherProfileUser(): JSX.Element {
     }));
     function sendFriendRequest()
     {
+        axios.post(`http://localhost:3000/friends/send-friend-request/`, {"receiverId" : Number(userId)}, {withCredentials: true});
         console.log("Friend Request Sent");
     }
     useEffect(() => {
@@ -252,7 +256,7 @@ function otherProfileUser(): JSX.Element {
                 <div className="profile">
                     <h3 id="profileScore"> score :  {otherUser.id}</h3>
                     <div className="ProfilePictureUsername">
-                        <img src={me} alt="" />
+                        <img src={otherUser.image} alt="" />
                         <p>{otherUser.username}</p>
                     </div>
                     <div className='WinLoss'>
@@ -271,11 +275,11 @@ function otherProfileUser(): JSX.Element {
                             <img src={ach} alt="" />
                         </div>
                         <div className='fourButtons'>
-                                { <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                                {otherUser.isFriend && <a className="challenge"><Maps buttonText='Challenge' /></a>}
                                 {/* <a onClick={() => {challenge()}} > aaa</a> */}
                                 <a className="message2" href="#"><span>Message</span></a>
-                               {!bbuttons.isFriend && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
-                               { bbuttons.isFriend && <a className="block2" href="#"><span>Block</span></a> }
+                               {!otherUser.isFriend && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
+                               { otherUser.isFriend && <a className="block2" href="#"><span>Block</span></a> }
 
                         </div>
                     </div>

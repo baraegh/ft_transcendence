@@ -23,6 +23,7 @@ import ErrorPage from './front-end/tsx/ErrorPage';
 import React from 'react';
 export {userMe}
 import OtherProfileUser from './front-end/tsx/otherProfileUser';
+import Stream from './front-end/tsx/stream';
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
@@ -149,9 +150,14 @@ function App() {
             element={isLoggedIn ? <InviteFriend /> : <Navigate to="/loginPage" replace />}
           />
           <Route
+            path="/stream"
+            element={isLoggedIn ? <Stream /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
             path="/errorPage"
             element={<ErrorPage />}
           />
+
         </Routes>
     </Router>
     </userMe.Provider>

@@ -83,36 +83,29 @@ const Game = () => {
     };
     
     
-    player1.x = 0,
-    player1.y = canvas.height / 2 - canvas.height / 4 / 2,
-    player1.width = canvas.width / 70,
-    player1.height = canvas.height / 4,
-    player1.color = modeControl.pColor,
-    player1.score = 0,
+    player1.x = 0;
+    player1.y = canvas.height / 2 - canvas.height / 4 / 2;
+    player1.width = canvas.width / 70;
+    player1.height = canvas.height / 4;
+    player1.color = modeControl.pColor;
+    player1.score = 0;
     // setPlayer2({
-      player2.x =   canvas.width - canvas.width / 70,
-      player2.y =   canvas.height / 2 - canvas.height / 4 / 2,
-      player2.width =   canvas.width / 70,
-      player2.height =   canvas.height / 4,
-      player2.color =   modeControl.pColor,
-      player2.score =   0,
+      player2.x =   canvas.width - canvas.width / 70;
+      player2.y =   canvas.height / 2 - canvas.height / 4 / 2;
+      player2.width =   canvas.width / 70;
+      player2.height =   canvas.height / 4;
+      player2.color =   modeControl.pColor;
+      player2.score =   0;
       // });
-      ball.x = canvas.width / 2 - canvas.width / 380,
-      ball.y = canvas.height / 2,
-      ball.radius = canvas.width / 60,
-      ball.speed = ((3 * canvas.width) / 4) / 300,
-      ball.velocityX = 5,
-      ball.velocityY = 5,
-      ball.color = modeControl.bColor,
-      // setBall((current: ballType) => {
-        //   return {
-          //     ...current,
-          //   }
-          // })
-          console.log("ball spd   ", ball.speed);
+      ball.x = canvas.width / 2 - canvas.width / 380;
+      ball.y = canvas.height / 2;
+      ball.radius = canvas.width / 60;
+      ball.speed = ((3 * canvas.width) / 4) / 300;
+      ball.velocityX = 5;
+      ball.velocityY = 5;
+      ball.color = modeControl.bColor;
           
           let dy: number = 0;
-          console.log("this is at first " + player2.y)
           function userInputs(): void {
             document.onkeydown = (event: KeyboardEvent) => {
               if (event.key == "ArrowUp") {
@@ -214,7 +207,6 @@ const Game = () => {
                       player2: player2,
                       dim: dim,
                     };
-                    console.log(player1.y)
                     update();
                     render();
                     socket.emit("clientToServer", player1.y);
@@ -259,7 +251,6 @@ const Game = () => {
                     //   player2.y = message.player2.y;
                     // });
                     socket.on("playerDisconnected", (message: string) => {
-                      console.log(message);
                       document.onkeydown = null;
                       document.onkeyup = null;
                       socket.off("ServerToClient");
@@ -273,7 +264,6 @@ const Game = () => {
                     socket.on("GameEnd", (message: string) => {
                       player1.score = 0;
                       player1.score = 0;
-                      console.log(message);
                       document.onkeydown = null;
                       document.onkeyup = null;
                       socket.off("ServerToClient");

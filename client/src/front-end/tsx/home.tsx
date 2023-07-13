@@ -39,7 +39,7 @@ function Home() : JSX.Element
         </div>
         <div className="P_W" >
             <a id="Play" onClick={() => {navigate('/Play')}}><span>Play</span></a>
-            <a id="WatchStream" href="#"><span>Watch Stram</span></a>
+            <a id="WatchStream" onClick={() => {navigate('/stream')}} href="#"><span>Watch Stram</span></a>
         </div>
     </div>)
 }
