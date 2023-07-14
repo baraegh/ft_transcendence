@@ -13,6 +13,7 @@ import { USerService } from './user.service';
 import { Request } from 'express';
 import { USERDTO, USERINFODTO, USER_FRIEN_DTO } from './dto';
 import { ParseIntPipe } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 
 
@@ -22,7 +23,7 @@ import { ParseIntPipe } from '@nestjs/common';
 @Controller('user')
 @ApiResponse({ status: 200, description: 'Successful response' })
 export class UserController {
-  constructor(private user: USerService) {}
+  constructor(private user: USerService,private prisma:PrismaService) {}
 
 
   @ApiOperation({
@@ -74,4 +75,29 @@ export class UserController {
     const user = await this.user.findMyfriend(userId,friendId);
     return user;
   }
+
+
+  @ApiOperation({
+    summary: 'otheruserId',
+  })
+  @ApiResponse({
+    description: 'true or false',
+    type: Boolean,
+  })
+  @ApiParam({
+    name: 'otheruserId',
+    type: 'number',
+    required: true,
+  })
+  @Get('isonline/:otheruserId')
+  async isonline(@Param('otheruserId',ParseIntPipe) otheruserId: number) {
+    const is_online0 = await this.prisma.user.findUnique({
+      where:{
+        id:otheruserId
+      }
+    });
+    return  is_online0.isonline;
+  }
+
+
 }

@@ -48,11 +48,10 @@ export class ChatService {
     });
 
     if (finde_same_channel) {
-      const findchannel = await this.prisma.channel.findUnique({
-        where: { id: finde_same_channel['id'] },
-      });
-      console.log('findchannel', findchannel);
-      return {channelID : findchannel.id} ;
+      return {channelID : finde_same_channel.id,
+        type :finde_same_channel.type,
+        blocked: finde_same_channel.blocked,
+        hasblocked : finde_same_channel.hasblocked} ;
     }
     const createChanell = await this.prisma.channel.create({
       data: {
@@ -72,7 +71,10 @@ export class ChatService {
       ],
     });
    
-    return  {channelID : createChanell.id};
+    return {channelID : createChanell.id,
+      type :createChanell.type,
+      blocked: createChanell.blocked,
+      hasblocked : createChanell.hasblocked} ;
 
   }
 
@@ -251,7 +253,7 @@ export class ChatService {
         (diff_on_min >= 45 &&
           find_user_and_channel_in_particepents.mut == 'M45') ||
         (diff_on_min >= 480 &&
-          find_user_and_channel_in_particepents.mut == 'M15')
+          find_user_and_channel_in_particepents.mut == 'H8')
       ) {
         find_user_and_channel_in_particepents =
           await this.prisma.participants.update({

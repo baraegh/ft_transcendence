@@ -35,7 +35,7 @@ export class ChatOwnerService {
         },
       },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (
       findChannel.chanelID['role'] === 'USER' &&
       findChannel.ownerId != userId
@@ -72,7 +72,7 @@ export class ChatOwnerService {
         },
       },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
 
     if (findChannel.chanelID['role'] == 'USER' && findChannel.ownerId !== userId)
       throw new ForbiddenException('Access Denied');
@@ -125,7 +125,7 @@ export class ChatOwnerService {
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelid },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
       
@@ -152,7 +152,7 @@ export class ChatOwnerService {
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelid },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
     }

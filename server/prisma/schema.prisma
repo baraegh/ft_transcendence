@@ -18,7 +18,8 @@ model User {
   gameLost                         Int?
   createdAt                        DateTime @default(now())
   updatedAt                        DateTime @updatedAt
-  achievements                     String[]
+  achievements                     String[] @default(["1"])
+  isonline                         Boolean  @default(false)       
   twoFactorAuthenticationSecret    String?
   isTwoFactorAuthenticationEnabled Boolean  @default(false)
 

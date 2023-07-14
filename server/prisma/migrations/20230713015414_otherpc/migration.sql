@@ -18,9 +18,10 @@ CREATE TABLE "users" (
     "gameLost" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "achievements" TEXT[],
+    "achievements" TEXT[] DEFAULT ARRAY['1']::TEXT[],
     "twoFactorAuthenticationSecret" TEXT,
     "isTwoFactorAuthenticationEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "isOnline" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );

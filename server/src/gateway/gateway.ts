@@ -25,59 +25,84 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly auth: AuthLogic,
     private prisma: PrismaService,
-  ) {}
+  ) { }
   private server: Server;
 
   private rooms: Set<string> = new Set<string>();
   private connectedUsers: Map<number, Socket> = new Map<number, Socket>();
-  private connectedhandelconnect: Map<string, Socket> = new Map<
+  private clientidtouseris: Map<string, number> = new Map<
     string,
-    Socket
+    number
   >();
 
   handleConnection(client: Socket) {
     const user = Array.isArray(client.handshake.query.user)
-    ? client.handshake.query.user[0]
-    : client.handshake.query.user;
-    console.log(decodeURIComponent(user) );
-     
-      if (decodeURIComponent(user) !== "undefined") {
-        const decodedUser = JSON.parse(decodeURIComponent(user));
-        const userSocket = this.getUserSocket(client.data.userId);
-        if (!userSocket) {
-          client.data.userId = decodedUser.id;
-          const token = this.auth.generateToken(client.data.userId);
-          console.log('New client connected:', client.data.userId);
-          console.log('New client connected:', client.data.userId);
-          client.data.token = token;
-          this.connectedUsers.set(client.data.userId, client);
-        } 
+      ? client.handshake.query.user[0]
+      : client.handshake.query.user;
+    console.log(decodeURIComponent(user));
+
+    if (decodeURIComponent(user) !== "undefined") {
+      const decodedUser = JSON.parse(decodeURIComponent(user));
+      const userSocket = this.getUserSocket(client.data.userId);
+      if (!userSocket) {
+        client.data.userId = decodedUser.id;
+        const token = this.auth.generateToken(client.data.userId);
+        console.log('New client connected:', client.data.userId);
+        console.log('New client connected:', client.data.userId);
+        client.data.token = token;
+        this.connectedUsers.set(client.data.userId, client);
       }
+    }
   }
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     // this.auth.verifyToken(client.data.token, client); 
-    console.log("client: ",client.data.userId," just left");
+    const id:number = this.clientidtouseris.get(client.id);
+    if(id)
+    {
+      const isonline = await this.prisma.user.update({
+        where: {
+          id: id,
+        }
+        , data: {
+          isonline: false,
+        }
+      })
+
+    }
+    console.log("client: ", client.data.userId, " just left");
     this.connectedUsers.delete(client.data.userId);
+    this.clientidtouseris.delete(client.id);
   }
   @SubscribeMessage('connect01')
-  handleconnect(client: Socket, cdata: { userId: number }) {
+  async handleconnect(client: Socket, cdata: { userId: number }) {
+    this.clientidtouseris.set(client.id, cdata.userId);
+    const isonline = await this.prisma.user.update({
+      where: {
+        id: cdata.userId,
+      }
+      , data: {
+        isonline: true,
+      }
+    });
     client.data.userId = cdata.userId;
-    if(this.connectedUsers.get(cdata.userId) == undefined)
-    {
+    if (this.connectedUsers.get(cdata.userId) == undefined) {
       this.connectedUsers.set(client.data.userId, client);
       console.log(' client connected:', cdata.userId);
     }
   }
 
   @SubscribeMessage('send_status')
-  send_status(client: Socket,userid:number) {
+  send_status(client: Socket, userid: number) {
     const userSocket = this.connectedUsers.get(userid);
-    let st:string;
-    if(userSocket)
+
+    console.log(`${userid} : `, userSocket ? 'online' : 'offline');
+
+    let st: string;
+    if (userSocket)
       st = 'online';
     else
-      st = 'ofline';
-      this.server.to(client.id).emit('get_status', st);
+      st = 'offline';
+    this.server.to(client.id).emit('get_status', st);
   }
 
 
@@ -88,8 +113,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.player2Id);
-    if(!userSocket)
-    {
+    if (!userSocket) {
       console.log("faild sendGameRequest");
       return;
     }
@@ -105,9 +129,9 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log(`User ${client.data.userId} sent:`, dataTogame);
     }
   }
-  
+
   @SubscribeMessage('quick_game')
- async quick_game(
+  async quick_game(
     client: Socket,
     data: { mode: modeType; name: string; image: string },
   ) {
@@ -121,7 +145,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ],
       },
     });
-    
+
     const not_playing = all_online.filter((user) => {
       return !the_not_one.some(
         (match) => match.user1Id === user || match.user2Id === user
