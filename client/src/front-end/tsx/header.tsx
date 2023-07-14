@@ -211,62 +211,70 @@ function MyHeader(): JSX.Element {
   return (
     <div>
       <header>
-      <Notification buttonText=" "  showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
-        <h3 onClick={() => {{
-                            navigate('/home');
-                            document.location.reload();
-                            }}} className="logo">
-          KIR
-        </h3>
-        <div className="vertical-line"></div>
-        <div className="header_buttons">
-          <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
-            <span>LeaderBoard</span>
-          </a>
-          <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
-            <span>Chat</span>
-          </a>
+        <div className='header-right'>
+          <h3 onClick={() => {{
+                              navigate('/home');
+                              document.location.reload();
+                              }}} className="logo">
+            KIR
+          </h3>
+          <div className="vertical-line"></div>
+          <div className="header_buttons">
+            <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
+              <span>LeaderBoard</span>
+            </a>
+            <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
+              <span>Chat</span>
+            </a>
+          </div>
         </div>
-        <div className="bell">
-          <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
-            <Dropdown.Toggle className="bellImg" variant="light">
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="dropDownMenu">
-            <Dropdown.Item  id="drop" href="#action1" onClick={() => console.log("EE")}>
-              <p>Invitations</p>
-            </Dropdown.Item>
-              {notificationData.map((notification) => (
-                <Dropdown.Item key={notification.id} id="drop" href="#action1" onClick={() => console.log("EE")}>
-                  <div className="friendRequest">
-                    {/* <img id="friendRequestImg" src={notification.image} alt="" /> */}
-                    <p>{notification.username} has sent you a friend request</p>
-                    <img onClick={() => acceptFriendRequest(notification.id.toString())} id='acceptImg' src={accept} alt="" />
-                    <img onClick={() => declineFriendRequest(notification.id.toString())} id='declineImg' src={decline} alt="" />
-                  </div>
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div className="profileImg">
-          {userData && (
-            <Dropdown
-              show={profileDropdownOpen}
-              onToggle={toggleProfileDropdown}
-            >
-              <Dropdown.Toggle variant="light">
-                <img src={userData.image} alt="" />
+        <Notification buttonText=" " 
+                      showNotification={showNotification}
+                      setShowNotification={setShowNotification}
+                      data={data}
+                      setData={setData} />
+        <div className='header-left'>
+          <div className="bell">
+            <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
+              <Dropdown.Toggle className="bellImg" variant="light">
               </Dropdown.Toggle>
               <Dropdown.Menu className="dropDownMenu">
-                <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item id="drop" onClick={handleLogout}>
-                  Logout
-                </Dropdown.Item>
+              <Dropdown.Item  id="drop" href="#action1" onClick={() => console.log("EE")}>
+                <p>Invitations</p>
+              </Dropdown.Item>
+                {notificationData.map((notification) => (
+                  <Dropdown.Item key={notification.id} id="drop" href="#action1" onClick={() => console.log("EE")}>
+                    <div className="friendRequest">
+                      {/* <img id="friendRequestImg" src={notification.image} alt="" /> */}
+                      <p>{notification.username} has sent you a friend request</p>
+                      <img onClick={() => acceptFriendRequest(notification.id.toString())} id='acceptImg' src={accept} alt="" />
+                      <img onClick={() => declineFriendRequest(notification.id.toString())} id='declineImg' src={decline} alt="" />
+                    </div>
+                  </Dropdown.Item>
+                ))}
               </Dropdown.Menu>
             </Dropdown>
-          )}
+          </div>
+          <div className="profileImg">
+            {userData && (
+              <Dropdown
+                show={profileDropdownOpen}
+                onToggle={toggleProfileDropdown}
+              >
+                <Dropdown.Toggle variant="light">
+                  <img src={userData.image} alt="" />
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropDownMenu">
+                  <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
+                    Profile
+                  </Dropdown.Item>
+                  <Dropdown.Item id="drop" onClick={handleLogout}>
+                    Logout
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
+          </div>
         </div>
       </header>
     </div>

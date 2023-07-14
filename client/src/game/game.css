@@ -1,0 +1,19 @@
+.the-game {
+    /* display: flex; */
+    /* justify-content: center; */
+
+    margin-top: 20px;
+
+    width: 100%;
+    /* height: 50%; */
+}
+
+.game-layout
+{
+    /* width: 1000px; */
+    width: 100%;
+    /* height: 35%; */
+    border: 1px solid var(--secondary-color);
+    box-shadow: 2px 2px 0px var(--secondary-color);
+    border-radius: 10px;
+}

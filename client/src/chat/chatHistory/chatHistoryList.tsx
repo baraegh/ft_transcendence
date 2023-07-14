@@ -77,16 +77,15 @@ const HistoryList = ({data, setChat, selected, updateGroup,
         let intervalId : number | undefined;
       
         const fetchData = () => {
-          if (isGroup) {
-            return;
-          }
+            if (isGroup)
+                return;
 
-          Axios.get(`http://localhost:3000/user/isonline/${data.otherUserId}`, { withCredentials: true })
+            Axios.get(`http://localhost:3000/user/isonline/${data.otherUserId}`, { withCredentials: true })
             .then((response) => {
                 setIsOnline(response.data);
             })
             .catch((error) => {
-              console.log(error);
+                console.log(error);
             });
         };
       
@@ -226,7 +225,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                     setFriendList(response.data);
                 else if (filter === 'Groups')
                     setGroupList(response.data);
-                console.log('response.data: ', response.data);
+                // console.log('response.data: ', response.data);
             })
             .catch((error) => {
                     console.log(error);

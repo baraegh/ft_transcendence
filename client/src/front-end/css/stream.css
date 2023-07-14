@@ -1,7 +1,7 @@
 
-.mainDisplay
-{
-  
+/* .mainDisplay
+{ */
+/*   
     position: relative;
     top : 50px;
     width: 1058px;
@@ -11,7 +11,7 @@
     border: 2px solid black;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
     background-color: black !important;
-}
+} */
 
 
 
@@ -91,3 +91,26 @@
   .P_W a:hover:after{
     width: 100%;
   } 
+
+.stream-container
+{
+  display: flex;
+  color : white;
+  margin: auto;
+}
+
+.stream-user-container
+{
+ display: flex;
+}
+
+/* #stream-user-username
+{
+
+} */
+
+/* #stream-user-image
+{
+  width: 50px;
+  height: 50px;
+} */

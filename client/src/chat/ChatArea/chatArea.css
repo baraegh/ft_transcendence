@@ -107,7 +107,8 @@
 .chat-area-send-btn
 {
     position: absolute;
-    left: 94.5%;
+    left: 90%;
+    top: 1px;
 }
 
 .chat-area-send-btn:hover
@@ -119,7 +120,7 @@
 {
     display: flex;
     position: absolute;
-    right:  94%;
+    right:  89%;
 }
 
 .square
@@ -495,7 +496,7 @@
     margin-top: 10px;
 }
 
-.header
+.chat-header
 {
     font-family: 'Mouse Memoirs';
     letter-spacing: 0.2em;

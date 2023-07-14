@@ -152,10 +152,6 @@ const ChatAreaInput = ({chatInfo, sendingroup, setChat,
         return false;
     }
 
-    useEffect(() => {
-
-    }, [chatInfo.chatId]);
-
     const handleOnSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
         if (checkNameInput(msg) || chatInfo.blocked || chatInfo.mute !== 'NAN')
@@ -246,7 +242,7 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
                 <p className="chat-area-message">{msg.content}</p>
             </div>
             <div className="msg-of-other-time-img">
-                <img src={msg.image} alt="description..."/>
+                <img src={chatInfo?.chatImage} alt="description..."/>
                 <p className="chat-time">{formatDate(msg.timeSend)}</p>
             </div>
         </div>

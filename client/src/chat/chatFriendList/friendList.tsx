@@ -123,10 +123,11 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
                 },
                 {withCredentials: true})
             .then((response) => {
+                console.log('response: ', response);
                 if (setChat)
-                    setChat(response.data.id, response.data.image, 
-                            response.data.name, response.data.type, null);
-                joinRoom(response.data.id);
+                    setChat(group.id, group.image, 
+                            group.name, group.type, null);
+                joinRoom(group.id);
             })
             .catch((error) => {
                 console.log(error);

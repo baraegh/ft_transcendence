@@ -55,9 +55,9 @@
 
 body {
   margin: 0;
-  display: flex;
+  /* display: flex;
 
-  place-items: center;
+  place-items: center; */
 }
 
 img {
@@ -124,7 +124,7 @@ input
 
 input[type='file']
 {
-  text-indent: -86px;
+  text-indent: -88px;
 }
 
 p

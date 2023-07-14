@@ -1,50 +1,76 @@
-* {
-    font-family: 'Mouse Memoirs', sans-serif;
-}
 header {
 
     /* left: 0; */
-    width: 1058px;
+    /* width: 1058px;
     height: 48px;
     display: flex;
     padding: 5px 50px;
     border: 2px solid black;
     border-radius: 20px;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-    margin-top : 10px;
+    margin-top : 10px; */
     /* position: fixed; */
     /* margin: auto; */
-    top: 0;
+    /* top: 0; */
     /* transform: translateX(-50%); */
+    /* display: flex; */
+
+    width: 100%;
+    height: 50px;
     display: flex;
+    justify-content: space-between;
+
+    border: 2px solid black;
+    border-radius: 20px;
+    box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
+
+    margin: 5px 0;
+    padding: 0 10px;
   }
 
+.header-right, .header-left
+{
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+}
 
 header h3{
-    position: relative;
-    text-align: center;
-    right: 20px;    
+    /* position: relative; */
+    /* text-align: center;
+    right: 20px;  */
+  padding: 5px 10px;
+  margin: 0;
+  font-family: 'Mouse Memoirs', sans-serif;
+}
+
+.logo-line
+{
+  /* display: flex; */
+  /* flex-direction: column; */
+
 }
 
 .bellImg {
-  position: absolute;
-  width: 27px;
-  height: 27px;
-  left: 500px;
+  /* position: absolute; */
+  /* width: 27px;
+  height: 27px; */
+  /* left: 500px; */
   background-color: white;
-  top: 5px;
-  z-index: 999;
+  margin-right: 5px;
+  /* top: 5px; */
+  /* z-index: 999; */
 }
 
 
 .profileImg {
-    bottom: 5px;
-    position: relative;
-    width: 30px;
-    height: 60px;
+    /* bottom: 5px; */
+    /* position: relative; */
+    /* width: 30px; */
+    /* height: 60px; */
     border-radius: 60px;
     /* background-color: black; */
-    left: 610px;
+    /* left: 610px; */
 }
 
 .profileImg img 
@@ -55,12 +81,14 @@ header h3{
 
 }
 
-
+span{
+  font-family: 'Mouse Memoirs', sans-serif;
+}
 
 .vertical-line {
-    position: relative;
-    bottom : 6px;
-    left: 10px;
+    /* position: relative; */
+    /* bottom : 6px; */
+    /* left: 10px; */
     width: 2px;
     height: 50px;
     background-color: black;
@@ -68,23 +96,25 @@ header h3{
 
 .header_buttons
 {
-    display: flex;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 5px;
 }
 .header_buttons #Lbutton
 {
-    position: relative;
-    left: 56px;
+    /* position: relative; */
+    /* left: 56px; */
     width: 160px;
     height: 35px;
 }
 .header_buttons #Cbutton
 {
-    position: relative;
-    left: 80px;
+    /* position: relative;
+    left: 80px; */
     width: 80px;
     height: 35px;
-
+    margin-left: 5px;
 }
 
 .header_buttons a{
@@ -107,7 +137,6 @@ header h3{
     position: relative;
     z-index: 1;
     bottom : 5px;
-
   }
   
   .header_buttons   a:after{
@@ -117,9 +146,9 @@ header h3{
     left: 0;
     width: 0;
     height: 100%;
-    background: black;
+    background-color: black;
     transition: all .20s;
-
+    color: #fff;
   }
   
   .header_buttons a:hover{
@@ -131,10 +160,10 @@ header h3{
   }
   
   .dropdown-menu {
-    position: absolute;
-    top: 40px; /* Adjust the top position as needed */
-    right: 0;
-    width: 150px; /* Adjust the width as needed */
+    /* position: absolute; */
+    /* top: 40px; */
+    /* right: 0; */
+    /* width: 150px; */
     background-color: #fff;
     border: 1px solid #333;
     border-radius: 5px;

@@ -19,9 +19,9 @@ CREATE TABLE "users" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "achievements" TEXT[] DEFAULT ARRAY['1']::TEXT[],
+    "isonline" BOOLEAN NOT NULL DEFAULT false,
     "twoFactorAuthenticationSecret" TEXT,
     "isTwoFactorAuthenticationEnabled" BOOLEAN NOT NULL DEFAULT false,
-    "isOnline" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );

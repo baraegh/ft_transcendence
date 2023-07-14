@@ -1,7 +1,7 @@
 /* Header Styles */
 .header {
-   width: 1142px;
-   height: 59px;
+    width: 100%;
+    height: 59px;
     display: flex;
     justify-content: space-between;
     align-items: center;

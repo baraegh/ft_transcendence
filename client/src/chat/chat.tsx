@@ -117,69 +117,71 @@ export function Chat() {
 
   return (
     <updateChatInfoCntext.Provider value={updateChatInfo}>
-      <MyHeader />
-      <div className="chat-page">
-        {!isChatSettingOpen ? (
-          <>
-            <ChatHistoryList  chatInfo={chatInfo}
-                              setChat={setChat}
-                              setIsProfileOpen={setIsProfileOpen}
-                              setRole={setRole}
-                              updateGroup={updateGroup}
-                              setUpdateGroup={setUpdateGroup}
-                              updateChatInfo={updateChatInfo}
-                              updateUserCard={updateUserCard}
-                              leaveRoom={leaveRoom}
-                              openChatGroupArea={setIsChatGroup}/>
+      {/* <div className="the-chat"> */}
+        <MyHeader />
+        <div className="chat-page">
+          {!isChatSettingOpen ? (
+            <>
+              <ChatHistoryList  chatInfo={chatInfo}
+                                setChat={setChat}
+                                setIsProfileOpen={setIsProfileOpen}
+                                setRole={setRole}
+                                updateGroup={updateGroup}
+                                setUpdateGroup={setUpdateGroup}
+                                updateChatInfo={updateChatInfo}
+                                updateUserCard={updateUserCard}
+                                leaveRoom={leaveRoom}
+                                openChatGroupArea={setIsChatGroup}/>
 
-            <div className="chat-area">
-              {chatInfo.chatId !== '' ? (
-                <ChatArea
-                  chatInfo={chatInfo} 
-                  setIsProfileOpen={setIsProfileOpen}
-                  setUpdateChatInfo={setUpdateChatInfo}
-                  setChat={setChat}
-                  setUpdateUserCard={setUpdateUserCard}
-                  updateUserCard={updateUserCard}
-                  updateChatInfo={updateChatInfo}
-                  leaveRoom={leaveRoom}/>
+              <div className="chat-area">
+                {chatInfo.chatId !== '' ? (
+                  <ChatArea
+                    chatInfo={chatInfo} 
+                    setIsProfileOpen={setIsProfileOpen}
+                    setUpdateChatInfo={setUpdateChatInfo}
+                    setChat={setChat}
+                    setUpdateUserCard={setUpdateUserCard}
+                    updateUserCard={updateUserCard}
+                    updateChatInfo={updateChatInfo}
+                    leaveRoom={leaveRoom}/>
+                ) : (
+                  <div className="chat-area-default">
+                    <p>Getting no message is also a message</p>
+                  </div>
+                )}
+              </div>
+
+              {chatInfo.chatId !== null && chatInfo.chatType !== '' 
+                && chatInfo.chatType !== "PERSONEL" && isChatGroup ? (
+                          <ChatAreaGroup  chatInfo={chatInfo} 
+                                  setIsChatSettingOpen={setIsChatSettingOpen}
+                                  membersData={membersData}
+                                  setMembersData={setMembersData}
+                                  role={role}
+                                  setChat={setChat}
+                                  update={updateGroup}
+                                  setUpdate={setUpdateGroup}
+                                  closeArea={() => setIsChatGroup(false)}/>
+              ) : isProfileOpen ? (
+                <ChatAreaProfile  chatInfo={chatInfo}
+                                  setIsProfileOpen={setIsProfileOpen} />
               ) : (
-                <div className="chat-area-default">
-                  <p>Getting no message is also a message</p>
-                </div>
+                <FriendList setChat={setChat}
+                            chatInfo={chatInfo}
+                            update={updateGroup}
+                            setUpdate={setUpdateGroup}/>
               )}
-            </div>
-
-            {chatInfo.chatId !== null && chatInfo.chatType !== '' 
-              && chatInfo.chatType !== "PERSONEL" && isChatGroup ? (
-                        <ChatAreaGroup  chatInfo={chatInfo} 
-                                setIsChatSettingOpen={setIsChatSettingOpen}
+            </>
+          ) : (
+            <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
                                 membersData={membersData}
                                 setMembersData={setMembersData}
+                                chatInfo={chatInfo}
+                                setChatInfo={setChatInfo}
                                 role={role}
-                                setChat={setChat}
-                                update={updateGroup}
-                                setUpdate={setUpdateGroup}
-                                closeArea={() => setIsChatGroup(false)}/>
-            ) : isProfileOpen ? (
-              <ChatAreaProfile  chatInfo={chatInfo}
-                                setIsProfileOpen={setIsProfileOpen} />
-            ) : (
-              <FriendList setChat={setChat}
-                          chatInfo={chatInfo}
-                          update={updateGroup}
-                          setUpdate={setUpdateGroup}/>
-            )}
-          </>
-        ) : (
-          <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
-                              membersData={membersData}
-                              setMembersData={setMembersData}
-                              chatInfo={chatInfo}
-                              setChatInfo={setChatInfo}
-                              role={role}
-                              setChat={setChat}/>
-        )}
+                                setChat={setChat}/>
+          )}
+        {/* </div> */}
       </div>
     </updateChatInfoCntext.Provider>
   );
