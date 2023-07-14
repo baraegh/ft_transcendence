@@ -167,43 +167,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('quick_game')
-  async quick_game(
-    client: Socket,
-    data: { mode: modeType; name: string; image: string },
-  ) {
-    this.auth.verifyToken(client.data.token, client);
-    const all_online: number[] = Array.from(this.connectedUsers.keys());
-    const the_not_one = await this.prisma.match_History.findMany({
-      where: {
-        OR: [
-          { user1Id: { in: all_online }, game_end: false },
-          { user2Id: { in: all_online }, game_end: false },
-        ],
-      },
-    });
-
-    const not_playing = all_online.filter((user) => {
-      return !the_not_one.some(
-        (match) => match.user1Id === user || match.user2Id === user
-      );
-    });
-    if (not_playing.length > 0) {
-      const randomIndex = Math.floor(Math.random() * not_playing.length);
-      const randomUserId = not_playing[randomIndex];
-      const userSocket = this.connectedUsers.get(randomUserId);
-      const dataTogame = {
-        player1Id: client.id,
-        player2Id: userSocket.id,
-        mode: data.mode,
-        numplayer1Id: client.data.userId,
-        numplayer2Id: randomUserId,
-      };
-      this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame);
-      console.log(`User ${client.data.userId} sent:`, dataTogame);
-    }
-  }
-
   @SubscribeMessage('sendFriendRequest')
   sendFriendRequest(
     client: Socket,
