@@ -10,7 +10,7 @@ type modeType = { pColor: string, bColor: string, fColor: string, bMode: string 
 type Tstreaming = { roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number };
 type datatype = { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number };
 @WebSocketGateway()
-export class GameGateway{
+export class GameGateway implements OnGatewayDisconnect{
   constructor(private prisma: PrismaService) { }
   private logger: Logger = new Logger("GameGateway");
   games = new Map<number, { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number }>();
@@ -65,10 +65,9 @@ export class GameGateway{
     this.server.to(client.id).emit('initGame', data);
   }
   async handleDisconnect(client: Socket) {
-    this.logger.log("here disco");
     let winerid: number;
     let losserid: number;
-    if (this.games.get(this.getMatchID(client))) {
+    if (this.games.get(this.getMatchID(client)) && this.games.get(this.getMatchID(client)) != undefined) {
       if (this.games.get(this.getMatchID(client)).player1Id == client.id) {
         const dto = {
           GameId: this.gameIds.get(this.getMatchID(client)),
@@ -99,7 +98,7 @@ export class GameGateway{
       await this.endMatch(winerid, dto);
       this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
       let i = this.getMatchID(client);
-      this.gameIdsData.delete(this.streaming.get(i).roomName);
+      // this.gameIdsData.delete(this.streaming.get(i).roomName);
       this.streaming.delete(i);
       this.gameIds.delete(i);
       this.games.delete(i);
@@ -256,7 +255,7 @@ export class GameGateway{
         await this.endMatch(win, dto);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
         let i = this.getMatchID(client);
-        this.gameIdsData.delete(this.streaming.get(i).roomName);
+        // this.gameIdsData.delete(this.streaming.get(i).roomName);
         this.streaming.delete(i);
         this.gameIds.delete(i);
         this.games.delete(i);
@@ -264,7 +263,7 @@ export class GameGateway{
         if (this.gameId -1 == i)
           this.gameId--;
       }
-      if (client.id == clientOb.player1Id) {
+      else if (client.id == clientOb.player1Id) {
         this.server.to(clientOb.player1Id).emit('ballMove', message);
         this.logger.log(this.streaming.get(this.getMatchID(client)).roomName);
         this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);

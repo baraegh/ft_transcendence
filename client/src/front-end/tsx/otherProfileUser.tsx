@@ -206,18 +206,14 @@ function OtherProfileUser(): JSX.Element {
 
   const pollUserData = () => {
     fetchData();
-    setTimeout(pollUserData, 5000); // Poll every 5 seconds
+    setTimeout(pollUserData, 10000); // Poll every 5 seconds
   };
 
   useEffect(() => {
     pollUserData();
   }, []);
 
-  const friends: friend[] = Array.from({ length: 30 }, (_, index) => ({
-    id: index + 1,
-    username: `rimney ${index + 2}`,
-    image: me,
-  }));
+
 
   function sendFriendRequest() {
     axios.post(`http://localhost:3000/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true });
@@ -261,6 +257,7 @@ function OtherProfileUser(): JSX.Element {
   const [bbuttons, setButtons] = useState(Buttons);
   const navigate = useNavigate();
   const friendDataLength = friendData ? friendData.length : 0;
+  const [matchHistory, setMatchHistory] = useState<any[] | null>(null);
 
   useEffect(() => {
     axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
@@ -278,7 +275,13 @@ function OtherProfileUser(): JSX.Element {
         console.log(error);
       });
   }, [userId]);
-  console.log()
+  
+  useEffect(() => {
+    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => {setMatchHistory(res.data)});
+    console.log("Passed");
+    console.log(matchHistory);
+
+  }, []);
   return (
     <div>
       <MyHeader />

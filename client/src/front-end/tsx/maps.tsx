@@ -60,6 +60,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, socket, userId })
     }
     else if(socket && Number(userId) === 0){
       socket.emit('quick_game',dataToSend);
+      navigate('/loadingPage');
+
 
     }
   };

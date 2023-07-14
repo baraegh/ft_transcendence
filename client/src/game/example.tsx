@@ -184,6 +184,7 @@ const Game = () => {
       };
       update();
       render();
+      console.log(player1.y)
       socket.emit("clientToServer", player1.y);
       socket.emit("ballMove", message);
       requestAnimationFrame(game);
@@ -221,7 +222,6 @@ const Game = () => {
       document.onkeydown = null;
       document.onkeyup = null;
       // socket.off("ServerToClient");
-      console.log("hellllo");
       if (message.dim.W != canvas.width || message.dim.H != canvas.height) {
         const widthScale = canvas.width / message.dim.W;
         const heightScale = canvas.height / message.dim.H;
@@ -254,11 +254,11 @@ const Game = () => {
       socket.off("streaming");
       socket.off("playerDisconnected");
       socket.off("GameEnd");
-      document.location.reload();
+      // socket.disconnect();
       navigate('/home')
+      document.location.reload();
     });
     socket.on("GameEnd", (message: string) => {
-      console.log("hellllo");
       player1.score = 0;
       player1.score = 0;
       document.onkeydown = null;
@@ -268,9 +268,11 @@ const Game = () => {
       socket.off("streaming");
       socket.off("playerDisconnected");
       socket.off("GameEnd");
-      document.location.reload();
       socket.off("initStream");
+      cancelAnimationFrame(animationFrameIdRef);
+      // socket.disconnect();
       navigate('/home')
+      document.location.reload();
     });
     socket.on("initStream", (eMode: modeType) => {
       player1.x = 0;
