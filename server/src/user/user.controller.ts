@@ -75,29 +75,4 @@ export class UserController {
     const user = await this.user.findMyfriend(userId,friendId);
     return user;
   }
-
-
-  @ApiOperation({
-    summary: 'otheruserId',
-  })
-  @ApiResponse({
-    description: 'true or false',
-    type: Boolean,
-  })
-  @ApiParam({
-    name: 'otheruserId',
-    type: 'number',
-    required: true,
-  })
-  @Get('isonline/:otheruserId')
-  async isonline(@Param('otheruserId',ParseIntPipe) otheruserId: number) {
-    const is_online0 = await this.prisma.user.findUnique({
-      where:{
-        id:otheruserId
-      }
-    });
-    return  is_online0.isonline;
-  }
-
-
 }

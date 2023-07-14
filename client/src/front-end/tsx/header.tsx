@@ -129,6 +129,8 @@ function MyHeader(): JSX.Element {
   };
 
   const fetchData = () => {
+    axios.get('http://localhost:3000/game/isplaying', {withCredentials: true})
+    .then((res) => {res.data === false ? navigate('/leaderBoard') : console.log("EEEEEEEEE FALSE")})
     axios
       .get('http://localhost:3000/user/me', { withCredentials: true })
       .then((response) => {
@@ -205,76 +207,93 @@ function MyHeader(): JSX.Element {
             document.location.reload();
           });
         document.location.reload();
+        const pollNotifications = () => {
+          axios
+            .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
+            .then((res) => {
+              setNotificationData(res.data);
+              holder.push(res.data);
+              console.log(res.data[0]?.username); // Log the username of the first notification (optional)
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          setTimeout(pollNotifications, 1000); // Poll every 5 seconds (adjust the interval as needed)
+        };
+      
+        useEffect(() => {
+         
+        }, []);
+
+        
+
+        // useEffect(() => {
+
+        // }, []);
     // axios.get('')
   }
 
   return (
     <div>
       <header>
-        <div className='header-right'>
-          <h3 onClick={() => {{
-                              navigate('/home');
-                              document.location.reload();
-                              }}} className="logo">
-            KIR
-          </h3>
-          <div className="vertical-line"></div>
-          <div className="header_buttons">
-            <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
-              <span>LeaderBoard</span>
-            </a>
-            <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
-              <span>Chat</span>
-            </a>
-          </div>
+      <Notification buttonText=" "  showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
+        <h3 onClick={() => {{
+                            navigate('/home');
+                            document.location.reload();
+                            }}} className="logo">
+          KIR
+        </h3>
+        <div className="vertical-line"></div>
+        <div className="header_buttons">
+          <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
+            <span>LeaderBoard</span>
+          </a>
+          <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
+            <span>Chat</span>
+          </a>
         </div>
-        <Notification buttonText=" " 
-                      showNotification={showNotification}
-                      setShowNotification={setShowNotification}
-                      data={data}
-                      setData={setData} />
-        <div className='header-left'>
-          <div className="bell">
-            <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
-              <Dropdown.Toggle className="bellImg" variant="light">
+        <div className="bell">
+          <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
+            <Dropdown.Toggle className="bellImg" variant="light">
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="dropDownMenu">
+              {notificationData && 
+            <Dropdown.Item  id="drop" href="#action1" onClick={() => console.log("EE")}>
+              <p>Invitations</p>
+            </Dropdown.Item>
+            }
+              {notificationData.map((notification) => (
+                <Dropdown.Item key={notification.id} id="drop" href="#action1" onClick={() => console.log("EE")}>
+                  <div className="friendRequest">
+                    {/* <img id="friendRequestImg" src={notification.image} alt="" /> */}
+                    <p>{notification.username} has sent you a friend request</p>
+                    <img onClick={() => acceptFriendRequest(notification.id.toString())} id='acceptImg' src={accept} alt="" />
+                    <img onClick={() => declineFriendRequest(notification.id.toString())} id='declineImg' src={decline} alt="" />
+                  </div>
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        <div className="profileImg">
+          {userData && (
+            <Dropdown
+              show={profileDropdownOpen}
+              onToggle={toggleProfileDropdown}
+            >
+              <Dropdown.Toggle variant="light">
+                <img src={userData.image} alt="" />
               </Dropdown.Toggle>
               <Dropdown.Menu className="dropDownMenu">
-              <Dropdown.Item  id="drop" href="#action1" onClick={() => console.log("EE")}>
-                <p>Invitations</p>
-              </Dropdown.Item>
-                {notificationData.map((notification) => (
-                  <Dropdown.Item key={notification.id} id="drop" href="#action1" onClick={() => console.log("EE")}>
-                    <div className="friendRequest">
-                      {/* <img id="friendRequestImg" src={notification.image} alt="" /> */}
-                      <p>{notification.username} has sent you a friend request</p>
-                      <img onClick={() => acceptFriendRequest(notification.id.toString())} id='acceptImg' src={accept} alt="" />
-                      <img onClick={() => declineFriendRequest(notification.id.toString())} id='declineImg' src={decline} alt="" />
-                    </div>
-                  </Dropdown.Item>
-                ))}
+                <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" onClick={handleLogout}>
+                  Logout
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </div>
-          <div className="profileImg">
-            {userData && (
-              <Dropdown
-                show={profileDropdownOpen}
-                onToggle={toggleProfileDropdown}
-              >
-                <Dropdown.Toggle variant="light">
-                  <img src={userData.image} alt="" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropDownMenu">
-                  <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
-                    Profile
-                  </Dropdown.Item>
-                  <Dropdown.Item id="drop" onClick={handleLogout}>
-                    Logout
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            )}
-          </div>
+          )}
         </div>
       </header>
     </div>

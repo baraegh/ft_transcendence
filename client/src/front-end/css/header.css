@@ -179,7 +179,8 @@ span{
   {
 
     position: relative;
-    bottom: 10px;
+    /* bottom: px; */
+    bottom : 10px;
     text-align: center;
     border: 1px solid black;
     box-shadow: 1px 1px 0px 2px rgba(0,0,0,1);
@@ -244,4 +245,9 @@ span{
   align-items: center;
   text-align: center;
 
+}
+
+.dropdown-menu.show
+{
+  height: 10px !important;
 }

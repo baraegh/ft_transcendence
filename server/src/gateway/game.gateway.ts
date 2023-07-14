@@ -10,12 +10,13 @@ type modeType = { pColor: string, bColor: string, fColor: string, bMode: string 
 type Tstreaming = { roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number };
 type datatype = { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number };
 @WebSocketGateway()
-export class GameGateway implements OnGatewayDisconnect {
+export class GameGateway implements OnGatewayDisconnect{
   constructor(private prisma: PrismaService) { }
   private logger: Logger = new Logger("GameGateway");
   games = new Map<number, { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number }>();
   streaming = new Map<number, Tstreaming>();
   gameIds = new Map<number, string>();
+  gameIdsData = new Map<string, modeType>();
   gameId: number = 0;
   @WebSocketServer() server: Server;
 
@@ -38,7 +39,7 @@ export class GameGateway implements OnGatewayDisconnect {
       player1Id: data.numplayer1Id,
       player2Id: data.numplayer2Id
     });
-    this.server.to(this.streaming.get(this.gameId).roomName).emit('initStream',"")
+    this.gameIdsData.set("room_" + this.gameId, data.mode);
     this.gameId++;
   }
   @SubscribeMessage('exploreRooms')
@@ -51,6 +52,7 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('joinStreamRoom')
   handleJoinRoom(client: Socket, room: string) {
     client.join(room);
+    this.server.to(room).emit('initStream', this.gameIdsData.get(room))
   }
 
   @SubscribeMessage('leaveStreamRoom')
@@ -65,7 +67,7 @@ export class GameGateway implements OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     let winerid: number;
     let losserid: number;
-    if (this.games.get(this.getMatchID(client)) && this.getMatchID(client)) {
+    if (this.games.get(this.getMatchID(client)) && this.games.get(this.getMatchID(client)) != undefined) {
       if (this.games.get(this.getMatchID(client)).player1Id == client.id) {
         const dto = {
           GameId: this.gameIds.get(this.getMatchID(client)),
@@ -95,8 +97,8 @@ export class GameGateway implements OnGatewayDisconnect {
       }
       await this.endMatch(winerid, dto);
       this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
-      this.logger.log(this.streaming.get(this.getMatchID(client)).roomName)
       let i = this.getMatchID(client);
+      // this.gameIdsData.delete(this.streaming.get(i).roomName);
       this.streaming.delete(i);
       this.gameIds.delete(i);
       this.games.delete(i);
@@ -118,10 +120,12 @@ export class GameGateway implements OnGatewayDisconnect {
     return undefined;
   }
   getMatchID(client: Socket): number {
-    let mKey: number = 0;
+    let mKey: number = undefined;
     this.games.forEach((value, key) => {
       if (value.player1Id == client.id || value.player2Id == client.id)
         mKey = key;
+      else
+        mKey = undefined;
     });
     return mKey;
   }
@@ -250,8 +254,8 @@ export class GameGateway implements OnGatewayDisconnect {
         }
         await this.endMatch(win, dto);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
-        this.logger.log(this.streaming.get(this.getMatchID(client)).roomName)
         let i = this.getMatchID(client);
+        // this.gameIdsData.delete(this.streaming.get(i).roomName);
         this.streaming.delete(i);
         this.gameIds.delete(i);
         this.games.delete(i);
@@ -259,9 +263,10 @@ export class GameGateway implements OnGatewayDisconnect {
         if (this.gameId -1 == i)
           this.gameId--;
       }
-      if (client.id == clientOb.player1Id) {
+      else if (client.id == clientOb.player1Id) {
         this.server.to(clientOb.player1Id).emit('ballMove', message);
-        this.server.to(this.getRoom(this.getMatchID(client))).emit('streaming', message);
+        this.logger.log(this.streaming.get(this.getMatchID(client)).roomName);
+        this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);
         message.ball.x = message.dim.W - message.ball.x;
         this.server.to(clientOb.player2Id).emit('ballMove', message);
       }

@@ -52,11 +52,17 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, socket, userId })
       image: 'image',
     };
 
-    if (socket) {
+    if (socket && Number(userId) > 0) {
       console.log('>>>>>>send from:' + dataToSend.mode.fColor);
       socket.emit('sendGameRequest', dataToSend);
       navigate('/loadingPage');
       // document.location.reload();
+    }
+    else if(socket && Number(userId) === 0){
+      socket.emit('quick_game',dataToSend);
+      navigate('/loadingPage');
+
+
     }
   };
 
@@ -134,8 +140,9 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, socket, userId })
 const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
   const [showModal, setShowModal] = useState(false);
   const { socket } = useContext<any | undefined>(SocketContext);
-  const { userId } = useParams();
-
+  let { userId } = useParams();
+  if(userId === undefined)
+    userId = "0";
   const handleImageClick = () => {
     setShowModal(true);
   };
@@ -143,6 +150,7 @@ const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
+  console.log(userId);
 
   return (
     <div>

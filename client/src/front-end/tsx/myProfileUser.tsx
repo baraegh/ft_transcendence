@@ -106,11 +106,12 @@ function MyProfileUser(): JSX.Element {
 
   const [userData, setUserData] = useState<User | null>(null);
   const [friendData, setFriendData] = useState<Friends | null>(null);
-
+  const [matchHistory, setMatchHistory] = useState<any[] | null>(null);
   const fetchData = () => {
     const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
     const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
 
+    
     Promise.all([fetchUserData, fetchAdditionalData])
       .then((responses) => {
         const userDataResponse = responses[0];
@@ -118,7 +119,6 @@ function MyProfileUser(): JSX.Element {
 
         if (userDataResponse.status === 200 && additionalDataResponse.status === 200) {
           const userData = userDataResponse.data;
-          console.log(userDataResponse.data)
           const friendData = additionalDataResponse.data;
 
           const fetchedUser: User = {
@@ -145,7 +145,7 @@ function MyProfileUser(): JSX.Element {
 
   const pollUserData = () => {
     fetchData(); // Fetch the latest userData from the server
-    setTimeout(pollUserData, 1000); // Poll every 5 seconds (adjust the interval as needed)
+    setTimeout(pollUserData, 10000); // Poll every 5 seconds (adjust the interval as needed)
   };
 
   useEffect(() => {
@@ -157,7 +157,13 @@ function MyProfileUser(): JSX.Element {
     username: `rimney ${index + 2}`,
     image: me,
   }));
-  console.log(friendData);
+  useEffect(() => {
+    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => {setMatchHistory(res.data)});
+    console.log("Passed");
+    console.log(matchHistory);
+
+  }, []);
+  // console.log(friendData);
 
   const friendDataLength = friendData ? friendData.length : 0;
   const navigate = useNavigate();
