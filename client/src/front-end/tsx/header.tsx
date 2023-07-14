@@ -8,6 +8,8 @@ import Notification from './notification'
 import "../css/home.css";
 import Game from "../../game/example";
 import { SocketContext } from '../../socket/socketContext';
+import accept from '../img/accept.png'
+import decline from '../img/decline.png'
 
 interface User {
   id: number;
@@ -18,8 +20,28 @@ interface User {
   achievements: string[];
 }
 
+interface Notification {
+  id: number;
+  image: string;
+  username: string;
+}
+
 function MyHeader(): JSX.Element {
+  
   const { socket } = useContext<any | undefined>(SocketContext);
+  type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+  const [notificationData, setNotificationData] = useState<Notification[]>([]);
+  const navigate = useNavigate();
+  
+  
+  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
+  const [userData, setUserData] = useState<User | null>(null);
+  const [bellDropdownOpen, setBellDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [data, setData]  = useState({
+    player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
+  });
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -45,29 +67,42 @@ function MyHeader(): JSX.Element {
 
   useEffect(() => {
     // Use the socket instance here
+
     if (socket) {
       {
         console.log("CREATED >> ");
-        socket.on("startGame", (msg: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) => {
-          socket.emit('initGameToStart', msg.mode)
+        socket.on("startGame", (msg: modeType) => {
+          socket.emit('initGameToStart', msg)
           navigate('/gamePlay');
           console.log('connected to Game');
         });
-      // console.log(socket);
+        // console.log(socket);
       }
     }
-  }, [socket]);
-  
-  type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-
-  const navigate = useNavigate();
-
-
-  const [login, setLogin] = useState<string>("Welcome to the Home Page!");
-  const [userData, setUserData] = useState<User | null>(null);
-  const [bellDropdownOpen, setBellDropdownOpen] = useState(false);
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-
+    if(socket)
+    {
+      socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
+        console.log("gameRequestResponse" + data);
+        setShowNotification(true);
+        console.log(showNotification);
+        setData(data);
+      });
+    }
+  }, [socket,showNotification]);
+  const holder : any = useState([]);
+  useEffect(() => {
+    axios
+      .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
+      .then((res) => {
+        setNotificationData(res.data);
+        holder.push(res.data);
+        console.log(res.data[0]?.username); // Log the username of the first notification (optional)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  // console.log(holder[0]);
   const toggleBellDropdown = () => {
     setBellDropdownOpen(!bellDropdownOpen);
   };
@@ -75,6 +110,7 @@ function MyHeader(): JSX.Element {
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
   };
+  
   const handleLogout = () => {
     axios
       .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
@@ -127,7 +163,7 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     fetchData();
   }, []);
-
+  
   const SlideInModal = ({ onClose }) => {
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -147,78 +183,93 @@ function MyHeader(): JSX.Element {
     );
   };
 
-
-
-
-
-
+  function acceptFriendRequest(userId: string) {
+    console.log("Accept ! << " + userId);
+    axios.patch('http://localhost:3000/friends/accept-friend-request', { "receiverId": Number(userId) }, { withCredentials: true })
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200)
+          console.log("Accepted successfully!");
+          document.location.reload();
+        });
+      }
+      
+      function declineFriendRequest(userId: string) {
+        
+        console.log("Decline !" + userId);
+        axios.patch('http://localhost:3000/notification/delet-friend-request', { "receiverId": Number(userId) }, { withCredentials: true })
+        .then((res) => {
+          console.log(res)
+          if (res.status === 200)
+            console.log("Rejected successfully!");
+            document.location.reload();
+          });
+        document.location.reload();
+    // axios.get('')
+  }
 
   return (
+    <div>
       <header>
-        <div className='header-left'>
-          <h3 onClick={() => navigate('/home')} className="logo">
-            KIR
-          </h3>
-          <div className="vertical-line"></div>
-          <div className="header_buttons">
-            <a className='header-btn' onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
-              <span>LeaderBoard</span>
-            </a>
-            <a className='header-btn' onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
-              <span>Chat</span>
-            </a>
-          </div>
+      <Notification buttonText=" "  showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
+        <h3 onClick={() => {{
+                            navigate('/home');
+                            document.location.reload();
+                            }}} className="logo">
+          KIR
+        </h3>
+        <div className="vertical-line"></div>
+        <div className="header_buttons">
+          <a onClick={() => navigate('/leaderboard')} id="Lbutton" href="#">
+            <span>LeaderBoard</span>
+          </a>
+          <a onClick={() =>  navigate('/chat')} id="Cbutton" href="#">
+            <span>Chat</span>
+          </a>
         </div>
-
-        {/* <div className="bell">
+        <div className="bell">
           <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
             <Dropdown.Toggle className="bellImg" variant="light">
-              <img className="bellImg" src={Bell} alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu className="dropDownMenu">
-              <Dropdown.Item id="drop" href="#action1" onClick={() =>  {console.log("EE")}}>
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action1">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action1">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action1">
-                Profile
-              </Dropdown.Item>
-              <Dropdown.Item id="drop" href="#action3">
-
-              </Dropdown.Item>
-              
+            <Dropdown.Item  id="drop" href="#action1" onClick={() => console.log("EE")}>
+              <p>Invitations</p>
+            </Dropdown.Item>
+              {notificationData.map((notification) => (
+                <Dropdown.Item key={notification.id} id="drop" href="#action1" onClick={() => console.log("EE")}>
+                  <div className="friendRequest">
+                    {/* <img id="friendRequestImg" src={notification.image} alt="" /> */}
+                    <p>{notification.username} has sent you a friend request</p>
+                    <img onClick={() => acceptFriendRequest(notification.id.toString())} id='acceptImg' src={accept} alt="" />
+                    <img onClick={() => declineFriendRequest(notification.id.toString())} id='declineImg' src={decline} alt="" />
+                  </div>
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
-        </div> */}
-        <div className='header-right'>
-          <Notification />
-          <div className="profileImg">
-            {userData && (
-              <Dropdown
+        </div>
+        <div className="profileImg">
+          {userData && (
+            <Dropdown
               show={profileDropdownOpen}
               onToggle={toggleProfileDropdown}
-              >
-                <Dropdown.Toggle variant="light">
-                  <img src={userData.image} alt="" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropDownMenu">
-                  <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
-                    Profile
-                  </Dropdown.Item>
-                  <Dropdown.Item id="drop" onClick={handleLogout} >
-                    Logout
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            )}
-          </div>
+            >
+              <Dropdown.Toggle variant="light">
+                <img src={userData.image} alt="" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropDownMenu">
+                <Dropdown.Item id="drop" onClick={() => navigate('/profile')}>
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item id="drop" onClick={handleLogout}>
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
       </header>
+    </div>
   );
 }
 

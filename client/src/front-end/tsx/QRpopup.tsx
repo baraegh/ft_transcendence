@@ -20,19 +20,18 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const [effectExecuted, setEffectExecuted] = useState(false);
 
   const submitQR = (event: KeyboardEvent) => {
-    
     axios.post('http://localhost:3000/2fa/verified', { "secret": QRvalue }, { withCredentials: true })
-    .then(res => {
-      console.log(res);
-      setQRisEnabled(true); // Update the QRisEnabled value using the callback
-    })
-    .catch((err) => {
-      console.log(err);
-      if (err.code === "ERR_BAD_REQUEST") {
-        setError("Wrong Auth Code !");
-      }
-    });
-    
+      .then(res => {
+        console.log(res);
+        setQRisEnabled(true); // Update the QRisEnabled value using the callback
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.code === "ERR_BAD_REQUEST") {
+          setError("Wrong Auth Code !");
+        }
+      });
+
     event.preventDefault();
     setError("");
     if (QRvalue.length !== 6) {
@@ -53,6 +52,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
         }
       });
   };
+
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -67,8 +67,6 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
       isMounted.current = true;
     }
   }, [QRisEnabled]);
-
-
 
   return (
     <Modal className="QRmodal" show={show} onHide={onHide} centered>

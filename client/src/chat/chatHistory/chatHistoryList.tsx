@@ -9,7 +9,7 @@ import { userMe } from "../../App";
 import { SocketContext } from "../../socket/socketContext";
 
 const filterList = ['All chats', 'Friends', 'Groups'];
-const settingsList = ['New Chat', 'Create Group'];
+const settingsList = ['New Chat', 'Create Group', 'Invite'];
 
 type ChatListHeaderProps = {
     setChat:        (chatId: string, chatImage: string, chatName: string,
@@ -226,8 +226,9 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                     setFriendList(response.data);
                 else if (filter === 'Groups')
                     setGroupList(response.data);
-                })
-                .catch((error) => {
+                console.log('response.data: ', response.data);
+            })
+            .catch((error) => {
                     console.log(error);
                 }
             );
@@ -288,6 +289,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
         }) ?? null;
     }
 
+        
     msgCard = filteredChannelList ?
             filteredChannelList.map( (channel) => {
                 return <HistoryList key={channel.channelId}

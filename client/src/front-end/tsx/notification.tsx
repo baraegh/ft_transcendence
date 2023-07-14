@@ -7,10 +7,9 @@ import SocketProvider, { SocketContext } from "../../socket/socketContext";
 
 
 // import { socketInstance,getSocket } from "/Users/brmohamm/Desktop/ft_trance_keep_it_random/client/src/socket/socket.tsx";
-const Notification : React.FC = () => {
-
+const Notification: React.FC<{ buttonText: string, showNotification:boolean, setShowNotification: (arg0: boolean) => void, data: any, setData: (data: any) => void }> = ({ showNotification ,setShowNotification, buttonText, data, setData }) => {
   const { socket } = useContext<any | undefined>(SocketContext);
-
+  const t : boolean = showNotification;
   useEffect(() => {
     // Use the socket instance here
     if (socket) {
@@ -20,10 +19,9 @@ const Notification : React.FC = () => {
     }
   }, [socket]);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-  const [showNotification, setShowNotification] = useState(false);
-  const [data, setData]  = useState({
-    player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
-  });
+  // const [data, setData]  = useState({
+  //   player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
+  // });
   const challenge = () => {
 
   // if (socket) {
@@ -43,7 +41,7 @@ const Notification : React.FC = () => {
       name: string;
       image: string;
     } = {
-      player2Id: 99030,
+      player2Id: 90498,
       mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
       name: "von",
       image: "image"
@@ -53,32 +51,25 @@ const Notification : React.FC = () => {
       console.log(">>>>>>send from:" + socket);
       console.log(socket.id);
       socket.emit("sendGameRequest", dataToSend);
+      
     }
   };
  
-if(socket)
-{
-  socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
-    console.log("gameRequestResponse" + data);
-    setShowNotification(true);
-    setData(data);
-  });
-}
-    
 
 
-  useEffect(() => {
-    
-    if (showNotification) {
-      const timer = setTimeout(() => {
-        setShowNotification(false);
-      }, 30000);
 
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [showNotification]);
+  // useEffect(() => {
+  //   console.log("EEEEEEEEEEEEEE");
+  //   if (showNotification) {
+  //     const timer = setTimeout(() => {
+  //       // setShowNotification(false);
+  //     }, 30000);
+
+  //     return () => {
+  //       clearTimeout(timer);
+  //     };
+  //   }
+  // }, [showNotification]);
 
 
   return (
@@ -101,7 +92,7 @@ if(socket)
         </div>
       )}
       <button onClick={() => challenge()}>
-        Show Notification
+       {buttonText}
       </button>
     </>
   );

@@ -1,4 +1,11 @@
-:root {  
+:root {
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  /* line-height: 1.5; */
+  /* font-weight: 400; */
+
+  /* color-scheme: light dark; */
+  /* color: rgba(255, 255, 255, 0.87); */
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,6 +22,18 @@
 {
   font-family: 'Mouse Memoirs';
   src: url('./fonts/mouse-memoirs/MouseMemoirs-Regular.ttf') format('truetype');
+
+  /* font-family: 'MPLUS 1p bold';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Bold.ttf') format('truetype');
+
+  font-family: 'MPLUS 1p medium';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Medium.ttf') format('truetype');
+
+  font-family: 'MPLUS 1p regular';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Regular.ttf') format('truetype');
+
+  font-family: 'MPLUS 1p thin';
+  src: url('./fonts/m-plus-1p/MPLUS1p-Thin.ttf') format('truetype'); */
 }
 
 @font-face 
@@ -36,12 +55,52 @@
 
 body {
   margin: 0;
+  display: flex;
+
+  place-items: center;
 }
 
 img {
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
 }
+
+/* h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+} */
+
+/* button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+} */
+/* button:hover {
+  border-color: #646cff;
+} */
+/* button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+} */
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
 
 button
 {
@@ -65,10 +124,14 @@ input
 
 input[type='file']
 {
-  text-indent: -88px;
+  text-indent: -86px;
 }
 
 p
 {
   margin: 0;
+}
+
+input[type="radio"] {
+  /* display: none; */
 }

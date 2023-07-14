@@ -7,7 +7,7 @@ import DropMenu from './DropMenu';
 import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
 import Axios from 'axios';
-import { chatInfoType, membersDataType, updateChatInfoCntext } from '../chat';
+import { chatInfoType, membersDataType } from '../chat';
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
 import { userMe } from '../../App';
@@ -29,7 +29,6 @@ type UserProps =
                             | { name: string; value: string; isChecked: boolean }
                             | { id: number; isChecked: boolean}) => void,
     type?:               string,
-    joinRoom?:          (channelId: string) => void,
 }
 
 const UsersCard = ({user, checkbox = false, setChat,
@@ -115,10 +114,9 @@ type NewChatProps = {
     setChat?: (chatId: string, chatImage: string,
                 chatName: string, chatType: string, userId: number | null) => void
     closeDialog?:       () => void,
-    joinRoom?:           (channelID: string) => void,
 }
 
-const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
+const NewChat = ({setChat, closeDialog} : NewChatProps) => {
     const [usersList, setUsersList] = useState<userListType[] | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -152,8 +150,7 @@ const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
                                 filteredUsersList.map(user => <UsersCard    key={user.id}
                                                                             user={user}     
                                                                             setChat={setChat}
-                                                                            closeDialog={closeDialog}
-                                                                            joinRoom={joinRoom}/>) 
+                                                                            closeDialog={closeDialog} />) 
                             : <p className='No-data' style={{textAlign: 'center'}}>NO RESULT</p>
                         }
             </div>
@@ -200,7 +197,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
 
     return (
         <>
-            <div className='dialog-label' key="group-name" >
+            <label className='dialog-label' key="group-name" >
                 <div className='create-group-name-warn'>
                     <p className='dialog-MPLUS-font'>Group name</p>
                     {nameWarn?  <p className='create-group-warn-name'>
@@ -219,7 +216,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
                         type='text'
                         autoComplete='off'
                         placeholder="Insert the group name" />
-            </div>
+            </label>
             <div key="profile-img-upload">
                 <p className='dialog-MPLUS-font'>Choose profile picture</p>
                 {
@@ -503,9 +500,10 @@ const CreateGroup = ({closeDialog, setChat, updateGroup,
         });
     const me = useContext(userMe);
 
-
-    if (me && GroupData.members !== null)
-        GroupData.members[0] = me.id.toString();
+    useEffect((() => {
+        if (me)
+            GroupData.members[0] = me.id.toString();
+    }), []);
     
     const checkNameInput = (groupName : string): boolean =>
     {
@@ -655,10 +653,8 @@ const CreateGroup = ({closeDialog, setChat, updateGroup,
 
     const  handleOnSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-
-        if (GroupData.members.length > 1 && 
-            GroupData.members[0] !== '')
-        {    
+        if (GroupData.members.length > 1 && GroupData.members[0] !== '')
+        {
             const formData = new FormData();
 
             formData.append('name', GroupData.name);
@@ -705,7 +701,7 @@ const CreateGroup = ({closeDialog, setChat, updateGroup,
     }
 
     return (
-        <form onSubmit={handleOnSubmit} className='create-group-form'>
+        <form onSubmit={handleOnSubmit}>
             {
                 showFirstDialog && <CreateGroupFirstDialog  nameExist={nameExist}
                                                             nameWarn={nameWarn}
@@ -1024,30 +1020,6 @@ const AddAdmin = ({closeDialog, chatInfo, membersData, setUpdatedAdmins} : Dialo
                 </div>
             </div>
         </>
-        // <>
-        //     {
-        //         showFirstDialog &&
-        //             (<>
-        //                 <label className='dialog-label' key="userName-emai" htmlFor="">
-        //                     <p className='dialog-MPLUS-font'>User-Name Or Email</p>
-        //                     <input className='dialog-MPLUS-font dialog-input' type='text' placeholder='Type here'/>
-        //                 </label>
-                        
-        //                 <div className='dialog-process-btn' key="create-group-process">
-        //                     <button className='cancel-btn' onClick={closeDialog}>Cancel</button>
-        //                     <div className='dialog-Previous-next-btn'>
-        //                         <button className='next-btn' onClick={handleAddOnClick}>Add</button>
-        //                     </div>
-        //                 </div>
-        //             </>)
-        //         ||
-        //             showSecondDialog && 
-        //             (<div className='dialog-success'>
-        //                 <FontAwesomeIcon icon={faCircleCheck} size="3x" style={{color: "#000000",}} />
-        //                 <p className='dialog-success-text'>Added successfully</p>
-        //             </div>)
-        //     }
-        // </>
     );
 }
 
@@ -1367,8 +1339,7 @@ type DialogProps =
     title?:             string;
     closeDialog?:       () => void;
     setChat?:           (chatId: string, chatImage: string,
-                            chatName: string, chatType: string, userId: number | null,
-                            blocked?: boolean, whoblock?: number | null) => void,
+                            chatName: string, chatType: string, userId: number | null) => void,
     chatInfo?:          chatInfoType,
     msgSend?:           boolean,
     setMsgSend?:        (msgSend: boolean) => void,
@@ -1401,9 +1372,7 @@ export function Dialog({title, closeDialog, setChat,
     switch(title)
     {
         case 'New Chat':
-            ItemComponent = () => <NewChat  setChat={setChat}
-                                            closeDialog={closeDialog}
-                                            joinRoom={joinRoom}/>;
+            ItemComponent = () => <NewChat setChat={setChat} closeDialog={closeDialog} />;
             break;
         
         case 'Create Group':

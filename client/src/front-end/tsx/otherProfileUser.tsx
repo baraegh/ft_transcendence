@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { Key, useContext, useEffect, useId, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import '../css/OtherProfileUser.css'
 import me from '../img/rimney.jpeg'
 import ach from '../img/pic.jpeg'
 import MyHeader from './header'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios, { AxiosResponse } from 'axios'
 import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
+import Maps from './maps'
+import Notification from './notification'
+import { SocketContext } from '../../socket/socketContext'
+
 interface User {
     id: number;
     username: string;
@@ -22,18 +26,14 @@ interface friend {
     username: string;
     image: string;
 }
-
-interface Friends {
+interface Friends extends Array<{
     blocked: boolean;
     isRequested: boolean;
     isFriend: boolean;
     requestAccepted: boolean;
-    friend: {
-        id: number,
-        username: string;
-        image: string;
-    }
-}
+    friend: friend;
+}> { }
+
 
 interface Match {
     matchId: string;
@@ -53,34 +53,81 @@ interface OtherUser {
     username: string;
 }
 
+const Buttons =
+{
+    isFriend: false,
+    isBlocked: false
+}
+
 const otherUserTemplate = {
     id: 0,
-    username: 'string',
+    username: "string",
+    image: "string",
     gameWon: 0,
     gameLost: 0,
-    achievements: ['string'],
-    updatedAt: '2023-07-11T15:52:29.338Z',
-    friend: {
-      id: 0,
-      username: 'string',
-      image: 'string'
-    }
-  };
+    // achievements: {
+    //   ach : "string"
+    // },
+    updatedAt: "2023-07-13T03:31:40.829Z",
+    blocked: true,
+    hosblocked: 0,
+    isRequested: true,
+    isFriend: true,
+    requestAccepted: true
+};
 
 
 function otherProfileUser(): JSX.Element {
+    const { socket } = useContext<any | undefined>(SocketContext);
+
+    const [showNotification, setShowNotification] = useState(false);
+    const [data, setData] = useState({
+        player1Id: "", player2Id: "", mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
+    });
+
+    const challenge = () => {
+
+        // if (socket) {
+        //   console.log("wwwwwaaaaaaa")
+        //   socket.emit('connect01');
+        // }
+        // console.log(storedSocket);
+        type modeType = {
+            pColor: string;
+            bColor: string;
+            fColor: string;
+            bMode: string;
+        };
+        let dataToSend: {
+            player2Id: number;
+            mode: modeType;
+            name: string;
+            image: string;
+        } = {
+            player2Id: Number(userId),
+            mode: { pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: "" },
+            name: "von",
+            image: "image"
+        };
+        if (socket) {
+
+            console.log(">>>>>>send from:" + socket);
+            console.log(socket.id);
+            socket.emit("sendGameRequest", dataToSend);
+
+        }
+    };
+
+    const matches: Match[] = [];
+    const { userId } = useParams();
     const [otherUser, setOtherUser] = useState(otherUserTemplate);
-    const {userId} = useParams();
+    // console.log(useId)
     const generateRandomUser = (index: number): OtherUser => {
-        
         const randomId = Math.floor(Math.random() * 1000);
         const randomImage = 'https://random.imagecdn.app/500/150';
         const randomUsername = `Other ${index}`;
         return { id: randomId, image: randomImage, username: randomUsername };
     };
-
-    const matches: Match[] = [];
-
     for (let i = 0; i < 64; i++) {
         const match: Match = {
             matchId: `match${i}`,
@@ -103,7 +150,6 @@ function otherProfileUser(): JSX.Element {
     const [showPopup, setShowPopup] = useState(false);
     const [scrollFlag, setScrollFlag] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-
     const handlePrevClick = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? matches.length - 4 : prevIndex - 4));
     };
@@ -121,7 +167,7 @@ function otherProfileUser(): JSX.Element {
 
     const fetchData = () => {
         const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
-        const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
+        const fetchAdditionalData = axios.get(`http://localhost:3000/other-profile/friends/${userId}`, { withCredentials: true });
 
         Promise.all([fetchUserData, fetchAdditionalData])
             .then((responses) => {
@@ -141,18 +187,10 @@ function otherProfileUser(): JSX.Element {
                         achievements: userData.achievements,
                     };
 
-                    const fetchedFriends: Friends = {
-                        blocked: friendData.blocked,
-                        isRequested: friendData.isRequested,
-                        isFriend: friendData.isFriend,
-                        requestAccepted: friendData.requestAccepted,
-                        friend: friendData.friend,
-                    };
-
-
                     setUserData(fetchedUser);
-                    setFriendData(fetchedFriends);
-                    // console.log(friendData);
+                    setFriendData(friendData);
+                    //   console.log(friendData[0].friend);
+                    //   console.log(friendData[1].friend);
                 } else {
                     throw new Error('Request failed');
                 }
@@ -164,7 +202,7 @@ function otherProfileUser(): JSX.Element {
     const pollUserData = () => {
         fetchData(); // Fetch the latest userData from the server
         setTimeout(pollUserData, 1000); // Poll every 5 seconds (adjust the interval as needed)
-      };
+    };
     useEffect(() => {
         pollUserData();
     }, []);
@@ -174,24 +212,52 @@ function otherProfileUser(): JSX.Element {
         username: `rimney ${index + 2}`,
         image: me,
     }));
+    function sendFriendRequest() {
+        axios.post(`http://localhost:3000/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true });
+        console.log("Friend Request Sent");
+    }
+
     useEffect(() => {
         axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
-          .then(res => {
-            // Extract the desired data from the response
-            const userData = res.data;
-      
-            // Update the state with the extracted data
-            setOtherUser(userData);
-        })
-        .catch(error => {
-            // Handle any errors
-            
-            console.log(error);
-        });
-        console.log(otherUser);
+            .then(res => {
+                const userData = res.data;
+                setOtherUser(userData);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }, []);
+
+    function blockFriend() {
+        axios.patch(`http://localhost:3000/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+            .then(() => {
+                // Update the UI or perform any other necessary actions
+                console.log("blocked");
+                setButtons({ ...bbuttons, isBlocked: true });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function unblockFriend() {
+        axios.patch(`http://localhost:3000/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+            .then(() => {
+                console.log("unblocked");
+                setButtons({ ...bbuttons, isBlocked: false });
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     otherUser.gameWon = 160;
     otherUser.gameLost = 160;
+    const [bbuttons, setButtons] = useState(Buttons);
+    const navigate = useNavigate();
+    const friendDataLength = friendData ? friendData.length : 0;
+    console.log(otherUser);
+
     return (
         <div>
             <MyHeader />
@@ -199,7 +265,7 @@ function otherProfileUser(): JSX.Element {
                 <div className="profile">
                     <h3 id="profileScore"> score :  {otherUser.id}</h3>
                     <div className="ProfilePictureUsername">
-                        <img src={me} alt="" />
+                        <img src={otherUser.image} alt="" />
                         <p>{otherUser.username}</p>
                     </div>
                     <div className='WinLoss'>
@@ -218,36 +284,46 @@ function otherProfileUser(): JSX.Element {
                             <img src={ach} alt="" />
                         </div>
                         <div className='fourButtons'>
-                            <div className='leftButtons'>
-                                <a id="challenge" href="#"><span>Challenge</span></a>
-                                <a id="message" href="#"><span>Message</span></a>
-                            </div>
-                            <div className='rightButtons'>
-                                <a id="invite" href="#"><span>Invite</span></a>
-                                <a id="block" href="#"><span>Block</span></a>
-                            </div>
+                            {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                            {/* <a onClick={() => {challenge()}} > aaa</a> */}
+                            {otherUser.isFriend && !otherUser.blocked &&  <a className="message2" href="#"><span>Message</span></a>}
+                            {!otherUser.isFriend &&  !otherUser.blocked && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
+                            {!otherUser.blocked && !otherUser.blocked && (
+                                <a onClick={blockFriend} className="block2" href="#">
+                                    <span>Block</span>
+                                </a>
+                            )}
+                            { otherUser.blocked && (
+                                <a onClick={unblockFriend} className="block2" href="#">
+                                    <span>Unblock</span>
+                                </a>
+                            )}
+
                         </div>
                     </div>
                 </div>
                 <div className="friends">
                     <h1>Friends</h1>
                     <div className="friendslistScrollBar">
-                        {!scrollFlag ? (
-                            Array.from({ length: 5 }).map((_, index) => (
-                                <div key={index} className="friend">
-                                    <img src={friends[index].image} alt="" />
-                                    <p>{friends[index].username}</p>
+                        {!scrollFlag ?
+                            friendData && friendData.map((data: {
+                                friend: {
+                                    id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined;
+                                };
+                            }, index: React.Key | null | undefined) => (
+                                <div onClick={() => {
+                                    {
+                                        if (data.friend.id !== userData?.id) {
+                                            navigate(`/user/${data.friend.id?.toString()}`);
+                                            document.location.reload();
+                                        }
+                                    }
+                                }} key={data.friend.id} className="friend">
+                                    <img src={data.friend.image} alt="" />
+                                    <p> {data.friend.username === userData?.username ? "me" : data.friend.username}</p>
                                 </div>
-                            ))
-                        ) : (
-                            friends.map((friend, index) => (
-                                <div key={index} className="friend">
-                                    <img src={friend.image} alt="" />
-                                    <p>{friend.username}</p>
-                                </div>
-                            ))
-                        )}
-                        <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friends.length - 5} More` : "Show Less"}</a>
+                            )) : ""}
+                        {friendDataLength > 5 && <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
                     </div>
                 </div>
                 <div className='matches'>
@@ -265,16 +341,16 @@ function otherProfileUser(): JSX.Element {
                         <button onClick={handlePrevClick}>
                             <img id='backButton' src={backButton} alt="" />
                             back
-                            </button>
+                        </button>
                         <p>{currentIndex} - {currentIndex + 8} of {matchElements.length}</p>
                         <button onClick={handleNextClick}>Next
-                        <img id='nextButton' src={nextButton} alt="" />
+                            <img id='nextButton' src={nextButton} alt="" />
 
                         </button>
                     </div>
-                    </div>
                 </div>
             </div>
+        </div>
 
     )
 }

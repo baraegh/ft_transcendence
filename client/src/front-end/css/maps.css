@@ -1,16 +1,12 @@
 #mapsPopup {
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
 }
 
 #mapsPopup .modal-body {
-    height: 800px;
-    /* width: 100% !important; */
+    height: 930px;
   }
 
-  #mapsPopup a
-  {
+#mapsPopup a
+{
     position: relative;
     left: 30%;
     font-size: 30px;
@@ -21,13 +17,10 @@
     width: 40%;
     border: 0.6px solid black;
     border-radius: 10px;
-    /* position: relative; */
     align-items: center;
     justify-content: center;
     box-shadow: 5px 5px 1px 1px black;
     transition: 0.3s;
-    /* position: relative; */
-    /* left : 100px; */
     background-color: white;
 }
 
@@ -36,8 +29,6 @@
     box-shadow: 0px 0px 0px 0px white;
     color: white;
     background-color: black;
-
-
 }
 
 .mapsHeader
@@ -62,11 +53,19 @@
     border: 1px solid black;
     border-radius: 20px;
     width: 100%;
-    height: 580px;
+    height: 700px;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin-top: 25px;
+    margin-top: 23px;
+    flex-direction: row;
+    align-content: space-around;
+
+}
+.map:hover
+{
+    border: 4px solid red;
+
 }
 
 .map
@@ -75,6 +74,7 @@
     width: 60%;
     height: 160px;
     background-color: black;
+    border : 1px solid black;
 }
 
 .ballType
@@ -88,13 +88,11 @@
 
 .smallBall 
 {
-
     width: 30%;
     height: 100%;
 }
 .bigBall 
 {
-
     width: 30%;
     height: 100%;
 }
@@ -103,44 +101,97 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
     width: 30%;
     height: 100%;
 }
 
 .blockBall img
 {
-    width: 98px;
-    height: 74px;
+    width: 77px;
+    height: 70px;
 }
+
+.blockBall:hover img
+{
+    border: 5px solid red;
+    border-radius: 20px;
+}
+
+#map1
+{
+    display: block;
+    position: relative;
+    left: 45%;
+    top : 55%;
+}
+
+#map2
+{
+    display: block;
+    position: relative;
+    left: 45%;
+    top : 55%;
+}
+
+#map3
+{
+    display: block;
+    position: relative;
+    left: 45%;
+    top : 55%;
+}
+
 .bigBall 
 {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border : 1px solid red; */
-
     width: 30%;
     height: 100%;
 }
 
 .bigBall img
 {
-    width: 98px;
-    height: 74px;
+    width: 77px;
+    height: 70px;
 }
+
+.bigBall:hover img
+{
+    border: 4px solid red;
+    border-radius: 60px;
+}
+
 .smallBall 
 {
     display: flex;
     justify-content: center;
     align-items: center;
-
     width: 30%;
     height: 100%;
 }
 
+.smallBall:hover img
+{
+    border: 4px solid red;
+    border-radius: 60px;
+}
+
 .smallBall img
 {
-    width: 54px;
-    height: 53px;
+    width: 34px;
+    height: 33px;
+}
+
+.balls
+{
+    background-color: black;
+    display: flex;
+    width: 100%;
+    height: 80px;
+    /* background-color: green; */
+    border-radius: 8px;
+    border: 0.8px solid black;
+    align-content: flex-start;
+    justify-content: center;
 }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useRef} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faKhanda, faXmark, faGear} from '@fortawesome/free-solid-svg-icons';
@@ -17,6 +17,8 @@ import defaultGroupImage from '../../assets/group.png';
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
+
+const settingsList = ['Profile', 'Delete', 'Block'];
 
 type chatAreaHeaderProps =
 {
@@ -255,7 +257,7 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
 
 type chatAreaMessagesProps =
 {
-    ListOfMsg:  msgListType,
+    ListOfMsg:  msgListType | null,
     chatInfo:   chatInfoType,
 }
 
@@ -270,7 +272,7 @@ const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
             chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }, [ListOfMsg]);
 
-    const msgCard = ListOfMsg.length !== 0? ListOfMsg.map( msg =>
+    const msgCard = ListOfMsg? ListOfMsg.map( msg =>
                     {
                         return    me?.id === msg.userId ?
                                 (<MsgCardMe key={msg.userId + i++}
@@ -283,7 +285,7 @@ const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
                 ) : '';
 
     return (
-        <div className='chat-area-messages' ref={chatAreaRef}>
+        <div className='chat-area-messages'>
             {msgCard}
         </div>
     );
@@ -378,7 +380,7 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfilePro
             .catch((error) => {
                 console.log(error);
             });
-    }, [chatInfo.chatId]);
+    }, []);
 
     const rankCard = profileData.rank.length !== 0?
                         profileData.rank.map((data) => {
@@ -490,6 +492,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                     withCredentials: true,
                 })
             .then((response) => {
+                // console.log('response.data: ', response.data);
                 if (setChat )
                     setChat(response.data.channelID, img, username,
                             'PERSONEL', id, response.data.blocked, response.data.hasblocked);
@@ -857,7 +860,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                 </div>
                 {   searchQuery === '' ?
                         <div className="chat-area-group-owner">
-                            <p className="header-role">Owner</p>
+                            <p className="header">Owner</p>
                             <PopoverComp    Trigger={<MemberCard   img={props.membersData?.owner.image}
                                                                 username={props.membersData?.owner.username} />}
                                             Content={<MemberCardPopOverContent  role={''}
@@ -872,7 +875,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                     : ''
                 }
                 <div className="chat-area-group-admins-members">
-                    <p className="header-role">Admins</p>
+                    <p className="header">Admins</p>
                     <div className="chat-area-group-admins">
                         <div className="chat-area-group-admins-list">
                             {filteredAdmins && filteredAdmins.length !== 0 ? filteredAdmins: <p className="No-data">No admin</p>}
@@ -880,7 +883,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                     </div>
 
                     <div className="chat-area-group-members">
-                        <p className="header-role">Members</p>
+                        <p className="header">Members</p>
                         <div className="chat-area-group-members-list">
                             {filteredUsers && filteredUsers.length !== 0 ? filteredUsers: <p className="No-data">No member</p>}
                         </div>
@@ -931,12 +934,6 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     );
 }
 
-type responseType = {
-    sender:             number,
-    room:               string,
-    message:            string,
-}
-
 type ChatAreaProps = {
     chatInfo:           chatInfoType,
     setIsProfileOpen:   (isOpen: boolean) => void,
@@ -955,16 +952,6 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
                             updateChatInfo, leaveRoom} : ChatAreaProps) => {
     const [msgList, setmsgList] = useState<msgListType>([]);
     const [msgSend, setMsgSend] = useState(false);
-    const me = useContext(userMe);
-    const {socket} = useContext<any | undefined>(SocketContext);
-    
-    const sendingroup = (msg: string) => {
-        if (socket) 
-        {
-            socket.emit('chatToServer', { sender: me?.id, room: chatInfo.chatId, message: msg });
-            console.log("send");
-        }
-    }
 
     useEffect(() => {
         if (!chatInfo.chatId || chatInfo.mute !== 'NAN')

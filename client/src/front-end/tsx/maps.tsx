@@ -1,96 +1,152 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import '../css/maps.css'
-import Edit from '../img/edit.png'
+import '../css/maps.css';
+import Edit from '../img/edit.png';
 import { FormFloating } from 'react-bootstrap';
 import axios from 'axios';
-import me from '../img/rimney.jpeg'
-import square from '../img/square.png'
-import circle from '../img/circle.png'
+import me from '../img/rimney.jpeg';
+import square from '../img/square.png';
+import circle from '../img/circle.png';
+import Notification from './notification';
+import { SocketContext } from '../../socket/socketContext';
+import { useParams } from 'react-router-dom';
+import map1 from '../img/map1.png';
+import map2 from '../img/map2.png';
+import map3 from '../img/map3.png';
 
 interface BlankModalProps {
-    show: boolean;
-    onHide: () => void;
+  show: boolean;
+  onHide: () => void;
 }
 
-type profileType = {
-    name: string,
-    image: File | null,
-}
+const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, socket, userId }) => {
+  const [map, setMap] = useState<any[]>([]);
+  const [ball, setBall] = useState("");
+  useEffect(() => {
 
-type ballType = 
-{
+    // console.log('Map updated:', map);
+    // console.log('Ball updated:', ball);
+    // Perform any additional actions when map changes
+  }, [map, ball]);
 
-}
+  const challenge = (socket: any, userId: string) => {
+    type modeType = {
+      pColor: string;
+      bColor: string;
+      fColor: string;
+      bMode: string;
+    };
 
-const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
-    return (
-        <Modal id="mapsPopup" show={show} onHide={onHide} centered>
-            <Modal.Body  >
-                <div className="mapsHeader">
-                    Pick Your Map
-                </div>
-                <div className='maps'>
-                    <div className='map'>
-                        <div className='ballType'>
-                            <div className='smallBall'>
-                            <img src={circle} alt="" />
-                            </div>
-                            <div className='bigBall'>
-                            <img src={circle} alt="" />
-                            </div>
-                            <div className='blockBall'>
-                            <img src={square} alt="" />
+    let dataToSend: {
+      player2Id: number;
+      mode: modeType;
+      name: string;
+      image: string;
+    } = {
+      player2Id: Number(userId),
+      mode: { pColor: map[0].pColor  , bColor: map[0].bColor , fColor: map[0].fColor , bMode: ball },
+      name: 'von',
+      image: 'image',
+    };
 
-                            </div>
-                        </div>
-                    </div>
-                    <div className='map'>
-                        <div className='ballType'>
-                            <div className='smallBall'></div>
-                            <div className='bigBall'></div>
-                            <div className='blockBall'></div>
-                        </div>
+    if (socket) {
+      console.log('>>>>>>send from:' + dataToSend.mode.fColor);
+      socket.emit('sendGameRequest', dataToSend);
+    }
+  };
 
-                    </div>
-                    <div className='map'>
-                        <div className='ballType'>
-                            <div className='smallBall'>
-                            </div>
-                            <div className='bigBall'></div>
-                            <div className='blockBall'></div>
-                        </div>
+  return (
+    <Modal id="mapsPopup" show={show} onHide={onHide} centered>
+      <Modal.Body>
+        <div className="mapsHeader">Pick Your Map</div>
+        <div className="maps">
+          <div className="balls">
+            <div className="smallBall" onClick={() => {
+              setBall("1");
+            }}
+            style={{
+              border: ball === '1' ? '1px solid white' : '',
+              borderRadius : "60px",
+            }}          
+            >
+              <img src={circle} alt="" />
+            </div>
+            <div className="bigBall" onClick={() => {
+              setBall("2");
+            }}
+            style={{
+              border: ball === '2' ? '1px solid white' : '',
+              borderRadius : "60px",
+            }}          
+            >
+              <img src={circle} alt="" />
+            </div>
+            <div className="blockBall" onClick={() => {
+              setBall("3");
+            }}
+            style={{
+              border: ball === '3' ? '1px solid white' : '',
+              borderRadius : "60px",
+            }}          
+            >
+              <img src={square} alt="" />
+            </div>
+          </div>
+          <div
+            onClick={() => setMap([{ pColor: 'WHITE', bColor: 'WHITE', fColor: 'BLACK', bMode: '' }])}
+            className="map"
+            style={{
+              backgroundImage: `url(${map1})`,
+              border: map.length > 0 && map[0].fColor === 'BLACK' ? '6px solid red' : '',
+            }}
+          ></div>
+          <div
+            onClick={() => setMap([{ pColor: 'BLACK', bColor: 'BLACK', fColor: 'WHITE', bMode: '' }])}
+            className="map"
+            style={{
+              backgroundImage: `url(${map2})`,
+              border: map.length > 0 && map[0].fColor === 'WHITE' ? '6px solid red' : '',
+            }}
+          ></div>
+          <div
+            onClick={() => setMap([{ pColor: 'BLACK', bColor: 'WHITE', fColor: 'GRAY', bMode: '' }])}
+            className="map"
+            style={{
+              backgroundImage: `url(${map3})`,
+              border: map.length > 0 && map[0].fColor === 'GRAY' ? '6px solid red' : '',
+            }}
+          ></div>
+        </div>
 
-                    </div>
-                </div>
-
-                {/* Add your custom content here */}
-            <a >Launch Game</a>
-            </Modal.Body>
-
-        </Modal>
-    );
+        {/* Add your custom content here */}
+        <a onClick={() => challenge(socket, userId)}>Launch Game</a>
+      </Modal.Body>
+    </Modal>
+  );
 };
 
-const Maps: React.FC = () => {
-    const [showModal, setShowModal] = useState(false);
 
-    const handleImageClick = () => {
-        setShowModal(true);
-    };
+const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
+  const [showModal, setShowModal] = useState(false);
+  const { socket } = useContext<any | undefined>(SocketContext);
+  const { userId } = useParams();
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+  const handleImageClick = () => {
+    setShowModal(true);
+  };
 
-    return (
-        <div>
-            <a id='quickGame' onClick={handleImageClick}>Quick Game </a>
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
-            {showModal && <BlankModal show={showModal} onHide={handleCloseModal} />}
-        </div>
-    );
+  return (
+    <div>
+      <a onClick={handleImageClick}>{buttonText}</a>
+
+      {showModal && <BlankModal socket={socket} userId={userId} show={showModal} onHide={handleCloseModal} />}
+    </div>
+  );
 };
 
 export default Maps;

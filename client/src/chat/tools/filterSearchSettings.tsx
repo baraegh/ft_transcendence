@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons' ;
 import DropMenu from './DropMenu';
 import { chatInfoType } from "../chat";
-import { channel } from "../chatHistory/chatHistoryList";
 
 type searchProps = {
     searchQuery:    string,

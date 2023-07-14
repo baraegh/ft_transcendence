@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 
 interface SocketContextProps {
   socket: Socket | null;
+  reconnectSocket: () => void;
 }
 
 export const SocketContext = createContext<SocketContextProps | undefined>(
@@ -16,17 +17,33 @@ interface SocketProviderProps {
 const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  useEffect(() => {
+  const connectSocket = () => {
     const newSocket: Socket = io('http://localhost:3000');
     setSocket(newSocket);
+  };
+
+  const disconnectSocket = () => {
+    if (socket) {
+      socket.disconnect();
+      setSocket(null);
+    }
+  };
+
+  useEffect(() => {
+    connectSocket();
 
     return () => {
-      newSocket.disconnect();
+      disconnectSocket();
     };
   }, []);
 
+  const reconnectSocket = () => {
+    disconnectSocket();
+    connectSocket();
+  };
+
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket, reconnectSocket }}>
       {socket && children}
     </SocketContext.Provider>
   );

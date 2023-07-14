@@ -3,6 +3,10 @@ import ChatHistoryList from "./chatHistory/chatHistoryList";
 import { FriendList } from "./chatFriendList/friendList";
 import { ChatArea, ChatAreaProfile, ChatAreaGroup, ChatGroupSettings} from "./ChatArea/charArea";
 import "./chat.css";
+import Axios from "axios";
+
+import Image from "./barae.jpg";
+import { useNavigate } from "react-router-dom";
 import MyHeader from "../front-end/tsx/header";
 import { SocketContext } from "../socket/socketContext";
 export {updateChatInfoCntext};
@@ -170,18 +174,35 @@ export function Chat() {
                           update={updateGroup}
                           setUpdate={setUpdateGroup}/>
             )}
-          </>
-        ) : (
-          <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
-                              membersData={membersData}
-                              setMembersData={setMembersData}
-                              chatInfo={chatInfo}
-                              setChatInfo={setChatInfo}
-                              role={role}
-                              setChat={setChat}/>
-        )}
-      </div>
-    </updateChatInfoCntext.Provider>
+          </div>
+
+          {chatInfo.chatId !== null && chatInfo.chatType !== '' && chatInfo.chatType !== "PERSONEL" ? (
+            <ChatAreaGroup  chatInfo={chatInfo} 
+                            setIsChatSettingOpen={setIsChatSettingOpen}
+                            membersData={membersData}
+                            setMembersData={setMembersData}
+                            role={role}
+                            setChat={setChat}
+                            update={updateGroup}
+                            setUpdate={setUpdateGroup}/>
+          ) : isProfileOpen ? (
+            <ChatAreaProfile  chatInfo={chatInfo}
+                              setIsProfileOpen={setIsProfileOpen} />
+          ) : (
+            <FriendList />
+          )}
+        </>
+      ) : (
+        <ChatGroupSettings  setIsChatSettingOpen={setIsChatSettingOpen}
+                            membersData={membersData}
+                            setMembersData={setMembersData}
+                            chatInfo={chatInfo}
+                            setChatInfo={setChatInfo}
+                            role={role}
+                            setChat={setChat}/>
+      )}
+    </div>
+    </div>
   );
 }
 

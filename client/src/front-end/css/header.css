@@ -1,46 +1,50 @@
+* {
+    font-family: 'Mouse Memoirs', sans-serif;
+}
 header {
 
-    width: 100%;
-    height: 50px;
+    /* left: 0; */
+    width: 1058px;
+    height: 48px;
     display: flex;
-    justify-content: space-between;
-    /* align-items: center; */
+    padding: 5px 50px;
     border: 2px solid black;
     border-radius: 20px;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-    margin: 5px 0;
-    padding: 0 10px;
-}
+    margin-top : 10px;
+    /* position: fixed; */
+    /* margin: auto; */
+    top: 0;
+    /* transform: translateX(-50%); */
+    display: flex;
+  }
 
-.header-right, .header-left
-{
-  display: flex;
-  /* justify-content: space-between; */
-  align-items: center;
-}
 
 header h3{
-  padding: 5px 10px;
-  margin: 0;
+    position: relative;
+    text-align: center;
+    right: 20px;    
 }
 
 .bellImg {
-    /* position: relative;
-    width: 27px;
-    height: 27px;
-    left: 600px;
-    top: 5px; */
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  left: 500px;
+  background-color: white;
+  top: 5px;
+  z-index: 999;
 }
 
+
 .profileImg {
-    /* bottom: 5px;
+    bottom: 5px;
     position: relative;
     width: 30px;
     height: 60px;
-    /* background-color: whi; */
-    /* left: 610px;  */
     border-radius: 60px;
-    background-color: white;
+    /* background-color: black; */
+    left: 610px;
 }
 
 .profileImg img 
@@ -52,10 +56,11 @@ header h3{
 }
 
 
+
 .vertical-line {
-    /* position: relative; */
-    /* bottom : 6px; */
-    /* left: 10px; */
+    position: relative;
+    bottom : 6px;
+    left: 10px;
     width: 2px;
     height: 50px;
     background-color: black;
@@ -63,50 +68,46 @@ header h3{
 
 .header_buttons
 {
-  display: flex;
-  margin: 0 5px 0 0;
-}
-
-.header-btn
-{
+    display: flex;
 
 }
-
 .header_buttons #Lbutton
 {
-    /* position: relative;
-    left: 56px; */
-    /* width: 160px;
-    height: 35px; */
-    text-align: center;
+    position: relative;
+    left: 56px;
+    width: 160px;
+    height: 35px;
 }
 .header_buttons #Cbutton
 {
-    /* position: relative;
-    left: 80px; */
-    /* width: 80px;
-    height: 35px; */
+    position: relative;
+    left: 80px;
+    width: 80px;
+    height: 35px;
 
 }
 
 .header_buttons a{
-    position: relative;
-    font-size: 18px;
-    font-family: 'Mouse Memoirs';
+    display: block;
+
+    line-height: 40px;
+    font-size: 25px;
+    font-family: sans-serif;
     text-decoration: none;
     color: #333;
     border: 2px solid #333;
     letter-spacing: 5px;
     text-align: center;
+    position: relative;
     transition: all .35s;
     border-radius: 9px;
-    margin-left: 5px;
-    padding: 0 10px;
   }
   
   .header_buttons a span{
     position: relative;
     z-index: 1;
+    bottom : 5px;
+
   }
   
   .header_buttons   a:after{
@@ -121,8 +122,7 @@ header h3{
 
   }
   
-  .header-btn:hover
-  {
+  .header_buttons a:hover{
     color: #fff;
   }
   
@@ -148,12 +148,15 @@ header h3{
 
   #drop
   {
+
     position: relative;
     bottom: 10px;
     text-align: center;
-    border : 1px solid black;
+    border: 1px solid black;
     box-shadow: 1px 1px 0px 2px rgba(0,0,0,1);
     transition: 0.2s;
+    background-color: white;
+
   }
 
   #drop:hover
@@ -171,3 +174,45 @@ header h3{
     /* right: 20px !important; */
   }
 
+.bell #drop
+{
+  display: flex;
+  height: 40px;
+  width : 300px;
+  justify-content: center;
+  align-items: center;
+}
+
+.friendRequest
+{
+  display: flex;
+
+  /* align-items: baseline; */
+}
+
+.friendRequest p
+{
+  margin-right: 10px;
+  /* align-items: baseline; */
+}
+
+#acceptImg
+{
+  width : 20px;
+  height : 20px;
+  margin-right: 10px;
+}
+#declineImg
+{
+  width : 20px;
+  height : 20px;
+}
+
+#youGotNo
+{
+  display: flex;
+  margin: 5px;
+  align-items: center;
+  text-align: center;
+
+}

@@ -13,21 +13,20 @@ function Home() : JSX.Element
 {
     const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
     const { socket } = useContext<any | undefined>(SocketContext);
-  
+
     useEffect(() => {
       // Use the socket instance here
       if (socket) {
         {
+          
           console.log("CREATED AT Home >> ");
         }
       }
+
     }, [socket]);
-    useEffect(() => {
-      // Simulating a delay for the header to load
-      setTimeout(() => {
-        setIsHeaderLoaded(true);
-      }, 10000); // Adjust the delay time as needed
-    }, [])
+    // useEffect(() => {
+    //   document.location.reload();
+    // }, [])
   
   
  
@@ -40,7 +39,7 @@ function Home() : JSX.Element
         </div>
         <div className="P_W" >
             <a id="Play" onClick={() => {navigate('/Play')}}><span>Play</span></a>
-            <a id="WatchStream" href="#"><span>Watch Stram</span></a>
+            <a id="WatchStream" onClick={() => {navigate('/stream')}} href="#"><span>Watch Stram</span></a>
         </div>
     </div>)
 }
