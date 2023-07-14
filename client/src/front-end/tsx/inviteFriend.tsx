@@ -4,69 +4,92 @@ import App from './App'
 import '../css/inviteFriend.css'
 import tvGif from '../img/giphy.gif'
 import Header from '../tsx/header'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import triangle from '../img/pngwing.com.png'
 import { Search } from '../../chat/tools/filterSearchSettings'
 import { MDBInputGroup, MDBInput, MDBIcon, MDBBtn } from 'mdb-react-ui-kit';
 import von from 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/brmohamm.jpg'
+import axios from 'axios'
+import Maps from './maps'
 
-
-
-function InviteFriend(): JSX.Element {
-    const navigate = useNavigate();
+interface OtherUser {
+    id: number;
+    image: string;
+    username: string;
+    gameWon: number;
+    gameLost: number;
+    updatedAt: string;
+    blocked: boolean;
+    hosblocked: number;
+    isRequested: boolean;
+    isFriend: boolean;
+    requestAccepted: boolean;
+  }
+  
+  const otherUserTemplate: OtherUser = {
+    id: 0,
+    username: "string",
+    image: "string",
+    gameWon: 0,
+    gameLost: 0,
+    updatedAt: "2023-07-13T03:31:40.829Z",
+    blocked: true,
+    hosblocked: 0,
+    isRequested: true,
+    isFriend: true,
+    requestAccepted: true
+  };
+  
+  function InviteFriend(): JSX.Element {
     const [searchQuery, setSearchQuery] = useState('');
+    const [names, setNames] = useState<OtherUser[]>([]); // Update to use OtherUser type
+    const navigate = useNavigate();
+    let {userId} = useParams();
     useEffect(() => {
-
+      const fetchData = async () => {
+        try {
+          const res = await axios.get('http://localhost:3000/user/is_all_online', { withCredentials: true });
+          const onlineUsers: string[] = res.data;
+          const namePromises = onlineUsers.map(async (element: string) => {
+            const res = await axios.get(`http://localhost:3000/other-profile/about/${element}`, { withCredentials: true });
+            const userData: OtherUser = res.data; // Use the OtherUser type
+            return userData;
+          });
+          const nameResults: OtherUser[] = await Promise.all(namePromises);
+          setNames(nameResults);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+  
+      fetchData();
     }, []);
-
-    const list = [
-     ['barae', 'https://cdn.intra.42.fr/users/56b6ef5fd87645cbc5179e01683d4b80/eel-ghan.jpg'],
-      ['rimney', 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/rimney.jpg'],
-       ['mohammed', 'https://cdn.intra.42.fr/users/49c9f954c68d136b2b41e8da9fbd4f30/mait-aad.jpg'],
-     ['barae', 'https://cdn.intra.42.fr/users/56b6ef5fd87645cbc5179e01683d4b80/eel-ghan.jpg'],
-      ['rimney', 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/rimney.jpg'],
-       ['mohammed', 'https://cdn.intra.42.fr/users/49c9f954c68d136b2b41e8da9fbd4f30/mait-aad.jpg'],
-     ['barae', 'https://cdn.intra.42.fr/users/56b6ef5fd87645cbc5179e01683d4b80/eel-ghan.jpg'],
-      ['rimney', 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/rimney.jpg'],
-       ['mohammed', 'https://cdn.intra.42.fr/users/49c9f954c68d136b2b41e8da9fbd4f30/mait-aad.jpg'],
-     ['barae', 'https://cdn.intra.42.fr/users/56b6ef5fd87645cbc5179e01683d4b80/eel-ghan.jpg'],
-      ['rimney', 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/rimney.jpg'],
-       ['mohammed', 'https://cdn.intra.42.fr/users/49c9f954c68d136b2b41e8da9fbd4f30/mait-aad.jpg'],
-     ['barae', 'https://cdn.intra.42.fr/users/56b6ef5fd87645cbc5179e01683d4b80/eel-ghan.jpg'],
-      ['rimney', 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/rimney.jpg'],
-       ['mohammed', 'https://cdn.intra.42.fr/users/49c9f954c68d136b2b41e8da9fbd4f30/mait-aad.jpg']
-    ];
-
-    
-    const names = list.filter((name) => {
-      const lowercaseName = name[0].toLowerCase(); // Convert the name to lowercase for comparison
+  
+    const filteredNames = names.filter((name) => {
+      const lowercaseName = name.username.toLowerCase(); // Access the username property
       const lowercaseSearchQuery = searchQuery.toLowerCase();
-      return   lowercaseName.includes(lowercaseSearchQuery);
+      return lowercaseName.includes(lowercaseSearchQuery);
     });
-
-    return (<div>
+  
+    return (
+      <div>
         <Header />
         <div className="mainDisplay">
-            <a onClick={() => { navigate('/home') }} id="X" >X</a>
-            <div className='search-input-container'>
-                <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-            </div>
-                {/* {searchBar()}; */}
-                {/* <div className="inviteFriendContainer">
-                </div> */}
-                <div className='friendList'>
-                    {
-                        names.map((item) => {
-                            return (
-                                <div className='friendsSearch'>
-                                <img className='friendsSearchImg' src={item[1]} alt="" />
-                            <p>{item[0]}</p>
-                            </div>)
-                        })
-                    }
-                </div>
-            </div>
-        </div>)
-}
-
-export default InviteFriend;
+          <a onClick={() => { navigate('/home') }} id="X">X</a>
+          <div className='search-input-container'>
+            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          </div>
+          <div className='friendList'>
+            {filteredNames.map((item) => (
+              <div className='friendsSearch' key={item.id} onClick={() => { console.log(item.id) }}>
+                <img className='friendsSearchImg' src={item.image} alt="" />
+                <p onClick={() => {userId = item.id}}><Maps buttonText={item.username}/> </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  export default InviteFriend;

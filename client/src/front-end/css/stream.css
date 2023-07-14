@@ -15,14 +15,13 @@
 
 
 
-.mainDisplay img{
+/* .mainDisplay img{
     width: 1058px;
     height: 500px;
     border-radius: 20px;
     position: relative;
     bottom : 1px;
-
- }
+ } */
 
 #Play
 {
@@ -95,19 +94,29 @@
 .stream-container
 {
   display: flex;
-  color : white;
   margin: auto;
   /* background-color: green; */
 }
 
 .stream-user-container
 {
- display: flex;
+  background-color: white;
+  border: 0.5px solid black;
+  width: 500px;
+  height: 90px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-evenly;
+  align-items: center;
+  align-content: space-between;
+  flex-wrap: nowrap;
+
 }
 
 #stream-user-username
 {
-
+  color : black;
 }
 
 #stream-user-image

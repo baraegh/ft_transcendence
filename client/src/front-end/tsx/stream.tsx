@@ -3,6 +3,10 @@ import MyHeader from './header';
 import { SocketContext } from '../../socket/socketContext';
 import axios from 'axios';
 import '../css/stream.css'
+import { useNavigate } from 'react-router-dom';
+import { userMe } from '../../App';
+
+
 
 type Tstreaming = {
   roomName: string;
@@ -26,7 +30,7 @@ function Stream(): JSX.Element {
   const [fStreaming, setFStreaming] = useState<Map<string, Tstreaming> | null>(null);
   const [userData1, setUserData1] = useState<User | null>(null);
   const [userData2, setUserData2] = useState<User | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     socket?.emit('exploreRooms', 'hello'); // sending socket to server
 
@@ -115,17 +119,20 @@ function Stream(): JSX.Element {
       const user2 = userData2 && userData2.id === value.player2Id ? userData2 : null;
   
       return (
-        <div className='stream-container' key={key}>
+        <div className='stream-container' key={key} onClick={() => {
+          navigate("/gamePlay")
+          socket.emit('joinStreamRoom', value.roomName)
+        }}>
           {user1 && (
             <div className='stream-user-container'>
-              <p id="stream-user-username" >Username: {user1.username}</p>
+              <p id="stream-user-username" >{user1.username}</p>
               <img id="stream-user-image" src={user1.image} alt={user1.username} />
             </div>
           )}
   
           {user2 && (
             <div className='stream-user-container'>
-              <p id="stream-user-username" >Username: {user2.username}</p>
+              <p id="stream-user-username" >{user2.username}</p>
               <img id="stream-user-image" src={user2.image} alt={user2.username} />
             </div>
           )}

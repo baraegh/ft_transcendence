@@ -188,10 +188,10 @@ const Game = () => {
       socket.emit("ballMove", message);
       requestAnimationFrame(game);
     }
-    socket.on("ServerToClient", (pdata: number) => {
-      player2.y = pdata;
+      socket.on("ServerToClient", (pdata: number) => {
+        player2.y = pdata;
       // console.log(player2.y)
-    });
+      });
     socket.on("ballMove", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number } }) => {
       if (message.dim.W != canvas.width || message.dim.H != canvas.height) {
         const widthScale = canvas.width / message.dim.W;
@@ -220,7 +220,8 @@ const Game = () => {
     socket.on("streaming", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number } }) => {
       document.onkeydown = null;
       document.onkeyup = null;
-      socket.off("ServerToClient");
+      // socket.off("ServerToClient");
+      console.log("hellllo");
       if (message.dim.W != canvas.width || message.dim.H != canvas.height) {
         const widthScale = canvas.width / message.dim.W;
         const heightScale = canvas.height / message.dim.H;
@@ -257,6 +258,7 @@ const Game = () => {
       navigate('/home')
     });
     socket.on("GameEnd", (message: string) => {
+      console.log("hellllo");
       player1.score = 0;
       player1.score = 0;
       document.onkeydown = null;
@@ -267,13 +269,45 @@ const Game = () => {
       socket.off("playerDisconnected");
       socket.off("GameEnd");
       document.location.reload();
+      socket.off("initStream");
       navigate('/home')
     });
-    socket.on("initStream", (msg: string) => {
-      socket.off("initStream");
+    socket.on("initStream", (eMode: modeType) => {
+      player1.x = 0;
+      player1.y = canvas.height / 2 - canvas.height / 4 / 2;
+      player1.width = canvas.width / 70;
+      player1.height = canvas.height / 4;
+      player1.color = modeControl.pColor;
+      player1.score = 0;
+      // setPlayer2({
+      player2.x = canvas.width - canvas.width / 70;
+      player2.y = canvas.height / 2 - canvas.height / 4 / 2;
+      player2.width = canvas.width / 70;
+      player2.height = canvas.height / 4;
+      player2.color = modeControl.pColor;
+      player2.score = 0;
+      // });
+      ball.x = canvas.width / 2 - canvas.width / 380;
+      ball.y = canvas.height / 2;
+      ball.radius = canvas.width / 60;
+      ball.speed = ((3 * canvas.width) / 4) / 300;
+      ball.velocityX = 5;
+      ball.velocityY = 5;
+      ball.color = modeControl.bColor;
+
+      if (eMode){
+        modeControl = eMode;
+        player1.color = modeControl.pColor;
+        player2.color = modeControl.pColor;
+        ball.color = modeControl.bColor;
+        net.color = ball.color;
+        if (eMode.bMode == '2')
+          ball.radius = ball.radius * 2
+      }
+      
+      // socket.off("initGame");
       game();
     })
-    
     socket.on("initGame", (eMode: modeType) => {
       player1.x = 0;
       player1.y = canvas.height / 2 - canvas.height / 4 / 2;
@@ -298,11 +332,11 @@ const Game = () => {
       ball.color = modeControl.bColor;
 
       if (eMode)
-      modeControl = eMode;
-      player1.color = modeControl.pColor;
-      player2.color = modeControl.pColor;
-      ball.color = modeControl.bColor;
-      net.color = ball.color;
+        modeControl = eMode;
+        player1.color = modeControl.pColor;
+        player2.color = modeControl.pColor;
+        ball.color = modeControl.bColor;
+        net.color = ball.color;
       if (eMode.bMode == '2')
       ball.radius = ball.radius * 2
       userInputs();
