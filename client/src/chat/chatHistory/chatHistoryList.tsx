@@ -52,42 +52,70 @@ export const format = (str: string, n: number): string => {
 }
 
 type HistoryListProps = {
-    data:           channel,
-    selected:       boolean
-    setChat:        (chatId: string, chatImage: string, chatName: string,
-                        chatType: string, userId: number | null,
-                        blocked?: boolean, whoblock?: number | null,
-                        muted?: string) => void,
-    updateGroup:    boolean,
-    setUpdateGroup: (update: boolean) => void,
-    chatInfo:       chatInfoType,
-    leaveRoom:      () => void,
-    joinRoom:        (channelId: string) => void,
+    data:               channel,
+    selected:           boolean
+    setChat:            (chatId: string, chatImage: string, chatName: string,
+                            chatType: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null,
+                            muted?: string) => void,
+    updateGroup:        boolean,
+    setUpdateGroup:     (update: boolean) => void,
+    chatInfo:           chatInfoType,
+    leaveRoom:          () => void,
+    joinRoom:           (channelId: string) => void,
+    openChatGroupArea:  (open: boolean) => void,
 }
 
 const HistoryList = ({data, setChat, selected, updateGroup,
                         setUpdateGroup, chatInfo, leaveRoom,
-                        joinRoom}: HistoryListProps) =>
-{
+                        joinRoom, openChatGroupArea}: HistoryListProps) => {
+    const isGroup = data.type !== 'PERSONEL';
+    const [isOnline, setIsOnline] = useState(true);
+        
+
+    useEffect(() => {
+        let intervalId : number | undefined;
+      
+        const fetchData = () => {
+          if (isGroup) {
+            return;
+          }
+
+          Axios.get(`http://localhost:3000/user/isonline/${data.otherUserId}`, { withCredentials: true })
+            .then((response) => {
+                setIsOnline(response.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        };
+      
+        intervalId = setInterval(fetchData, 1000);
+        return () => {
+          clearInterval(intervalId);
+        };
+      }, []);
+
     const handleOnClick = () => {
         if (chatInfo.chatId !== '')
             leaveRoom();
         joinRoom(data.channelId);
         if (data.type === 'PERSONEL')
+        {
             setChat(data.channelId,
                     data.otherUserImage? data.otherUserImage: defaultUserImage,
                     data.otherUserName, data.type, data.otherUserId, data.blocked,
                     data.hasblocked);
+        }
         else
         {
             setChat(data.channelId,
                     data.channelImage? data.channelImage : defaultGroupImage,
                     data.channelName, data.type, null, false, null, data.mut);
+            openChatGroupArea(true);
             setUpdateGroup(!updateGroup)
         }
     } 
-
-    const isGroup = data.type !== 'PERSONEL';
 
     return (
         <div className={`item ${selected? 'selected': ''}`}
@@ -106,7 +134,9 @@ const HistoryList = ({data, setChat, selected, updateGroup,
                             : format(data.otherUserName, 8)
                         }
                     </p>
-                    {isGroup? '': <div className='status-circle online'></div>}
+                    {isGroup? '': <div className={'status-circle ' + (isOnline?
+                                                                        'online' 
+                                                                    : 'offline')}></div>}
                 </div>
                 { 
                     data.lastMessage?
@@ -157,11 +187,13 @@ type chatHistoryListProps =
     updateChatInfo:     boolean,
     updateUserCard:     boolean,
     leaveRoom:          () => void,
+    openChatGroupArea:  (open: boolean) => void,
 }
 
 const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                             setRole, setUpdateGroup, updateGroup,
-                            updateChatInfo, updateUserCard, leaveRoom}: chatHistoryListProps) =>
+                            updateChatInfo, updateUserCard, leaveRoom,
+                            openChatGroupArea}: chatHistoryListProps) =>
 {
     const [channelList, setChannelList] = useState<channel[]| null>(null);
     const [groupList, setGroupList] = useState<channel[]| null>(null);
@@ -257,18 +289,18 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
     }
 
     msgCard = filteredChannelList ?
-            filteredChannelList.map( (channel) =>
-            (
-                <HistoryList    key={channel.channelId}
-                                data={channel}
-                                selected={chatInfo.chatId === channel.channelId}
-                                setChat={setChat}
-                                setUpdateGroup={setUpdateGroup}
-                                updateGroup={updateGroup}
-                                chatInfo={chatInfo}
-                                leaveRoom={leaveRoom}
-                                joinRoom={joinRoom}/>
-            ))
+            filteredChannelList.map( (channel) => {
+                return <HistoryList key={channel.channelId}
+                                    data={channel}
+                                    selected={chatInfo.chatId === channel.channelId}
+                                    setChat={setChat}
+                                    setUpdateGroup={setUpdateGroup}
+                                    updateGroup={updateGroup}
+                                    chatInfo={chatInfo}
+                                    leaveRoom={leaveRoom}
+                                    joinRoom={joinRoom}
+                                    openChatGroupArea={openChatGroupArea}/>
+            })
         : <p className="No-data" style={{textAlign: 'center'}}>No Channel</p>
 
     return (

@@ -90,6 +90,7 @@ export function Chat() {
   const [updateChatInfo, setUpdateChatInfo] = useState(false);
   const [updateUserCard, setUpdateUserCard] = useState(false);
   const {socket} = useContext<any | undefined>(SocketContext);
+  const [isChatGroup, setIsChatGroup] = useState(true);
 
   const setChat = (Id: string, Image: string, Name: string,
                     Type: string, userId: number | null,
@@ -110,6 +111,9 @@ export function Chat() {
         socket.emit('leaveRoom', chatInfo.chatId);
   }
 
+  useEffect(() => {
+      setIsChatGroup(true);
+  }, []);
 
   return (
     <updateChatInfoCntext.Provider value={updateChatInfo}>
@@ -125,7 +129,8 @@ export function Chat() {
                               setUpdateGroup={setUpdateGroup}
                               updateChatInfo={updateChatInfo}
                               updateUserCard={updateUserCard}
-                              leaveRoom={leaveRoom}/>
+                              leaveRoom={leaveRoom}
+                              openChatGroupArea={setIsChatGroup}/>
 
             <div className="chat-area">
               {chatInfo.chatId !== '' ? (
@@ -145,15 +150,17 @@ export function Chat() {
               )}
             </div>
 
-            {chatInfo.chatId !== null && chatInfo.chatType !== '' && chatInfo.chatType !== "PERSONEL" ? (
-              <ChatAreaGroup  chatInfo={chatInfo} 
-                              setIsChatSettingOpen={setIsChatSettingOpen}
-                              membersData={membersData}
-                              setMembersData={setMembersData}
-                              role={role}
-                              setChat={setChat}
-                              update={updateGroup}
-                              setUpdate={setUpdateGroup}/>
+            {chatInfo.chatId !== null && chatInfo.chatType !== '' 
+              && chatInfo.chatType !== "PERSONEL" && isChatGroup ? (
+                        <ChatAreaGroup  chatInfo={chatInfo} 
+                                setIsChatSettingOpen={setIsChatSettingOpen}
+                                membersData={membersData}
+                                setMembersData={setMembersData}
+                                role={role}
+                                setChat={setChat}
+                                update={updateGroup}
+                                setUpdate={setUpdateGroup}
+                                closeArea={() => setIsChatGroup(false)}/>
             ) : isProfileOpen ? (
               <ChatAreaProfile  chatInfo={chatInfo}
                                 setIsProfileOpen={setIsProfileOpen} />

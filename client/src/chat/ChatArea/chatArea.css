@@ -803,3 +803,17 @@
 {
     margin-left: 30px;
 }
+
+.chat-area-group-close {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.chat-area-group-close p {
+    font-family: 'Mouse Memoirs';
+    font-size: 18px;
+    line-height: 85%;
+    letter-spacing: 0.2em;
+}
