@@ -24,6 +24,7 @@ import React from 'react';
 export {userMe}
 import OtherProfileUser from './front-end/tsx/otherProfileUser';
 import Stream from './front-end/tsx/stream';
+import LoadingPage from './front-end/tsx/loadingPage';
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
@@ -116,6 +117,10 @@ function App() {
           <Route
             path="/user"
             element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/loadingPage"
+            element={isLoggedIn ? <LoadingPage /> : <Navigate to="/loginPage" replace />}
           />
           <Route
             path="/user/:userId"

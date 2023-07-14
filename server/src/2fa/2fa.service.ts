@@ -16,7 +16,7 @@ export class _2faService {
       where: { id: user.id },
     })
     if(finduser.isTwoFactorAuthenticationEnabled === true)
-      throw new BadRequestException("the 2FA is enable");
+      return;
     await this.prisma.user.update({
       where: { id: user.id },
       data: { twoFactorAuthenticationSecret: secret },

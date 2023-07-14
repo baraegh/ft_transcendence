@@ -91,3 +91,27 @@
   .P_W a:hover:after{
     width: 100%;
   } 
+
+.stream-container
+{
+  display: flex;
+  color : white;
+  margin: auto;
+  /* background-color: green; */
+}
+
+.stream-user-container
+{
+ display: flex;
+}
+
+#stream-user-username
+{
+
+}
+
+#stream-user-image
+{
+  width: 50px;
+  height: 50px;
+}

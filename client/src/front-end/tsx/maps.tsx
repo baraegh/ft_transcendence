@@ -10,7 +10,7 @@ import square from '../img/square.png';
 import circle from '../img/circle.png';
 import Notification from './notification';
 import { SocketContext } from '../../socket/socketContext';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import map1 from '../img/map1.png';
 import map2 from '../img/map2.png';
 import map3 from '../img/map3.png';
@@ -20,7 +20,9 @@ interface BlankModalProps {
   onHide: () => void;
 }
 
+
 const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, socket, userId }) => {
+  const navigate = useNavigate();
   const [map, setMap] = useState<any[]>([]);
   const [ball, setBall] = useState("");
   useEffect(() => {
@@ -53,6 +55,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, socket, userId })
     if (socket) {
       console.log('>>>>>>send from:' + dataToSend.mode.fColor);
       socket.emit('sendGameRequest', dataToSend);
+      navigate('/loadingPage');
+      // document.location.reload();
     }
   };
 

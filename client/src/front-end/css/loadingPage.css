@@ -1,0 +1,35 @@
+
+.loading-contaiter
+{
+    width: 1100px;
+    display: flex;
+    color: white;
+    /* background-color: green; */
+    align-items: center;
+    flex-direction: column;
+}
+#loop
+{
+    
+    width : 400px;
+    height : 400px;
+    /* margin: auto; */
+}
+
+.flickering-text {
+    animation: flicker 2s infinite;
+    font-size: 25px;
+  }
+
+@keyframes flicker {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
