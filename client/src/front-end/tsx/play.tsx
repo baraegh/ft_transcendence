@@ -14,7 +14,7 @@ function Play(): JSX.Element {
     return (<div>
         <Header />
         <div className="mainDisplay">
-            <a onClick={() => { navigate('/home') }} id="X" >X</a>
+            <div onClick={() => { navigate('/home'); console.log("FFFF")}} id="X" >X</div>
             <div className='IQ'>
                 <div className="inviteFriendContainer">
                     <img id="triangleImg" src={triangle} alt="" />

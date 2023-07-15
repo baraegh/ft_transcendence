@@ -71,7 +71,7 @@ export class FetchChatService {
     }
 
     if (findinparticepents.mut != 'NAN')
-      throw new ForbiddenException('you are muted from this channel');
+      return;
     if (findinparticepents.blocked === true)
        return;
       const messages = await this.prisma.messages.findMany({
@@ -558,7 +558,7 @@ export class FetchChatService {
         },
       },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if(findChannel.type == "PERSONEL")
       throw new ForbiddenException('Ths channel is private');
     if (findChannel.ownerId === userId)

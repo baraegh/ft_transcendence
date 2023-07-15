@@ -1,6 +1,6 @@
 .mainDisplay
 {
-    position: relative;
+    /* position: relative;
     top : 50px;
     width: 1058px;
     margin: auto;
@@ -8,18 +8,21 @@
     border-radius: 20px;
     border: 2px solid black;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-    background-color: black;
+    background-color: black; */
 }
 
 .IQ {
-    position: relative;
-    top : 120px;
-    margin: 100px;
-    width : 700px;
-    font-size: 50px;
-    display: flex;
-    justify-content: space-between;
-    /* padding: 0 50px; Adjust the padding value as needed */
+  width: 95%;
+  height: 100%;
+  position: relative;
+  font-size: 50px;
+  bottom : 50px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  align-content: stretch;
+
   }
 #X
 {

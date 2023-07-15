@@ -1,29 +1,21 @@
 
 ----------------------- VON ------------------------
-=> handle bolck of all users not only friends in chat 
-
-=> the end-point ../unblock not working
-
-=> fix unblock and block - when unblock someone
-    it shouldn't remove the channel or the friendship unless
-    they didn't have a friendship relation or a channel
-
-=> edit group doesn't modify the database
-
-=> mute member
-
-=> add 'blocked' in user info
-
 
 
 ----------------------- ME ------------------------
 
-=> join group
-
-=> mute member
-
-=> handle delete when the chat is already deleted
-
-=> fix channel image while messaging using sockets
+=> check mute member
 
 => fix unblock
+
+
+=> fix Achievements
+
+=> click on UsersCard -> redirect to profile
+
+=> challenge button
+
+
+=> leave group return a 404 group not found when a user leave the group,
+    and å owner is levead before the action of the user
+        -> remove - mute

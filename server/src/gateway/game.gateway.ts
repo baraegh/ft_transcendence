@@ -388,6 +388,36 @@ export class GameGateway implements OnGatewayDisconnect{
         data: { gameLost: { increment: 1 } },
       });
     }
+
+    const achivement = await this.prisma.user.findFirst({
+      where:{
+        id:dto.WinnerId,
+      }
+    })
+    if(achivement.gameWon === 2)
+    {
+      await this.prisma.user.update({
+        where:{
+          id:dto.WinnerId,
+        },
+        data:{
+          achievements:["2"],
+        }
+      })
+  
+    }
+    else if(achivement.gameWon === 4)
+    {
+      await this.prisma.user.update({
+        where:{
+          id:dto.WinnerId,
+        },
+        data:{
+          achievements:["3"],
+        }
+      })
+  
+    }
     return editGame;
   }
 

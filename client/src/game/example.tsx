@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../socket/socketContext";
+import "./game.css"
 
 type ballType = {
   x: number;
@@ -353,8 +354,8 @@ const Game = () => {
   }, []);
 
   return (
-    <div className="mainDisplay">
-      <canvas ref={canvasRef} id="pong" />
+    <div className="the-game">
+      <canvas ref={canvasRef} id="pong" className="game-layout" />
     </div>
   );
 };

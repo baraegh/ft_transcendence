@@ -7,10 +7,12 @@ import DropMenu from './DropMenu';
 import { friendDataType } from '../chatFriendList/friendList';
 import './Dialog.css';
 import Axios from 'axios';
-import { chatInfoType, membersDataType } from '../chat';
+import { chatInfoType, membersDataType, updateChatInfoCntext } from '../chat';
 import defaultUserImage from '../../assets/person.png';
 import defaultGroupImage from '../../assets/group.png';
 import { userMe } from '../../App';
+import { channel } from '../chatHistory/chatHistoryList';
+import { SocketContext } from '../../socket/socketContext';
 
 type UserProps =
 {
@@ -27,10 +29,34 @@ type UserProps =
                             | { name: string; value: string; isChecked: boolean }
                             | { id: number; isChecked: boolean}) => void,
     type?:               string,
+    joinRoom?:          (channelId: string) => void,
 }
 
-const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) => {
+const UsersCard = ({user, checkbox = false, setChat,
+                    closeDialog, joinRoom }: UserProps) => {
     const [isChecked, setIsChecked] = useState(false);
+    const [isOnline, setIsOnline] = useState(false);
+
+    useEffect(() => {
+        let intervalId : number | undefined;
+      
+        const fetchData = () => {
+
+          Axios.get(`http://localhost:3000/user/isonline/${user.id}`,
+                { withCredentials: true })
+            .then((response) => {
+                setIsOnline(response.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        };
+      
+        intervalId = setInterval(fetchData, 1000);
+        return () => {
+          clearInterval(intervalId);
+        };
+      }, []);
 
     const handleOnClickCheckBox = () => {
         setIsChecked(!isChecked);
@@ -48,14 +74,14 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
                     setChat(response.data.channelID, user.image, user.username,
                             'PERSONEL', user.id);
                 if (joinRoom)
-                    joinRoom(response.data.id);
+                    joinRoom(response.data.channelID);
                 if (closeDialog)
                     closeDialog();
             })
             .catch((error) => {
                 console.log(error);
             }
-            );
+        );
     }
 
     return (
@@ -64,14 +90,18 @@ const UsersCard = ({user, checkbox = false, setChat, closeDialog}: UserProps) =>
             <div>
                 <div className='item-username-group-status-circle'>
                     <p className="item-username-group">{user.username}</p>
-                    <div className='status-circle online'></div>
+                    <div className={'status-circle ' + 
+                                                (isOnline?
+                                                    'online' 
+                                                : 'offline')}></div>
                 </div>
-                <p className="item-last-message">online || offline</p>
+                <p className="item-last-message">{isOnline? 
+                                                        'online'
+                                                    : 'offline'}</p>
             </div>
             {checkbox && (
                 <div className='dialog-checkbox' >
                     <input  type="checkbox"
-                            // id="username-of-the-user"
                             name="username-of-the-user"
                             checked={isChecked} 
                             onChange={()=>{}}/>
@@ -85,9 +115,10 @@ type NewChatProps = {
     setChat?: (chatId: string, chatImage: string,
                 chatName: string, chatType: string, userId: number | null) => void
     closeDialog?:       () => void,
+    joinRoom?:           (channelID: string) => void,
 }
 
-const NewChat = ({setChat, closeDialog} : NewChatProps) => {
+const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
     const [usersList, setUsersList] = useState<userListType[] | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -121,7 +152,8 @@ const NewChat = ({setChat, closeDialog} : NewChatProps) => {
                                 filteredUsersList.map(user => <UsersCard    key={user.id}
                                                                             user={user}     
                                                                             setChat={setChat}
-                                                                            closeDialog={closeDialog} />) 
+                                                                            closeDialog={closeDialog}
+                                                                            joinRoom={joinRoom}/>) 
                             : <p className='No-data' style={{textAlign: 'center'}}>NO RESULT</p>
                         }
             </div>
@@ -168,7 +200,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
 
     return (
         <>
-            <label className='dialog-label' key="group-name" >
+            <div className='dialog-label' key="group-name" >
                 <div className='create-group-name-warn'>
                     <p className='dialog-MPLUS-font'>Group name</p>
                     {nameWarn?  <p className='create-group-warn-name'>
@@ -187,7 +219,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
                         type='text'
                         autoComplete='off'
                         placeholder="Insert the group name" />
-            </label>
+            </div>
             <div key="profile-img-upload">
                 <p className='dialog-MPLUS-font'>Choose profile picture</p>
                 {
@@ -246,6 +278,28 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
 
 const UsersList = ({user, checkbox = false, handleOnChange, type}: UserProps) => {
     const [isChecked, setIsChecked] = useState(false);
+    const [isOnline, setIsOnline] = useState(false);
+
+    useEffect(() => {
+        let intervalId : number | undefined;
+      
+        const fetchData = () => {
+
+          Axios.get(`http://localhost:3000/user/isonline/${user.id}`,
+                { withCredentials: true })
+            .then((response) => {
+                setIsOnline(response.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        };
+      
+        intervalId = setInterval(fetchData, 1000);
+        return () => {
+          clearInterval(intervalId);
+        };
+      }, []);
 
     const handleOnClickCheckBox = () => {
         setIsChecked(!isChecked);
@@ -266,9 +320,11 @@ const UsersList = ({user, checkbox = false, handleOnChange, type}: UserProps) =>
             <div>
                 <div className='item-username-group-status-circle'>
                     <p className="item-username-group">{user.username}</p>
-                    <div className='status-circle online'></div>
+                    <div className={'status-circle ' + (isOnline?
+                                                                'online' 
+                                                        : 'offline')}></div>
                 </div>
-                <p className="item-last-message">{'active | to be edited'}</p>
+                <p className="item-last-message">{isOnline? 'online' : 'offline'}</p>
             </div>
             {checkbox && (
                 <div className='dialog-checkbox'>
@@ -297,7 +353,7 @@ type CreateGroupSecondDialogProps = {
     chatInfo?:          chatInfoType,
     closeDialog?:       () => void,
     update?:            boolean,
-    setUpdate?:         (update: boolean) => void,  
+    setUpdate?:         (update: boolean) => void,
 }
 
 type userListType = {
@@ -316,7 +372,7 @@ const CreateGroupSecondDialog = ({  GroupData, handleOnChange, type,
     const [userListArray, setUserListArray] = useState<userListType[] | null>(null);
     const [usersData, setUsersData] = useState< usersDataType>({ otheruserid: [] });
     const [searchQuery, setSearchQuery] = useState('');
-    // const [membersWarn, setMembersWarn]= useState(false);
+    // const [membersWarn, setMembersWarn]= useState(false);                   
 
     useEffect(() => {
         Axios.get('http://localhost:3000/chat/show-all-users',
@@ -390,9 +446,6 @@ const CreateGroupSecondDialog = ({  GroupData, handleOnChange, type,
             user.username.toLowerCase().includes(searchQuery.toLowerCase())
         ) ;
 
-        // console.log('membersWarn: ', membersWarn);
-
-
     return (
         <>
             <div key="create-group-search" className='create-group-search'>
@@ -431,17 +484,8 @@ const CreateGroupSecondDialog = ({  GroupData, handleOnChange, type,
     );
 }
 
-// const CreateGroupThirdDialog = () => {
-
-//     return (
-//         <div className='dialog-success'>
-//             <FontAwesomeIcon icon={faCircleCheck} size="3x" style={{color: "#000000",}} />
-//             <p className='dialog-success-text'>Group Created Successfully</p>
-//         </div>
-//     );
-// }
-
-const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
+const CreateGroup = ({closeDialog, setChat, updateGroup,
+                        setUpdateGroup, joinRoom} : DialogProps) => {
     
     const   [showFirstDialog, setShowFirstDialog] = useState(true);
     const   [showSecondtDialog, setShowSecondtDialog] = useState(false);
@@ -459,10 +503,9 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
         });
     const me = useContext(userMe);
 
-    useEffect((() => {
-        if (me)
-            GroupData.members[0] = me.id.toString();
-    }), []);
+
+    if (me && GroupData.members !== null)
+        GroupData.members[0] = me.id.toString();
     
     const checkNameInput = (groupName : string): boolean =>
     {
@@ -612,8 +655,10 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
 
     const  handleOnSubmit = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        if (GroupData.members.length > 1 && GroupData.members[0] !== '')
-        {
+
+        if (GroupData.members.length > 1 && 
+            GroupData.members[0] !== '')
+        {    
             const formData = new FormData();
 
             formData.append('name', GroupData.name);
@@ -645,6 +690,8 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
                             response.data.name, response.data.type, null);
                     if (setUpdateGroup)
                         setUpdateGroup(!updateGroup);
+                    if (joinRoom)
+                        joinRoom(response.data.id);
                 }
             }
             catch(error)
@@ -658,7 +705,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
     }
 
     return (
-        <form onSubmit={handleOnSubmit}>
+        <form onSubmit={handleOnSubmit} className='create-group-form'>
             {
                 showFirstDialog && <CreateGroupFirstDialog  nameExist={nameExist}
                                                             nameWarn={nameWarn}
@@ -670,7 +717,7 @@ const CreateGroup = ({closeDialog, setChat} : DialogProps) => {
                                                                 setMembersWarn={setMembersWarn} 
                                                                 GroupData={GroupData}
                                                                 handleOnChange={handleOnChange}
-                                                                type='create group' />
+                                                                type='create group'/>
             }
             <div className='dialog-process-btn' key="create-group-process">
                 <button className='cancel-btn' onClick={closeDialog}>Cancel</button>
@@ -729,6 +776,14 @@ const Invite = () => {
 
 const LeaveGroup = ({closeDialog, chatInfo, setChat} : DialogProps) => {
     
+    const {socket} = useContext<any | undefined>(SocketContext);
+
+    const leaveRoom = () => {
+
+        if (socket && chatInfo)
+            socket.emit('leaveRoom', chatInfo.chatId);
+      }
+
     const handleOnClick = () => {
         if (chatInfo === undefined)
             return;
@@ -740,6 +795,7 @@ const LeaveGroup = ({closeDialog, chatInfo, setChat} : DialogProps) => {
             .then(() => {
                 if (setChat)
                     setChat('', '', '', '', null);
+                leaveRoom();
                 if (closeDialog)
                     closeDialog();
             })
@@ -760,7 +816,7 @@ const LeaveGroup = ({closeDialog, chatInfo, setChat} : DialogProps) => {
     );
 }
 
-const RemoveMember = ({closeDialog, chatInfo, setUpdate, update} : DialogProps) => {
+const   RemoveMember = ({closeDialog, chatInfo, setUpdate, update, setChat} : DialogProps) => {
 
     const HandleRemove = () => {
         Axios.post('http://localhost:3000/chat/setting/remove-member',
@@ -772,6 +828,9 @@ const RemoveMember = ({closeDialog, chatInfo, setUpdate, update} : DialogProps) 
             .then(() => {
                 if (setUpdate)
                     setUpdate(!update);
+                if (setChat && chatInfo)
+                    setChat(chatInfo.chatId, chatInfo.chatImage,
+                        chatInfo.chatName, chatInfo.chatType, null);
             })
             .catch((error) => {
                 console.log(error);
@@ -793,10 +852,10 @@ const RemoveMember = ({closeDialog, chatInfo, setUpdate, update} : DialogProps) 
 }
 
 const MuteMember = ({closeDialog, role, chatInfo, userId, setChat} : DialogProps) => {
-    const [muteValue, setMuteValue] = useState('45 min');
+    const [muteValue, setMuteValue] = useState('Unmute');
     const MuteTime = role === 'admin' ?
-                ['45 min', '1 Hour', '4 Hour', '8 Hour']
-            : ['45 min', '1 Hour', '4 Hour', '8 Hour', 'Forever'];
+                ['Unmute', '45 min', '1 Hour', '4 Hour', '8 Hour']
+            : ['Unmute', '45 min', '1 Hour', '4 Hour', '8 Hour', 'Forever'];
 
     const onClickYes = () => {
         let mute : string = 'NAN';
@@ -820,6 +879,10 @@ const MuteMember = ({closeDialog, role, chatInfo, userId, setChat} : DialogProps
 
             case 'Forever':
                 mute = 'FOREVER';
+                break;
+            
+            case 'Unmute':
+                mute = 'NAN';
                 break;
         
             default:
@@ -1108,7 +1171,9 @@ const DeleteGroup = ({closeDialog, chatInfo, setChat, closeGroupSetting} : Dialo
 }
 
 const BlockUser = ({closeDialog, chatInfo, setMsgSend,
-                    msgSend, setChat} : DialogProps) => {
+                    msgSend, setChat, leaveRoom} : DialogProps) => {
+
+    const me = useContext(userMe);
 
     const handleOnClick = () => {
         if (!chatInfo)
@@ -1121,7 +1186,6 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend,
                     setMsgSend(!msgSend);
                 if (closeDialog)
                     closeDialog();
-                console.log('response.status: ', response.status, 'setChat: ', setChat)
                 if (response.status === 200 && setChat)
                 {
                     console.log('here')
@@ -1150,7 +1214,16 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend,
     );
 }
 
-const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => {
+const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend, setChat} : DialogProps) => {
+
+    const {socket} = useContext<any | undefined>(SocketContext);
+
+    const joinRoom = (channelId: string) =>{
+        if (socket) {
+            socket.emit('joinRoom', channelId);
+            console.log("join");
+        }
+    }
 
     const handleOnClick = () => {
         if (chatInfo === undefined
@@ -1160,6 +1233,27 @@ const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => 
             {FriendId: chatInfo.chatUserId},
             {withCredentials: true})
             .then((response) => {
+                // create channel
+                Axios.post(`http://localhost:3000/chat/join-friend`,
+                { receiverId: chatInfo.chatUserId },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                })
+                .then((response) => {
+                    if (setChat )
+                        setChat(response.data.channelID, chatInfo.chatImage, chatInfo.chatName,
+                                'PERSONEL', chatInfo.chatUserId);
+                    joinRoom(response.data.channelID);
+                    if (closeDialog)
+                        closeDialog();
+                })
+                .catch((error) => {
+                    console.log(error);
+                }
+            );
                 if (setMsgSend)
                     setMsgSend(!msgSend);
                 if (closeDialog)
@@ -1183,12 +1277,92 @@ const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend} : DialogProps) => 
     )
 }
 
+const JoinGroup = ({chatInfo, closeDialog, setChat} : DialogProps) => {
+    const [nameWarn, setNameWarn] = useState(false);
+    const [privateKey, setPrivateKey] = useState('');
+    const {socket} = useContext<any | undefined>(SocketContext);
+
+    const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setPrivateKey(value);
+        console.log('privateKey: ', privateKey);
+        setNameWarn(false);
+    }
+
+    const joinRoom = () =>{
+        if (socket)
+            socket.emit('joinRoom', chatInfo?.chatId);
+    }
+
+    const handleJoin = () => {
+        if (chatInfo === undefined)
+            return;
+        if (privateKey === '')
+            setNameWarn(true);
+        else 
+        {
+            Axios.post("http://localhost:3000/chat/join-group",
+            {
+                channelId:  chatInfo.chatId,
+                password:   privateKey,
+            },
+            {withCredentials: true})
+            .then((response) => {
+                if (response.data.is_password_true === false ||
+                    response.data === "")
+                {
+                    setNameWarn(true);
+                    return;
+                }
+                else
+                {
+                    if (setChat)
+                        setChat(response.data.id, response.data.image,
+                                response.data.name, response.data.type, null);
+                    joinRoom();
+                }
+                if (closeDialog)
+                    closeDialog();
+            })
+            .catch((error) => {
+                console.log(error);
+                if (closeDialog)
+                    closeDialog();
+            })
+        }
+    }
+
+    return (
+        <div className='dialog-label' key="group-name" >
+            <div className='create-group-name-warn'>
+                <p className='dialog-MPLUS-font'>private key</p>
+                {nameWarn?  <p className='create-group-warn-name'>
+                                incorrect private key
+                            </p>
+                        : ''
+                }
+            </div>
+            <input  className='dialog-input'
+                    name='password'
+                    // value={name}
+                    type='password'
+                    onChange={handleOnChange}
+                    autoComplete='off'
+                    placeholder="Insert the private key" />
+            <div className='dialog-invite' key="invitation-process">
+                <button className='send-btn' type='submit' onClick={handleJoin} >Join</button>
+            </div>
+        </div>
+    )
+}
+
 type DialogProps =
 {
     title?:             string;
     closeDialog?:       () => void;
     setChat?:           (chatId: string, chatImage: string,
-                            chatName: string, chatType: string, userId: number | null) => void,
+                            chatName: string, chatType: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null) => void,
     chatInfo?:          chatInfoType,
     msgSend?:           boolean,
     setMsgSend?:        (msgSend: boolean) => void,
@@ -1201,27 +1375,37 @@ type DialogProps =
     closeGroupSetting?: () => void,
     setUpdateChatInfo?: (update: boolean) => void,
     joinRoom?:          (channelId: string) => void,
+    setUpdateGroup?:    (update: boolean) =>void,
+    updateGroup?:       boolean,
+    leaveRoom?:         () => void,
+    role?:              string,
+    userId?:            number,
 }
 
 export function Dialog({title, closeDialog, setChat,
                         chatInfo, msgSend, setMsgSend,
                         setUpdate, update, membersData,
                         membersWarn, setMembersWarn, setUpdatedAdmins,
-                        closeGroupSetting, setUpdateChatInfo, joinRoom} : DialogProps)
+                        closeGroupSetting, setUpdateChatInfo, joinRoom,
+                        setUpdateGroup, updateGroup, leaveRoom, role,
+                        userId} : DialogProps)
 {
     let ItemComponent :React.ComponentType = () => <p>Invalid Choose</p>;
 
     switch(title)
     {
         case 'New Chat':
-            ItemComponent = () => <NewChat setChat={setChat} closeDialog={closeDialog} />;
+            ItemComponent = () => <NewChat  setChat={setChat}
+                                            closeDialog={closeDialog}
+                                            joinRoom={joinRoom}/>;
             break;
         
         case 'Create Group':
             ItemComponent = () =>  <CreateGroup setChat={setChat}
                                                 closeDialog={closeDialog}
                                                 setUpdateGroup={setUpdateGroup}
-                                                updateGroup={updateGroup}/>;
+                                                updateGroup={updateGroup}
+                                                joinRoom={joinRoom}/>
             break;
 
         case 'add member':
@@ -1248,9 +1432,10 @@ export function Dialog({title, closeDialog, setChat,
         
         case 'Remove Member':
             ItemComponent = () => <RemoveMember chatInfo={chatInfo}
+                                                setChat={setChat}
                                                 closeDialog={closeDialog}
                                                 setUpdate={setUpdate}
-                                                update={update} />;
+                                                update={update}/>;
             break;
         
         case 'Mute Member':
@@ -1283,7 +1468,8 @@ export function Dialog({title, closeDialog, setChat,
                                                 setMsgSend={setMsgSend}
                                                 msgSend={msgSend}
                                                 setUpdateChatInfo={setUpdateChatInfo}
-                                                setChat={setChat}/>
+                                                setChat={setChat}
+                                                leaveRoom={leaveRoom}/>
             break;
 
         case 'Delete Group':

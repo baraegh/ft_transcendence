@@ -114,7 +114,6 @@ export class ChatController {
   @HttpCode(HttpStatus.OK)
   @Post('send-msg')
   async SendMsg(@Req() req: Request, @Body() body: MSGDTO) {
-    console.log("send-msg");
     const senderId = req.user['id'];
     const channelId = body.channelID;
     const content = body.content;

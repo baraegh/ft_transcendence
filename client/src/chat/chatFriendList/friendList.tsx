@@ -10,6 +10,7 @@ import { Popover } from "@radix-ui/react-popover";
 import PopoverComp from "../tools/popover";
 import defaultGroupImage from '../../assets/group.png';
 import { format } from "../chatHistory/chatHistoryList";
+import { SocketContext } from "../../socket/socketContext";
 
 export type friendDataType = {
     blocked:            boolean,
@@ -102,42 +103,14 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
         image: '',
     });
     const [isJoinOpen, setIsJoinOpen] = useState(false);
-    
-        console.log('chatInfo');
-    // const me = useContext(userMe);
+    const {socket} = useContext<any | undefined>(SocketContext);
 
-    // useEffect(() => {
-        // if (setChat)
-        //     setChat(chatInfo.chatId, chatInfo.chatImage,
-        //             chatInfo.chatName, chatInfo.chatType, id);
-    // }, []);
-
-    const closeDialog = () => {
-        // setIsRemoveDialogOpen(false);
-        // setIsMuteDialogOpen(false);
+    const joinRoom = (channelId: string) =>{
+        if (socket) {
+            socket.emit('joinRoom', channelId);
+            console.log("join");
+        }
     }
-
-    // const handleMessage = () => {
-    //     Axios.post(`http://localhost:3000/chat/join-friend`,
-    //             { receiverId: id },
-    //             {
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 withCredentials: true,
-    //             })
-    //         .then((response) => {
-    //             if (setChat )
-    //                 setChat(response.data.id, img, username,
-    //                         'PERSONEL', id);
-    //             if (closeDialog)
-    //                 closeDialog();
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         }
-    //         );
-    // }
 
     const handleJoinGroup = () => {
         setIsJoinOpen(true);
@@ -149,18 +122,16 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
                     password:   '',
                 },
                 {withCredentials: true})
-            .then(() => {
-                // sendingroup(msg);
-                // setUpdateChatInfo(!updateChatInfo);
-                // setMsg('');
+            .then((response) => {
+                console.log('response: ', response);
+                if (setChat)
+                    setChat(group.id, group.image, 
+                            group.name, group.type, null);
+                joinRoom(group.id);
             })
             .catch((error) => {
                 console.log(error);
             });
-            if (setChat)
-                setChat(group.id,
-                        group.image? group.image: defaultGroupImage,
-                        group.name, group.type, null);
         }
     }
 
@@ -177,7 +148,7 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
                         setChat={setChat}
                         chatInfo={{chatId: group.id, chatName: group.name,
                                     chatImage: group.image, chatType: group.type,
-                                    chatUserId: null, blocked: false, whoblock: null}}/>
+                                    chatUserId: null, blocked: false, whoblock: null, mute: 'NAN'}}/>
             }
         </div>
     );
