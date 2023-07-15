@@ -236,12 +236,12 @@ function MyHeader(): JSX.Element {
   return (
     <div>
       <header>
-      <Notification buttonText=" "  showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
-        <h3 onClick={() => {{
-                            navigate('/home');
-                            document.location.reload();
-                            }}} className="logo">
-          KIR
+        <Notification buttonText=""  showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
+        <h3 onClick={() =>{{
+          navigate('/home');
+          document.location.reload();
+        }}} className="logo">
+          Keep It Random !
         </h3>
         <div className="vertical-line"></div>
         <div className="header_buttons">
@@ -278,8 +278,8 @@ function MyHeader(): JSX.Element {
         <div className="profileImg">
           {userData && (
             <Dropdown
-              show={profileDropdownOpen}
-              onToggle={toggleProfileDropdown}
+            show={profileDropdownOpen}
+            onToggle={toggleProfileDropdown}
             >
               <Dropdown.Toggle variant="light">
                 <img src={userData.image} alt="" />

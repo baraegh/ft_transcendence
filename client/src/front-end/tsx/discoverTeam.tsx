@@ -51,7 +51,7 @@ function getActualWindowDientions() {
     //   // check();
     // }, []);
     return (
-      <div>
+      <div className='dstDiv'>
        <header className='header'>
           <h3 className="logo">Keep It Random !</h3>
           <div  className="discoverTeam">
