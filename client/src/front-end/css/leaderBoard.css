@@ -147,3 +147,13 @@
     left: 40px;
     bottom: 20px;
 }
+
+#oops_currentGame
+{
+    position: relative;
+    top: 25%;
+    margin: auto;
+    display: flex;
+    font-size: 90px;
+    text-align: center;
+}

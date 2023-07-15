@@ -29,27 +29,13 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
         console.log(img);
       }
     )
-    // if (socket) {
-    //   {
-    //     console.log(socket);
-    // console.log( + " << \n");
-    //   }
-    //   }
+
     }
   }, [data]);
 
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
-  // const [data, setData]  = useState({
-  //   player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
-  // });
   const challenge = () => {
 
-  // if (socket) {
-  //   console.log("wwwwwaaaaaaa")
-  //   socket.emit('connect01');
-  // }
-    // console.log(storedSocket);
-    // console.log(userId);
     type modeType = {
       pColor: string;
       bColor: string;
@@ -75,22 +61,6 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
       
     }
   };
- 
-
-
-
-  // useEffect(() => {
-  //   console.log("EEEEEEEEEEEEEE");
-  //   if (showNotification) {
-  //     const timer = setTimeout(() => {
-  //       // setShowNotification(false);
-  //     }, 30000);
-
-  //     return () => {
-  //       clearTimeout(timer);
-  //     };
-  //   }
-  // }, [showNotification]);
 
 
   return (
@@ -101,9 +71,7 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
             <span className="message">
               {name} has sent you a friend request
             </span>
-            {/* <button className="close-button" onClick={closeNotification}>
-              X
-            </button> */}
+
             <img id="profileImgNotif" src={img} alt="" />
           </div>
           <div className='notifButons'>

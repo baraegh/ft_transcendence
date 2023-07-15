@@ -25,6 +25,7 @@ export {userMe}
 import OtherProfileUser from './front-end/tsx/otherProfileUser';
 import Stream from './front-end/tsx/stream';
 import LoadingPage from './front-end/tsx/loadingPage';
+import AlreadyInGame from './front-end/tsx/alreadyInGame';
 
 //  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
@@ -121,6 +122,10 @@ function App() {
           <Route
             path="/loadingPage"
             element={isLoggedIn ? <LoadingPage /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/alreadyInGame"
+            element={isLoggedIn ? <AlreadyInGame /> : <Navigate to="/loginPage" replace />}
           />
           <Route
             path="/user/:userId"

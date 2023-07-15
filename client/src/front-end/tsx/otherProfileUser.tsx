@@ -33,7 +33,7 @@ interface Friends extends Array<{
   isFriend: boolean;
   requestAccepted: boolean;
   friend: friend;
-}> {}
+}> { }
 
 interface Match {
   matchId: string;
@@ -214,23 +214,19 @@ function OtherProfileUser(): JSX.Element {
   }, []);
 
 
-
-  function sendFriendRequest() {
-    axios.post(`http://localhost:3000/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true });
-    console.log("Friend Request Sent");
-  }
-
-  useEffect(() => {
-    axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
-      .then(res => {
-        const userData = res.data;
-        setOtherUser(userData);
+  const sendFriendRequest = () => {
+    axios.post(`http://localhost:3000/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true })
+      .then(() => {
+        console.log("Friend Request Sent");
+        setOtherUser(prevUser => ({
+          ...prevUser,
+          isRequested: true
+        }));
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
-  }, []);
-
+  }
   function blockFriend() {
     axios.patch(`http://localhost:3000/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
@@ -269,15 +265,15 @@ function OtherProfileUser(): JSX.Element {
           setBlock(true);
         }
         else
-            setBlock(false);
+          setBlock(false);
       })
       .catch(error => {
         console.log(error);
       });
   }, [userId]);
-  
+
   useEffect(() => {
-    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => {setMatchHistory(res.data)});
+    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => { setMatchHistory(res.data) });
     console.log("Passed");
     console.log(matchHistory);
 
@@ -287,8 +283,8 @@ function OtherProfileUser(): JSX.Element {
       <MyHeader />
       {block ? (
         <div className='oops'>
-        <p>Oops, it sounds like this user has blocked you.</p>
-        <a href='' onClick={() => (navigate('/home'))}>Go Back Home</a>
+          <p>Oops, it sounds like this user has blocked you.</p>
+          <a href='' onClick={() => (navigate('/home'))}>Go Back Home</a>
         </div>
       ) : (
         <div className='profileAndFriends'>
@@ -316,7 +312,10 @@ function OtherProfileUser(): JSX.Element {
               <div className='fourButtons'>
                 {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
                 {otherUser.isFriend && !otherUser.blocked && <a className="message2" href="#"><span>Message</span></a>}
-                {!otherUser.isFriend && !otherUser.blocked && < a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>}
+                {!otherUser.isFriend && !otherUser.blocked && !otherUser.isRequested && (
+                  <a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>
+                )}
+                {otherUser.isRequested && <a className="invite2" href="#"><span> Request Sent !</span></a>}
                 {!otherUser.blocked && !otherUser.blocked && (
                   <a onClick={blockFriend} className="block2" href="#">
                     <span>Block</span>

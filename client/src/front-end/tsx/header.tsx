@@ -2,7 +2,7 @@ import Bell from '../img/bell.png';
 import '../css/header.css';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Notification from './notification'
 import "../css/home.css";
@@ -27,7 +27,7 @@ interface Notification {
 }
 
 function MyHeader(): JSX.Element {
-  
+  const location = useLocation();
   const { socket } = useContext<any | undefined>(SocketContext);
   type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
   const [notificationData, setNotificationData] = useState<Notification[]>([]);
@@ -42,6 +42,7 @@ function MyHeader(): JSX.Element {
   const [data, setData]  = useState({
     player1Id: "", player2Id: "", mode: {pColor: "WHITE", bColor: "GRAY", fColor: "BLACK", bMode: ""},
   });
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -129,8 +130,7 @@ function MyHeader(): JSX.Element {
   };
 
   const fetchData = () => {
-    axios.get('http://localhost:3000/game/isplaying', {withCredentials: true})
-    .then((res) => {res.data === false ? navigate('/leaderBoard') : console.log("EEEEEEEEE FALSE")})
+    
     axios
       .get('http://localhost:3000/user/me', { withCredentials: true })
       .then((response) => {
@@ -165,6 +165,7 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     fetchData();
   }, []);
+
   
   const SlideInModal = ({ onClose }) => {
     useEffect(() => {
@@ -175,6 +176,8 @@ function MyHeader(): JSX.Element {
       return () => clearTimeout(timer);
     }, [onClose]);
   
+
+
     return (
       <div className="slide-in-modal">
         <div className="content">
@@ -207,6 +210,9 @@ function MyHeader(): JSX.Element {
             document.location.reload();
           });
         document.location.reload();
+
+      }
+        
         const pollNotifications = () => {
           axios
             .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
@@ -220,19 +226,20 @@ function MyHeader(): JSX.Element {
             });
           setTimeout(pollNotifications, 1000); // Poll every 5 seconds (adjust the interval as needed)
         };
-      
-        useEffect(() => {
-         
-        }, []);
 
-        
 
         // useEffect(() => {
-
+        //   axios.get('http://localhost:3000/game/isplaying', {withCredentials : true}).then((res) => {console.log(res.data + " <<")})
+        
         // }, []);
-    // axios.get('')
-  }
+        useEffect(() => {
+          axios.get('http://localhost:3000/game/isplaying', {withCredentials: true})
+          .then((res) => { setIsPlaying(res.data);});
+          if(isPlaying && location.pathname !== '/gamePlay')
+            navigate('/alreadyInGame');
 
+        }, [isPlaying]);
+        console.log(isPlaying + " << ");
   return (
     <div>
       <header>
