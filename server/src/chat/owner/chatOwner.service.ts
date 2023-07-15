@@ -74,11 +74,8 @@ export class ChatOwnerService {
     });
     if (!findChannel) throw new NotFoundException('channel not found');
 
-    if (findChannel.chanelID['role'] && findChannel.ownerId === userId)
+    if (findChannel.chanelID['role'] == 'USER' && findChannel.ownerId !== userId)
       throw new ForbiddenException('Access Denied');
-    if (findChannel.ownerId != userId || findChannel.chanelID['role']) {
-      throw new ForbiddenException('Access Denied');
-    }
     const participantUniqueInput: Prisma.ParticipantsWhereUniqueInput = {
       channelID_userID: {
         channelID: dto.channelid,
@@ -100,7 +97,7 @@ export class ChatOwnerService {
       where: { id: dto.channelid },
     });
 
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
     }
@@ -272,11 +269,11 @@ export class ChatOwnerService {
     if (dto.image !== null) {
       updateChannelData.image = dto.image;
     }
-    if (dto.hash !== null) {
+    if (dto.hash !== '') {
       updateChannelData.hash = dto.hash;
     }
-    if (dto.name !== null) {
-      updateChannelData.hash = dto.name;
+    if (dto.name !== '') {
+      updateChannelData.name = dto.name;
     }
     
     const updatechannel = await this.prisma.channel.update({

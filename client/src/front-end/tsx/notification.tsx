@@ -14,8 +14,7 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
     // Use the socket instance here
     if (socket) {
       {
-        console.log("CREATED >> ");
-      console.log(socket);
+        console.log(socket);
       }
     }
   }, [socket]);

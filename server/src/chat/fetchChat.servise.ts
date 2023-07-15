@@ -34,13 +34,13 @@ export class FetchChatService {
       where: { id: dto.channelId },
     });
     if (!findChannel) {
-      throw new NotFoundException('channel not found');
+      return;
     }
     let findinparticepents = await this.prisma.participants.findFirst({
       where: { channelID: dto.channelId, userID: userid },
     });
     if (!findinparticepents) {
-      throw new NotFoundException('not found in Participants');
+      return
     }
 
     const currentDate = new Date();
@@ -73,7 +73,7 @@ export class FetchChatService {
     if (findinparticepents.mut != 'NAN')
       throw new ForbiddenException('you are muted from this channel');
     if (findinparticepents.blocked === true)
-      throw new ForbiddenException('you are blocked');
+       return;
       const messages = await this.prisma.messages.findMany({
         where: {
           channelID: dto.channelId,
@@ -407,13 +407,15 @@ export class FetchChatService {
       },
     });
     if (!owner) {
-      throw new NotFoundException('channel not found');
+      return;
     }
-    const findinparticepents = await this.prisma.participants.findFirst({
+    let findinparticepents = await this.prisma.participants.findFirst({
       where: { channelID: channelId, userID },
     });
     if (!findinparticepents) {
-      throw new NotFoundException('not found in Participants');
+       findinparticepents = await this.prisma.participants.findFirst({
+        where: { channelID: channelId},
+      });
     }
     const participants = await this.prisma.participants.findMany({
       where: { channelID: channelId },
@@ -470,7 +472,7 @@ export class FetchChatService {
       },
     });
     if (!owner) {
-      throw new NotFoundException('channel not found');
+      return;
     }
     if(owner.channel.ownerId === userID)
       return "owner"
@@ -495,7 +497,7 @@ export class FetchChatService {
       },
     });
     if (!owner) {
-      throw new NotFoundException('channel not found');
+      return;
     }
    return owner
   }

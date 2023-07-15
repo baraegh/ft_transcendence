@@ -4,24 +4,26 @@
 
 => the end-point ../unblock not working
 
+=> fix unblock and block - when unblock someone
+    it shouldn't remove the channel or the friendship unless
+    they didn't have a friendship relation or a channel
 
-
------------------------ ME ------------------------
-=> handle: if the group privacy is 'public' the 'hash' should be ''
-
-=> hash of group
-
-=> test if the private group is work`
-
-=> unblock
-
-=> in the group area if a click on 'message' it doesn't set with who I message
-
-=> private key appears in the {value} of the input
+=> edit group doesn't modify the database
 
 => mute member
 
-=> check von work
+=> add 'blocked' in user info
 
-=> format the date - time
-=> check clear chat
+
+
+----------------------- ME ------------------------
+
+=> join group
+
+=> mute member
+
+=> handle delete when the chat is already deleted
+
+=> fix channel image while messaging using sockets
+
+=> fix unblock
