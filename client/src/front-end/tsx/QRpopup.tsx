@@ -78,6 +78,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
         </div>
         {/* Add your custom content here */}
         <form onSubmit={submitQR}>
+
           <input onChange={(e) => setQRvalue(e.target.value)} value={QRvalue} id="QRinput" type="text" placeholder="Your Code" />
           <br />
           <center>

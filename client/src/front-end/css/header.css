@@ -1,29 +1,11 @@
 header {
-
-    /* left: 0; */
-    /* width: 1058px;
-    height: 48px;
-    display: flex;
-    padding: 5px 50px;
-    border: 2px solid black;
-    border-radius: 20px;
-    box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-    margin-top : 10px; */
-    /* position: fixed; */
-    /* margin: auto; */
-    /* top: 0; */
-    /* transform: translateX(-50%); */
-    /* display: flex; */
-
     width: 100%;
     height: 50px;
     display: flex;
     justify-content: space-between;
-
     border: 2px solid black;
     border-radius: 20px;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
-
     margin: 5px 0;
     padding: 0 10px;
   }
@@ -32,13 +14,9 @@ header {
 {
   display: flex;
   justify-content: space-between;
-  /* align-items: center; */
 }
 
 header h3{
-    /* position: relative; */
-    /* text-align: center;
-    right: 20px;  */
   padding: 5px 10px;
   margin: 0;
   font-family: 'Mouse Memoirs', sans-serif;
@@ -52,14 +30,26 @@ header h3{
 }
 
 .bellImg {
+  
   /* position: absolute; */
-  /* width: 27px;
-  height: 27px; */
+  /* /* width: 27px; */
+  /* height: 27px; */ */
   /* left: 500px; */
   background-color: white;
   margin-right: 5px;
   /* top: 5px; */
   /* z-index: 999; */
+}
+
+.imgBell
+{
+  display: flex;
+}
+
+.bellImg img
+{
+  width: 30px;
+  height: 30px;
 }
 
 

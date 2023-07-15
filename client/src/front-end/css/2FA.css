@@ -1,5 +1,8 @@
 .mainDiv
 {
+    font-family: 'Mouse Memoirs';
+
+    font-family: '';
     display: flex;
     width: 1047px;
     height: 261px;

@@ -57,19 +57,21 @@ export class OtherProfileService {
       },
     });
     const matchHistoryDTOs = matchHistory.map((match) => {
+      
       let otherUser: SELECTE_DATA_OF_OTHER_PLAYER;
       let win: boolean;
       if (match.user1Id === userId) {
         otherUser = match.user2;
+        if (match.user1P >= match.user2P) win = true;
+        else win = false;
       } else {
         otherUser = match.user1;
-        const temp = match.user1P;
-        match.user1P = match.user2P;
-        match.user2P = temp;
-        console.log( match.user1P,match.user2P);
+        if (match.user2P >= match.user1P) 
+        {
+          win = true;
+        }
+        else win = false;
       }
-      if (match.user1P >= match.user2P) win = true;
-      else win = false;
       return {
         matchId: match.id,
         otherUser,
@@ -78,7 +80,6 @@ export class OtherProfileService {
         user2P: match.user2P,
       };
     });
-
     return matchHistoryDTOs;
   }
 

@@ -278,6 +278,14 @@ function OtherProfileUser(): JSX.Element {
     console.log(matchHistory);
 
   }, []);
+  function handleSendMessage() {
+    axios.post('http://localhost:3000/chat/join-friend', {receiverId: Number(userId)}, {withCredentials: true})
+    .then(
+      (res) => {res.status === 200 ? navigate('/chat') : ""}
+);
+
+  }
+
   return (
     <div>
       <MyHeader />
@@ -311,7 +319,9 @@ function OtherProfileUser(): JSX.Element {
               </div>
               <div className='fourButtons'>
                 {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
-                {otherUser.isFriend && !otherUser.blocked && <a className="message2" href="#"><span>Message</span></a>}
+                {otherUser.isFriend && !otherUser.blocked && <a onClick={
+                  () => {handleSendMessage()}
+                } className="message2" href="#"><span>Message</span></a>}
                 {!otherUser.isFriend && !otherUser.blocked && !otherUser.isRequested && (
                   <a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>
                 )}

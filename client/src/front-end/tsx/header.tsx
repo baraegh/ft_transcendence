@@ -259,9 +259,11 @@ function MyHeader(): JSX.Element {
             <span>Chat</span>
           </a>
         </div>
+        <div className="imgBell">
         <div className="bell">
           <Dropdown show={bellDropdownOpen} onToggle={toggleBellDropdown}>
             <Dropdown.Toggle className="bellImg" variant="light">
+              <img src={Bell} alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu className="dropDownMenu">
               {notificationData && 
@@ -301,6 +303,7 @@ function MyHeader(): JSX.Element {
               </Dropdown.Menu>
             </Dropdown>
           )}
+          </div>
         </div>
       </header>
     </div>

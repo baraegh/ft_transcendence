@@ -11,6 +11,7 @@ import PopoverComp from "../tools/popover";
 import defaultGroupImage from '../../assets/group.png';
 import { format } from "../chatHistory/chatHistoryList";
 import { SocketContext } from "../../socket/socketContext";
+import { useNavigate } from "react-router-dom";
 
 export type friendDataType = {
     blocked:            boolean,
@@ -24,14 +25,16 @@ export type friendDataType = {
     }
 }
 
+
 type FriendCardProps = {
     friend: friendDataType,
 }
 
 export const FriendCard = ({friend} : FriendCardProps) => {
+    const navigate = useNavigate();
 
     return (
-            <div className="friend-card">
+            <div onClick={() => {navigate(`/user/${friend.friend.id}`)}} className="friend-card">
                 <img    src={friend.friend.image? friend.friend.image: userImage}
                         alt={friend.friend.username + " profile's image"}/>
                 <p>{friend.friend.username}</p>
@@ -52,9 +55,10 @@ type GroupCardProps= {
 }
 
 export const GroupCard = ({group, flag} : GroupCardProps) => {
+    const navigate = useNavigate();
 
     return (
-            <div className="friend-card">
+            <div  className="friend-card">
                 <img    src={group.image? group.image: groupImage} 
                         alt={group.name + " profile's image"}/>
                 <p>{flag? format(group.name, 3): format(group.name, 10)}</p>
@@ -74,9 +78,9 @@ type UserCardProps = {
 }
 
 export const UserCard = ({user} : UserCardProps) => {
-
+    const navigate = useNavigate();
     return (
-            <div className="friend-card">
+            <div onClick={() => {navigate(`/user/${user.id}`)}} className="friend-card">
                 <img    src={user.image? user.image: userImage}
                         alt={user.username + " profile's image"}/>
                 <p>{user.username}</p>
