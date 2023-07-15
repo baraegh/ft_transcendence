@@ -146,14 +146,7 @@ function MyProfileUser(): JSX.Element {
       });
   };
 
-  const pollUserData = () => {
-    fetchData(); // Fetch the latest userData from the server
-    setTimeout(pollUserData, 10000); // Poll every 5 seconds (adjust the interval as needed)
-  };
 
-  useEffect(() => {
-    pollUserData();
-  }, []);
 
   const friends: Friend[] = Array.from({ length: 30 }, (_, index) => ({
     id: index + 1,
@@ -178,7 +171,14 @@ function MyProfileUser(): JSX.Element {
         console.log(error);
       });
   }, []);
+  const pollUserData = () => {
+    fetchData(); // Fetch the latest userData from the server
+    setTimeout(pollUserData, 10000); // Poll every 5 seconds (adjust the interval as needed)
+  };
 
+  useEffect(() => {
+    pollUserData();
+  }, []);
 
   return (
     <div>
@@ -230,40 +230,7 @@ function MyProfileUser(): JSX.Element {
           </div>
         </div>
 
-        <div className="matches">
-          <h1>Matches</h1>
-          <div className="winLoseContainter">
-            <div className="winLoseLeft">
-              {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
-                <div className="winLose" key={match?.matchId}>
-                  <img src={match.otherUser.image} alt="" />
-                  <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-                  <p>{match.user1P} - {match.user2P}</p>
-                </div>
-              ))}
-            </div>
-            <div className="winLoseLine"></div>
-            <div className="winLoseRight">
-              {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
-                <div className="winLose" key={match.matchId}>
-                  <img src={match.otherUser.image} alt="" />
-                  <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-                  <p>{match.user1P} - {match.user2P}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="nextBackButtons">
-            <button onClick={handlePrevClick}>
-              <img id="backButton" src={backButton} alt="" />
-              back
-            </button>
-            <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
-            <button onClick={handleNextClick}>
-              Next
-              <img id="nextButton" src={nextButton} alt="" />
-            </button>
-          </div>
+
         </div>
       </div>
     </div>

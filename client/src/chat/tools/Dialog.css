@@ -141,6 +141,10 @@
   font-size: 15px;
   letter-spacing: 0.1em;
   cursor: pointer;
+  position: relative;
+  left: 30px;
+  text-indent: -67px;
+
 }
 
 

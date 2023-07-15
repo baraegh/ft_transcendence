@@ -274,12 +274,7 @@ function OtherProfileUser(): JSX.Element {
       });
   }, [userId]);
 
-  useEffect(() => {
-    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => { setMatchHistory(res.data) });
-    console.log("Passed");
-    console.log(matchHistory);
 
-  }, []);
   function handleSendMessage() {
     axios.post('http://localhost:3000/chat/join-friend', {receiverId: Number(userId)}, {withCredentials: true})
     .then(
@@ -287,6 +282,17 @@ function OtherProfileUser(): JSX.Element {
 );
 
   }
+
+  const [matchHistoryData, setMatchHistoryData] = useState<Match[]>([]);
+  useEffect(() => {
+    axios.get(`http://localhost:3000/other-profile/match-history/${userId}`, { withCredentials: true })
+      .then((response) => {
+        setMatchHistoryData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <div>
@@ -363,28 +369,41 @@ function OtherProfileUser(): JSX.Element {
               {friendDataLength > 5 && <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
             </div>
           </div>
-          <div className='matches'>
-            <h1>Matches</h1>
-            <div className='winLoseContainter'>
-              <div className='winLoseLeft'>
-                {matchElements.slice(currentIndex, currentIndex + 4)}
-              </div>
-              <div className='winLoseLine'></div>
-              <div className='winLoseRight'>
-                {matchElements.slice(currentIndex + 4, currentIndex + 8)}
-              </div>
+          <div className="matches">
+          <h1>Matches</h1>
+          <div className="winLoseContainter">
+            <div className="winLoseLeft">
+              {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
+                <div className="winLose" key={match?.matchId}>
+                  <img src={match.otherUser.image} alt="" />
+                  <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                  <p>{match.user1P} - {match.user2P}</p>
+                </div>
+              ))}
             </div>
-            <div className="nextBackButtons">
-              <button onClick={handlePrevClick}>
-                <img id='backButton' src={backButton} alt="" />
-                back
-              </button>
-              <p>{currentIndex} - {currentIndex + 8} of {matchElements.length}</p>
-              <button onClick={handleNextClick}>Next
-                <img id='nextButton' src={nextButton} alt="" />
-              </button>
+            <div className="winLoseLine"></div>
+            <div className="winLoseRight">
+              {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
+                <div className="winLose" key={match.matchId}>
+                  <img src={match.otherUser.image} alt="" />
+                  <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                  <p>{match.user1P} - {match.user2P}</p>
+                </div>
+              ))}
             </div>
           </div>
+          <div className="nextBackButtons">
+            <button onClick={handlePrevClick}>
+              <img id="backButton" src={backButton} alt="" />
+              back
+            </button>
+            <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
+            <button onClick={handleNextClick}>
+              Next
+              <img id="nextButton" src={nextButton} alt="" />
+            </button>
+          </div>
+        </div>
         </div>
       )}
     </div>
