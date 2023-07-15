@@ -11,7 +11,9 @@ import backButton from '../img/back.png';
 import Maps from './maps';
 import Notification from './notification';
 import { SocketContext } from '../../socket/socketContext';
-
+import bronze from '../img/bronze.png'
+import silver from '../img/silver.png'
+import gold from '../img/gold.png'
 interface User {
   id: number;
   username: string;
@@ -313,9 +315,9 @@ function OtherProfileUser(): JSX.Element {
             <div className='achievement'>
               <p>Achievement</p>
               <div className='achievementIcons'>
-                <img src={ach} alt="" />
-                <img src={ach} alt="" />
-                <img src={ach} alt="" />
+                <img src={bronze} alt="" />
+                <img src={silver} alt="" />
+                <img src={gold} alt="" />
               </div>
               <div className='fourButtons'>
                 {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}

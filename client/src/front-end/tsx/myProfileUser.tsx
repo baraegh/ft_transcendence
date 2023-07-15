@@ -10,6 +10,9 @@ import axios from 'axios';
 import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
 import { Navigate, useNavigate } from 'react-router-dom';
+import bronze from '../img/bronze.png'
+import silver from '../img/silver.png'
+import gold from '../img/gold.png'
 
 interface User {
   id: number;
@@ -27,12 +30,12 @@ interface Friend {
 }
 
 interface Friends extends Array<{
-    blocked: boolean;
-    isRequested: boolean;
-    isFriend: boolean;
-    requestAccepted: boolean;
-    friend: Friend;
-  }> {}
+  blocked: boolean;
+  isRequested: boolean;
+  isFriend: boolean;
+  requestAccepted: boolean;
+  friend: Friend;
+}> { }
 
 interface Match {
   matchId: string;
@@ -111,7 +114,7 @@ function MyProfileUser(): JSX.Element {
     const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
     const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
 
-    
+
     Promise.all([fetchUserData, fetchAdditionalData])
       .then((responses) => {
         const userDataResponse = responses[0];
@@ -132,8 +135,8 @@ function MyProfileUser(): JSX.Element {
 
           setUserData(fetchedUser);
           setFriendData(friendData);
-        //   console.log(friendData[0].friend);
-        //   console.log(friendData[1].friend);
+          //   console.log(friendData[0].friend);
+          //   console.log(friendData[1].friend);
         } else {
           throw new Error('Request failed');
         }
@@ -158,15 +161,23 @@ function MyProfileUser(): JSX.Element {
     image: me,
   }));
   useEffect(() => {
-    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => {setMatchHistory(res.data)});
-    console.log("Passed");
-    console.log(matchHistory);
+    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => { console.log(res.data) });
 
   }, []);
   // console.log(friendData);
 
   const friendDataLength = friendData ? friendData.length : 0;
   const navigate = useNavigate();
+  const [matchHistoryData, setMatchHistoryData] = useState<Match[]>([]);
+  useEffect(() => {
+    axios.get('http://localhost:3000/profile/match-history', { withCredentials: true })
+      .then((response) => {
+        setMatchHistoryData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
 
   return (
@@ -175,7 +186,7 @@ function MyProfileUser(): JSX.Element {
       <div className="profileAndFriends">
         <div className="profile">
           <QRpopup />
-          <h3 id="profileScore">score : 200</h3>
+          <h3 id="profileScore">score : {userData?.gameLost ? userData?.gameLost : 0}</h3>
           <div className="ProfilePictureUsername">
             <img id="profileImg" src={userData?.image} alt="" />
             <p id="profileUsername">{userData?.username}</p>
@@ -183,37 +194,39 @@ function MyProfileUser(): JSX.Element {
           </div>
           <div className="WinLoss">
             <div className="Win">
-              <p>Win: {userData?.gameWon || '33'}</p>
+              <p>Win: {userData?.gameWon || '0'}</p>
             </div>
             <div className="Loss">
-              <p>Loss: {userData?.gameLost || '11'}</p>
+              <p>Loss: {userData?.gameLost || '0'}</p>
             </div>
           </div>
           <div className="achievement">
             <p>Achievement</p>
             <div className="achievementIcons">
-              <img src={ach} alt="" />
-              <img src={ach} alt="" />
-              <img src={ach} alt="" />
+              <img src={bronze} alt="" />
+              <img src={silver} alt="" />
+              <img src={gold} alt="" />
             </div>
           </div>
         </div>
         <div className="friends">
           <h1>Friends</h1>
           <div className="friendslistScrollBar">
-                {!scrollFlag ? 
-                // console.log()
-                friendData && friendData.map((data: { friend: {
-                    id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; 
-}; }, index: React.Key | null | undefined) => (
-                    <div onClick={() => {navigate(`/user/${data.friend.id?.toString()}`)}} key={data.friend.id} className="friend">
-                      <img src={data.friend.image} alt="" />
-                      <p>{data.friend.username}</p>
-                    </div>
-                  )): ""}
-            
+            {!scrollFlag ?
+              // console.log()
+              friendData && friendData.map((data: {
+                friend: {
+                  id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined;
+                };
+              }, index: React.Key | null | undefined) => (
+                <div onClick={() => { navigate(`/user/${data.friend.id?.toString()}`) }} key={data.friend.id} className="friend">
+                  <img src={data.friend.image} alt="" />
+                  <p>{data.friend.username}</p>
+                </div>
+              )) : ""}
 
-            {  friendDataLength > 5 && <a onClick={switchScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
+
+            {friendDataLength > 5 && <a onClick={switchScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
           </div>
         </div>
 
@@ -221,11 +234,23 @@ function MyProfileUser(): JSX.Element {
           <h1>Matches</h1>
           <div className="winLoseContainter">
             <div className="winLoseLeft">
-              {matchElements.slice(currentIndex, currentIndex + 4)}
+              {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
+                <div className="winLose" key={match?.matchId}>
+                  <img src={match.otherUser.image} alt="" />
+                  <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                  <p>{match.user1P} - {match.user2P}</p>
+                </div>
+              ))}
             </div>
             <div className="winLoseLine"></div>
             <div className="winLoseRight">
-              {matchElements.slice(currentIndex + 4, currentIndex + 8)}
+              {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
+                <div className="winLose" key={match.matchId}>
+                  <img src={match.otherUser.image} alt="" />
+                  <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                  <p>{match.user1P} - {match.user2P}</p>
+                </div>
+              ))}
             </div>
           </div>
           <div className="nextBackButtons">
@@ -233,7 +258,7 @@ function MyProfileUser(): JSX.Element {
               <img id="backButton" src={backButton} alt="" />
               back
             </button>
-            <p>{currentIndex} - {currentIndex + 8} of {matchElements.length}</p>
+            <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
             <button onClick={handleNextClick}>
               Next
               <img id="nextButton" src={nextButton} alt="" />
