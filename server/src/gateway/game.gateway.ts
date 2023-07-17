@@ -1,6 +1,7 @@
 import { Logger, NotFoundException } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Match_History } from '@prisma/client';
+import { connect } from 'http2';
 import { Server, Socket } from 'socket.io';
 import { CREAT_GAME_DTO, EDIT_GAME_DTO, END_GAME_DTO } from 'src/game/game.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,6 +10,7 @@ type playerType = { x: number, y: number, width: number, height: number, color: 
 type modeType = { pColor: string, bColor: string, fColor: string, bMode: string };
 type Tstreaming = { roomName: string, client1Id: string, client2Id: string, player1Id: number, player2Id: number };
 type datatype = { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number };
+
 @WebSocketGateway()
 export class GameGateway implements OnGatewayDisconnect{
   constructor(private prisma: PrismaService) { }
@@ -62,12 +64,13 @@ export class GameGateway implements OnGatewayDisconnect{
 
   @SubscribeMessage('initGameToStart')
   handleGameInit(client: Socket, data: modeType) {
+    
     this.server.to(client.id).emit('initGame', data);
   }
   async handleDisconnect(client: Socket) {
     let winerid: number;
     let losserid: number;
-    if (this.games.get(this.getMatchID(client)) && this.games.get(this.getMatchID(client)) != undefined) {
+    if (this.games.get(this.getMatchID(client)) && this.games.get(this.getMatchID(client)) !== undefined && this.getMatchID(client) != null) {
       if (this.games.get(this.getMatchID(client)).player1Id == client.id) {
         const dto = {
           GameId: this.gameIds.get(this.getMatchID(client)),
@@ -117,26 +120,28 @@ export class GameGateway implements OnGatewayDisconnect{
     });
     if (game)
       return game;
-    return undefined;
+    return null;
   }
   getMatchID(client: Socket): number {
     let mKey: number = undefined;
     this.games.forEach((value, key) => {
-      if (value.player1Id == client.id || value.player2Id == client.id)
+      if (value.player1Id == client.id || value.player2Id == client.id){
         mKey = key;
+        return ;
+      }
       else
-        mKey = undefined;
+        mKey = null;
     });
     return mKey;
   }
   getRoom(roomID: number): string {
     if (this.streaming.get(roomID))
       return this.streaming.get(roomID).roomName;
-    return undefined;
+    return null;
   }
 
   @SubscribeMessage('clientToServer')
-  handleMessage(client: Socket, message: number): void {
+  handleMessage(client: Socket, message: { y: number; h: number }): void {
     let clientOb: { player1Id: string, player2Id: string, mode: modeType } = this.getClientId(client)
     if (clientOb) {
       let nb = message;
@@ -226,6 +231,7 @@ export class GameGateway implements OnGatewayDisconnect{
       return ball;
     }
     let clientOb: { player1Id: string, player2Id: string, mode: modeType } = this.getClientId(client)
+    
     if (clientOb) {
       message.ball = await ballMovement(message.ball, message.player1, message.player2, message.dim);
       if (message.player1.score == 5 || message.player2.score == 5) {
@@ -263,12 +269,14 @@ export class GameGateway implements OnGatewayDisconnect{
         if (this.gameId -1 == i)
           this.gameId--;
       }
-      else if (client.id == clientOb.player1Id) {
+      else {
+        if (client.id == clientOb.player1Id && this.streaming.get(this.getMatchID(client)) !== undefined) {
         this.server.to(clientOb.player1Id).emit('ballMove', message);
         this.logger.log(this.streaming.get(this.getMatchID(client)).roomName);
         this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);
         message.ball.x = message.dim.W - message.ball.x;
         this.server.to(clientOb.player2Id).emit('ballMove', message);
+        }
       }
     }
   }
