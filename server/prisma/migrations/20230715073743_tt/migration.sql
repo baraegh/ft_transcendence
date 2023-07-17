@@ -20,6 +20,7 @@ CREATE TABLE "users" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "achievements" TEXT[] DEFAULT ARRAY['1']::TEXT[],
     "isonline" BOOLEAN NOT NULL DEFAULT false,
+    "ingame" BOOLEAN NOT NULL DEFAULT false,
     "twoFactorAuthenticationSecret" TEXT,
     "isTwoFactorAuthenticationEnabled" BOOLEAN NOT NULL DEFAULT false,
 

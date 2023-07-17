@@ -143,15 +143,12 @@ export class GameService {
         ]
       }
     });
-    if(matchHistory.length == 1)
-    {
-      console.log("false");
-      return false;
-    }
-    else
+    if(matchHistory[0].user1Id == userId || matchHistory[0].user2Id == userId ||matchHistory[1].user1Id == userId || matchHistory[1].user2Id == userId )
+      return true;
+    else 
     {
       console.log("true"+matchHistory[0].user1Id);
-      return true;
+      return false;
     }
   }
 }

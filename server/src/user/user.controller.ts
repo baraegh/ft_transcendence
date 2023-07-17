@@ -96,4 +96,21 @@ export class UserController {
     });
     return  is_online0.isonline;
   }
+
+
+ 
+  @ApiResponse({
+    description: 'true or false',
+    type: Boolean,
+  })
+  @Get('isingame/:otheruserId')
+  async isingame(@Req() req: Request) {
+    const is_ingame = await this.prisma.user.findUnique({
+      where:{
+        id:req['id'],
+      }
+    });
+    return  is_ingame.ingame;
+  }
+
 }

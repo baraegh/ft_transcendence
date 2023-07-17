@@ -19,7 +19,8 @@ model User {
   createdAt                        DateTime @default(now())
   updatedAt                        DateTime @updatedAt
   achievements                     String[] @default(["1"])
-  isonline                         Boolean  @default(false)       
+  isonline                         Boolean  @default(false)
+  ingame                        Boolean  @default(false)   
   twoFactorAuthenticationSecret    String?
   isTwoFactorAuthenticationEnabled Boolean  @default(false)
 

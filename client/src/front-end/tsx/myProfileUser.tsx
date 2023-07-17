@@ -1,5 +1,7 @@
-import React, { Key, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/myProfileUser.css';
+
 import me from '../img/rimney.jpeg';
 import ach from '../img/42_logo.png';
 import MyHeader from '../tsx/header';
@@ -9,7 +11,6 @@ import EditProfileIcon from '../tsx/editProfile'
 import axios from 'axios';
 import nextButton from '../img/next.png'
 import backButton from '../img/back.png'
-import { Navigate, useNavigate } from 'react-router-dom';
 import bronze from '../img/bronze.png'
 import silver from '../img/silver.png'
 import gold from '../img/gold.png'
@@ -109,11 +110,9 @@ function MyProfileUser(): JSX.Element {
 
   const [userData, setUserData] = useState<User | null>(null);
   const [friendData, setFriendData] = useState<Friends | null>(null);
-  const [matchHistory, setMatchHistory] = useState<any[] | null>(null);
   const fetchData = () => {
     const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
     const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
-
 
     Promise.all([fetchUserData, fetchAdditionalData])
       .then((responses) => {
@@ -135,8 +134,6 @@ function MyProfileUser(): JSX.Element {
 
           setUserData(fetchedUser);
           setFriendData(friendData);
-          //   console.log(friendData[0].friend);
-          //   console.log(friendData[1].friend);
         } else {
           throw new Error('Request failed');
         }
@@ -146,20 +143,15 @@ function MyProfileUser(): JSX.Element {
       });
   };
 
+  const pollUserData = () => {
+    fetchData(); // Fetch the latest userData from the server
+    setTimeout(pollUserData, 5000); // Poll every 5 seconds (adjust the interval as needed)
+  };
 
-
-  const friends: Friend[] = Array.from({ length: 30 }, (_, index) => ({
-    id: index + 1,
-    username: `rimney ${index + 2}`,
-    image: me,
-  }));
   useEffect(() => {
-    const matchHistory = axios.get('http://localhost:3000/profile/match-history', { withCredentials: true }).then((res) => { console.log(res.data) });
-
+    pollUserData();
   }, []);
-  // console.log(friendData);
 
-  const friendDataLength = friendData ? friendData.length : 0;
   const navigate = useNavigate();
   const [matchHistoryData, setMatchHistoryData] = useState<Match[]>([]);
   useEffect(() => {
@@ -170,14 +162,6 @@ function MyProfileUser(): JSX.Element {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
-  const pollUserData = () => {
-    fetchData(); // Fetch the latest userData from the server
-    setTimeout(pollUserData, 10000); // Poll every 5 seconds (adjust the interval as needed)
-  };
-
-  useEffect(() => {
-    pollUserData();
   }, []);
 
   return (
@@ -212,25 +196,72 @@ function MyProfileUser(): JSX.Element {
         <div className="friends">
           <h1>Friends</h1>
           <div className="friendslistScrollBar">
-            {!scrollFlag ?
-              // console.log()
-              friendData && friendData.map((data: {
+            {!scrollFlag &&
+              friendData &&
+              friendData.map((data: {
                 friend: {
-                  id: Key | null | undefined; image: string | undefined; username: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined;
+                  id: number;
+                  image: string;
+                  username: string;
                 };
-              }, index: React.Key | null | undefined) => (
-                <div onClick={() => { navigate(`/user/${data.friend.id?.toString()}`) }} key={data.friend.id} className="friend">
+              }) => (
+                <div
+                  onClick={() => {
+                    navigate(`/user/${data.friend.id}`);
+                  }}
+                  key={data.friend.id}
+                  className="friend"
+                >
                   <img src={data.friend.image} alt="" />
                   <p>{data.friend.username}</p>
                 </div>
-              )) : ""}
-
-
-            {friendDataLength > 5 && <a onClick={switchScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
+              ))}
+            {friendData?.length && friendData.length > 5 && (
+              <a onClick={switchScrollFlag}>
+                {!scrollFlag ? `And ${friendData.length} More` : "Show Less"}
+              </a>
+            )}
           </div>
         </div>
 
-
+        <div className="matches">
+          <h1>Matches</h1>
+          {matchHistoryData.length > 0 && (
+            <div className="winLoseContainter">
+              <div className="winLoseLeft">
+                {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
+                  <div className="winLose" key={match?.matchId}>
+                    <img src={match.otherUser.image} alt="" />
+                    <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                    <p>{match.user1P} - {match.user2P}</p>
+                  </div>
+                ))}
+              </div>
+              {matchHistoryData.length > 0 && <div className="winLoseLine"></div>}
+              <div className="winLoseRight">
+                {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
+                  <div className="winLose" key={match?.matchId}>
+                    <img src={match.otherUser.image} alt="" />
+                    <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                    <p>{match.user1P} - {match.user2P}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {matchHistoryData.length > 0 && (
+            <div className="nextBackButtons">
+              <button onClick={handlePrevClick}>
+                <img id="backButton" src={backButton} alt="" />
+                back
+              </button>
+              <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
+              <button onClick={handleNextClick}>
+                Next
+                <img id="nextButton" src={nextButton} alt="" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
