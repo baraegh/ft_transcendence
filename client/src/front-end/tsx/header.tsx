@@ -237,10 +237,10 @@ function MyHeader(): JSX.Element {
     <div>
       <header>
       <Notification buttonText=" "  showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
-        <h3 onClick={() => {{
-                            navigate('/home');
-                            document.location.reload();
-                            }}} className="logo">
+      <h3 onClick={() =>{{
+          navigate('/home');
+          document.location.reload();
+        }}} className="logo">
           KIR
         </h3>
         <div className="vertical-line"></div>

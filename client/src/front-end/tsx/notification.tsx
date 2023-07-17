@@ -86,7 +86,13 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
             <img id="profileImgNotif" src={me} alt="" />
           </div>
           <div className='notifButons'>
-          <a onClick={() => {socket?.emit('gameStart', data);console.log("accept")}}>Accept</a>
+          <a onClick={() => {
+            socket.emit('check', data.player1Id);
+            socket.on('im_here', (b: boolean) =>{
+              if (b)
+                socket?.emit('gameStart', data);
+            })
+            console.log("accept")}}>Accept</a>
           <a onClick={() => {console.log("Reject Button")}}>Reject</a>
         </div>
         </div>
