@@ -35,7 +35,10 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     number
   >();
 
+  private allcilients: Map<string, Socket> = new Map<string,Socket>();
+
   handleConnection(client: Socket) {
+    this.allcilients.set(client.id,client);
     const user = Array.isArray(client.handshake.query.user)
       ? client.handshake.query.user[0]
       : client.handshake.query.user;
@@ -56,6 +59,7 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   async handleDisconnect(client: Socket) {
     // this.auth.verifyToken(client.data.token, client); 
+    this.allcilients.delete(client.id);
     const id:number = this.clientidtouseris.get(client.id);
     if(id)
     {
@@ -103,6 +107,15 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     else
       st = 'offline';
     this.server.to(client.id).emit('get_status', st);
+  }
+
+  @SubscribeMessage('check')
+  check(client: Socket, clientId: string) {
+    const userSocket = this.allcilients.get(clientId);
+    if(userSocket != undefined)
+      this.server.to(client.id).emit('im_here', true);
+    else
+    this.server.to(client.id).emit('im_here', false);
   }
 
 

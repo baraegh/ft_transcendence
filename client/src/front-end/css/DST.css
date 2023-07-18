@@ -315,9 +315,13 @@
   box-shadow: 6px 6px 0px 2px black;
   border-radius: 25px;
   transform: translateZ(0); /* Add this line */
+  z-index: 2;
 
 }
 
+/* .meet-the-team-images:hover {
+  pointer-events: none;
+} */
 
 .overlay {
       font-family: 'Mouse Memoirs';

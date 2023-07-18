@@ -261,7 +261,7 @@ function MyProfileUser(): JSX.Element {
                 <img id="nextButton" src={nextButton} alt="" />
               </button>
             </div>
-          )}
+           )|| <div className="noMatchHistory">Player Has No Match History !</div>}
         </div>
       </div>
     </div>

@@ -343,3 +343,12 @@ input[type="checkbox"]:checked + .slider:before {
     width: 20px;
     height: 20px;
 }
+
+.noMatchHistory{
+    font-size: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height : 80%;
+    padding-bottom: 60px;
+}

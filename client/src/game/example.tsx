@@ -183,38 +183,37 @@ const Game = () => {
         player2: player2,
         dim: dim,
       };
+      let msg: { y: number; h: number } = {
+                y: player1.y, 
+                h: canvas.height}
       update();
       render();
-      console.log(player1.y)
-      socket.emit("clientToServer", player1.y);
+      socket.emit("clientToServer", msg);
       socket.emit("ballMove", message);
       requestAnimationFrame(game);
     }
-      socket.on("ServerToClient", (pdata: number) => {
-        player2.y = pdata;
+      socket.on("ServerToClient", (msg: { y: number; h: number }) => {
+        const heightScale = canvas.height / msg.h;
+        const newY = msg.y * heightScale;
+        player2.y = newY;
       // console.log(player2.y)
       });
     socket.on("ballMove", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number } }) => {
-      if (message.dim.W != canvas.width || message.dim.H != canvas.height) {
-        const widthScale = canvas.width / message.dim.W;
-        const heightScale = canvas.height / message.dim.H;
-        const newX = (message.ball.x / message.dim.W) * canvas.width;
-        const newY = (message.ball.y / message.dim.H) * canvas.height;
-        const newSpeedX = (message.ball.velocityX / message.dim.W) * canvas.width;
-        const newSpeedY = (message.ball.velocityY / message.dim.H) * canvas.height;
-        message.ball.x = newX;
-        message.ball.y = newY;
-        message.ball.velocityX = newSpeedX;
-        message.ball.velocityY = newSpeedY;
-      }
-      ball.x = message.ball.x;
-      ball.y = message.ball.y;
+      const widthScale = canvas.width / message.dim.W;
+      const heightScale = canvas.height / message.dim.H;
+      const newX = message.ball.x * widthScale;
+      const newY = message.ball.y * heightScale;
+      const newSpeedX = (message.ball.velocityX / message.dim.W) * canvas.width;
+      const newSpeedY = (message.ball.velocityY / message.dim.H) * canvas.height;
+      message.ball.velocityX = newSpeedX;
+      message.ball.velocityY = newSpeedY;
+      ball.x = newX;
+      ball.y = newY;
       ball.radius = message.ball.radius;
-      ball.speed = message.ball.speed;
+      // ball.speed = message.ball.speed;
       ball.velocityX = message.ball.velocityX;
       ball.velocityY = message.ball.velocityY;
       ball.color = message.ball.color;
-
       player1.score = message.player1.score;
       player2.score = message.player2.score;
     }
@@ -223,27 +222,23 @@ const Game = () => {
       document.onkeydown = null;
       document.onkeyup = null;
       // socket.off("ServerToClient");
-      if (message.dim.W != canvas.width || message.dim.H != canvas.height) {
-        const widthScale = canvas.width / message.dim.W;
-        const heightScale = canvas.height / message.dim.H;
-        const newX = (message.ball.x / message.dim.W) * canvas.width;
-        const newY = (message.ball.y / message.dim.H) * canvas.height;
-        const newSpeedX = (message.ball.velocityX / message.dim.W) * canvas.width;
-        const newSpeedY = (message.ball.velocityY / message.dim.H) * canvas.height;
-        message.ball.x = newX;
-        message.ball.y = newY;
-        message.ball.velocityX = newSpeedX;
-        message.ball.velocityY = newSpeedY;
-      }
-      ball.x = message.ball.x;
-      ball.y = message.ball.y;
-      ball.radius = message.ball.radius;
-      ball.speed = message.ball.speed;
+      const widthScale = canvas.width / message.dim.W;
+      const heightScale = canvas.height / message.dim.H;
+      const newX = message.ball.x * widthScale;
+      const newY = message.ball.y * heightScale;
+      const newSpeedX = (message.ball.velocityX / message.dim.W) * canvas.width;
+      const newSpeedY = (message.ball.velocityY / message.dim.H) * canvas.height;
+      message.ball.velocityX = newSpeedX;
+      message.ball.velocityY = newSpeedY;
+      ball.x = newX;
+      ball.y = newY;
+      // ball.radius = message.ball.radius;
+      // ball.speed = message.ball.speed;
       ball.velocityX = message.ball.velocityX;
       ball.velocityY = message.ball.velocityY;
       ball.color = message.ball.color;
-      player1.y = message.player1.y;
-      player2.y = message.player2.y;
+      player1.y = message.player1.y * widthScale;
+      player2.y = message.player2.y * widthScale;
       player1.score = message.player1.score;
       player2.score = message.player2.score;
     });
