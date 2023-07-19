@@ -234,17 +234,19 @@ function OtherProfileUser(): JSX.Element {
       .then(() => {
         console.log("blocked");
         setButtons({ ...bbuttons, isBlocked: true });
+        document.location.reload();
       })
       .catch((error) => {
         console.log(error);
       });
-  }
-
-  function unblockFriend() {
-    axios.patch(`http://localhost:3000/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+    }
+    
+    function unblockFriend() {
+      axios.patch(`http://localhost:3000/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
         console.log("unblocked");
         setButtons({ ...bbuttons, isBlocked: false });
+        document.location.reload();
       })
       .catch((error) => {
         console.log(error);
@@ -329,18 +331,18 @@ function OtherProfileUser(): JSX.Element {
                 {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
                 {otherUser.isFriend && !otherUser.blocked && <a onClick={
                   () => {handleSendMessage()}
-                } className="message2" href="#"><span>Message</span></a>}
+                } className="message2"><span>Message</span></a>}
                 {!otherUser.isFriend && !otherUser.blocked && !otherUser.isRequested && (
-                  <a onClick={sendFriendRequest} className="invite2" href="#"><span>Friend Request</span></a>
+                  <a onClick={sendFriendRequest} className="invite2"><span>Friend Request</span></a>
                 )}
-                {otherUser.isRequested && <a className="invite2" href="#"><span> Request Sent !</span></a>}
+                {otherUser.isRequested && <a className="invite2"><span> Request Sent !</span></a>}
                 {!otherUser.blocked && !otherUser.blocked && (
-                  <a onClick={blockFriend} className="block2" href="#">
+                  <a onClick={blockFriend} className="block2">
                     <span>Block</span>
                   </a>
                 )}
                 {otherUser.blocked && (
-                  <a onClick={unblockFriend} className="block2" href="#">
+                  <a onClick={unblockFriend} className="block2">
                     <span>Unblock</span>
                   </a>
                 )}
