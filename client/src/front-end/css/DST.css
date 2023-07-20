@@ -89,13 +89,23 @@
 .ping-pong-reboot-text {
   font-family: 'Mouse Memoirs';
 
-  font-size: 24px;
-  width: 680px;
-
+  font-size: 25px;
+  display: flex;
+  width: 650px;
 
   margin-left: 50px;
-  display: inline-block;
-  padding-bottom: 10px;
+}
+
+.ping-pong-reboot-img-p
+{
+  display: flex;
+  flex-wrap: wrap;
+}
+}
+
+#pingPongRebootText
+{
+
 }
   
 .ping-pong-photo {
@@ -199,7 +209,8 @@
   }
   
 
-.button_animation a{
+#tryIt {
+
   font-family: 'Mouse Memoirs';
 
   display: block;
@@ -207,7 +218,6 @@
   height: 45px;
   line-height: 40px;
   font-size: 25px;
-  font-family: sans-serif;
   text-decoration: none;
   color: #333;
   border: 2px solid #333;
@@ -216,39 +226,43 @@
   position: relative;
   transition: all .35s;
   border-radius: 9px;
+  bottom : 50px;
+  left : 44px;
 }
 
-.button_animation a span{
+#tryIt:hover {
+  background-color: black;
+  color : white;
+
+}
+#playB {
+
   font-family: 'Mouse Memoirs';
 
+  display: block;
+  width: 104px;
+  height: 45px;
+  line-height: 40px;
+  font-size: 25px;
+  text-decoration: none;
+  color: #333;
+  border: 2px solid #333;
+  letter-spacing: 2px;
+  text-align: center;
   position: relative;
-  z-index: 2;
+  transition: all .35s;
+  border-radius: 9px;
+  /* bottom : 50px; */
+  left : 44px;
 }
 
-.button_animation  a:after{
-  font-family: 'Mouse Memoirs';
+#playB:hover {
+  background-color: black;
+  color : white;
 
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background: black;
-  transition: all .20s;
 }
 
-.button_animation a:hover{
-  font-family: 'Mouse Memoirs';
 
-  color: #fff;
-}
-
-.button_animation a:hover:after{
-  font-family: 'Mouse Memoirs';
-
-  width: 100%;
-}
 
 .discoverTeam h2
 {
@@ -355,6 +369,14 @@
   height: 250px;
 }
 
+.ping-pong-reboot .button_animation 
+{
+      font-family: 'Mouse Memoirs';
+
+  position: relative;
+  top: 10px;
+  width : 100px;
+}
 .ping-pong-reboot .button_animation
 {
       font-family: 'Mouse Memoirs';

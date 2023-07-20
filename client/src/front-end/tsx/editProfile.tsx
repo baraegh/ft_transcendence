@@ -126,12 +126,7 @@ const EditProfileIcon: React.FC = () => {
     <div>
       <img id="editIcon" src={Edit} alt="" onClick={handleImageClick} />
 
-      {/* <img
-        className="popup-image"
-        src="your-image-url.jpg"
-        alt="Popup Image"
-        onClick={handleImageClick}
-      /> */}
+ 
       {showModal && <BlankModal show={showModal} onHide={handleCloseModal} />}
     </div>
   );

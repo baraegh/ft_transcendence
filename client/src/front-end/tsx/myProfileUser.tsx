@@ -225,44 +225,47 @@ function MyProfileUser(): JSX.Element {
         </div>
 
         <div className="matches">
-          <h1>Matches</h1>
-          {matchHistoryData.length > 0 && (
-            <div className="winLoseContainter">
-              <div className="winLoseLeft">
-                {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
-                  <div className="winLose" key={match?.matchId}>
-                    <img src={match.otherUser.image} alt="" />
-                    <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-                    <p>{match.user1P} - {match.user2P}</p>
-                  </div>
-                ))}
-              </div>
-              {matchHistoryData.length > 0 && <div className="winLoseLine"></div>}
-              <div className="winLoseRight">
-                {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
-                  <div className="winLose" key={match?.matchId}>
-                    <img src={match.otherUser.image} alt="" />
-                    <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-                    <p>{match.user1P} - {match.user2P}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {matchHistoryData.length > 0 && (
-            <div className="nextBackButtons">
-              <button onClick={handlePrevClick}>
-                <img id="backButton" src={backButton} alt="" />
-                back
-              </button>
-              <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
-              <button onClick={handleNextClick}>
-                Next
-                <img id="nextButton" src={nextButton} alt="" />
-              </button>
-            </div>
-           )|| <div className="noMatchHistory">Player Has No Match History !</div>}
-        </div>
+{matchHistoryData.length > 0 ? (
+  <>
+    <h1>Matches</h1>
+    <div className="winLoseContainter">
+      <div className="winLoseLeft">
+        {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
+          <div className="winLose" key={match?.matchId}>
+            <img src={match.otherUser.image} alt="" />
+            <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+            <p>{match.user1P} - {match.user2P}</p>
+          </div>
+        ))}
+      </div>
+      {matchHistoryData.length > 4 && <div className="winLoseLine"></div>}
+      <div className="winLoseRight">
+        {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
+          <div className="winLose" key={match?.matchId}>
+            <img src={match.otherUser.image} alt="" />
+            <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+            <p>{match.user1P} - {match.user2P}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+    { matchHistoryData.length > 4  && (<div className="nextBackButtons">
+      <button onClick={handlePrevClick}>
+        <img id="backButton" src={backButton} alt="" />
+        back
+      </button>
+      <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
+      <button onClick={handleNextClick}>
+        Next
+        <img id="nextButton" src={nextButton} alt="" />
+      </button>
+    </div>)}
+    </>) : (
+  // </div>
+  <div className="noMatchHistory">Player Has No Match History!</div>)
+}
+
+      </div>
       </div>
     </div>
   );
