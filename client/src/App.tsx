@@ -11,7 +11,7 @@ import FA from './front-end/tsx/2FA'
 import MyProfileUser from './front-end/tsx/myProfileUser';
 import Play from './front-end/tsx/play'
 import AuthPage from './auth/AuthPage'
-import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
+// import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
@@ -92,7 +92,7 @@ function App() {
         setMe(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("err << ");
       })
   }, []);
 
@@ -137,7 +137,7 @@ function App() {
           />
           <Route
             path="/TwoFactorAuth"
-            element={isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />}
+            element={isLoggedIn ? <Navigate to="/home" replace /> : <FA />}
           />
           <Route
             path="/chat"

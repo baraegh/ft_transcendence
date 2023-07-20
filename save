@@ -16,15 +16,16 @@ const TwoFactorAuth: React.FC = () => {
 
   const queryParams = new URLSearchParams(window.location.search);
   const imageParam = queryParams.get("image");
+  const usernameParam = queryParams.get("image");
   const navigate = useNavigate();
   const [logo, setLogo] = useState(imageParam);
 
 
   const submitForm = () => {
-    console.log("@2222222");
+    console.log(usernameParam);
     console.log(input);
     axios
-      .post("http://localhost:3000/2fa/verified", {secret: input}, {
+      .post("http://localhost:3000/2fa/verified", { secret: input }, {
         withCredentials: true,
       })
       .then((response) => {
@@ -35,15 +36,13 @@ const TwoFactorAuth: React.FC = () => {
             })
             .then((response) => {
               if (response.status === 200) {
-                document.location.reload();
-                // console.log("EEEEE");
+                navigate("/home");
               } else {
                 throw new Error("Request failed");
               }
             })
             .catch((error) => {
               console.log(error);
-              navigate("/");
             });
         }
       })

@@ -12,7 +12,9 @@ const TwoFactorAuth: React.FC = () => {
   const navigate = useNavigate();
   const [logo, setLogo] = useState(imageParam);
 
+
   const submitForm = () => {
+    console.log("@2222222");
     console.log(input);
     axios
       .post("http://localhost:3000/2fa/verified", {secret: input}, {

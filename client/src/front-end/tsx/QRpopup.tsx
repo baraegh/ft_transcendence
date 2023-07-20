@@ -58,16 +58,12 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const isMounted = useRef(false);
 
   useEffect(() => {
-    if (isMounted.current) {
-      console.log("CLEAN");
-      axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
-        .then(res => {
+    axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
+    .then(res => {
+          console.log("CLEAN");
           fetchQR = res;
           setSource(res.data);
         });
-    } else {
-      isMounted.current = true;
-    }
   }, [QRisEnabled]);
 
   return (
@@ -100,7 +96,7 @@ const QRpopup: React.FC = () => {
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
-    setQRisEnabled(false);
+    // setQRisEnabled(false);
     setToggleChecked(event.target.checked);
     console.log(QRisEnabled);
   };
@@ -116,9 +112,9 @@ const QRpopup: React.FC = () => {
   //   }
   // }, [toggleChecked]);
 
-  useEffect(() => {
-    localStorage.setItem('QRisEnabled', JSON.stringify(QRisEnabled));
-  }, [QRisEnabled]);
+  // useEffect(() => {
+  //   localStorage.setItem('QRisEnabled', JSON.stringify(QRisEnabled));
+  // }, [QRisEnabled]);
 
   return (
     <div>
