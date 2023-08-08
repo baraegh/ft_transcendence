@@ -92,7 +92,7 @@ function App() {
         setMe(response.data);
       })
       .catch((error) => {
-        console.log("err << ");
+        console.log(error);
       })
   }, []);
 
