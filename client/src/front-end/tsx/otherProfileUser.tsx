@@ -1,6 +1,6 @@
 import React, { Key, useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import '../css/OtherProfileUser.css';
+import '../css/otherProfileUser.css';
 import me from '../img/rimney.jpeg';
 import ach from '../img/pic.jpeg';
 import MyHeader from './header';

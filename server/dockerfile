@@ -1,20 +1,17 @@
-FROM node:20.3.0-alpine
+FROM nestjs
 
 WORKDIR /app
 
-COPY  package*.json ./
+COPY package*.json ./
 
-RUN rm -rf node_modules
+RUN npm install --force
 
-RUN npm cache clean --force
+COPY . .
 
-RUN npm install
+EXPOSE 3000
 
-ENV PYTHON=/path/to/python
+RUN npm rebuild argon2 --build-from-source
 
-COPY script.sh .
+RUN npx prisma generate
 
-RUN chmod +x script.sh
-
-CMD [ "./script.sh" ]
-
+CMD ["npm", "run", "start:dev"]
