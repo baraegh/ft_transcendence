@@ -1,8 +1,10 @@
-FROM nestjs
+FROM node
 
 WORKDIR /app
 
 COPY package*.json ./
+
+COPY in.sh ./
 
 RUN npm install --force
 
@@ -10,8 +12,6 @@ COPY . .
 
 EXPOSE 3000
 
-RUN npm rebuild argon2 --build-from-source
-
-RUN npx prisma generate
+ENTRYPOINT ["sh", "in.sh"]
 
 CMD ["npm", "run", "start:dev"]

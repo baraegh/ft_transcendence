@@ -1,20 +1,17 @@
 version: '3.8'
 
 services:
- postgresql-db:
-    container_name: postgres
-    build: 
-      context: ${PWD}/server/src/postgresql_df
+  postgresql-db:
+    image: postgres:13
     ports:
       - 5432:5432
     env_file:
-      - ${PWD}/server/.env
+      - ./server/.env
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - ft_transcendence
-
- nestjs:
+  nestjs:
     container_name: nestjs
     build: 
       context: ./server
@@ -24,11 +21,10 @@ services:
     depends_on:
       - postgresql-db
     env_file:
-      - ${PWD}/server/.env
+      - ./server/.env
     networks:
       - ft_transcendence
-
- react:
+  react:
     container_name: react
     build:
       context: ./client
@@ -51,6 +47,3 @@ volumes:
 networks:
   ft_transcendence:
     driver: bridge
-
-
-   
