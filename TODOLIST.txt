@@ -7,7 +7,13 @@ Game:
     --> invite freinds:
             - the list of freinds appears empty, even if I have freinds.
             - remove the red error from console
-    --> remove the red error from console
+    --> remove the red error from console (when choosing map)
 
 Landing Page:
     --> remove the red error from console
+
+leaderboard:
+    --> doesn't show the actual score order
+
+watch stream:
+    --> fix the layout
