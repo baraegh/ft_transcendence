@@ -4,7 +4,7 @@ Chat:
     --> fix the layout of the browse button
 
 Game:
-    --> invite freinds:
+    --> invite friends:
             - the list of freinds appears empty, even if I have freinds.
             - remove the red error from console
     --> remove the red error from console (when choosing map)
