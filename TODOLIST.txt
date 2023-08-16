@@ -1,0 +1,13 @@
+Chat:
+    --> fix challenge button
+    --> fix acheivement in chat -> profile
+    --> fix the layout of the browse button
+
+Game:
+    --> invite freinds:
+            - the list of freinds appears empty, even if I have freinds.
+            - remove the red error from console
+    --> remove the red error from console
+
+Landing Page:
+    --> remove the red error from console
