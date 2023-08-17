@@ -1,36 +1,52 @@
-import React, { createContext, useEffect } from 'react';
-import io, { Socket } from 'socket.io-client';
+import React, { createContext, useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
-interface SocketContextValue {
+interface SocketContextProps {
   socket: Socket | null;
+  reconnectSocket: () => void;
 }
 
-const SocketContext = createContext<SocketContextValue>({
-  socket: null,
-});
+export const SocketContext = createContext<SocketContextProps | undefined>(
+  undefined
+);
 
-interface SocketContextProviderProps {
+interface SocketProviderProps {
   children: React.ReactNode;
 }
 
-const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ children }) => {
-  const socket = io('http://localhost:3000');
-  let data = {
-    playerid : 123,
-  }
-  socket.emit("connect01" ,data);
-  useEffect(() => {
-    return () => {
-      // Clean up the socket connection on unmount
+const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  const connectSocket = () => {
+    const newSocket: Socket = io('http://localhost:3000');
+    setSocket(newSocket);
+  };
+
+  const disconnectSocket = () => {
+    if (socket) {
       socket.disconnect();
+      setSocket(null);
+    }
+  };
+
+  useEffect(() => {
+    connectSocket();
+
+    return () => {
+      disconnectSocket();
     };
   }, []);
 
+  const reconnectSocket = () => {
+    disconnectSocket();
+    connectSocket();
+  };
+
   return (
-    <SocketContext.Provider value={{ socket }}>
-      {children}
+    <SocketContext.Provider value={{ socket, reconnectSocket }}>
+      {socket && children}
     </SocketContext.Provider>
   );
 };
 
-export { SocketContext, SocketContextProvider };
+export default SocketProvider;

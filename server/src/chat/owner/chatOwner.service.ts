@@ -35,7 +35,7 @@ export class ChatOwnerService {
         },
       },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (
       findChannel.chanelID['role'] === 'USER' &&
       findChannel.ownerId != userId
@@ -72,13 +72,10 @@ export class ChatOwnerService {
         },
       },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
 
-    if (findChannel.chanelID['role'] && findChannel.ownerId === userId)
+    if (findChannel.chanelID['role'] == 'USER' && findChannel.ownerId !== userId)
       throw new ForbiddenException('Access Denied');
-    if (findChannel.ownerId != userId || findChannel.chanelID['role']) {
-      throw new ForbiddenException('Access Denied');
-    }
     const participantUniqueInput: Prisma.ParticipantsWhereUniqueInput = {
       channelID_userID: {
         channelID: dto.channelid,
@@ -100,7 +97,7 @@ export class ChatOwnerService {
       where: { id: dto.channelid },
     });
 
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
     }
@@ -128,7 +125,7 @@ export class ChatOwnerService {
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelid },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
       
@@ -136,12 +133,10 @@ export class ChatOwnerService {
     const clearchat = await this.prisma.messages.deleteMany({
       where: { channelID: dto.channelid },
     });
-    if (!clearchat) throw new NotFoundException('error on delete');
 
     const clearparticipants = await this.prisma.participants.deleteMany({
       where: { channelID: dto.channelid },
     });
-    if (!clearparticipants) throw new NotFoundException('error on delete');
 
     const deletGroup = await this.prisma.channel.delete({
       where: { id: dto.channelid },
@@ -157,7 +152,7 @@ export class ChatOwnerService {
     const findChannel = await this.prisma.channel.findUnique({
       where: { id: dto.channelid },
     });
-    if (!findChannel) throw new NotFoundException('channel not found');
+    if (!findChannel) return;
     if (findChannel.ownerId != userId) {
       throw new ForbiddenException('You are not the Owner');
     }
@@ -274,11 +269,11 @@ export class ChatOwnerService {
     if (dto.image !== null) {
       updateChannelData.image = dto.image;
     }
-    if (dto.hash !== null) {
+    if (dto.hash !== '') {
       updateChannelData.hash = dto.hash;
     }
-    if (dto.name !== null) {
-      updateChannelData.hash = dto.name;
+    if (dto.name !== '') {
+      updateChannelData.name = dto.name;
     }
     
     const updatechannel = await this.prisma.channel.update({

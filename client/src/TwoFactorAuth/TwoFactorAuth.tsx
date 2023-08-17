@@ -12,10 +12,12 @@ const TwoFactorAuth: React.FC = () => {
   const navigate = useNavigate();
   const [logo, setLogo] = useState(imageParam);
 
+
   const submitForm = () => {
+    console.log("@2222222");
     console.log(input);
     axios
-      .post("http://localhost:3000/2fa/verified", {"secret": input}, {
+      .post("http://localhost:3000/2fa/verified", {secret: input}, {
         withCredentials: true,
       })
       .then((response) => {
@@ -27,7 +29,7 @@ const TwoFactorAuth: React.FC = () => {
             .then((response) => {
               if (response.status === 200) {
                 // navigate("/home");
-                location.reload();
+                console.log("EEEEE");
               } else {
                 throw new Error("Request failed");
               }
@@ -40,6 +42,8 @@ const TwoFactorAuth: React.FC = () => {
       })
       .catch((error) => {
         console.log(error);
+        navigate("/");
+
       });
   };
 

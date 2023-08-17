@@ -1,1 +1,3 @@
-npm run dev
+#!/bin/bash
+npm run build
+exec "$@"

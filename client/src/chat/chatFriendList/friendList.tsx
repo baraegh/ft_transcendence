@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FilterBtn, Search } from "../tools/filterSearchSettings";
 import groupImage from "../../assets/group.png";
 import userImage from "../../assets/person.png";
 import Axios from "axios";
+import { chatInfoType } from "../chat";
+import { Dialog } from "../tools/Dialog";
+import { userMe } from "../../App";
+import { Popover } from "@radix-ui/react-popover";
+import PopoverComp from "../tools/popover";
+import defaultGroupImage from '../../assets/group.png';
+import { format } from "../chatHistory/chatHistoryList";
+import { SocketContext } from "../../socket/socketContext";
+import { useNavigate } from "react-router-dom";
 
 export type friendDataType = {
     blocked:            boolean,
@@ -16,14 +25,16 @@ export type friendDataType = {
     }
 }
 
+
 type FriendCardProps = {
     friend: friendDataType,
 }
 
 export const FriendCard = ({friend} : FriendCardProps) => {
+    const navigate = useNavigate();
 
     return (
-            <div className="friend-card">
+            <div onClick={() => {navigate(`/user/${friend.friend.id}`)}} className="friend-card">
                 <img    src={friend.friend.image? friend.friend.image: userImage}
                         alt={friend.friend.username + " profile's image"}/>
                 <p>{friend.friend.username}</p>
@@ -39,16 +50,18 @@ type groupDataType = {
 }
 
 type GroupCardProps= {
-    group: groupDataType,
+    group:  groupDataType,
+    flag?:   boolean,
 }
 
-export const GroupCard = ({group} : GroupCardProps) => {
+export const GroupCard = ({group, flag} : GroupCardProps) => {
+    const navigate = useNavigate();
 
     return (
-            <div className="friend-card">
+            <div  className="friend-card">
                 <img    src={group.image? group.image: groupImage} 
                         alt={group.name + " profile's image"}/>
-                <p>{group.name}</p>
+                <p>{flag? format(group.name, 3): format(group.name, 10)}</p>
             </div>
     );
 }
@@ -65,9 +78,9 @@ type UserCardProps = {
 }
 
 export const UserCard = ({user} : UserCardProps) => {
-
+    const navigate = useNavigate();
     return (
-            <div className="friend-card">
+            <div onClick={() => {navigate(`/user/${user.id}`)}} className="friend-card">
                 <img    src={user.image? user.image: userImage}
                         alt={user.username + " profile's image"}/>
                 <p>{user.username}</p>
@@ -75,11 +88,88 @@ export const UserCard = ({user} : UserCardProps) => {
     );
 }
 
+type GroupCardPopOverContentProps = {
+    group:      groupDataType,
+    setChat?:   (Id: string, Image: string, Name: string,
+                Type: string, userId: number | null) => void,  
+    chatInfo:   chatInfoType;
+    setUpdate:  (update: boolean) => void,
+    update:     boolean,
+}
 
+const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} : GroupCardPopOverContentProps) => {
+    const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+    const [isMuteDialogOpen, setIsMuteDialogOpen] = useState(false);
+    const [groupData, setGroupData] = useState<groupDataType>({
+        id: '',
+        type: '',
+        name: '',
+        image: '',
+    });
+    const [isJoinOpen, setIsJoinOpen] = useState(false);
+    const {socket} = useContext<any | undefined>(SocketContext);
+
+    const joinRoom = (channelId: string) =>{
+        if (socket) {
+            socket.emit('joinRoom', channelId);
+            console.log("join");
+        }
+    }
+
+    const handleJoinGroup = () => {
+        setIsJoinOpen(true);
+        if (group.type === 'PUBLIC')
+        {
+            Axios.post("http://localhost:3000/chat/join-group",
+                {   
+                    channelId:  group.id,
+                    password:   '',
+                },
+                {withCredentials: true})
+            .then((response) => {
+                console.log('response: ', response);
+                if (setChat)
+                    setChat(group.id, group.image, 
+                            group.name, group.type, null);
+                joinRoom(group.id);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        }
+    }
+
+    return (
+        <div className="user-card-popover-content" style={{width: '110px'}}>
+            <GroupCard group={group} flag={true}/>
+            <div className="user-card-btn">
+                <button onClick={handleJoinGroup}>Join</button>
+            </div>
+            {
+                isJoinOpen && group.type === 'PROTECTED' &&  
+                <Dialog title="Join group" 
+                        closeDialog={() => setIsJoinOpen(false)}
+                        setChat={setChat}
+                        chatInfo={{chatId: group.id, chatName: group.name,
+                                    chatImage: group.image, chatType: group.type,
+                                    chatUserId: null, blocked: false, whoblock: null, mute: 'NAN'}}/>
+            }
+        </div>
+    );
+}
 
 const filterList = ['All Friends', 'All Groups', 'All Users',  'Online', 'Block', 'Pending'];
 
-export const FriendList = () => {
+type friendListProps = {
+    setChat:    (Id: string, Image: string, Name: string,
+                    Type: string, userId: number | null,
+                    blocked?: boolean, whoblock?: number | null) => void,
+    chatInfo:   chatInfoType,
+    update:     boolean,
+    setUpdate:  (update: boolean) => void,
+}
+
+export const FriendList = ({setChat, chatInfo, update, setUpdate} : friendListProps) => {
     const [friendListArray, setFriendListArray] = useState<friendDataType[] | null>(null);
     const [groupListArray, setGroupListArray] = useState<groupDataType[] | null>(null);
     const [usersListArray, setUsersListArray] = useState<userDataType[] | null>(null);
@@ -95,7 +185,10 @@ export const FriendList = () => {
         if (filter === 'All Friends' || filter === '')
             url = 'user/friends';
         else if (filter === 'All Groups')
+        {
+            console.log('all groups')
             url = 'chat/show-all-groups';
+        }
         else if (filter === 'All Users')
             url = 'chat/show-all-users';
         else if (filter === 'Block')
@@ -146,9 +239,17 @@ export const FriendList = () => {
 
         List =  filteredGroupList ?
                     filteredGroupList.map(group =>
-                        <GroupCard 
-                            key={group.id}
-                            group={group}/>)
+                        {
+                            return <PopoverComp Trigger={<GroupCard group={group}/>}
+                                                Content={<GroupCardPopOverContent   group={group}
+                                                                                    setChat={setChat}
+                                                                                    chatInfo={chatInfo}
+                                                                                    update={update}
+                                                                                    setUpdate={setUpdate}/>}
+                                                key={group.id}/>
+                        }
+                        
+                )
                 : <p className="No-data" style={{textAlign: 'center'}}>NO GROUPS</p>;
     }
     else if (filter === 'All Users')

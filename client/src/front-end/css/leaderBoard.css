@@ -1,9 +1,11 @@
 .leaderBoard
 {
+    font-family: 'Mouse Memoirs';
+
     position: relative;
     top : 20px;
     width : 1058px;
-    height: 1200px;
+    height: 900px;
     border : 2px solid black;
     border-radius: 20px;
     margin: auto;
@@ -44,7 +46,6 @@
 
 .rankNum {
     position: relative;
-    top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,4 +147,14 @@
     position: relative;
     left: 40px;
     bottom: 20px;
+}
+
+#oops_currentGame
+{
+    position: relative;
+    top: 25%;
+    margin: auto;
+    display: flex;
+    font-size: 90px;
+    text-align: center;
 }

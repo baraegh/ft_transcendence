@@ -48,7 +48,6 @@ export class _2faController {
       req.user['sub'],
       body.secret,
     );
-
   }
 
   

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import Axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faKhanda, faXmark, faGear} from '@fortawesome/free-solid-svg-icons';
@@ -7,17 +7,16 @@ import { Settings, Search } from "../tools/filterSearchSettings";
 import { CreateGroupFirstDialog, Type, createGroupType } from "../tools/Dialog";
 import PopoverComp from "../tools/popover";
 import { Dialog } from "../tools/Dialog";
-import { chatInfoType, membersDataType } from "../chat";
+import { chatInfoType, formatDate, membersDataType } from "../chat";
 import { userMe } from "../../App";
 import "./chatArea.css"
 import defaultUserImage from '../../assets/person.png';
-import dfaultGroupImage from '../../assets/group.png';
 import { format } from "../chatHistory/chatHistoryList";
+import { SocketContext } from "../../socket/socketContext";
+import defaultGroupImage from '../../assets/group.png';
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
-
-const settingsList = ['Profile', 'Delete', 'Block'];
 
 type chatAreaHeaderProps =
 {
@@ -25,34 +24,84 @@ type chatAreaHeaderProps =
     setIsProfileOpen:   (isopen: boolean) => void,
     setMsgSend:         (msgSend: boolean) => void,
     msgSend:            boolean,
+    setUpdateChatInfo:  (update: boolean) => void,
+    setChat:            (Id: string, Image: string, Name: string,
+                            Type: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null) => void,
+    leaveRoom:          () => void,
 }
 
-const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend, msgSend} : chatAreaHeaderProps) => {
+const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
+                            setUpdateChatInfo, msgSend, setChat,
+                            leaveRoom} : chatAreaHeaderProps) => {
+    const [isOnline, setIsOnline] = useState(false);
+    const me = useContext(userMe);
+    const settingsList = chatInfo.blocked?(
+            me?.id === chatInfo.whoblock?
+                ['Profile', 'Delete', 'Unblock']
+            : ['Delete']
+        )
+        :['Profile', 'Delete', 'Block'];
+
+
+    useEffect(() => {
+        if (!chatInfo.chatUserId)
+            return;
+        let intervalId : number | undefined;
+      
+        const fetchData = () => {
+
+          Axios.get(`http://localhost:3000/user/isonline/${chatInfo.chatUserId}`,
+                { withCredentials: true })
+            .then((response) => {
+                setIsOnline(response.data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        };
+      
+        intervalId = setInterval(fetchData, 1000);
+        return () => {
+          clearInterval(intervalId);
+        };
+    }, [chatInfo.chatId]);
 
     return (
         <div className='chat-area-header'>
             <div className="user-card">
-                <img    src={chatInfo.chatImage? chatInfo.chatImage: 'deafault image'}
+                <img    src={chatInfo.chatImage? chatInfo.chatImage: defaultGroupImage}
                         alt={`${chatInfo.chatName} image`}/>
                 <div>
-                    <p className="user-card-username">{chatInfo.chatName}</p>
-                    <p className="user-card-status">active | to be edited</p>
+                    <p className="user-card-username">{format(chatInfo.chatName, 12)}</p>
+                    {
+                        chatInfo.chatType !== 'PERSONEL'?
+                            ''
+                        :   <p className="user-card-status">{isOnline? 'online': 'offline'}</p> 
+                    }
                 </div>
             </div>
             <div className="challenge-setting">
                 {
                     (chatInfo.chatType === 'PERSONEL') ?
                         <>
-                            <button className="challenge-btn">
-                                <p>Challenge</p>
-                                <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
-                            </button>
+                            {
+                                !chatInfo.blocked?
+                                    <button className="challenge-btn">
+                                        <p>Challenge</p>
+                                        <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
+                                    </button>
+                                : ''
+                            }
                             <Settings   chatInfo={chatInfo}
                                         setIsProfileOpen={setIsProfileOpen}
                                         list={settingsList}
                                         size="18px"
                                         setMsgSend={setMsgSend}
-                                        msgSend={msgSend}/>
+                                        msgSend={msgSend}
+                                        setUpdateChatInfo={setUpdateChatInfo}
+                                        setChat={setChat}
+                                        leaveRoom={leaveRoom}/>
                         </>
                     : ''
                 }
@@ -73,12 +122,17 @@ const ThreeSquare = () => {
 }
 
 type chatAreaInputProps ={
-    chatInfo:   chatInfoType,
-    setMsgSend: (msgSend: boolean) => void,
-    msgSend:    boolean,
+    chatInfo:           chatInfoType,
+    sendingroup:        (msg: string) => void,
+    setUpdateChatInfo:  (update: boolean) => void,
+    updateChatInfo:     boolean,
+    setChat:            (Id: string, Image: string, Name: string,
+                            Type: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null, muted?: string) => void
 }
 
-const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
+const ChatAreaInput = ({chatInfo, sendingroup, setChat,
+                        setUpdateChatInfo, updateChatInfo}: chatAreaInputProps) => {
     const [isClicked, setIsClicked] = useState(false);
     const [msg, setMsg] = useState<string>('');
 
@@ -100,17 +154,28 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
 
     const handleOnSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
-        if (checkNameInput(msg))
+        if (checkNameInput(msg) || chatInfo.blocked || chatInfo.mute !== 'NAN')
             return;
-        Axios.post("http://localhost:3000/chat/send-msg",
-                {   
-                    channelID:  chatInfo.chatId,
-                    content:    msg,
-                },
-                {withCredentials: true})
-            .then(() => {
-                setMsgSend(!msgSend);
-                setMsg('');
+        Axios.post('http://localhost:3000/chat/is_muted',
+                {channelId: chatInfo.chatId,},
+                {withCredentials:    true,})
+            .then((response) => {
+                if (response.data)
+                    return;
+                Axios.post("http://localhost:3000/chat/send-msg",
+                        {   
+                            channelID:  chatInfo.chatId,
+                            content:    msg,
+                        },
+                        {withCredentials: true})
+                    .then(() => {
+                        sendingroup(msg);
+                        setUpdateChatInfo(!updateChatInfo);
+                        setMsg('');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -123,11 +188,15 @@ const ChatAreaInput = ({chatInfo, setMsgSend, msgSend}: chatAreaInputProps) => {
                     id="chat-area-input-text"
                     value={msg} 
                     className='chat-area-input-text'
-                    onChange={handleOnChange}/>
-            {!isClicked &&<ThreeSquare />}
-            <button className="chat-area-send-btn" type="submit">
-                <SendOutlined style={{color: '#000', fontSize: '18px'}} />
-            </button>
+                    onChange={handleOnChange}
+                    readOnly={chatInfo.blocked || chatInfo.mute !== 'NAN'}/>
+            {!isClicked && !chatInfo.blocked && chatInfo.mute === 'NAN' && <ThreeSquare />}
+            {
+                !chatInfo.blocked && chatInfo.mute === 'NAN' &&
+                    <button className="chat-area-send-btn" type="submit">
+                        <SendOutlined style={{color: '#000', fontSize: '18px'}} />
+                    </button>
+            }
         </form>
     );
 }
@@ -143,7 +212,7 @@ const MsgCardMe = ({msg} : msgCardProps) =>
         <div className="chat-area-msg-me-container">
             <div className="chat-area-msg-me">
                 <p className="chat-area-message msg-of-me">{msg.content}</p>
-                <p className="chat-time time-of-me">{msg.timeSend}</p>
+                <p className="chat-time time-of-me">{formatDate(msg.timeSend)}</p>
             </div>
         </div>
     );
@@ -173,8 +242,8 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
                 <p className="chat-area-message">{msg.content}</p>
             </div>
             <div className="msg-of-other-time-img">
-                <img src={msg.image} alt="description..."/>
-                <p className="chat-time">{msg.timeSend}</p>
+                <img src={chatInfo?.chatImage} alt="description..."/>
+                <p className="chat-time">{formatDate(msg.timeSend)}</p>
             </div>
         </div>
     );
@@ -182,15 +251,22 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
 
 type chatAreaMessagesProps =
 {
-    ListOfMsg:  msgListType | null,
+    ListOfMsg:  msgListType,
     chatInfo:   chatInfoType,
 }
 
 const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
     const me = useContext(userMe);
     let i = 0;
+    const chatAreaRef = useRef<HTMLDivElement | null>(null);
 
-    const msgCard = ListOfMsg? ListOfMsg.map( msg =>
+    useEffect(() => {
+
+        if (chatAreaRef && chatAreaRef.current)
+            chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }, [ListOfMsg]);
+
+    const msgCard = ListOfMsg.length !== 0? ListOfMsg.map( msg =>
                     {
                         return    me?.id === msg.userId ?
                                 (<MsgCardMe key={msg.userId + i++}
@@ -200,10 +276,10 @@ const ChatAreaMessages = ({chatInfo, ListOfMsg} : chatAreaMessagesProps) => {
                                                 msg={msg}
                                                 chatInfo={chatInfo}/>)
                     }
-                ) : ''
+                ) : '';
 
     return (
-        <div className='chat-area-messages'>
+        <div className='chat-area-messages' ref={chatAreaRef}>
             {msgCard}
         </div>
     );
@@ -270,7 +346,12 @@ const RankCard = ({ranked} : RankCardProps) => {
     )
 }
 
-export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) => {
+type ChatAreaProfileProps ={
+    setIsProfileOpen:   (open: boolean) => void,
+    chatInfo:           chatInfoType,
+}
+
+export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfileProps) => {
 
     const   [profileData, setProfileData] = useState<profileDataType>({
         username:       '',
@@ -280,6 +361,7 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
         updatedAt:      '',
         rank:           [],
     });
+    const [isOnline, setIsOnline] = useState(false);
 
     useEffect(() => {
         if (!chatInfo.chatUserId)
@@ -288,12 +370,11 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
             { withCredentials: true })
             .then((response) => {
                 setProfileData(response.data);
-                console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }, [chatInfo.chatId]);
 
     const rankCard = profileData.rank.length !== 0?
                         profileData.rank.map((data) => {
@@ -314,7 +395,6 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
                 </div>
                 <img src={chatInfo.chatImage} alt={`${chatInfo.chatName} image`}/> {/* Click to go to profile */}
                 <p className="CA-profile-about-username">{chatInfo.chatName}</p>
-                <p className="CA-profile-about-status">Last seen: Active | to be fixed</p>
             </div>
             
             <div className="chat-area-profile-content">
@@ -345,13 +425,13 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfile) =
     );
 }
 
-const MemberCard = (props: {img: string | undefined, username: string | undefined}) => {
+const MemberCard = (props: {img: string, username: string}) => {
 
     return (
         <div className="user-card-img-username">
             <img    src={props.img? props.img : defaultUserImage}
                     alt={`${props.username}'s image`}/>
-            <p>{props.username}</p>
+            <p>{format(props.username, 14)}</p>
         </div>
     );
 }
@@ -362,7 +442,8 @@ type MemberCardPopOverContentProps = {
     username:   string,
     id:         number,
     setChat?:   (Id: string, Image: string, Name: string,
-                Type: string, userId: number | null) => void,  
+                Type: string, userId: number | null, blocked?: boolean,
+                whoblock?: number | null, muted?: string) => void,  
     chatInfo:   chatInfoType;
     setUpdate:  (update: boolean) => void,
     update:     boolean,
@@ -381,12 +462,14 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
         rank:           [],
     });
     const me = useContext(userMe);
+    const {socket} = useContext<any | undefined>(SocketContext);
 
-    useEffect(() => {
-        if (setChat)
-            setChat(chatInfo.chatId, chatInfo.chatImage,
-                    chatInfo.chatName, chatInfo.chatType, id);
-    }, []);
+    const joinRoom = (channelId: string) =>{
+        if (socket) {
+            socket.emit('joinRoom', channelId);
+            console.log("join");
+        }
+    }
 
     const closeDialog = () => {
         setIsRemoveDialogOpen(false);
@@ -403,10 +486,11 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                     withCredentials: true,
                 })
             .then((response) => {
-                // console.log('response.data: ', response.data);
                 if (setChat )
                     setChat(response.data.channelID, img, username,
-                            'PERSONEL', id);
+                            'PERSONEL', id, response.data.blocked, response.data.hasblocked);
+                if (!response.data.blocked)
+                    joinRoom(response.data.channelID);
                 if (closeDialog)
                     closeDialog();
             })
@@ -415,6 +499,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
             }
             );
     }
+
 
     return (
         <div className="user-card-popover-content">
@@ -435,7 +520,14 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                 {
                     (role === 'owner' || role === 'admin') && id !==  me?.id ?
                         <>
-                            <button onClick={() => setIsRemoveDialogOpen(true)}>Remove</button>
+                            <button onClick={() => {
+                                                    setIsRemoveDialogOpen(true)
+                                                    if (setChat)
+                                                        setChat(chatInfo.chatId, chatInfo.chatId, chatInfo.chatName,
+                                                            chatInfo.chatType, id);
+                                                }}>
+                                Remove
+                            </button>
                             <button onClick={() => setIsMuteDialogOpen(true)}>Mute</button>
                         </>
                     : ''
@@ -451,7 +543,10 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                 ||
                 isMuteDialogOpen && <Dialog title="Mute Member" 
                                             closeDialog={closeDialog}
-                                            chatInfo={chatInfo} />
+                                            chatInfo={chatInfo}
+                                            role={role}
+                                            userId={id}
+                                            setChat={setChat}/>
             }
         </div>
     );
@@ -533,7 +628,10 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
         const formData = new FormData();
 
         formData.append('channelid', props.chatInfo.chatId);
-        formData.append('type', groupData.type);
+        if (groupData.type === 'PRIVATE' && groupData.hash !== '')
+            formData.append('type', 'PROTECTED');
+        else
+            formData.append('type', groupData.type);
         formData.append('name', groupData.name);
         formData.append('hash', groupData.hash)
         if (groupData.image !== null)
@@ -542,9 +640,10 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
         Axios.post("http://localhost:3000/chat/setting/edit-group",
                 formData,
                 {withCredentials: true})
-            .then((response) => {
-                props.setChat(props.chatInfo.chatId, response.data.image,
-                                groupData.name, groupData.type, null);
+            .then((response) => { 
+                props.setChat(props.chatInfo.chatId, 
+                                response.data.image? response.data.image: props.chatInfo.chatImage,
+                                response.data.name, response.data.type, null);
                 props.setIsChatSettingOpen(false);
             })
             .catch((error) => {
@@ -620,8 +719,8 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                     <div>
                         <p>Owner</p>
                         <div className="chat-group-settings-owner">
-                            <MemberCard img={props.membersData?.owner.image}
-                                        username={props.membersData?.owner.username} />
+                            <MemberCard img={props.membersData? props.membersData.owner.image: defaultUserImage}
+                                        username={props.membersData? props.membersData.owner.username : 'name'} />
                             <div className="chat-group-settings-owner-btn">
                                 {<button onClick={() => setIsAddAdminDialogOpen(true)}>Add Admin</button>}
                             </div>
@@ -650,7 +749,8 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
 
             {isClearChatDialogOpen && <Dialog   title="Clear chat" 
                                                 closeDialog={() => setIsClearChatDialogOpen(false)}
-                                                chatInfo={props.chatInfo}/>}
+                                                chatInfo={props.chatInfo}
+                                                closeGroupSetting={() => props.setIsChatSettingOpen(false)}/>}
             {isDeleteGroupDialogOpen && <Dialog title="Delete Group"
                                                 closeDialog={() => setIsDeleteGroupDialogOpen(false)}
                                                 chatInfo={props.chatInfo}
@@ -668,9 +768,11 @@ type ChatAreaGroupProps =
     setMembersData:         (membersData: membersDataType) => void,
     role:                   string,
     setChat:                (Id: string, Image: string, Name: string,
-                            Type: string, userId: number | null) => void,
+                            Type: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null, muted?: string) => void,
     update:                 boolean,
     setUpdate:              (update: boolean) => void,
+    closeArea:              () => void,
 }
 
 export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
@@ -683,12 +785,15 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
         Axios.get(`http://localhost:3000/chat/show-members/${props.chatInfo.chatId}`,
                 {withCredentials: true})
             .then((response) => {
-                props.setMembersData(response.data);
+                if (response.data)
+                    props.setMembersData(response.data);
             })
             .catch((error) => {
                 console.log(error);
             })
         }, [props.update]);
+
+
 
     const admins = props.membersData?.admins.length !== 0 ? props.membersData?.admins.map((admin) => {
         return  <PopoverComp    Trigger={<MemberCard    img={admin.image}
@@ -735,15 +840,23 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     return (
         <div className="chat-area-group">
             <div className="group-owner-admins-members">
+                <div className="chat-area-group-close">
+                    <p>Group Info</p>
+                    <button onClick={props.closeArea}>
+                        <FontAwesomeIcon 
+                            className="x-mark" size="xl" icon={faXmark} 
+                            style={{color: "#000000",}} />
+                    </button>
+                </div>
                 <div className="chat-area-group-search">
                     <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                 </div>
                 {   searchQuery === '' ?
                         <div className="chat-area-group-owner">
-                            <p className="header">Owner</p>
+                            <p className="header-role">Owner</p>
                             <PopoverComp    Trigger={<MemberCard   img={props.membersData?.owner.image}
                                                                 username={props.membersData?.owner.username} />}
-                                            Content={<MemberCardPopOverContent  role=''
+                                            Content={<MemberCardPopOverContent  role={''}
                                                                                 img={owner.image}
                                                                                 username={owner.username}
                                                                                 id={owner.id}
@@ -755,7 +868,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                     : ''
                 }
                 <div className="chat-area-group-admins-members">
-                    <p className="header">Admins</p>
+                    <p className="header-role">Admins</p>
                     <div className="chat-area-group-admins">
                         <div className="chat-area-group-admins-list">
                             {filteredAdmins && filteredAdmins.length !== 0 ? filteredAdmins: <p className="No-data">No admin</p>}
@@ -763,7 +876,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                     </div>
 
                     <div className="chat-area-group-members">
-                        <p className="header">Members</p>
+                        <p className="header-role">Members</p>
                         <div className="chat-area-group-members-list">
                             {filteredUsers && filteredUsers.length !== 0 ? filteredUsers: <p className="No-data">No member</p>}
                         </div>
@@ -783,7 +896,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
                 }
 
                 {
-                    props.role == 'owner' ?
+                    props.role == 'owner'?
                         <button className="chat-area-group-invite-btn" onClick={() => setIsInviteDialogOpen(true)}>
                             <p>Add member</p>
                             {/* <FontAwesomeIcon icon={faUsersMedical} style={{color: "#000000",}} /> */}
@@ -814,43 +927,113 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     );
 }
 
+type responseType = {
+    sender:             number,
+    room:               string,
+    message:            string,
+}
+
 type ChatAreaProps = {
     chatInfo:           chatInfoType,
     setIsProfileOpen:   (isOpen: boolean) => void,
+    setUpdateChatInfo:  (update: boolean) => void,
+    setChat:            (Id: string, Image: string, Name: string,
+                            Type: string, userId: number | null,
+                            blocked?: boolean, whoblock?: number | null, muted?: string) => void,
+    setUpdateUserCard:  (update: boolean) => void,
+    updateUserCard:     boolean,
+    updateChatInfo:     boolean,
+    leaveRoom:          () => void,
 }
 
-export const ChatArea = ({chatInfo, setIsProfileOpen} : ChatAreaProps) => {
-    const [msgList, setmsgList] = useState<msgListType | null>(null);
+export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
+                            setChat, setUpdateUserCard, updateUserCard,
+                            updateChatInfo, leaveRoom} : ChatAreaProps) => {
+    const [msgList, setmsgList] = useState<msgListType>([]);
     const [msgSend, setMsgSend] = useState(false);
+    const me = useContext(userMe);
+    const {socket} = useContext<any | undefined>(SocketContext);
+    
+    const sendingroup = (msg: string) => {
+        if (socket) 
+        {
+            socket.emit('chatToServer', { sender: me?.id, room: chatInfo.chatId, message: msg });
+            console.log("send");
+        }
+    }
 
     useEffect(() => {
-        if (!chatInfo.chatId)
+        if (!chatInfo.chatId || chatInfo.mute !== 'NAN')
           return;
         Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
                 {withCredentials: true})
             .then((response) => {
-                setmsgList(response.data);
+                setmsgList(response.data || [])
               }
             )
             .catch((error) => {
                 console.log(error);
               }
             );
-      }, [chatInfo.chatId, msgSend]);
+      }, [chatInfo.chatId, updateChatInfo]);
+    
+    useEffect(() => {
+
+        const chatToClientListener = (response: responseType) => {
+            setmsgList(prevMsgList => [...prevMsgList, 
+                                        {userId: response.sender,
+                                        content: response.message,
+                                        timeSend: new Date().toISOString(),
+                                        image: chatInfo.chatImage}]);
+            setUpdateUserCard(!updateUserCard);
+            setUpdateChatInfo(!updateChatInfo);
+        }
+
+        if (socket)
+            socket.on("chatToClient", chatToClientListener);
+
+        return () => {
+            if (socket) {
+              socket.off("chatToClient", chatToClientListener);
+            }
+          };
+
+    }, []);
+
 
     return (
         <div className='chat-area-container'>
             <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} 
                             chatInfo={chatInfo}
                             setMsgSend={setMsgSend}
-                            msgSend={msgSend}/>
+                            msgSend={msgSend}
+                            setUpdateChatInfo={setUpdateChatInfo}
+                            setChat={setChat}
+                            leaveRoom={leaveRoom}/>
 
             <ChatAreaMessages   ListOfMsg={msgList}
                                 chatInfo={chatInfo}/>
-
-            <ChatAreaInput  setMsgSend={setMsgSend}
-                            msgSend={msgSend}
-                            chatInfo={chatInfo}/>
+            {
+                chatInfo.blocked && me?.id === chatInfo.whoblock ? 
+                    <p  className="No-data"
+                        style={{textAlign: 'center', fontSize: '12px'}}>
+                        You blocked this user
+                    </p>
+                : ''
+            }
+            {
+                chatInfo.mute !== 'NAN' ?
+                    <p  className="No-data"
+                        style={{textAlign: 'center', fontSize: '12px'}}>
+                        You Muted from this group
+                    </p>
+                : ''
+            }
+            <ChatAreaInput  chatInfo={chatInfo}
+                            sendingroup={sendingroup}
+                            setUpdateChatInfo={setUpdateChatInfo}
+                            updateChatInfo={updateChatInfo}
+                            setChat={setChat}/>
         </div>
     );
 }

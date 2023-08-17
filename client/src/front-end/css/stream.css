@@ -1,7 +1,7 @@
 
-.mainDisplay
-{
-  
+/* .mainDisplay
+{ */
+/*   
     position: relative;
     top : 50px;
     width: 1058px;
@@ -11,18 +11,17 @@
     border: 2px solid black;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
     background-color: black !important;
-}
+} */
 
 
 
-.mainDisplay img{
+/* .mainDisplay img{
     width: 1058px;
     height: 500px;
     border-radius: 20px;
     position: relative;
     bottom : 1px;
-
- }
+ } */
 
 #Play
 {
@@ -91,3 +90,36 @@
   .P_W a:hover:after{
     width: 100%;
   } 
+
+.stream-container
+{
+  display: flex;
+  margin: auto;
+}
+
+.stream-user-container
+{
+  background-color: white;
+  border: 0.5px solid black;
+  width: 500px;
+  height: 90px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-evenly;
+  align-items: center;
+  align-content: space-between;
+  flex-wrap: nowrap;
+
+}
+
+/* #stream-user-username
+{
+  color : black;
+}
+
+/* #stream-user-image
+{
+  width: 50px;
+  height: 50px;
+} */

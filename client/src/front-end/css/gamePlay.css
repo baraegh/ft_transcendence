@@ -1,5 +1,5 @@
 
-.mainDisplay 
+/* .mainDisplay 
 {
     display: flex;
     position: relative;
@@ -12,14 +12,14 @@
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
     background-color: green;
 
-}
+} */
 
-.mainDisplay #pong
+/* .mainDisplay #pong
 {
   width: 1200px;
   height: 500px;
   border-radius: 20px;
-}
+} */
 
 
 

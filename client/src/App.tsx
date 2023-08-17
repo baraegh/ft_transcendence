@@ -1,30 +1,44 @@
-import "./App.css";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import Chat from "./chat/chat";
+import './App.css';
+import { BrowserRouter as Router, Route, Switch, useParams, Routes, Navigate } from 'react-router-dom';
+import Chat from './chat/chat';
 import LoginPage from "./front-end/tsx/loginPage";
 import DSTeam from "../src/front-end/tsx/discoverTeam";
 import Home from "./front-end/tsx/home";
 import LeaderBoard from "./front-end/tsx/leaderBoard";
 import MyHeader from "./front-end/tsx/header";
-import "bootstrap/dist/css/bootstrap.css";
-import FA from "./front-end/tsx/2FA";
-import MyProfileUser from "./front-end/tsx/myProfileUser";
-import Play from "./front-end/tsx/play";
-import AuthPage from "./auth/AuthPage";
-import TwoFactorAuth from "./TwoFactorAuth/TwoFactorAuth";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import io, { Socket } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
-import { SocketContextProvider } from "./socket/socketContext";
+import 'bootstrap/dist/css/bootstrap.css'
+import FA from './front-end/tsx/2FA'
+import MyProfileUser from './front-end/tsx/myProfileUser';
+import Play from './front-end/tsx/play'
+import AuthPage from './auth/AuthPage'
+// import TwoFactorAuth from './TwoFactorAuth/TwoFactorAuth';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import io, { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
+import SocketProvider from './socket/socketContext';
+import GamePlay from './front-end/tsx/gamePlay';
+import InviteFriend from './front-end/tsx/inviteFriend';
+import ErrorPage from './front-end/tsx/ErrorPage';
+import React from 'react';
+export {userMe}
+import OtherProfileUser from './front-end/tsx/otherProfileUser';
+import Stream from './front-end/tsx/stream';
+import LoadingPage from './front-end/tsx/loadingPage';
+import AlreadyInGame from './front-end/tsx/alreadyInGame';
 
-//  let socket: Socket | null;
+//  let socket: Socket | null; 
 //  export let socket: Socket | null = null;
+type meType = {
+  id:           number,
+  username:     string,
+  image:        string,
+  gameWon:      number,
+  gameLost:     number,
+  achievements: string[],
+}
+
+const userMe = React.createContext<meType | null>(null);
 function App() {
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
@@ -71,23 +85,52 @@ function App() {
     // Update local storage whenever the isLoggedIn state changes
     localStorage.setItem("isLoggedIn", isLoggedIn);
   }, [isLoggedIn]);
+  const [me, setMe] = useState<meType | null>(null)
 
+  useEffect(() => {
+    axios.get('http://localhost:3000/user/me', {withCredentials: true})
+      .then((response) => {
+        setMe(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, []);
+
+  
   return (
-    <SocketContextProvider>
-      <Router>
-        <Routes>
+    <SocketProvider>
+      <userMe.Provider value={me}>
+    <Router>
+    <Routes>
           <Route path="/" element={<DSTeam />} />
           <Route
             path="/loginPage"
-            element={
-              !isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />
-            }
+            element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
+          />
+          <Route
+            path="/FA"
+            element={isLoggedIn ? <FA /> : <Navigate to="/loginPage" replace />}
           />
           <Route
             path="/home"
-            element={
-              isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />
-            }
+            element={isLoggedIn ? <Home /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/user"
+            element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/loadingPage"
+            element={isLoggedIn ? <LoadingPage /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/alreadyInGame"
+            element={isLoggedIn ? <AlreadyInGame /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/user/:userId"
+            element={isLoggedIn ? <OtherProfileUser /> : <Navigate to="/loginPage" replace />}
           />
           <Route
             path="/play"
@@ -97,9 +140,7 @@ function App() {
           />
           <Route
             path="/TwoFactorAuth"
-            element={
-              isLoggedIn ? <Navigate to="/home" replace /> : <TwoFactorAuth />
-            }
+            element={isLoggedIn ? <Navigate to="/home" replace /> : <FA />}
           />
           <Route
             path="/chat"
@@ -119,17 +160,29 @@ function App() {
           />
           <Route
             path="/profile"
-            element={
-              isLoggedIn ? (
-                <MyProfileUser />
-              ) : (
-                <Navigate to="/loginPage" replace />
-              )
-            }
+            element={isLoggedIn ? <MyProfileUser /> : <Navigate to="/loginPage" replace />}
           />
+          <Route
+            path="/gamePlay"
+            element={isLoggedIn ? <GamePlay /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/inviteFriend"
+            element={isLoggedIn ? <InviteFriend /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/stream"
+            element={isLoggedIn ? <Stream /> : <Navigate to="/loginPage" replace />}
+          />
+          <Route
+            path="/errorPage"
+            element={<ErrorPage />}
+          />
+
         </Routes>
-      </Router>
-    </SocketContextProvider>
+    </Router>
+    </userMe.Provider>
+    </SocketProvider>
   );
 }
 

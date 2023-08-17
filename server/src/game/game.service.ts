@@ -128,4 +128,27 @@ export class GameService {
     }
     return editGame;
   }
+
+  async isplaying(userId:number){
+    const matchHistory = await this.prisma.match_History.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { user1Id: userId },
+              { user2Id: userId }
+            ]
+          },
+          { game_end: false }
+        ]
+      }
+    });
+    if(matchHistory[0].user1Id == userId || matchHistory[0].user2Id == userId ||matchHistory[1].user1Id == userId || matchHistory[1].user2Id == userId )
+      return true;
+    else 
+    {
+      console.log("true"+matchHistory[0].user1Id);
+      return false;
+    }
+  }
 }

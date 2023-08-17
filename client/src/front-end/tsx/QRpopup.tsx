@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import '../css/QRpopup.css';
@@ -17,31 +17,35 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const [source, setSource] = useState("");
   const [QRvalue, setQRvalue] = useState("");
   const [error, setError] = useState("");
+  const [effectExecuted, setEffectExecuted] = useState(false);
 
-  const submitQR = (event: KeyboardEvent) => {
-    axios.post('http://localhost:3000/2fa/verified', { "secret": QRvalue }, { withCredentials: true })
-      .then(res => {
-        console.log(res);
-        setQRisEnabled(true); // Update the QRisEnabled value using the callback
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.code === "ERR_BAD_REQUEST") {
-          setError("Wrong Auth Code !");
-        }
-      });
-
+  const submitQR = (event: React.KeyboardEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+
     if (QRvalue.length !== 6) {
       setError("error akhay");
+      return;
     }
-    console.log(QRvalue);
-    axios.post('http://localhost:3000/2fa/verified_first_time', { "secret": QRvalue }, { withCredentials: true })
-      .then(res => {
+
+    axios
+      .post('http://localhost:3000/2fa/verified', { secret: QRvalue }, { withCredentials: true })
+      .then((res) => {
         console.log(res);
-        setError("");
-        onHide();
+        setQRisEnabled(true); // Update the QRisEnabled value using the callback
+        axios
+          .post('http://localhost:3000/2fa/verified_first_time', { secret: QRvalue }, { withCredentials: true })
+          .then((res) => {
+            console.log(res);
+            setError("");
+            onHide();
+          })
+          .catch((err) => {
+            console.log(err);
+            if (err.code === "ERR_BAD_REQUEST") {
+              setError("Wrong Auth Code !");
+            }
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -51,14 +55,15 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
       });
   };
 
-  useEffect(() => {
-    console.log(QRisEnabled);
+  const isMounted = useRef(false);
 
+  useEffect(() => {
     axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
-      .then(res => {
-        fetchQR = res;
-        setSource(res.data);
-      });
+    .then(res => {
+          console.log("CLEAN");
+          fetchQR = res;
+          setSource(res.data);
+        });
   }, [QRisEnabled]);
 
   return (
@@ -69,6 +74,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
         </div>
         {/* Add your custom content here */}
         <form onSubmit={submitQR}>
+
           <input onChange={(e) => setQRvalue(e.target.value)} value={QRvalue} id="QRinput" type="text" placeholder="Your Code" />
           <br />
           <center>
@@ -86,19 +92,29 @@ const QRpopup: React.FC = () => {
     const storedValue = localStorage.getItem('QRisEnabled');
     return storedValue ? JSON.parse(storedValue) : false;
   });
+  const [toggleChecked, setToggleChecked] = useState(showModal || QRisEnabled);
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
-    if(QRisEnabled)
-      setShowModal(false);
-    setQRisEnabled(false);
+    // setQRisEnabled(false);
+    setToggleChecked(event.target.checked);
     console.log(QRisEnabled);
-    console.log("EEE");
   };
 
-  useEffect(() => {
-    localStorage.setItem('QRisEnabled', JSON.stringify(QRisEnabled));
-  }, [QRisEnabled]);
+  // useEffect(() => {
+  //   if (toggleChecked) {
+  //     console.log("CLEAN");
+  //     axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
+  //       .then(res => {
+  //         fetchQR = res;
+  //         setSource(res.data);
+  //       });
+  //   }
+  // }, [toggleChecked]);
+
+  // useEffect(() => {
+  //   localStorage.setItem('QRisEnabled', JSON.stringify(QRisEnabled));
+  // }, [QRisEnabled]);
 
   return (
     <div>
@@ -120,3 +136,7 @@ const QRpopup: React.FC = () => {
 };
 
 export default QRpopup;
+function setSource(data: any) {
+  throw new Error('Function not implemented.');
+}
+

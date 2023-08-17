@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import axios from 'axios';
@@ -6,17 +6,73 @@ import 'bootstrap/dist/css/bootstrap.css'
 import '../css/style.css'
 import '../css/2FA.css'
 import me from '../img/rimney.jpeg'
+import { useNavigate } from 'react-router-dom';
+import { userMe } from '../../App';
 
-function FA() : JSX.Element {
-    return (
+const TwoFactorAuth: React.FC = () => {
+  const [input, setInput] = useState("");
 
-        <div className="mainDiv">
-            <img src={me} className="UserImage" />
-            <p className='userName'>rimney</p>
-            <input placeholder='OTP' type="tel" className="otp" />
-        </div>
 
-    );
-}
 
-export default FA;
+  const queryParams = new URLSearchParams(window.location.search);
+  const imageParam = queryParams.get("image");
+  const navigate = useNavigate();
+  const [logo, setLogo] = useState(imageParam);
+
+
+  const submitForm = () => {
+    console.log("@2222222");
+    console.log(input);
+    axios
+      .post("http://localhost:3000/2fa/verified", {secret: input}, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          axios
+            .post("http://localhost:3000/auth/refresh", null, {
+              withCredentials: true,
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                document.location.reload();
+                // console.log("EEEEE");
+              } else {
+                throw new Error("Request failed");
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              navigate("/");
+            });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        navigate("/");
+
+      });
+  };
+
+  return (
+    <div className="mainDiv">
+    
+        <img
+          src={logo}
+          alt="Logo"
+          className='UserImage'
+        />
+      <br />
+      <input type="text" id="inputText" placeholder="Enter Your OTP" value={input} onChange={(e) => setInput(e.target.value)} />
+      <br />{" "}
+      <button
+        onClick={submitForm}
+        className='otp'
+      >
+        Submit
+      </button>
+    </div>
+  );
+};
+
+export default TwoFactorAuth;

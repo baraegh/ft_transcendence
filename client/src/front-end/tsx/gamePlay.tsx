@@ -66,7 +66,6 @@ function gamePlay() : JSX.Element
         });
         type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
         socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
-          
           socket.emit('gameStart', data);
         });
   

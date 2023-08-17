@@ -1,7 +1,7 @@
 /* Header Styles */
 .header {
-   width: 1142px;
-   height: 59px;
+    width: 100%;
+    height: 59px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -16,17 +16,23 @@
   
 .discoverTeam
 {
+  font-family: 'Mouse Memoirs';
+
   display: flex;
   justify-content: center;
   padding-right: 60px;
 }
 
 .discover-team-h2 {
+  font-family: 'Mouse Memoirs';
+
   display: inline-block;
   margin-right: 15px;
 }
 
 .play-button {
+  font-family: 'Mouse Memoirs';
+
   width: 70px;
   font-size: 30px;
   background-color: white;
@@ -36,6 +42,8 @@
 }
 
 .discover-this-amazing-team {
+  font-family: 'Mouse Memoirs';
+
   display: flex;
   margin: auto;
   height: 750px;
@@ -50,6 +58,8 @@
 
 .discover-this-amazing-team p
 {
+  font-family: 'Mouse Memoirs';
+
   position: relative;
   left : 100px;
   color : white;
@@ -59,6 +69,8 @@
 }
   
 .ping-pong-reboot {
+  font-family: 'Mouse Memoirs';
+
   margin: auto;
   width: 1142px;
   height: 430px;
@@ -68,21 +80,37 @@
 }
 
 .ping-ping-reboot-h1 {
+  font-family: 'Mouse Memoirs';
+
   margin-left: 50px;
   margin-top: 31px;
 }
 
 .ping-pong-reboot-text {
-  font-size: 24px;
-  width: 680px;
+  font-family: 'Mouse Memoirs';
 
+  font-size: 25px;
+  display: flex;
+  width: 650px;
 
   margin-left: 50px;
-  display: inline-block;
-  padding-bottom: 10px;
+}
+
+.ping-pong-reboot-img-p
+{
+  display: flex;
+  flex-wrap: wrap;
+}
+}
+
+#pingPongRebootText
+{
+
 }
   
 .ping-pong-photo {
+  font-family: 'Mouse Memoirs';
+
   position: relative;
   background-color: green;
   height: 100px;
@@ -94,6 +122,8 @@
 }
 
 .discover-this-amazing-team-title {
+  font-family: 'Mouse Memoirs';
+
   font-size: 120px;
   margin-top: 1%;
   color: white;
@@ -103,6 +133,8 @@
   
 .meet-the-team
 {
+  font-family: 'Mouse Memoirs';
+
   margin: auto;
   width: 1142px;
 
@@ -113,6 +145,8 @@
 }
   
   .meet-the-team-h1 {
+    font-family: 'Mouse Memoirs';
+
     position: relative;
     text-align: center;
     font-size: 100px;
@@ -120,6 +154,8 @@
   }
   
   .meet-the-team-h3 {
+    font-family: 'Mouse Memoirs';
+
     text-align: center;
     font-size: 40px;
     position: relative;
@@ -127,6 +163,8 @@
   }
   
   .meet-the-team-line {
+    font-family: 'Mouse Memoirs';
+
     position: relative;
     border-bottom: 5px solid;
     background-color: black;
@@ -136,6 +174,8 @@
 
 
 .dsFooter {
+  font-family: 'Mouse Memoirs';
+
   position: relative;
   bottom: 30px;
   flex-direction: column;
@@ -152,11 +192,15 @@
 }
   
   .footer-h2 {
+    font-family: 'Mouse Memoirs';
+
     position: relative;
     text-align: center;
   }
   
   .footer-text {
+    font-family: 'Mouse Memoirs';
+
     position: relative;
     top: -10px;
     right: 0.17%;
@@ -165,13 +209,15 @@
   }
   
 
-.button_animation a{
+#tryIt {
+
+  font-family: 'Mouse Memoirs';
+
   display: block;
   width: 104px;
   height: 45px;
   line-height: 40px;
   font-size: 25px;
-  font-family: sans-serif;
   text-decoration: none;
   color: #333;
   border: 2px solid #333;
@@ -180,39 +226,55 @@
   position: relative;
   transition: all .35s;
   border-radius: 9px;
+  bottom : 50px;
+  left : 44px;
 }
 
-.button_animation a span{
+#tryIt:hover {
+  background-color: black;
+  color : white;
+
+}
+#playB {
+
+  font-family: 'Mouse Memoirs';
+
+  display: block;
+  width: 104px;
+  height: 45px;
+  line-height: 40px;
+  font-size: 25px;
+  text-decoration: none;
+  color: #333;
+  border: 2px solid #333;
+  letter-spacing: 2px;
+  text-align: center;
   position: relative;
-  z-index: 2;
+  transition: all .35s;
+  border-radius: 9px;
+  /* bottom : 50px; */
+  left : 44px;
 }
 
-.button_animation  a:after{
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background: black;
-  transition: all .20s;
+#playB:hover {
+  background-color: black;
+  color : white;
+
 }
 
-.button_animation a:hover{
-  color: #fff;
-}
 
-.button_animation a:hover:after{
-  width: 100%;
-}
 
 .discoverTeam h2
 {
+  font-family: 'Mouse Memoirs';
+
   position: relative;
   display: inline-block;
   text-decoration: none; 
 }
 .discoverTeam h2:before {
+      font-family: 'Mouse Memoirs';
+
   content: '';
   position: absolute;
   bottom: -3px;
@@ -227,6 +289,8 @@
 }
 
 .discoverTeam h2:hover:before {
+      font-family: 'Mouse Memoirs';
+
   transform: scaleX(1);
 }
 
@@ -234,6 +298,8 @@
 
 
 .meet-the-team-images {
+      font-family: 'Mouse Memoirs';
+
   position: relative;
   bottom: 13%;
   display: flex;
@@ -245,12 +311,16 @@
 }
 
 .meet-the-team-image img {
+      font-family: 'Mouse Memoirs';
+
   border-radius: 20px;
   width: 249px;
   height: 249px;
   cursor: pointer;
 }
 .meet-the-team-image {
+      font-family: 'Mouse Memoirs';
+
   margin: 10px;
   width: 250px;
   height: 250px;
@@ -259,11 +329,17 @@
   box-shadow: 6px 6px 0px 2px black;
   border-radius: 25px;
   transform: translateZ(0); /* Add this line */
+  z-index: 2;
 
 }
 
+/* .meet-the-team-images:hover {
+  pointer-events: none;
+} */
 
 .overlay {
+      font-family: 'Mouse Memoirs';
+
   position: absolute;
   transition: all 0.3s ease;
   opacity: 0;
@@ -271,10 +347,14 @@
 }
 
 .meet-the-team-image:hover .overlay {
+      font-family: 'Mouse Memoirs';
+
   opacity: 1;
 }
 
 .overlayBottom {
+      font-family: 'Mouse Memoirs';
+
   border-radius: 20px;
   width: 250px;
   height: 0;
@@ -284,11 +364,23 @@
 }
 
 .meet-the-team-image:hover .overlayBottom {
+      font-family: 'Mouse Memoirs';
+
   height: 250px;
 }
 
+.ping-pong-reboot .button_animation 
+{
+      font-family: 'Mouse Memoirs';
+
+  position: relative;
+  top: 10px;
+  width : 100px;
+}
 .ping-pong-reboot .button_animation
 {
+      font-family: 'Mouse Memoirs';
+
   position: relative;
   top: 10px;
   width : 100px;
@@ -296,6 +388,8 @@
 
 #header_text
 {
+      font-family: 'Mouse Memoirs';
+
   position: relative;
   text-align: center;
   top : 20px;
@@ -304,6 +398,8 @@
 
 #paragraphImg
 {
+      font-family: 'Mouse Memoirs';
+
   display: flex;
   position: relative;
   text-align: center;
@@ -320,3 +416,7 @@
     height: 700px;
 }
 
+.dstDiv
+{
+ font-family: "Mouse Memoirs";
+}

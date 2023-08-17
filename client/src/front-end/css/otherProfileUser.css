@@ -19,9 +19,9 @@
 {
     position: relative;
     top: 30px;
-    clear: both; /* makes the div under the other onces */
+    clear: both;
     width: 1054px;
-    height: 370px;
+    height: 403px;
     border: 2px solid black;
     border-radius: 20px;
     box-shadow: 6px 8px 0px 2px rgba(0,0,0,1);
@@ -106,16 +106,21 @@
 
 .achievementIcons
 {
+    /* margin-right: 1px; */
+    /* width : 60px !important; */
+    display: flex;
+    /* justify-content: space-between; */
     /* margin: auto; */
     position: relative;
-    left: 30px;
-    bottom: 18px;
+    left: 25px;
+    bottom: 10px;
 }
 .achievementIcons img
 {
+    margin-right: 30px;
     align-items: center;
     justify-content: space-between;
-    width: 60px;
+    width: 40px;
     height: 60px;
 }
 
@@ -224,115 +229,162 @@
 
 .fourButtons
 {
-    /* display: flex; */
-    position: relative;
-    bottom : 3px;
-    /* justify-content: space-between; */
-}
+     position: relative;
+     right: 200px;
+     /* background-color: green; */
+     width: 630px;
+     display: flex;
+     justify-content: space-between;
+ }
 
-.leftButtons {
-
-    /* display: flex; */
-
-    position: relative;
-    right: 195px;
-    bottom : 15px;
-}
-
-.rightButtons {
-
-    /* display: flex; */
-
-    height: 35px;
-    position: relative;
-    left: 250px;
-    bottom : 50px;
-}
-
-#invite
+.challenge 
 {
-    /* width: 100px; */
+    --c: black;
+    line-height: 1.2em;
+    background: conic-gradient(from -135deg at 1000% 540%, var(--c) 90deg, #0000 0)
+        0 var(--p, 0%),
+      conic-gradient(from -135deg at 1.2em 80%, #0000 90deg, var(--c) 0) 100%
+        var(--p, 0%);
+    background-size: var(--s, 0%) 200%;
+    background-repeat: no-repeat;
+    transition: 0.4s ease-in, background-position 0s;
+    text-align: center;
+    align-items: center;
+    width: 150px;
+    height: 40px;
     border: 2px solid #333;
-    box-shadow: 2px 4px 10px 1px rgba(0,0,0,1);
     border-radius: 3px;
-    position: relative;
-    font-size: 25px;
-    /* width: 100px; */
-    /* height: 50px; */
 }
 
-#block 
+.challenge:hover {
+    --p: 100%;
+    --s: calc(
+      50% + 0.61em
+    ); /* it should be 0.6em(1.2em/2) but we use a litte bigger */
+    color: white;
+  }
+
+.message2
 {
-    /* width: 100px; */
+    --c: black;
+    line-height: 1.2em;
+    background: conic-gradient(from -135deg at 1000% 540%, var(--c) 90deg, #0000 0)
+        0 var(--p, 0%),
+      conic-gradient(from -135deg at 1.2em 80%, #0000 90deg, var(--c) 0) 100%
+        var(--p, 0%);
+    background-size: var(--s, 0%) 200%;
+    background-repeat: no-repeat;
+    transition: 0.4s ease-in, background-position 0s;
+    text-align: center;
+    align-items: center;
+    width: 150px;
+    height: 40px;
     border: 2px solid #333;
-    box-shadow: 2px 4px 10px 1px rgba(0,0,0,1);
     border-radius: 3px;
-    position: relative;
-    font-size: 25px;
-    left: 20px;
-    /* width: 100px; */
-    /* height: 50px; */
+    
 }
 
-#challenge 
+
+.message2:hover {
+    --p: 100%;
+    --s: calc(
+      50% + 0.61em
+    ); /* it should be 0.6em(1.2em/2) but we use a litte bigger */
+    color: white;
+  }
+
+.invite2
 {
-    /* width: 100px; */
+    --c: black;
+    line-height: 1.2em;
+    background: conic-gradient(from -135deg at 1000% 540%, var(--c) 90deg, #0000 0)
+        0 var(--p, 0%),
+      conic-gradient(from -135deg at 1.2em 80%, #0000 90deg, var(--c) 0) 100%
+        var(--p, 0%);
+    background-size: var(--s, 0%) 200%;
+    background-repeat: no-repeat;
+    transition: 0.4s ease-in, background-position 0s;
+    text-align: center;
+    align-items: center;
+    width: 150px;
+    height: 40px;
     border: 2px solid #333;
-    box-shadow: 2px 4px 10px 1px rgba(0,0,0,1);
     border-radius: 3px;
-    position: relative;
-    font-size: 25px;
-    /* width: 100px; */
-    /* height: 50px; */
+    
 }
 
+.invite2:hover {
+    --p: 100%;
+    --s: calc(
+      50% + 0.61em
+    ); /* it should be 0.6em(1.2em/2) but we use a litte bigger */
+    color: white;
+  }
 
 
-#message 
+.block2
 {
-    /* width: 100px; */
+    --c: black;
+    line-height: 1.2em;
+    background: conic-gradient(from -135deg at 1000% 540%, var(--c) 90deg, #0000 0)
+        0 var(--p, 0%),
+      conic-gradient(from -135deg at 1.2em 80%, #0000 90deg, var(--c) 0) 100%
+        var(--p, 0%);
+    background-size: var(--s, 0%) 200%;
+    background-repeat: no-repeat;
+    transition: 0.4s ease-in, background-position 0s;
+    text-align: center;
+    align-items: center;
+    width: 150px;
+    height: 40px;
     border: 2px solid #333;
-    box-shadow: 2px 4px 10px 1px rgba(0,0,0,1);
     border-radius: 3px;
-    position: relative;
-    left: 20px;
-    font-size: 25px;
-    /* width: 90px; */
-    /* height: 35px; */
+
 }
+
+.block2:hover {
+    --p: 100%;
+    --s: calc(
+      50% + 0.61em
+    ); /* it should be 0.6em(1.2em/2) but we use a litte bigger */
+    color: white;
+  }
 
 
 .fourButtons a{
 
+    display: flex;
     /* display: block; */
     text-decoration: none;
-    font-family: sans-serif;
     color: #333;
     letter-spacing: 5px;
     transition: all .35s;
+    justify-content: space-around;
 }
 
-.fourButtons a span{
-    position: relative;
-    z-index: 1;
-    height: 100%;
+.oops
+{
+    font-family: 'Mouse Memoirs';
+
+    color : black;
+    font-size: 80px;
+    width: 1050px;
+    height: 500px;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    align-content: center;
 }
-  
-.fourButtons  a:after{
-    position: absolute;
-    content: "";
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 100%;
-    background: black;
-    transition: all .20s;
-  }
-  
-  .fourButtons a:hover{
-    color: #fff;
-  }
-  
-  .fourButtons a:hover:after{
-    width: 100%;
-  }
+
+.oops a
+{
+    color : black;
+}
+
+.oops a:hover
+{
+    text-decoration: none;
+    color : red;
+}

@@ -1,17 +1,35 @@
 /* chat page and itd compenent style  */
+.the-chat {
+    /* width: 100%; */
+    /* height: 100%; */
+    
+    /* display: grid; */
+    /* grid-template-rows: 80px 800px; */
+    /* align-items: center; */
+    /* justify-content: space-around; */
+}
+
 .chat-page
 {
     box-sizing: border-box;
 
-    width: 80%;
-    height: 80%;
+    /* width: 80%;
+    height: 80%; */
+
+    width: 1050px;
+    height: 100%;
+
+    /* width: 1050px; */
+    /* height: 900px; */
 
     border: 2px solid var(--secondary-color);
     box-shadow: 8px 8px 0px var(--secondary-color);
     border-radius: 20px;
     display: flex;
 
+    margin-top: 20px;
 }
+
 
 .chat-history-list
 {

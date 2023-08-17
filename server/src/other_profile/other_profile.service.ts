@@ -22,7 +22,7 @@ export class OtherProfileService {
       },
     });
 
-    if (!finduser) throw new ForbiddenException('Other user Not Found');
+    if (!finduser) return;
     const matchHistory = await this.prisma.match_History.findMany({
       where: {
         OR: [
@@ -56,20 +56,22 @@ export class OtherProfileService {
         },
       },
     });
-
     const matchHistoryDTOs = matchHistory.map((match) => {
+      
       let otherUser: SELECTE_DATA_OF_OTHER_PLAYER;
       let win: boolean;
       if (match.user1Id === userId) {
         otherUser = match.user2;
+        if (match.user1P >= match.user2P) win = true;
+        else win = false;
       } else {
         otherUser = match.user1;
-        const temp = match.user1P;
-        match.user1P = match.user2P;
-        match.user2P = temp;
+        if (match.user2P >= match.user1P) 
+        {
+          win = true;
+        }
+        else win = false;
       }
-      if (match.user1P >= match.user2P) win = true;
-      else win = false;
       return {
         matchId: match.id,
         otherUser,
@@ -78,7 +80,6 @@ export class OtherProfileService {
         user2P: match.user2P,
       };
     });
-
     return matchHistoryDTOs;
   }
 
@@ -123,26 +124,38 @@ export class OtherProfileService {
         friendID: userId,
       },
       select: {
+        user:true,
         blocked: true,
         isRequested: true,
         isFriend: true,
         requestAccepted: true,
         },
       });
+      const foundPersonalChannel = await this.prisma.channel.findFirst({
+        where: {
+          type: 'PERSONEL',
+          chanelID: {
+            every: {
+              OR: [{ userID: userId }, { userID: otherId }],
+            },
+          },
+        },
+      });
 
     const aboutOther: ABOUOTHERTDTO = {
       id: findOther.id,
       username: findOther.username,
+      image:findOther.image,
       gameWon: findOther.gameWon,
       gameLost: findOther.gameLost,
       achievements: findOther.achievements,
       updatedAt: findOther.updatedAt,
+      blocked: foundPersonalChannel?.blocked || false,
+      hosblocked: foundPersonalChannel?.hasblocked || null,
+      isRequested: friendships?.isRequested || false,
+      isFriend: friendships?.isFriend || false,
+      requestAccepted: friendships?.requestAccepted || false,
     };
-
-    if (friendships) {
-      aboutOther.friend = friendships;
-    }
-
     return aboutOther;
   }
 }

@@ -41,6 +41,7 @@ export class USerService {
     userId: number,
     friendId: number,
   ): Promise<USER_FRIEN_DTO> {
+
     const friendships = await this.prisma.friendship.findFirst({
       where: {
         userID: userId,

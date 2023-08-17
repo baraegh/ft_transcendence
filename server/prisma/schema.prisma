@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -18,7 +18,9 @@ model User {
   gameLost                         Int?
   createdAt                        DateTime @default(now())
   updatedAt                        DateTime @updatedAt
-  achievements                     String[]
+  achievements                     String[] @default(["1"])
+  isonline                         Boolean  @default(false)
+  ingame                        Boolean  @default(false)   
   twoFactorAuthenticationSecret    String?
   isTwoFactorAuthenticationEnabled Boolean  @default(false)
 
@@ -30,7 +32,8 @@ model User {
 
   participants Participants[]
 
-  channels Channel[]
+  channels Channel[] 
+  hasblockedtable Channel[] @relation("hasblockedtable")
   messages Messages[]
 
   @@map("users")
@@ -111,7 +114,9 @@ model Channel {
   hash       String?
   image      String?
   blocked    Boolean        @default(false)
-  hasblocked Int?
+
+  hasblockedtable User? @relation("hasblockedtable",fields: [hasblocked], references: [id])
+  hasblocked  Int?      
   chanelID   Participants[]
   messages   Messages[]
 
