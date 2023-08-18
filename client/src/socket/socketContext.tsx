@@ -18,7 +18,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const connectSocket = () => {
-    const newSocket: Socket = io('http://localhost:3000');
+    const newSocket: Socket = io(`${import.meta.env.VITE_BACKEND_URL}`);
     setSocket(newSocket);
   };
 

@@ -29,12 +29,12 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
     }
 
     axios
-      .post('http://localhost:3000/2fa/verified', { secret: QRvalue }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified`, { secret: QRvalue }, { withCredentials: true })
       .then((res) => {
         console.log(res);
         setQRisEnabled(true); // Update the QRisEnabled value using the callback
         axios
-          .post('http://localhost:3000/2fa/verified_first_time', { secret: QRvalue }, { withCredentials: true })
+          .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified_first_time`, { secret: QRvalue }, { withCredentials: true })
           .then((res) => {
             console.log(res);
             setError("");
@@ -58,7 +58,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   const isMounted = useRef(false);
 
   useEffect(() => {
-    axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/2fa/enable`, null, { withCredentials: true })
     .then(res => {
           console.log("CLEAN");
           fetchQR = res;
@@ -104,7 +104,7 @@ const QRpopup: React.FC = () => {
   // useEffect(() => {
   //   if (toggleChecked) {
   //     console.log("CLEAN");
-  //     axios.post('http://localhost:3000/2fa/enable', null, { withCredentials: true })
+  //     axios.post(`${import.meta.env.VITE_BACKEND_URL}/2fa/enable`, null, { withCredentials: true })
   //       .then(res => {
   //         fetchQR = res;
   //         setSource(res.data);

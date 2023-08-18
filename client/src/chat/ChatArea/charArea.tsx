@@ -51,7 +51,7 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
       
         const fetchData = () => {
 
-          Axios.get(`http://localhost:3000/user/isonline/${chatInfo.chatUserId}`,
+          Axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/isonline/${chatInfo.chatUserId}`,
                 { withCredentials: true })
             .then((response) => {
                 setIsOnline(response.data);
@@ -156,13 +156,13 @@ const ChatAreaInput = ({chatInfo, sendingroup, setChat,
         e.preventDefault();
         if (checkNameInput(msg) || chatInfo.blocked || chatInfo.mute !== 'NAN')
             return;
-        Axios.post('http://localhost:3000/chat/is_muted',
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/is_muted`,
                 {channelId: chatInfo.chatId,},
                 {withCredentials:    true,})
             .then((response) => {
                 if (response.data)
                     return;
-                Axios.post("http://localhost:3000/chat/send-msg",
+                Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/send-msg`,
                         {   
                             channelID:  chatInfo.chatId,
                             content:    msg,
@@ -225,7 +225,7 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
     useEffect(() => {
         if (chatInfo === undefined || !chatInfo.chatUserId)
             return;
-        Axios.get(`http://localhost:3000/chat/aboutfriend/${chatInfo.chatUserId}`,
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/aboutfriend/${chatInfo.chatUserId}`,
             { withCredentials: true })
             .then((response) => {
                 setName(response.data.username);
@@ -366,7 +366,7 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfilePro
     useEffect(() => {
         if (!chatInfo.chatUserId)
             return;
-        Axios.get(`http://localhost:3000/chat/aboutfriend/${chatInfo.chatUserId}`,
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/aboutfriend/${chatInfo.chatUserId}`,
             { withCredentials: true })
             .then((response) => {
                 setProfileData(response.data);
@@ -477,7 +477,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
     }
 
     const handleMessage = () => {
-        Axios.post(`http://localhost:3000/chat/join-friend`,
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`,
                 { receiverId: id },
                 {
                     headers: {
@@ -637,7 +637,7 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
         if (groupData.image !== null)
             formData.append('image', groupData.image);
 
-        Axios.post("http://localhost:3000/chat/setting/edit-group",
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/setting/edit-group`,
                 formData,
                 {withCredentials: true})
             .then((response) => { 
@@ -656,7 +656,7 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
     useEffect(() => {
         if (!updatedAdmins)
             return;
-        Axios.get(`http://localhost:3000/chat/show-members/${props.chatInfo.chatId}`,
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/show-members/${props.chatInfo.chatId}`,
             {withCredentials: true})
             .then((response) => {
                 props.setMembersData(response.data);
@@ -782,7 +782,7 @@ export const ChatAreaGroup = (props : ChatAreaGroupProps) => {
     const [membersWarn, setMembersWarn] = useState(false);
 
     useEffect(() => {
-        Axios.get(`http://localhost:3000/chat/show-members/${props.chatInfo.chatId}`,
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/show-members/${props.chatInfo.chatId}`,
                 {withCredentials: true})
             .then((response) => {
                 if (response.data)
@@ -965,7 +965,7 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
     useEffect(() => {
         if (!chatInfo.chatId || chatInfo.mute !== 'NAN')
           return;
-        Axios.post("http://localhost:3000/chat/all-msg/", {channelId: chatInfo.chatId}, 
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/all-msg/`, {channelId: chatInfo.chatId}, 
                 {withCredentials: true})
             .then((response) => {
                 setmsgList(response.data || [])

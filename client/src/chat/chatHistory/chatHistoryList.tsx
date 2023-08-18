@@ -80,7 +80,7 @@ const HistoryList = ({data, setChat, selected, updateGroup,
             if (isGroup)
                 return;
 
-            Axios.get(`http://localhost:3000/user/isonline/${data.otherUserId}`, { withCredentials: true })
+            Axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/isonline/${data.otherUserId}`, { withCredentials: true })
             .then((response) => {
                 setIsOnline(response.data);
             })
@@ -217,7 +217,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
         else if (filter === 'Groups')
             url = 'chat/all-group-channel-of-user';
 
-        Axios.get(`http://localhost:3000/${url}`, { withCredentials: true })
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/${url}`, { withCredentials: true })
             .then((response) => {
                 if (filter === '' || filter === 'All chats')
                     setChannelList(response.data);
@@ -239,7 +239,7 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
             chatInfo.chatId === undefined ||
             chatInfo.chatType === 'PERSONEL')
             return;
-        Axios.get(`http://localhost:3000/chat/roleOfuser/${chatInfo.chatId}`,
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/roleOfuser/${chatInfo.chatId}`,
                 { withCredentials: true })
             .then((response) => {
                 setRole(response.data.toLowerCase());

@@ -43,7 +43,7 @@ const UsersCard = ({user, checkbox = false, setChat,
       
         const fetchData = () => {
 
-          Axios.get(`http://localhost:3000/user/isonline/${user.id}`,
+          Axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/isonline/${user.id}`,
                 { withCredentials: true })
             .then((response) => {
                 setIsOnline(response.data);
@@ -62,7 +62,7 @@ const UsersCard = ({user, checkbox = false, setChat,
     const handleOnClickCheckBox = () => {
         setIsChecked(!isChecked);
 
-        Axios.post(`http://localhost:3000/chat/join-friend`,
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`,
                 { receiverId: user.id },
                 {
                     headers: {
@@ -124,7 +124,7 @@ const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(()=>{
-        Axios.get('http://localhost:3000/chat/show-all-users',
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/show-all-users`,
             { withCredentials: true })
         .then((response) => {
             setUsersList(response.data);
@@ -286,7 +286,7 @@ const UsersList = ({user, checkbox = false, handleOnChange, type}: UserProps) =>
       
         const fetchData = () => {
 
-          Axios.get(`http://localhost:3000/user/isonline/${user.id}`,
+          Axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/isonline/${user.id}`,
                 { withCredentials: true })
             .then((response) => {
                 setIsOnline(response.data);
@@ -376,7 +376,7 @@ const CreateGroupSecondDialog = ({  GroupData, handleOnChange, type,
     // const [membersWarn, setMembersWarn]= useState(false);                   
 
     useEffect(() => {
-        Axios.get('http://localhost:3000/chat/show-all-users',
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/show-all-users`,
                 { withCredentials: true })
             .then((response) => {
                     setUserListArray(response.data);
@@ -418,7 +418,7 @@ const CreateGroupSecondDialog = ({  GroupData, handleOnChange, type,
     
         if (chatInfo && usersData.otheruserid.length > 0)
         {
-            Axios.post("http://localhost:3000/chat/invite-user",
+            Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/invite-user`,
                 {   
                     channelId:      chatInfo.chatId,
                     otheruserid:    usersData.otheruserid,
@@ -522,7 +522,7 @@ const CreateGroup = ({closeDialog, setChat, updateGroup,
     const checkIsNameExist = async (groupName : string): Promise<boolean> => {
         try
         {
-            const response = await Axios.get(`http://localhost:3000/chat/NameGroupExist/${groupName}`,
+            const response = await Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/NameGroupExist/${groupName}`,
                                     {withCredentials: true});
             return response.data;
         }
@@ -677,7 +677,7 @@ const CreateGroup = ({closeDialog, setChat, updateGroup,
 
             try
             {
-                const response = await Axios.post("http://localhost:3000/chat/create-group", 
+                const response = await Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/create-group`, 
                                     formData, 
                                     { 
                                         withCredentials: true,
@@ -788,7 +788,7 @@ const LeaveGroup = ({closeDialog, chatInfo, setChat} : DialogProps) => {
     const handleOnClick = () => {
         if (chatInfo === undefined)
             return;
-        Axios.post("http://localhost:3000/chat/leave-group",
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/leave-group`,
                 {   
                     channelid:  chatInfo.chatId,
                 },
@@ -820,7 +820,7 @@ const LeaveGroup = ({closeDialog, chatInfo, setChat} : DialogProps) => {
 const   RemoveMember = ({closeDialog, chatInfo, setUpdate, update, setChat} : DialogProps) => {
 
     const HandleRemove = () => {
-        Axios.post('http://localhost:3000/chat/setting/remove-member',
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/setting/remove-member`,
             {
                 otheruser:  chatInfo?.chatUserId,
                 channelid:  chatInfo?.chatId,
@@ -890,7 +890,7 @@ const MuteMember = ({closeDialog, role, chatInfo, userId, setChat} : DialogProps
                 return;
         }
 
-        Axios.patch('http://localhost:3000/chat/setting/mute-member',
+        Axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/setting/mute-member`,
             {
                 usertomute:  userId,
                 channelid:  chatInfo?.chatId,
@@ -965,7 +965,7 @@ const AddAdmin = ({closeDialog, chatInfo, membersData, setUpdatedAdmins} : Dialo
         }
         if (chatInfo)
         {
-            Axios.post("http://localhost:3000/chat/setting/add-admin",
+            Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/setting/add-admin`,
                 {   
                     channelid:      chatInfo.chatId,
                     role:           'ADMIN',
@@ -1063,7 +1063,7 @@ const DleteChat = ({closeDialog, chatInfo, title, setMsgSend, msgSend, setChat} 
     const handleOnClickYes = () => {
         if (!chatInfo)
             return;
-        Axios.post("http://localhost:3000/chat/friend/delet-chat",
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/delet-chat`,
             {channelId: chatInfo.chatId},
             {withCredentials: true})
             .then(() => {
@@ -1104,7 +1104,7 @@ const ClearChat = ({closeDialog, chatInfo, title, closeGroupSetting} : DialogPro
     const handleOnClickYes = () => {
         if (!chatInfo)
             return;
-        Axios.post("http://localhost:3000/chat/setting/clear-chat",
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/setting/clear-chat`,
             {channelid: chatInfo.chatId},
             {withCredentials: true})
             .then(() => {
@@ -1141,7 +1141,7 @@ const DeleteGroup = ({closeDialog, chatInfo, setChat, closeGroupSetting} : Dialo
     const handleOnClickYes = () => {
         if (!chatInfo)
             return;
-        Axios.post("http://localhost:3000/chat/setting/delet-group",
+        Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/setting/delet-group`,
             {channelid: chatInfo.chatId},
             {withCredentials: true})
             .then(() => {
@@ -1179,7 +1179,7 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend,
     const handleOnClick = () => {
         if (!chatInfo)
             return;
-        Axios.patch("http://localhost:3000/chat/friend/block_friend",
+        Axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/block_friend`,
             {FriendId: chatInfo.chatUserId},
             {withCredentials: true})
             .then((response) => {
@@ -1230,12 +1230,12 @@ const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend, setChat} : DialogP
         if (chatInfo === undefined
                 || !chatInfo.blocked)
             return;
-        Axios.patch("http://localhost:3000/chat/friend/block_friend",
+        Axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/block_friend`,
             {FriendId: chatInfo.chatUserId},
             {withCredentials: true})
             .then((response) => {
                 // create channel
-                Axios.post(`http://localhost:3000/chat/join-friend`,
+                Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`,
                 { receiverId: chatInfo.chatUserId },
                 {
                     headers: {
@@ -1302,7 +1302,7 @@ const JoinGroup = ({chatInfo, closeDialog, setChat} : DialogProps) => {
             setNameWarn(true);
         else 
         {
-            Axios.post("http://localhost:3000/chat/join-group",
+            Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-group`,
             {
                 channelId:  chatInfo.chatId,
                 password:   privateKey,

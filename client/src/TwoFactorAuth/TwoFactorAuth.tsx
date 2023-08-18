@@ -17,13 +17,13 @@ const TwoFactorAuth: React.FC = () => {
     console.log("@2222222");
     console.log(input);
     axios
-      .post("http://localhost:3000/2fa/verified", {secret: input}, {
+      .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified`, {secret: input}, {
         withCredentials: true,
       })
       .then((response) => {
         if (response.status === 200) {
           axios
-            .post("http://localhost:3000/auth/refresh", null, {
+            .post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, null, {
               withCredentials: true,
             })
             .then((response) => {

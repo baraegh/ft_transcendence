@@ -174,8 +174,8 @@ function OtherProfileUser(): JSX.Element {
   const [friendData, setFriendData] = useState<Friends | null>(null);
 
   const fetchData = () => {
-    const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
-    const fetchAdditionalData = axios.get(`http://localhost:3000/other-profile/friends/${userId}`, { withCredentials: true });
+    const fetchUserData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true });
+    const fetchAdditionalData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/friends/${userId}`, { withCredentials: true });
 
     Promise.all([fetchUserData, fetchAdditionalData])
       .then((responses) => {
@@ -217,7 +217,7 @@ function OtherProfileUser(): JSX.Element {
 
 
   const sendFriendRequest = () => {
-    axios.post(`http://localhost:3000/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then(() => {
         console.log("Friend Request Sent");
         setOtherUser(prevUser => ({
@@ -230,7 +230,7 @@ function OtherProfileUser(): JSX.Element {
       });
   }
   function blockFriend() {
-    axios.patch(`http://localhost:3000/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+    axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
         console.log("blocked");
         setButtons({ ...bbuttons, isBlocked: true });
@@ -242,7 +242,7 @@ function OtherProfileUser(): JSX.Element {
     }
     
     function unblockFriend() {
-      axios.patch(`http://localhost:3000/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+      axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
         console.log("unblocked");
         setButtons({ ...bbuttons, isBlocked: false });
@@ -260,7 +260,7 @@ function OtherProfileUser(): JSX.Element {
   const [matchHistory, setMatchHistory] = useState<any[] | null>(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/other-profile/about/${userId}`, { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${userId}`, { withCredentials: true })
       .then(res => {
         const userData = res.data;
         setOtherUser(userData);
@@ -278,7 +278,7 @@ function OtherProfileUser(): JSX.Element {
 
 
   function handleSendMessage() {
-    axios.post('http://localhost:3000/chat/join-friend', {receiverId: Number(userId)}, {withCredentials: true})
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`, {receiverId: Number(userId)}, {withCredentials: true})
     .then(
       (res) => {res.status === 200 ? navigate('/chat') : ""}
 );
@@ -287,7 +287,7 @@ function OtherProfileUser(): JSX.Element {
 
   const [matchHistoryData, setMatchHistoryData] = useState<Match[]>([]);
   useEffect(() => {
-    axios.get(`http://localhost:3000/other-profile/match-history/${userId}`, { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/match-history/${userId}`, { withCredentials: true })
       .then((response) => {
         setMatchHistoryData(response.data);
       })

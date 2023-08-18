@@ -136,7 +136,7 @@ function update(){
     else if (player2.y < 0)
         player2.y = 0;
 }
-const socket = io('http://localhost:3000/');
+const socket = io(`${import.meta.env.VITE_BACKEND_URL}/`);
 type dataForm = {y: number};
 function game() {
     let data: dataForm = {

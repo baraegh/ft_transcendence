@@ -20,7 +20,7 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
   useEffect(() => {
     if(data.numplayer1Id !== undefined)
     {
-      const fetchAdditionalData = axios.get(`http://localhost:3000/other-profile/about/${data.numplayer1Id}`, { withCredentials: true })
+      const fetchAdditionalData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${data.numplayer1Id}`, { withCredentials: true })
     .then(
       (res) => {
         setImg(res.data.image);

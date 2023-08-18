@@ -56,7 +56,7 @@
 //         receiverId: 98782
 //     };
 //     axios
-//   .post('http://localhost:3000/friends/send-friend-request', requestData, {
+//   .post(`${import.meta.env.VITE_BACKEND_URL}/friends/send-friend-request`, requestData, {
 //     headers: {
 //       'Content-Type': 'application/json',
 //     },withCredentials: true, 
@@ -84,7 +84,7 @@
 //       receiverId: 90498, // User ID of von
 //     };
 //     axios
-//   .patch('http://localhost:3000/friends/accept-friend-request', requestData, {
+//   .patch(`${import.meta.env.VITE_BACKEND_URL}/friends/accept-friend-request`, requestData, {
 //     headers: {
 //       'Content-Type': 'application/json',
 //     },withCredentials: true, 
@@ -117,7 +117,7 @@
 //   };
 //   const handleLogout = () => {
 //     axios
-//       .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
+//       .post(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, null, { withCredentials: true })
 //       .then((response) => {
 //         if (response.status === 200) {
 //           navigate("/");
@@ -134,7 +134,7 @@
 
 //   const userFefriends = () => {
 //     axios
-//     .get("http://localhost:3000/user/friends", { withCredentials: true })
+//     .get(`${import.meta.env.VITE_BACKEND_URL}/user/friends`, { withCredentials: true })
 //       .then((response) => {
 //         if (response.status === 200) {
 //           console.log(response);
@@ -159,7 +159,7 @@
 //   useEffect(() => {
 //     const fetchdata = async () => {
 //       try {
-//         const response = await axios.get("http://localhost:3000/user/me", {
+//         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
 //           withCredentials: true,
 //         });
 //         if (response.status === 200) {
@@ -180,7 +180,7 @@
   
 //   useEffect(() => {
 //     const connectToSocket = () => {
-//       const newSocket = io('http://localhost:3000', {
+//       const newSocket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
 //         query: { user: encodeURIComponent(JSON.stringify({ id: getid })) },
 //       });
 

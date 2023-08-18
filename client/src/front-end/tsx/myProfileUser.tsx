@@ -111,8 +111,8 @@ function MyProfileUser(): JSX.Element {
   const [userData, setUserData] = useState<User | null>(null);
   const [friendData, setFriendData] = useState<Friends | null>(null);
   const fetchData = () => {
-    const fetchUserData = axios.get('http://localhost:3000/user/me', { withCredentials: true });
-    const fetchAdditionalData = axios.get('http://localhost:3000/user/friends', { withCredentials: true });
+    const fetchUserData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true });
+    const fetchAdditionalData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/friends`, { withCredentials: true });
 
     Promise.all([fetchUserData, fetchAdditionalData])
       .then((responses) => {
@@ -155,7 +155,7 @@ function MyProfileUser(): JSX.Element {
   const navigate = useNavigate();
   const [matchHistoryData, setMatchHistoryData] = useState<Match[]>([]);
   useEffect(() => {
-    axios.get('http://localhost:3000/profile/match-history', { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/profile/match-history`, { withCredentials: true })
       .then((response) => {
         setMatchHistoryData(response.data);
       })

@@ -120,7 +120,7 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
         setIsJoinOpen(true);
         if (group.type === 'PUBLIC')
         {
-            Axios.post("http://localhost:3000/chat/join-group",
+            Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-group`,
                 {   
                     channelId:  group.id,
                     password:   '',
@@ -198,7 +198,7 @@ export const FriendList = ({setChat, chatInfo, update, setUpdate} : friendListPr
         else // online: to be fixed
             return;
 
-        Axios.get(`http://localhost:3000/${url}`, { withCredentials: true })
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/${url}`, { withCredentials: true })
             .then((response) => {
                 if (url === 'user/friends')
                     setFriendListArray(response.data);

@@ -36,7 +36,7 @@ import logo42White from '../img/42_logo_white.png'
 
 function LoginPage() : JSX.Element {
         const handleLogin = () => {
-          window.location.href = "http://localhost:3000/auth/";
+          window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/`;
     }
     return (
         <div className="loginDiv">

@@ -65,8 +65,8 @@ function Stream(): JSX.Element {
   }, [fStreaming]);
 
   const fetchData = (playerid1: number, playerid2: number) => {
-    const fetchUserData1 = axios.get(`http://localhost:3000/other-profile/about/${playerid1}`, { withCredentials: true });
-    const fetchUserData2 = axios.get(`http://localhost:3000/other-profile/about/${playerid2}`, { withCredentials: true });
+    const fetchUserData1 = axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${playerid1}`, { withCredentials: true });
+    const fetchUserData2 = axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${playerid2}`, { withCredentials: true });
 
     Promise.all([fetchUserData1, fetchUserData2])
       .then((responses) => {

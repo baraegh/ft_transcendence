@@ -48,10 +48,10 @@ interface OtherUser {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const res = await axios.get('http://localhost:3000/user/is_all_online', { withCredentials: true });
+          const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/is_all_online`, { withCredentials: true });
           const onlineUsers: string[] = res.data;
           const namePromises = onlineUsers.map(async (element: string) => {
-            const res = await axios.get(`http://localhost:3000/other-profile/about/${element}`, { withCredentials: true });
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${element}`, { withCredentials: true });
             const userData: OtherUser = res.data; // Use the OtherUser type
             return userData;
           });

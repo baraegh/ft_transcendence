@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 const AuthPage = () => {
   const navigate = useNavigate();
   const handleLogin = () => {
-    window.location.href = "http://localhost:3000/auth/";
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/`;
   };
 
   const check = () => {
     axios
-      .get("http://localhost:3000/auth/check", { withCredentials: true })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           navigate("/");

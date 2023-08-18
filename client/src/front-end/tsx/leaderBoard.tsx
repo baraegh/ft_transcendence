@@ -17,7 +17,7 @@ function LeaderBoard(): JSX.Element {
   
     async function fetchLeaderboardData() {
       try {
-        const response = await axios.get('http://localhost:3000/leaderboard/leaderboard', { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/leaderboard/leaderboard`, { withCredentials: true });
         const data = response.data;
   
         console.log(data);

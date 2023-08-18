@@ -46,7 +46,7 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     const fetchdata = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/user/me", {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -89,7 +89,7 @@ function MyHeader(): JSX.Element {
   const holder: any = useState([]);
   useEffect(() => {
     axios
-      .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/notification/all_friend_req`, { withCredentials: true })
       .then((res) => {
         setNotificationData(res.data);
         holder.push(res.data);
@@ -110,7 +110,7 @@ function MyHeader(): JSX.Element {
 
   const handleLogout = () => {
     axios
-      .post("http://localhost:3000/auth/logout", null, { withCredentials: true })
+      .post(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, null, { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           window.location.reload(); // Reload the page
@@ -127,7 +127,7 @@ function MyHeader(): JSX.Element {
 
   const fetchData = () => {
     axios
-      .get('http://localhost:3000/user/me', { withCredentials: true })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true })
       .then((response) => {
         if (response.status === 401)
           window.location.reload();
@@ -178,7 +178,7 @@ function MyHeader(): JSX.Element {
 
   function acceptFriendRequest(userId: string) {
     console.log("Accept ! << " + userId);
-    axios.patch('http://localhost:3000/friends/accept-friend-request', { "receiverId": Number(userId) }, { withCredentials: true })
+    axios.patch(`${import.meta.env.VITE_BACKEND_URL}/friends/accept-friend-request`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then((res) => {
         console.log(res)
         if (res.status === 200)
@@ -189,7 +189,7 @@ function MyHeader(): JSX.Element {
 
   function declineFriendRequest(userId: string) {
     console.log("Decline !" + userId);
-    axios.patch('http://localhost:3000/notification/delet-friend-request', { "receiverId": Number(userId) }, { withCredentials: true })
+    axios.patch(`${import.meta.env.VITE_BACKEND_URL}/notification/delet-friend-request`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then((res) => {
         console.log(res)
         if (res.status === 200)
@@ -203,7 +203,7 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     const interval = setInterval(() => {
       axios
-        .get('http://localhost:3000/notification/all_friend_req', { withCredentials: true })
+        .get(`${import.meta.env.VITE_BACKEND_URL}/notification/all_friend_req`, { withCredentials: true })
         .then((res) => {
           setNotificationData(res.data);
           holder.push(res.data);

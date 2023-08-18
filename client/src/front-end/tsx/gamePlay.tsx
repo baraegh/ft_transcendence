@@ -24,7 +24,7 @@ function gamePlay() : JSX.Element
     useEffect(() => {
       const fetchdata = async () => {
         try {
-          const response = await axios.get("http://localhost:3000/user/me", {
+          const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
             withCredentials: true,
           });
           if (response.status === 200) {

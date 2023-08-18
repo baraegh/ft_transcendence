@@ -54,7 +54,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
     //     formData.append('image', GroupData.image);
 
     axios.post(
-      'http://localhost:3000/profile/edite',
+      `${import.meta.env.VITE_BACKEND_URL}/profile/edite`,
       formData,
       {
         withCredentials: true,

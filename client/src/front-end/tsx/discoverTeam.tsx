@@ -42,7 +42,7 @@ function DSTeam(): JSX.Element {
   // useEffect(() => {
   //   // const check = () => {
   //     axios
-  //       .get("http://localhost:3000/auth/check", { withCredentials: true })
+  //       .get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, { withCredentials: true })
   //       .then((response) => {
   //         if (response.status === 200) {
   //           setIsLoggedIn(true);

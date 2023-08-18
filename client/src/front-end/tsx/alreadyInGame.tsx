@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom'
 
 function AlreadyInGame(): JSX.Element {
   const navigate = useNavigate();
-  axios.get('http://localhost:3000/game/isplaying', {withCredentials: true})
+  axios.get(`${import.meta.env.VITE_BACKEND_URL}/game/isplaying`, {withCredentials: true})
   .then((res) => {res.data === false ? navigate('/play') : ""})
   
     return (
