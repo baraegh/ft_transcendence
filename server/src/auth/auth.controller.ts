@@ -18,6 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthDto_42 } from './42_auth/dtos';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -25,6 +26,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private prisma: PrismaService,
+    private configService: ConfigService
   ) {}
 
   @Public()
@@ -66,10 +68,10 @@ export class AuthController {
       });
       res.clearCookie('access_token');
       res.redirect(
-        'http://localhost:5173/TwoFactorAuth/?image=' +
+        `${process.env.FRONTEND_URL}/TwoFactorAuth/?image=` +
           encodeURIComponent(image.image),
       );
-    } else res.redirect('http://localhost:5173/home/');
+    } else res.redirect(`${process.env.FRONTEND_URL}/home/`);
   }
 
   @Public()
