@@ -3,6 +3,7 @@ import { Strategy, VerifyCallback } from 'passport-42';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthDto_42 } from '../dtos/42_auth.dot';
+import { callbackify } from 'util';
 
 
 @Injectable()

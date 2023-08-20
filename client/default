@@ -1,0 +1,27 @@
+server {
+        listen 5173 default_server;
+        listen [::]:5173 default_server;
+        root /app/dist;
+        index index.html;
+        server_name mait-aad.42.fr;
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+}
+
+#server {
+#       listen 80;
+#       listen [::]:80;
+#
+#       server_name example.com;
+#
+#       root /var/www/example.com;
+#       index index.html;
+#
+#       location / {
+#               try_files $uri $uri/ =404;
+#       }
+#}

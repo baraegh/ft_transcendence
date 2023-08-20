@@ -49,13 +49,11 @@ export class AuthController {
     else token = await this.authService.signinlocal(dto_42);
     res.cookie('access_token', token.access_token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      domain : process.env.DOMAIN
     });
     res.cookie('refresh_token', token.refresh_token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      domain : process.env.DOMAIN
     });
     const finde_active2fa = await this.prisma.user.findUnique({
       where: { id: req.user['id'] },
@@ -89,13 +87,11 @@ export class AuthController {
     res.clearCookie('refresh_token');
     res.cookie('access_token', token.access_token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      domain : process.env.DOMAIN
     });
     res.cookie('refresh_token', token.refresh_token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      domain : process.env.DOMAIN
     });
     res.end();
   }

@@ -38,8 +38,8 @@ type meType = {
   achievements: string[],
 }
 const userMe = React.createContext<meType | null>(null);
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
-console.log(import.meta.env.VITE_BACKEND_URL);
+// const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// console.log(import.meta.env.VITE_BACKEND_URL);
 function App() {
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
@@ -66,9 +66,10 @@ function App() {
   useEffect(() => {
     const checkLoggedInStatus = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/auth/check`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
           withCredentials: true,
         });
+        console.log(">>>>" + response.status);
         if (response.status === 200) {
           setIsLoggedIn(true);
         }
@@ -89,7 +90,7 @@ function App() {
   const [me, setMe] = useState<meType | null>(null)
 
   useEffect(() => {
-    axios.get(`${backendUrl}/user/me`, {withCredentials: true})
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {withCredentials: true})
       .then((response) => {
         setMe(response.data);
       })
