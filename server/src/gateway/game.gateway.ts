@@ -164,7 +164,7 @@ export class GameGateway implements OnGatewayDisconnect{
         ball.y = message.dim.H / 2;
         ball.velocityY = 5;
         ball.velocityX = -ball.velocityX;
-        ball.speed = ((3 * dim.W) / 4) / 300;
+        ball.speed = ((3 * dim.W) / 4) / 200;
       }
       function collision(b, p): boolean {
         // players
@@ -265,14 +265,12 @@ export class GameGateway implements OnGatewayDisconnect{
         this.streaming.delete(i);
         this.gameIds.delete(i);
         this.games.delete(i);
-        this.logger.log(this.gameId +" | "+ i);
         if (this.gameId -1 == i)
           this.gameId--;
       }
       else {
         if (client.id == clientOb.player1Id && this.streaming.get(this.getMatchID(client)) !== undefined) {
         this.server.to(clientOb.player1Id).emit('ballMove', message);
-        this.logger.log(this.streaming.get(this.getMatchID(client)).roomName);
         this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);
         message.ball.x = message.dim.W - message.ball.x;
         this.server.to(clientOb.player2Id).emit('ballMove', message);

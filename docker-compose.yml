@@ -31,18 +31,26 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5173:5173
+    volumes:
+      - clientV:/app
     depends_on:
       - postgresql-db
     networks:
       - ft_transcendence
 
-# volumes:
-#   postgres-data:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: ./server/Data
+volumes:
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./server/Data
+  clientV:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./client/
 
 networks:
   ft_transcendence:

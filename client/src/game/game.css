@@ -5,11 +5,13 @@
     margin-top: 20px;
 
     width: 100vw; /* Use 100% of the viewport width */
+    max-width: 1000px;
 }
 
 .game-layout {
     /* width: 1000px; */
     width: 100vw; /* Use 100% of the viewport width */
+    max-width: 1000px;
     /* height: 100%; */
     /* height: 35%; */
     border: 1px solid var(--secondary-color);

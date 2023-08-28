@@ -62,7 +62,6 @@ function App() {
   //     newSocket.close();
   //   };
   // }, [setSocket]);
-
   useEffect(() => {
     const checkLoggedInStatus = async () => {
       try {
