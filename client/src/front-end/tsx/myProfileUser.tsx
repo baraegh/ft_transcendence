@@ -195,6 +195,8 @@ function MyProfileUser(): JSX.Element {
         </div>
         <div className="friends">
           <h1>Friends</h1>
+          {
+            friendData?.length > 0  && 
           <div className="friendslistScrollBar">
             {!scrollFlag &&
               friendData &&
@@ -222,7 +224,9 @@ function MyProfileUser(): JSX.Element {
               </a>
             )}
           </div>
+}
         </div>
+
 
         <div className="matches">
 {matchHistoryData.length > 0 ? (
@@ -250,15 +254,15 @@ function MyProfileUser(): JSX.Element {
       </div>
     </div>
     { matchHistoryData.length > 4  && (<div className="nextBackButtons">
-      <button onClick={handlePrevClick}>
+      {matchHistoryData.length % 8 == 0 && <button onClick={handlePrevClick}>
         <img id="backButton" src={backButton} alt="" />
         back
-      </button>
+      </button> }
       <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
-      <button onClick={handleNextClick}>
+      {matchHistoryData.length % 8 == 0 && <button onClick={handleNextClick}>
         Next
         <img id="nextButton" src={nextButton} alt="" />
-      </button>
+      </button>}
     </div>)}
     </>) : (
   // </div>

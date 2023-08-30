@@ -57,6 +57,11 @@
   top : 9px;
 }
 
+.quickGameContainer span
+{
+  color : white;
+}
+
   .quickGameContainer
   {
     display: flex;

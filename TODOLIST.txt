@@ -7,7 +7,9 @@ Game:
     --> invite friends:
             - the list of freinds appears empty, even if I have freinds.
             - remove the red error from console
+
     --> remove the red error from console (when choosing map)
+    --> go back home or handle when opponent dosen't accept the game !
 
 Landing Page:
     --> remove the red error from console
