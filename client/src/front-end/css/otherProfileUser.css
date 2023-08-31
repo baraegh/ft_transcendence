@@ -220,6 +220,7 @@
 
 .winLoseLine
 {
+    bottom : 320px;
     position: relative;
     width: 2px;
     height: 270px;

@@ -10,7 +10,12 @@ import Edit from '../img/edit.png'
 import EditProfileIcon from '../tsx/editProfile'
 import axios from 'axios';
 import nextButton from '../img/next.png'
+import nextButtonGray from '../img/nextGray.png'
+
 import backButton from '../img/back.png'
+import backButtonGray from '../img/backGray.png'
+
+
 import bronze from '../img/bronze.png'
 import silver from '../img/silver.png'
 import gold from '../img/gold.png'
@@ -166,7 +171,7 @@ function MyProfileUser(): JSX.Element {
 
   return (
     <div>
-      {/* <MyHeader /> */}
+      <MyHeader />
       <div className="profileAndFriends">
         <div className="profile">
           <QRpopup />
@@ -243,16 +248,34 @@ function MyProfileUser(): JSX.Element {
         ))}
       </div>
     </div>
+
     { (<div className="nextBackButtons">
-      { <button onClick={handlePrevClick}>
+      {
+        currentIndex + 1 === 1 ?
+              <button style={{color:"gray"}}>
+              <img  id="backButton" src={backButtonGray} alt="" />
+              back
+            </button>
+            :
+      <button onClick={handlePrevClick}>
         <img id="backButton" src={backButton} alt="" />
         back
-      </button> }
-      <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
-      { <button onClick={handleNextClick}>
+      </button>
+      }
+
+      <p>{currentIndex + 1} - {currentIndex + 8 < matchHistoryData.length ? currentIndex + 8 : matchHistoryData.length } of {matchHistoryData.length}</p>
+      {
+        currentIndex + 8 <= matchHistoryData.length ?
+        <button onClick={handleNextClick}>
         Next
         <img id="nextButton" src={nextButton} alt="" />
-      </button>}
+      </button>
+      :
+        <button style={{color: "gray"}}>
+        Next
+        <img id="nextButton" src={nextButtonGray} alt="" />
+      </button>
+      }
     </div>)}
     </>) : (
   // </div>
