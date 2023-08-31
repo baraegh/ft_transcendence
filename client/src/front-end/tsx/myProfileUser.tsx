@@ -166,7 +166,7 @@ function MyProfileUser(): JSX.Element {
 
   return (
     <div>
-      {/* <MyHeader /> */}
+      <MyHeader />
       <div className="profileAndFriends">
         <div className="profile">
           <QRpopup />
