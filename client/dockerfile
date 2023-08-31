@@ -3,7 +3,7 @@ FROM node:16-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install && npm install -g serve
+RUN npm install -g && npm install -g serve
 COPY . .
 EXPOSE 5173
 ENTRYPOINT ["sh", "run.sh"]

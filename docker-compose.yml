@@ -17,6 +17,7 @@ services:
       context: ./server
     ports:
       - 3000:3000
+      - 5555:5555
     restart: always
     depends_on:
       - postgresql-db
@@ -31,8 +32,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5173:5173
-    volumes:
-      - clientV:/app
+    # volumes:
+      # - clientV:/app
     depends_on:
       - postgresql-db
     networks:
@@ -50,7 +51,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./client/
+      device: ./client/Data
 
 networks:
   ft_transcendence:

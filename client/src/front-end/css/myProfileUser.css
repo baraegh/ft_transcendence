@@ -289,6 +289,17 @@ input[type="checkbox"]:checked + .slider:before {
     left: 120px
 }
 
+.winLoseLeft
+{
+    padding-right: 50px;;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-end;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
 .all .popupQR
 {
     margin: auto;

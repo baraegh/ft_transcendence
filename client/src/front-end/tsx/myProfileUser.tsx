@@ -96,11 +96,11 @@ function MyProfileUser(): JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrevClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? matches.length - 4 : prevIndex - 4));
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? matches.length - 8 : prevIndex - 8));
   };
 
   const handleNextClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === matches.length - 4 ? 0 : prevIndex + 4));
+    setCurrentIndex((prevIndex) => (prevIndex === matches.length - 8 ? 0 : prevIndex + 8));
   };
 
   const handleToggleChange = () => {
@@ -166,7 +166,7 @@ function MyProfileUser(): JSX.Element {
 
   return (
     <div>
-      <MyHeader />
+      {/* <MyHeader /> */}
       <div className="profileAndFriends">
         <div className="profile">
           <QRpopup />
@@ -234,17 +234,7 @@ function MyProfileUser(): JSX.Element {
     <h1>Matches</h1>
     <div className="winLoseContainter">
       <div className="winLoseLeft">
-        {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
-          <div className="winLose" key={match?.matchId}>
-            <img src={match.otherUser.image} alt="" />
-            <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-            <p>{match.user1P} - {match.user2P}</p>
-          </div>
-        ))}
-      </div>
-      {matchHistoryData.length > 4 && <div className="winLoseLine"></div>}
-      <div className="winLoseRight">
-        {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
+        {matchHistoryData.slice(currentIndex, currentIndex + 8).map((match) => (
           <div className="winLose" key={match?.matchId}>
             <img src={match.otherUser.image} alt="" />
             <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
@@ -253,13 +243,13 @@ function MyProfileUser(): JSX.Element {
         ))}
       </div>
     </div>
-    { matchHistoryData.length > 4  && (<div className="nextBackButtons">
-      {matchHistoryData.length % 8 == 0 && <button onClick={handlePrevClick}>
+    { (<div className="nextBackButtons">
+      { <button onClick={handlePrevClick}>
         <img id="backButton" src={backButton} alt="" />
         back
       </button> }
       <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
-      {matchHistoryData.length % 8 == 0 && <button onClick={handleNextClick}>
+      { <button onClick={handleNextClick}>
         Next
         <img id="nextButton" src={nextButton} alt="" />
       </button>}

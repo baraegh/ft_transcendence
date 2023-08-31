@@ -35,21 +35,22 @@ const TwoFactorAuth: React.FC = () => {
             })
             .then((response) => {
               if (response.status === 200) {
+                console.log("PASSED");
                 document.location.reload();
-                // console.log("EEEEE");
               } else {
                 throw new Error("Request failed");
               }
             })
             .catch((error) => {
+              // console.log()
               console.log(error);
-              navigate("/");
+              // navigate("/");
             });
         }
       })
       .catch((error) => {
         console.log(error);
-        navigate("/");
+        // navigate("/");
 
       });
   };
