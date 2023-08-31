@@ -14,8 +14,6 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
   const t : boolean = showNotification;
   const [img, setImg]  = useState("");
   const [name, setName] = useState("");
-  console.log(data);
-  console.log(data.numplayer1Id + " >>>>");
   const {userId} = useParams();
   useEffect(() => {
     if(data.numplayer1Id !== undefined)

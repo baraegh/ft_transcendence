@@ -207,7 +207,6 @@ function MyHeader(): JSX.Element {
         .then((res) => {
           setNotificationData(res.data);
           holder.push(res.data);
-          console.log(res.data[0]?.username); // Log the username of the first notification (optional)
         })
         .catch((error) => {
           console.log(error);
