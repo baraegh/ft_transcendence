@@ -55,15 +55,18 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
       });
   };
 
-  const isMounted = useRef(false);
 
   useEffect(() => {
+    if(QRisEnabled == false)
+    {
+    console.log(QRisEnabled)
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/2fa/enable`, null, { withCredentials: true })
     .then(res => {
           console.log("CLEAN");
           fetchQR = res;
           setSource(res.data);
         });
+    }
   }, [QRisEnabled]);
 
   return (
@@ -88,17 +91,22 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
 
 const QRpopup: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
-  const [QRisEnabled, setQRisEnabled] = useState(() => {
-    const storedValue = localStorage.getItem('QRisEnabled');
-    return storedValue ? JSON.parse(storedValue) : false;
-  });
+  const [QRisEnabled, setQRisEnabled] = useState(false);
   const [toggleChecked, setToggleChecked] = useState(showModal || QRisEnabled);
+  const [handleToggleChecked, setHandleToggleChecked] = useState(() => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/2fa/isenable`, { withCredentials: true }).then
+    (
+      (res) => {
+        console.log(res.data) 
+      }
+    )
+  }
+  );
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
     // setQRisEnabled(false);
-    setToggleChecked(event.target.checked);
-    console.log(QRisEnabled);
+    // console.log(QRisEnabled);
   };
 
   // useEffect(() => {
@@ -119,7 +127,7 @@ const QRpopup: React.FC = () => {
   return (
     <div>
       <label className="toggle-switch">
-        <input type="checkbox" checked={showModal || QRisEnabled} onChange={handleToggleChange} />
+        <input type="checkbox" checked={handleToggleChecked} onChange={handleToggleChange} />
         <span className="slider"></span>
         <p>2FA</p>
       </label>
@@ -136,7 +144,4 @@ const QRpopup: React.FC = () => {
 };
 
 export default QRpopup;
-function setSource(data: any) {
-  throw new Error('Function not implemented.');
-}
 

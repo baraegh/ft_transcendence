@@ -7,13 +7,16 @@ import MyHeader from './header';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import nextButton from '../img/next.png';
+import nextButtonGray from '../img/nextGray.png';
 import backButton from '../img/back.png';
+import backButtonGray from '../img/backGray.png';
 import Maps from './maps';
 import Notification from './notification';
 import { SocketContext } from '../../socket/socketContext';
 import bronze from '../img/bronze.png'
 import silver from '../img/silver.png'
 import gold from '../img/gold.png'
+
 interface User {
   id: number;
   username: string;
@@ -371,8 +374,57 @@ function OtherProfileUser(): JSX.Element {
               {friendDataLength > 5 && <a onClick={setScrollFlag}>{!scrollFlag ? `And ${friendData && friendData.length} More` : "Show Less"}</a>}
             </div>
           </div>
-
           <div className="matches">
+          {matchHistoryData.length > 0 ? (
+            <>
+              <h1>Matches</h1>
+              <div className="winLoseContainter">
+                <div className="winLoseLeft">
+                  {matchHistoryData.slice(currentIndex, currentIndex + 8).map((match) => (
+                    <div className="winLose" key={match?.matchId}>
+                      <img src={match.otherUser.image} alt="" />
+                      <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                      <p>{match.user1P} - {match.user2P}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {(<div className="nextBackButtons">
+                {
+                  currentIndex + 1 === 1 ?
+                    <button style={{ color: "gray" }}>
+                      <img id="backButton" src={backButtonGray} alt="" />
+                      back
+                    </button>
+                    :
+                    <button onClick={handlePrevClick}>
+                      <img id="backButton" src={backButton} alt="" />
+                      back
+                    </button>
+                }
+
+                <p>{currentIndex + 1} - {currentIndex + 8 < matchHistoryData.length ? currentIndex + 8 : matchHistoryData.length} of {matchHistoryData.length}</p>
+                {
+                  currentIndex + 8 <= matchHistoryData.length ?
+                    <button onClick={handleNextClick}>
+                      Next
+                      <img id="nextButton" src={nextButton} alt="" />
+                    </button>
+                    :
+                    <button style={{ color: "gray" }}>
+                      Next
+                      <img id="nextButton" src={nextButtonGray} alt="" />
+                    </button>
+                }
+              </div>)}
+            </>) : (
+            // </div>
+            <div className="noMatchHistory">Player Has No Match History!</div>)
+          }
+
+        </div>
+          {/* <div className="matches">
             <h1>Matches</h1>
             {matchHistoryData.length > 0 && (
               <div className="winLoseContainter">
@@ -410,7 +462,7 @@ function OtherProfileUser(): JSX.Element {
                 </button>
               </div>
             ) || <div className="noMatchHistory">Player Has No Match History !</div>}
-          </div>
+          </div> */}
         </div>
       )}
     </div>
