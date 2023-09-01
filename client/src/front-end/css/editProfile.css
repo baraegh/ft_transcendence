@@ -119,13 +119,33 @@
     font-family: 'Mouse Memoirs';
 
     border : 0.5px solid black;
-
+    display: flex;
     position: relative;
     left: 9px;
     /* bottom : 10px; */
     border-radius: 4px;
     width: 350px;
     
+}
+
+.browse-image-label1
+{
+    justify-content: center;
+    display: flex;
+    font-family: 'Mouse Memoirs';
+    border-radius: 5px;
+    display: flex;
+    color: black;
+    font-size: 20px;
+    background-color: white;
+    border: 1px solid black;
+    position: relative;
+    width: 60px;
+    bottom: 31px;
+    left: 390px;
+    /* left: 30px; */
+    box-shadow: 3px 2px 0px 1px rgba(0,0,0,1);
+    transition: 0.3s;
 }
 
 #editModalBrowse
@@ -140,7 +160,7 @@
     background-color: white;
     border: 1px solid black;
     position: relative;
-    width: 66px;
+    /* width: 60px !important; */
     bottom: 31px;
     height: 33px;
     left: 390px;

@@ -96,8 +96,7 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
                     type="file"
                     onChange={handleOnChange}
                     accept='.png, .jpg, .jpeg'/>
-            <label htmlFor="editModalPicInput" className='browse-image-label'>Browse</label>
-            {/* <Button id="editModalBrowse">Browse</Button> */}
+            <label htmlFor="editModalPicInput" className='browse-image-label1'>Browse</label>
           </div>
           
         </div>
