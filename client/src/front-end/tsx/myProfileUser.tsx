@@ -101,11 +101,11 @@ function MyProfileUser(): JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrevClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? matches.length - 8 : prevIndex - 8));
+    setCurrentIndex((prevIndex: number) => (prevIndex === 0 ? matches.length - 8 : prevIndex - 8));
   };
 
   const handleNextClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === matches.length - 8 ? 0 : prevIndex + 8));
+    setCurrentIndex((prevIndex: number) => (prevIndex === matches.length - 8 ? 0 : prevIndex + 8));
   };
 
   const handleToggleChange = () => {
@@ -201,88 +201,88 @@ function MyProfileUser(): JSX.Element {
         <div className="friends">
           <h1>Friends</h1>
           {
-            friendData?.length > 0  && 
-          <div className="friendslistScrollBar">
-            {!scrollFlag &&
-              friendData &&
-              friendData.map((data: {
-                friend: {
-                  id: number;
-                  image: string;
-                  username: string;
-                };
-              }) => (
-                <div
-                  onClick={() => {
-                    navigate(`/user/${data.friend.id}`);
-                  }}
-                  key={data.friend.id}
-                  className="friend"
-                >
-                  <img src={data.friend.image} alt="" />
-                  <p>{data.friend.username}</p>
-                </div>
-              ))}
-            {friendData?.length && friendData.length > 5 && (
-              <a onClick={switchScrollFlag}>
-                {!scrollFlag ? `And ${friendData.length} More` : "Show Less"}
-              </a>
-            )}
-          </div>
-}
+            friendData?.length > 0 &&
+            <div className="friendslistScrollBar">
+              {!scrollFlag &&
+                friendData &&
+                friendData.map((data: {
+                  friend: {
+                    id: number;
+                    image: string;
+                    username: string;
+                  };
+                }) => (
+                  <div
+                    onClick={() => {
+                      navigate(`/user/${data.friend.id}`);
+                    }}
+                    key={data.friend.id}
+                    className="friend"
+                  >
+                    <img src={data.friend.image} alt="" />
+                    <p>{data.friend.username}</p>
+                  </div>
+                ))}
+              {friendData?.length && friendData.length > 5 && (
+                <a onClick={switchScrollFlag}>
+                  {!scrollFlag ? `And ${friendData.length} More` : "Show Less"}
+                </a>
+              )}
+            </div>
+          }
         </div>
 
 
         <div className="matches">
-{matchHistoryData.length > 0 ? (
-  <>
-    <h1>Matches</h1>
-    <div className="winLoseContainter">
-      <div className="winLoseLeft">
-        {matchHistoryData.slice(currentIndex, currentIndex + 8).map((match) => (
-          <div className="winLose" key={match?.matchId}>
-            <img src={match.otherUser.image} alt="" />
-            <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-            <p>{match.user1P} - {match.user2P}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+          {matchHistoryData.length > 0 ? (
+            <>
+              <h1>Matches</h1>
+              <div className="winLoseContainter">
+                <div className="winLoseLeft">
+                  {matchHistoryData.slice(currentIndex, currentIndex + 8).map((match) => (
+                    <div className="winLose" key={match?.matchId}>
+                      <img src={match.otherUser.image} alt="" />
+                      <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                      <p>{match.user1P} - {match.user2P}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-    { (<div className="nextBackButtons">
-      {
-        currentIndex + 1 === 1 ?
-              <button style={{color:"gray"}}>
-              <img  id="backButton" src={backButtonGray} alt="" />
-              back
-            </button>
-            :
-      <button onClick={handlePrevClick}>
-        <img id="backButton" src={backButton} alt="" />
-        back
-      </button>
-      }
+              {(<div className="nextBackButtons">
+                {
+                  currentIndex + 1 === 1 ?
+                    <button style={{ color: "gray" }}>
+                      <img id="backButton" src={backButtonGray} alt="" />
+                      back
+                    </button>
+                    :
+                    <button onClick={handlePrevClick}>
+                      <img id="backButton" src={backButton} alt="" />
+                      back
+                    </button>
+                }
 
-      <p>{currentIndex + 1} - {currentIndex + 8 < matchHistoryData.length ? currentIndex + 8 : matchHistoryData.length } of {matchHistoryData.length}</p>
-      {
-        currentIndex + 8 <= matchHistoryData.length ?
-        <button onClick={handleNextClick}>
-        Next
-        <img id="nextButton" src={nextButton} alt="" />
-      </button>
-      :
-        <button style={{color: "gray"}}>
-        Next
-        <img id="nextButton" src={nextButtonGray} alt="" />
-      </button>
-      }
-    </div>)}
-    </>) : (
-  // </div>
-  <div className="noMatchHistory">Player Has No Match History!</div>)
-}
+                <p>{currentIndex + 1} - {currentIndex + 8 < matchHistoryData.length ? currentIndex + 8 : matchHistoryData.length} of {matchHistoryData.length}</p>
+                {
+                  currentIndex + 8 <= matchHistoryData.length ?
+                    <button onClick={handleNextClick}>
+                      Next
+                      <img id="nextButton" src={nextButton} alt="" />
+                    </button>
+                    :
+                    <button style={{ color: "gray" }}>
+                      Next
+                      <img id="nextButton" src={nextButtonGray} alt="" />
+                    </button>
+                }
+              </div>)}
+            </>) : (
+            // </div>
+            <div className="noMatchHistory">Player Has No Match History!</div>)
+          }
 
-      </div>
+        </div>
       </div>
     </div>
   );

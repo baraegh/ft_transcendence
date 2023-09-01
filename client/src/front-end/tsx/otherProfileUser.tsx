@@ -239,10 +239,10 @@ function OtherProfileUser(): JSX.Element {
       .catch((error) => {
         console.log(error);
       });
-    }
-    
-    function unblockFriend() {
-      axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
+  }
+
+  function unblockFriend() {
+    axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
         console.log("unblocked");
         setButtons({ ...bbuttons, isBlocked: false });
@@ -278,10 +278,10 @@ function OtherProfileUser(): JSX.Element {
 
 
   function handleSendMessage() {
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`, {receiverId: Number(userId)}, {withCredentials: true})
-    .then(
-      (res) => {res.status === 200 ? navigate('/chat') : ""}
-);
+    axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`, { receiverId: Number(userId) }, { withCredentials: true })
+      .then(
+        (res) => { res.status === 200 ? navigate('/chat') : "" }
+      );
 
   }
 
@@ -330,7 +330,7 @@ function OtherProfileUser(): JSX.Element {
               <div className='fourButtons'>
                 {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
                 {otherUser.isFriend && !otherUser.blocked && <a onClick={
-                  () => {handleSendMessage()}
+                  () => { handleSendMessage() }
                 } className="message2"><span>Message</span></a>}
                 {!otherUser.isFriend && !otherUser.blocked && !otherUser.isRequested && (
                   <a onClick={sendFriendRequest} className="invite2"><span>Friend Request</span></a>
@@ -373,44 +373,44 @@ function OtherProfileUser(): JSX.Element {
           </div>
 
           <div className="matches">
-          <h1>Matches</h1>
-          {matchHistoryData.length > 0 && (
-            <div className="winLoseContainter">
-              <div className="winLoseLeft">
-                {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
-                  <div className="winLose" key={match?.matchId}>
-                    <img src={match.otherUser.image} alt="" />
-                    <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-                    <p>{match.user1P} - {match.user2P}</p>
-                  </div>
-                ))}
+            <h1>Matches</h1>
+            {matchHistoryData.length > 0 && (
+              <div className="winLoseContainter">
+                <div className="winLoseLeft">
+                  {matchHistoryData.slice(currentIndex, currentIndex + 4).map((match) => (
+                    <div className="winLose" key={match?.matchId}>
+                      <img src={match.otherUser.image} alt="" />
+                      <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                      <p>{match.user1P} - {match.user2P}</p>
+                    </div>
+                  ))}
+                </div>
+                {matchHistoryData.length > 0 && <div className="winLoseLine"></div>}
+                <div className="winLoseRight">
+                  {matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
+                    <div className="winLose" key={match?.matchId}>
+                      <img src={match.otherUser.image} alt="" />
+                      <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
+                      <p>{match.user1P} - {match.user2P}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              {matchHistoryData.length > 0 && <div className="winLoseLine"></div>}
-              <div className="winLoseRight">
-                { matchHistoryData.slice(currentIndex + 4, currentIndex + 8).map((match) => (
-                  <div className="winLose" key={match?.matchId}>
-                    <img src={match.otherUser.image} alt="" />
-                    <p>{match.win ? 'Win' : 'Lose'} Against {match.otherUser.username}</p>
-                    <p>{match.user1P} - {match.user2P}</p>
-                  </div>
-                ))}
+            )}
+            {matchHistoryData.length > 0 && (
+              <div className="nextBackButtons">
+                <button onClick={handlePrevClick}>
+                  <img id="backButton" src={backButton} alt="" />
+                  back
+                </button>
+                <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
+                <button onClick={handleNextClick}>
+                  Next
+                  <img id="nextButton" src={nextButton} alt="" />
+                </button>
               </div>
-            </div>
-          )}
-          {matchHistoryData.length > 0 && (
-            <div className="nextBackButtons">
-              <button onClick={handlePrevClick}>
-                <img id="backButton" src={backButton} alt="" />
-                back
-              </button>
-              <p>{currentIndex} - {currentIndex + 8} of {matchHistoryData.length}</p>
-              <button onClick={handleNextClick}>
-                Next
-                <img id="nextButton" src={nextButton} alt="" />
-              </button>
-            </div>
-           )|| <div className="noMatchHistory">Player Has No Match History !</div>}
-        </div>
+            ) || <div className="noMatchHistory">Player Has No Match History !</div>}
+          </div>
         </div>
       )}
     </div>
