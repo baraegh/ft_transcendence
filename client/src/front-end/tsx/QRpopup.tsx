@@ -92,42 +92,33 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
 const QRpopup: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [QRisEnabled, setQRisEnabled] = useState(false);
-  const [toggleChecked, setToggleChecked] = useState(showModal || QRisEnabled);
-  const [handleToggleChecked, setHandleToggleChecked] = useState(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/2fa/isenable`, { withCredentials: true }).then
-    (
-      (res) => {
-        console.log(res.data) 
-      }
-    )
-  }
-  );
+  const [isenables, setIsEnables] = useState(false);
+
+  useEffect(() => {
+    // Fetch data when the component mounts
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/2fa/isenable`, { withCredentials: true })
+      .then((res) => {
+        console.log(res.data);
+        setIsEnables(res.data); // Update the state here
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+
+  // Calculate the value of toggleChecked based on showModal and isenables
+  const toggleChecked = showModal || isenables;
+
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowModal(event.target.checked);
-    // setQRisEnabled(false);
-    // console.log(QRisEnabled);
   };
 
-  // useEffect(() => {
-  //   if (toggleChecked) {
-  //     console.log("CLEAN");
-  //     axios.post(`${import.meta.env.VITE_BACKEND_URL}/2fa/enable`, null, { withCredentials: true })
-  //       .then(res => {
-  //         fetchQR = res;
-  //         setSource(res.data);
-  //       });
-  //   }
-  // }, [toggleChecked]);
-
-  // useEffect(() => {
-  //   localStorage.setItem('QRisEnabled', JSON.stringify(QRisEnabled));
-  // }, [QRisEnabled]);
 
   return (
     <div>
       <label className="toggle-switch">
-        <input type="checkbox" checked={handleToggleChecked} onChange={handleToggleChange} />
+        <input type="checkbox" checked={toggleChecked} onChange={handleToggleChange} />
         <span className="slider"></span>
         <p>2FA</p>
       </label>

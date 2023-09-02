@@ -56,6 +56,6 @@ export class _2faController {
   })
   @Get('isenable')
   async isenable(@GetUser() user: User) {
-      await this._2fa.isenable(user);
+     return await this._2fa.isenable(user);
   }
 }

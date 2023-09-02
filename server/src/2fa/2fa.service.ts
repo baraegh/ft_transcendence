@@ -54,7 +54,7 @@ export class _2faService {
   async isenable(user: User) {
     const finduser =   await this.prisma.user.findUnique({
       where: { id: user.id },
-    })
+    });
     return finduser.isTwoFactorAuthenticationEnabled;
   }
 
