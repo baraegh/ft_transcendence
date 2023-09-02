@@ -27,13 +27,14 @@ type DropMenuProps =
   updateGroup?:       boolean,
   leaveRoom?:         () => void,
   setMuteValue?:      (muteValue: string) => void,
+  updateChatInfo?:    boolean,
 }
 
 const DropMenu = ({list, defaultValue = true, OnOpen, settings = false, 
                   size='14px', triggerIconSize='9px', setIsProfileOpen,
                   setChat, chatInfo, setMsgSend, msgSend, setFilter,
                   setUpdateChatInfo, joinRoom, setUpdateGroup,
-                  updateGroup, leaveRoom, setMuteValue} : DropMenuProps) => {
+                  updateGroup, leaveRoom, setMuteValue, updateChatInfo} : DropMenuProps) => {
 
     const [selectedDropMenu, setSelectedDropMenu] = useState(list[0]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -112,7 +113,8 @@ const DropMenu = ({list, defaultValue = true, OnOpen, settings = false,
                                   joinRoom={joinRoom}
                                   setUpdateGroup={setUpdateGroup}
                                   updateGroup={updateGroup}
-                                  leaveRoom={leaveRoom}/>
+                                  leaveRoom={leaveRoom}
+                                  updateChatInfo={updateChatInfo}/>
         }
       </>
     );

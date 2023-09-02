@@ -96,6 +96,7 @@ export function Chat() {
                     Type: string, userId: number | null,
                     blocked?: boolean, whoblock?: number | null, muted?: string) => {
 
+    console.log("setChat called");
     setChatInfo({chatId: Id, chatImage: Image,
                 chatName: Name, chatType: Type,
                 chatUserId: userId,
@@ -106,7 +107,7 @@ export function Chat() {
   }
 
   const leaveRoom = () => {
-
+    console.log('leave');
     if (socket)
         socket.emit('leaveRoom', chatInfo.chatId);
   }

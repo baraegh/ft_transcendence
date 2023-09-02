@@ -14,6 +14,11 @@ import defaultUserImage from '../../assets/person.png';
 import { format } from "../chatHistory/chatHistoryList";
 import { SocketContext } from "../../socket/socketContext";
 import defaultGroupImage from '../../assets/group.png';
+import Bronze from '../../front-end/img/bronze.png';
+import Silver from '../../front-end/img/silver.png';
+import Gold from '../../front-end/img/gold.png';
+import Maps from "../../front-end/tsx/maps";
+import { useNavigate } from "react-router-dom";
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
@@ -29,20 +34,21 @@ type chatAreaHeaderProps =
                             Type: string, userId: number | null,
                             blocked?: boolean, whoblock?: number | null) => void,
     leaveRoom:          () => void,
+    updateChatInfo:     boolean,
 }
 
 const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
                             setUpdateChatInfo, msgSend, setChat,
-                            leaveRoom} : chatAreaHeaderProps) => {
+                            leaveRoom, updateChatInfo} : chatAreaHeaderProps) => {
     const [isOnline, setIsOnline] = useState(false);
     const me = useContext(userMe);
+    const navigate = useNavigate();
     const settingsList = chatInfo.blocked?(
             me?.id === chatInfo.whoblock?
                 ['Profile', 'Delete', 'Unblock']
             : ['Delete']
         )
         :['Profile', 'Delete', 'Block'];
-
 
     useEffect(() => {
         if (!chatInfo.chatUserId)
@@ -67,9 +73,10 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
         };
     }, [chatInfo.chatId]);
 
+
     return (
         <div className='chat-area-header'>
-            <div className="user-card">
+            <div className="user-card" onClick={() => {navigate(`/user/${chatInfo.chatUserId}`)}}>
                 <img    src={chatInfo.chatImage? chatInfo.chatImage: defaultGroupImage}
                         alt={`${chatInfo.chatName} image`}/>
                 <div>
@@ -87,10 +94,11 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
                         <>
                             {
                                 !chatInfo.blocked?
-                                    <button className="challenge-btn">
-                                        <p>Challenge</p>
+                                    <div className="challenge-btn">
+                                        <Maps buttonText='Challenge' />
+                                        {/* <p>Challenge</p> */}
                                         <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
-                                    </button>
+                                    </div>
                                 : ''
                             }
                             <Settings   chatInfo={chatInfo}
@@ -100,6 +108,7 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
                                         setMsgSend={setMsgSend}
                                         msgSend={msgSend}
                                         setUpdateChatInfo={setUpdateChatInfo}
+                                        updateChatInfo={updateChatInfo}
                                         setChat={setChat}
                                         leaveRoom={leaveRoom}/>
                         </>
@@ -154,6 +163,16 @@ const ChatAreaInput = ({chatInfo, sendingroup, setChat,
 
     const handleOnSubmit = (e: React.SyntheticEvent) => {
         e.preventDefault();
+
+        // Axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${chatInfo.chatUserId}`,
+        //         {withCredentials:    true,})
+        //     .then((response) => {
+        //         console.log(response.data);
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
+
         if (checkNameInput(msg) || chatInfo.blocked || chatInfo.mute !== 'NAN')
             return;
         Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/is_muted`,
@@ -313,12 +332,14 @@ type RankCardProps ={
 }
 
 const RankCard = ({ranked} : RankCardProps) => {
+    const navigate = useNavigate();
+
     if (ranked.rank === 1)
     {
         return (
             <div className="Ranking-1">
                 <div className="Ranking-1-number"><p>{ranked.rank}</p></div>
-                <div className="Ranking-1-img-username">
+                <div className="Ranking-1-img-username" onClick={() => {navigate(`/user/${ranked.id}`)}}>
                     <img src={ranked.image} alt={`${ranked.username}'s image`}/>
                     <p>{ranked.username}</p>
                 </div>
@@ -332,13 +353,13 @@ const RankCard = ({ranked} : RankCardProps) => {
     }
 
     return (
-        <div className="Ranking-2">
+        <div className="Ranking-2" onClick={() => {navigate(`/user/${ranked.id}`)}}>
             <div className="Ranking-2-number"><p>{ranked.rank}</p></div>
             <div className="Ranking-2-img-username">
                 <img src={ranked.image} alt={`${ranked.username}'s image`}/>
                 <p>{format(ranked.username, 4)}</p>
             </div>
-            <div className="Ranking-2-stat">
+            <div className="Ranking-2-stat" onClick={() => {navigate(`/user/${ranked.id}`)}}>
                 <p>{ranked.gameWon? ranked.gameWon: 0}</p>
                 <p>Games won</p>
             </div>
@@ -353,6 +374,7 @@ type ChatAreaProfileProps ={
 
 export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfileProps) => {
 
+    const navigate = useNavigate()
     const   [profileData, setProfileData] = useState<profileDataType>({
         username:       '',
         gameWon:        0,
@@ -380,8 +402,7 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfilePro
                         profileData.rank.map((data) => {
                             return <RankCard ranked={data} key={data.username}/>
                         })
-                    : null
-
+                    : null;
     return (
         <div className='chat-area-profile'>
             <div className="chat-area-profile-about">
@@ -393,8 +414,10 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfilePro
                             style={{color: "#000000",}} />
                     </button>
                 </div>
-                <img src={chatInfo.chatImage} alt={`${chatInfo.chatName} image`}/> {/* Click to go to profile */}
-                <p className="CA-profile-about-username">{chatInfo.chatName}</p>
+                <div onClick={() => {navigate(`/user/${chatInfo.chatUserId}`)}}>
+                    <img src={chatInfo.chatImage} alt={`${chatInfo.chatName} image`}/> {/* Click to go to profile */}
+                    <p className="CA-profile-about-username">{chatInfo.chatName}</p>
+                </div>
             </div>
             
             <div className="chat-area-profile-content">
@@ -409,8 +432,30 @@ export const ChatAreaProfile = ({setIsProfileOpen, chatInfo}: ChatAreaProfilePro
                 <div className="chat-area-profile-achievements">
                     <p className="CA-profile-achievements-header">Achievements</p>
                     <div className="achievements">
-                        {profileData.achievements && profileData.achievements.length !== 0 ? 
-                            profileData.achievements: <p className="No-data" style={{textAlign: 'center'}}>No Achievements</p>}
+                        {
+                            profileData.achievements && profileData.achievements.length !== 0 ? 
+                               profileData.achievements.map((a: string) =>{
+                                    if (a === "1")
+                                        return <img className="achievement-badge"
+                                                    key={1}
+                                                    src={Bronze}
+                                                    alt="bronze"/>;
+                                    if (a === "2")
+                                        return <img className="achievement-badge"
+                                                    key={2}
+                                                    src={Silver}
+                                                    alt="silver"/>;
+                                    if (a === "3")
+                                        return <img className="achievement-badge"
+                                                    key={3}
+                                                    src={Gold}
+                                                    alt="Gold"/>;
+                                    return (<p className="No-data"
+                                                style={{textAlign: 'center'}}
+                                                key={"No-Achievement"}>No Achievement</p>);
+                               })
+                            : <p className="No-data" style={{textAlign: 'center'}}>No Achievements</p>
+                        }
                     </div>
                 </div>
 
@@ -463,6 +508,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
     });
     const me = useContext(userMe);
     const {socket} = useContext<any | undefined>(SocketContext);
+    const navigate = useNavigate();
 
     const joinRoom = (channelId: string) =>{
         if (socket) {
@@ -509,7 +555,7 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
                 <p className="user-card-loses">Loses - {profileData.gameLost? profileData.gameLost: 0}</p>
             </div>
             <div className="user-card-btn">
-                <button>Profile</button>
+                <button onClick={() => {navigate(`/user/${id}`)}}>Profile</button>
                 {
                     id !==  me?.id? 
                         <button onClick={handleMessage}>Message</button>
@@ -1000,7 +1046,6 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
 
     }, []);
 
-
     return (
         <div className='chat-area-container'>
             <ChatAreaHeader setIsProfileOpen={setIsProfileOpen} 
@@ -1008,6 +1053,7 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
                             setMsgSend={setMsgSend}
                             msgSend={msgSend}
                             setUpdateChatInfo={setUpdateChatInfo}
+                            updateChatInfo={updateChatInfo}
                             setChat={setChat}
                             leaveRoom={leaveRoom}/>
 
@@ -1025,7 +1071,7 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
                 chatInfo.mute !== 'NAN' ?
                     <p  className="No-data"
                         style={{textAlign: 'center', fontSize: '12px'}}>
-                        You Muted from this group
+                        You are Muted from this group
                     </p>
                 : ''
             }

@@ -71,12 +71,13 @@ type SettingsProps =
     setUpdateGroup?:        (update: boolean) => void,
     updateGroup?:           boolean,
     leaveRoom?:             () => void,
+    updateChatInfo?:        boolean,
 }
 
 export function Settings({list, size='14px', setIsProfileOpen,
                             setChat, chatInfo, msgSend, setMsgSend,
                             setUpdateChatInfo, joinRoom, setUpdateGroup,
-                            updateGroup, leaveRoom} : SettingsProps)
+                            updateGroup, leaveRoom, updateChatInfo} : SettingsProps)
 {
     return (
         <div className="chat-settings">
@@ -93,6 +94,7 @@ export function Settings({list, size='14px', setIsProfileOpen,
                         joinRoom={joinRoom}
                         updateGroup={updateGroup}
                         setUpdateGroup={setUpdateGroup}
+                        updateChatInfo={updateChatInfo}
                         leaveRoom={leaveRoom}/>
         </div>
     );

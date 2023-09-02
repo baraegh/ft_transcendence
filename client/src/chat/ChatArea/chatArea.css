@@ -302,6 +302,7 @@
 {
     font-family: 'Mouse Memoirs';
     font-size: 24px;
+    text-align: center;
 }
 
 .chat-area-profile-status
@@ -815,4 +816,15 @@
     font-size: 18px;
     line-height: 85%;
     letter-spacing: 0.2em;
+}
+
+.achievements {
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.achievement-badge {
+    width: 50px;
+    height: auto;
 }

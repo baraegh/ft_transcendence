@@ -4,7 +4,7 @@
 
   display: grid;
   justify-content: center;
-  grid-template-rows: 60px 800px;
+  grid-template-rows: 60px 600px;
 }
 
 ::-webkit-scrollbar {

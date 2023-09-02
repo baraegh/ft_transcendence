@@ -158,7 +158,7 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
     );
 }
 
-const filterList = ['All Friends', 'All Groups', 'All Users',  'Online', 'Block', 'Pending'];
+const filterList = ['All Friends', 'All Groups', 'All Users', 'Blocked'];
 
 type friendListProps = {
     setChat:    (Id: string, Image: string, Name: string,
@@ -191,11 +191,9 @@ export const FriendList = ({setChat, chatInfo, update, setUpdate} : friendListPr
         }
         else if (filter === 'All Users')
             url = 'chat/show-all-users';
-        else if (filter === 'Block')
+        else if (filter === 'Blocked')
             url = 'chat/friend/filter/block';
-        else if (filter === 'Pending')
-            url = 'chat/friend/filter/pending';
-        else // online: to be fixed
+        else 
             return;
 
         Axios.get(`${import.meta.env.VITE_BACKEND_URL}/${url}`, { withCredentials: true })
@@ -215,7 +213,7 @@ export const FriendList = ({setChat, chatInfo, update, setUpdate} : friendListPr
                     console.log(error);
                 }
             );
-
+    
     }, [filter, searchQuery]);
 
     if (filter === 'All Friends' || filter === '')
@@ -264,7 +262,7 @@ export const FriendList = ({setChat, chatInfo, update, setUpdate} : friendListPr
                             user={user}/>)
                 : <p className="No-data" style={{textAlign: 'center'}}>NO USERS</p> ;
     }
-    else if (filter === 'Block')
+    else if (filter === 'Blocked')
     {
         const filtredBlockedList =  blockedList?.filter(user => 
                 user.username.toLowerCase().includes(searchQuery.toLowerCase())

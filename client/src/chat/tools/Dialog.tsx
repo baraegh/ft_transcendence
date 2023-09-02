@@ -1189,11 +1189,12 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend,
                     closeDialog();
                 if (response.status === 200 && setChat)
                 {
-                    console.log('here')
                     setChat(chatInfo.chatId, chatInfo.chatImage,
                             chatInfo.chatName, chatInfo.chatType,
                             chatInfo.chatUserId, true,
-                            chatInfo.chatUserId);
+                            me?.id);
+                    if (leaveRoom)
+                        leaveRoom();
 
                 }
             })
@@ -1215,7 +1216,8 @@ const BlockUser = ({closeDialog, chatInfo, setMsgSend,
     );
 }
 
-const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend, setChat} : DialogProps) => {
+const UnBlock = ({closeDialog, chatInfo, setMsgSend,
+                    msgSend, setChat} : DialogProps) => {
 
     const {socket} = useContext<any | undefined>(SocketContext);
 
@@ -1227,36 +1229,19 @@ const UnBlock = ({closeDialog, chatInfo, setMsgSend, msgSend, setChat} : DialogP
     }
 
     const handleOnClick = () => {
-        if (chatInfo === undefined
-                || !chatInfo.blocked)
+        if (chatInfo === undefined || !chatInfo.blocked)
             return;
-        Axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/block_friend`,
-            {FriendId: chatInfo.chatUserId},
-            {withCredentials: true})
-            .then((response) => {
-                // create channel
-                Axios.post(`${import.meta.env.VITE_BACKEND_URL}/chat/join-friend`,
-                { receiverId: chatInfo.chatUserId },
+        Axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`,
+        {FriendId: chatInfo.chatUserId},
+        {withCredentials: true})
+        .then((response) => {
+                if (setChat)
                 {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    withCredentials: true,
-                })
-                .then((response) => {
-                    if (setChat )
-                        setChat(response.data.channelID, chatInfo.chatImage, chatInfo.chatName,
-                                'PERSONEL', chatInfo.chatUserId);
-                    joinRoom(response.data.channelID);
-                    if (closeDialog)
-                        closeDialog();
-                })
-                .catch((error) => {
-                    console.log(error);
+                    setChat(chatInfo.chatId, chatInfo.chatImage,
+                        chatInfo.chatName, chatInfo.chatType,
+                        chatInfo.chatUserId, false, null);
+                        joinRoom(chatInfo.chatId);
                 }
-            );
-                if (setMsgSend)
-                    setMsgSend(!msgSend);
                 if (closeDialog)
                     closeDialog();
             })
@@ -1381,6 +1366,7 @@ type DialogProps =
     leaveRoom?:         () => void,
     role?:              string,
     userId?:            number,
+    updateChatInfo?:    boolean,
 }
 
 export function Dialog({title, closeDialog, setChat,
@@ -1389,7 +1375,7 @@ export function Dialog({title, closeDialog, setChat,
                         membersWarn, setMembersWarn, setUpdatedAdmins,
                         closeGroupSetting, setUpdateChatInfo, joinRoom,
                         setUpdateGroup, updateGroup, leaveRoom, role,
-                        userId} : DialogProps)
+                        userId, updateChatInfo} : DialogProps)
 {
     let ItemComponent :React.ComponentType = () => <p>Invalid Choose</p>;
 
@@ -1488,7 +1474,10 @@ export function Dialog({title, closeDialog, setChat,
         
         case 'Unblock':
                 ItemComponent = () => <UnBlock  closeDialog={closeDialog}
-                                                chatInfo={chatInfo}/>
+                                                chatInfo={chatInfo}
+                                                setMsgSend={setMsgSend}
+                                                msgSend={msgSend}
+                                                setChat={setChat}/>
             break;
         
         default:

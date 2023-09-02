@@ -9,7 +9,7 @@ import { userMe } from "../../App";
 import { SocketContext } from "../../socket/socketContext";
 
 const filterList = ['All chats', 'Friends', 'Groups'];
-const settingsList = ['New Chat', 'Create Group', 'Invite'];
+const settingsList = ['New Chat', 'Create Group'];
 
 type ChatListHeaderProps = {
     setChat:        (chatId: string, chatImage: string, chatName: string,
@@ -98,13 +98,14 @@ const HistoryList = ({data, setChat, selected, updateGroup,
     const handleOnClick = () => {
         if (chatInfo.chatId !== '')
             leaveRoom();
-        joinRoom(data.channelId);
+        if (!data.blocked)
+            joinRoom(data.channelId);
         if (data.type === 'PERSONEL')
         {
             setChat(data.channelId,
                     data.otherUserImage? data.otherUserImage: defaultUserImage,
                     data.otherUserName, data.type, data.otherUserId, data.blocked,
-                    data.hasblocked);
+                    data.hasblocked); // there's a problem here, check todoList
         }
         else
         {
@@ -225,7 +226,6 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
                     setFriendList(response.data);
                 else if (filter === 'Groups')
                     setGroupList(response.data);
-                // console.log('response.data: ', response.data);
             })
             .catch((error) => {
                     console.log(error);
