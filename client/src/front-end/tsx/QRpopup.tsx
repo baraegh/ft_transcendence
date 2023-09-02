@@ -106,7 +106,6 @@ const QRpopup: React.FC = () => {
       });
   }, []);
 
-  // Calculate the value of toggleChecked based on showModal and isenables
   const toggleChecked = showModal || isenables;
 
 
@@ -115,10 +114,19 @@ const QRpopup: React.FC = () => {
   };
 
 
+  function handleToggleClick (toggleChecked: boolean)
+  {
+    if(toggleChecked === true)
+    {
+      axios.post(`${import.meta.env.VITE_BACKEND_URL}/2fa/disable`, null , { withCredentials: true });
+      toggleChecked = false;
+      setIsEnables(false);
+    }
+  }
   return (
     <div>
       <label className="toggle-switch">
-        <input type="checkbox" checked={toggleChecked} onChange={handleToggleChange} />
+        <input type="checkbox"  onClick={() => {handleToggleClick(toggleChecked)}} checked={toggleChecked} onChange={handleToggleChange} />
         <span className="slider"></span>
         <p>2FA</p>
       </label>
