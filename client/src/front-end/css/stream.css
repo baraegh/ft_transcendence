@@ -94,7 +94,10 @@
 .stream-container
 {
   display: flex;
-  margin: auto;
+  /* margin: auto; */
+  justify-content: space-around;
+  align-content: flex-start;
+  flex-direction: row-reverse;
 }
 
 .stream-user-container
@@ -113,13 +116,13 @@
 
 }
 
-/* #stream-user-username
+ #stream-user-username
 {
   color : black;
 }
 
-/* #stream-user-image
+#stream-user-image
 {
   width: 50px;
   height: 50px;
-} */
+}
