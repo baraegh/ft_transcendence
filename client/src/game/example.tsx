@@ -195,7 +195,7 @@ const Game = () => {
         const newY = msg.y * heightScale;
         player2.y = newY;
       });
-    socket.on("ballMove", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number } }) => {
+    socket.on("ballMoveCatch", (message: { ball: ballType, player1: playerType, player2: playerType, dim: { W: number, H: number } }) => {
       const widthScale = canvas.width / message.dim.W;
       const heightScale = canvas.height / message.dim.H;
       const newX = message.ball.x * widthScale;

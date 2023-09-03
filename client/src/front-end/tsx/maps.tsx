@@ -27,8 +27,13 @@ const BlankModal: React.FC<BlankModalProps> = ({
   userId,
 }) => {
   const navigate = useNavigate();
-  const [map, setMap] = useState<any[]>([]);
-  const [ball, setBall] = useState("");
+  const [map, setMap] = useState<any[]>([                {
+    pColor: "WHITE",
+    bColor: "WHITE",
+    fColor: "BLACK",
+    bMode: "",
+  },]);
+  const [ball, setBall] = useState("1");
   useEffect(() => {
     // console.log('Map updated:', map);
     // console.log('Ball updated:', ball);

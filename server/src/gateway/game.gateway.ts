@@ -16,6 +16,7 @@ export class GameGateway implements OnGatewayDisconnect{
   constructor(private prisma: PrismaService) { }
   private logger: Logger = new Logger("GameGateway");
   games = new Map<number, { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number }>();
+  gamesIDs = new Map<number, { player1Id: string, player2Id: string, Id: number }>();
   streaming = new Map<number, Tstreaming>();
   gameIds = new Map<number, string>();
   gameIdsData = new Map<string, modeType>();
@@ -29,8 +30,10 @@ export class GameGateway implements OnGatewayDisconnect{
     }
     if (!data.numplayer1Id || !data.numplayer1Id)
       this.server.to(this.games.get(this.getMatchID(client)).player2Id).emit('playerDisconnected', "");
+    this.gameId++;
     const gameid = await this.creatGame(data.numplayer1Id, idp2);
     this.games.set(this.gameId, data);
+    this.gamesIDs.set(this.gameId, {player1Id: data.player1Id, player2Id: data.player2Id, Id: this.gameId})
     this.gameIds.set(this.gameId, gameid.id);
     this.server.to(data.player1Id).emit('startGame', data.mode);
     this.server.to(client.id).emit('startGame', data.mode);
@@ -42,7 +45,6 @@ export class GameGateway implements OnGatewayDisconnect{
       player2Id: data.numplayer2Id
     });
     this.gameIdsData.set("room_" + this.gameId, data.mode);
-    this.gameId++;
   }
   @SubscribeMessage('exploreRooms')
   creatingRoom(client: Socket, msg: string) {
@@ -105,17 +107,21 @@ export class GameGateway implements OnGatewayDisconnect{
       this.streaming.delete(i);
       this.gameIds.delete(i);
       this.games.delete(i);
-      this.logger.log(this.gameId +" | "+ i);
-      if (this.gameId -1 == i)
-        this.gameId--;
+      this.gamesIDs.delete(i);
+      this.logger.log(this.gameId +" | "+ i); 
+      // if (this.gameId -1 == i)
+      //   this.gameId--;
     }
   }
 
   getClientId(client: Socket): { player1Id: string, player2Id: string, mode: modeType } {
-    let game: datatype;
+    let game: {
+      player1Id: string;
+      player2Id: string;
+      mode: modeType};
     this.games.forEach((value, key) => {
       if (value.player1Id == client.id || value.player2Id == client.id) {
-        game = value;
+        game = {player1Id: value.player1Id, player2Id: value.player2Id, mode: value.mode};
       }
     });
     if (game)
@@ -123,14 +129,10 @@ export class GameGateway implements OnGatewayDisconnect{
     return null;
   }
   getMatchID(client: Socket): number {
-    let mKey: number = undefined;
-    this.games.forEach((value, key) => {
-      if (value.player1Id == client.id || value.player2Id == client.id){
-        mKey = key;
-        return ;
-      }
-      else
-        mKey = null;
+    let mKey: number = 0;
+    this.gamesIDs.forEach((value, key) => {
+      if (value.player1Id == client.id || value.player2Id == client.id)
+        mKey = value.Id;
     });
     return mKey;
   }
@@ -258,23 +260,34 @@ export class GameGateway implements OnGatewayDisconnect{
           WinnerId: win,
           LosserId: losser
         }
-        await this.endMatch(win, dto);
+       
+        console.log('end hi ***********');
+        console.log(client.id)
+        if (client.id == clientOb.player1Id)
+          await this.endMatch(win, dto);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
         let i = this.getMatchID(client);
         // this.gameIdsData.delete(this.streaming.get(i).roomName);
         this.streaming.delete(i);
         this.gameIds.delete(i);
+        this.gamesIDs.delete(i);
         this.games.delete(i);
-        if (this.gameId -1 == i)
-          this.gameId--;
+        // if (this.gameId -1 == i)
+        //   this.gameId--;
       }
       else {
-        if (client.id == clientOb.player1Id && this.streaming.get(this.getMatchID(client)) !== undefined) {
-        this.server.to(clientOb.player1Id).emit('ballMove', message);
+      if (client.id == clientOb.player1Id && this.streaming.get(this.getMatchID(client)) !== undefined) {
+        this.server.to(clientOb.player1Id).emit('ballMoveCatch', message);
         this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);
         message.ball.x = message.dim.W - message.ball.x;
-        this.server.to(clientOb.player2Id).emit('ballMove', message);
-        }
+        let score = message.player1.score;
+        message.player1.score = message.player2.score;
+        message.player2.score = score;
+        this.server.to(clientOb.player2Id).emit('ballMoveCatch', message);
+        score = message.player1.score;
+        message.player1.score = message.player2.score;
+        message.player2.score = score;  
+      }
       }
     }
   }
@@ -327,7 +340,8 @@ export class GameGateway implements OnGatewayDisconnect{
       },
     });
     if (!findmatch) return;
-    if (findmatch.game_end == true)
+    console.log('  end gaaame : ' + findmatch.game_end +  dto.GameId);
+    if (findmatch.game_end === true)
       return;
 
     const editGame = await this.prisma.match_History.update({
@@ -338,6 +352,7 @@ export class GameGateway implements OnGatewayDisconnect{
         game_end: true,
       },
     });
+    console.log('  ennnnnnd gaaame : ' + editGame.game_end + ' ' +  dto.GameId);
     let otherplayer: number;
     let userplayer: number;
     let winuser: boolean;
@@ -349,17 +364,80 @@ export class GameGateway implements OnGatewayDisconnect{
       userplayer = editGame.user2Id;
     }
 
-
-    if (dto.WinnerId && dto.LosserId) {
+    const achivement = await this.prisma.user.findFirst({
+      where:{
+        id:dto.WinnerId,
+      }
+    })
+    if(achivement.gameWon === 2)
+    {
       await this.prisma.user.update({
+        where:{
+          id:dto.WinnerId,
+        },
+        data:{
+          achievements:["2"],
+        }
+      })
+  
+    }
+    else if(achivement.gameWon === 4)
+    {
+      await this.prisma.user.update({
+        where:{
+          id:dto.WinnerId,
+        },
+        data:{
+          achievements:["3"],
+        }
+      })
+  
+    }
+    const winner = await this.prisma.user.findUnique({
+      where: { id: dto.WinnerId }
+    });
+    if(winner.gameWon === null)
+      {
+        await this.prisma.user.update({
+          where: { id: dto.WinnerId },
+          data: { gameWon: 0 },
+        });
+      }
+      if(winner.gameLost === null)
+      {
+        await this.prisma.user.update({
+          where: { id: dto.WinnerId },
+          data: { gameLost: 0 },
+        });
+      }
+      const lossser = await this.prisma.user.findUnique({
+        where: { id: dto.LosserId }
+      });
+      if(lossser.gameLost === null)
+        {
+          await this.prisma.user.update({
+            where: { id: dto.LosserId },
+            data: { gameLost: 0 },
+          });
+        }
+        if(lossser.gameWon === null)
+        {
+          await this.prisma.user.update({
+            where: { id: dto.LosserId },
+            data: { gameWon: 0 },
+          });
+        }
+    if (dto.WinnerId && dto.LosserId) {
+      const wi = await this.prisma.user.update({
         where: { id: dto.WinnerId },
         data: { gameWon: { increment: 1 } },
       });
+      console.log('winnnnnner ' + wi.gameWon );
       await this.prisma.user.update({
         where: { id: dto.LosserId },
         data: { gameLost: { increment: 1 } },
       });
-      return editGame;
+      return;
     }
 
     if (editGame.user1P > editGame.user2P) winuser = true;
@@ -394,37 +472,8 @@ export class GameGateway implements OnGatewayDisconnect{
         data: { gameLost: { increment: 1 } },
       });
     }
-
-    const achivement = await this.prisma.user.findFirst({
-      where:{
-        id:dto.WinnerId,
-      }
-    })
-    if(achivement.gameWon === 2)
-    {
-      await this.prisma.user.update({
-        where:{
-          id:dto.WinnerId,
-        },
-        data:{
-          achievements:["2"],
-        }
-      })
-  
-    }
-    else if(achivement.gameWon === 4)
-    {
-      await this.prisma.user.update({
-        where:{
-          id:dto.WinnerId,
-        },
-        data:{
-          achievements:["3"],
-        }
-      })
-  
-    }
-    return editGame;
+    
+    return ;
   }
 
 }
