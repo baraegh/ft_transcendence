@@ -1,12 +1,7 @@
 Chat:
     --> fix challenge button
     --> fix the layout of the browse button
-    --> X: if I block someone when he still in chat he can send messages (I need the end-point isblocked)
-    --> I need the Id of who sent a message in a group, to fetch the name and the image in the chat
-    --> the end-point 'all-users' should return all users without the blocked ones
-    --> User can block other users. This means they won't receive private messages
-        from the accounts they blocked nor view their messages in public/private
-        channels.
+
 
 Game:
     --> invite friends:
