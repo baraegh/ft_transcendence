@@ -59,15 +59,13 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
       
     }
   };
-
-
   return (
     <>
       {showNotification && (
         <div className="slide-in-modal">
           <div className="content">
             <span className="message">
-              {name} has sent you a friend request
+              {name} has invited you to play a game
             </span>
 
             <img id="profileImgNotif" src={img} alt="" />

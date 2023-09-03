@@ -53,6 +53,7 @@ interface OtherUser {
           const namePromises = onlineUsers.map(async (element: string) => {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${element}`, { withCredentials: true });
             const userData: OtherUser = res.data; // Use the OtherUser type
+            console.log(res.data);
             return userData;
           });
           const nameResults: OtherUser[] = await Promise.all(namePromises);
@@ -61,7 +62,7 @@ interface OtherUser {
           console.log(error);
         }
       };
-  
+      console.log(names);
       fetchData();
     }, []);
   
@@ -77,7 +78,7 @@ interface OtherUser {
         <div className="mainDisplay">
           <a onClick={() => { navigate('/home') }} id="X">X</a>
           <div className='search-input-container'>
-            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery}></Search>
           </div>
           <div className='friendList'>
             {filteredNames.map((item) => (

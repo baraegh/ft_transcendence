@@ -113,4 +113,19 @@ export class UserController {
     return  is_ingame.ingame;
   }
 
+  @Get('is_all_online')
+  async is_all_online() {
+    const is_online0 = await this.prisma.user.findMany({
+      where:{
+        isonline:true,
+      },
+      select: {
+        id: true,
+      },
+    });
+    const is_online_ids = is_online0.map(user => user.id);
+
+  return is_online_ids;
+  }
+
 }

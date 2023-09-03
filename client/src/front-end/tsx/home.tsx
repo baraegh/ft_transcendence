@@ -11,7 +11,6 @@ import { SocketContext } from '../../socket/socketContext'
 import Maps from './maps'
 function Home() : JSX.Element
 {
-    
     const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
     const { socket } = useContext<any | undefined>(SocketContext);
 
@@ -27,10 +26,6 @@ function Home() : JSX.Element
     // useEffect(() => {
     //   document.location.reload();
     // }, [])
-  
-  
- 
-  
     const navigate = useNavigate();
     return (<div>
         <MyHeader/>

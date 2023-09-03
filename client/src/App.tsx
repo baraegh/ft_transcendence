@@ -62,25 +62,24 @@ function App() {
   //     newSocket.close();
   //   };
   // }, [setSocket]);
-  useEffect(() => {
-    const checkLoggedInStatus = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
-          withCredentials: true,
-        });
-        console.log(">>>>" + response.status);
-        if (response.status === 200) {
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        // Handle error
-        console.error(error);
-        setIsLoggedIn(false);
-      }
-    };
+  // useEffect(() => {
+  //   const checkLoggedInStatus = async () => {
+  //     try {
+  //       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
+  //         withCredentials: true,
+  //       });
+  //       if (response.status === 200) {
+  //         setIsLoggedIn(true);
+  //       }
+  //     } catch (error) {
+  //       // Handle error
+  //       console.error(error);
+  //       setIsLoggedIn(false);
+  //     }
+  //   };
 
-    checkLoggedInStatus();
-  }, []);
+  //   checkLoggedInStatus();
+  // }, []);
 
   useEffect(() => {
     // Update local storage whenever the isLoggedIn state changes
@@ -89,13 +88,13 @@ function App() {
   const [me, setMe] = useState<meType | null>(null)
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {withCredentials: true})
+    if(isLoggedIn)
+    {
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {withCredentials: true})
       .then((response) => {
         setMe(response.data);
       })
-      .catch((error) => {
-        console.log(error);
-      })
+    }
   }, []);
 
   
@@ -107,7 +106,7 @@ function App() {
           <Route path="/" element={<DSTeam />} />
           <Route
             path="/loginPage"
-            element={!isLoggedIn ? <LoginPage /> : <Navigate to="/home" replace />}
+            element={!isLoggedIn ? <LoginPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/home" replace />}
           />
           <Route
             path="/FA"

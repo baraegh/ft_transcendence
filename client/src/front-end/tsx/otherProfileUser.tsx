@@ -53,6 +53,7 @@ interface Match {
 }
 
 interface OtherUser {
+  achievements: any;
   id: number;
   image: string;
   username: string;
@@ -96,11 +97,6 @@ function OtherProfileUser(): JSX.Element {
   });
 
   const challenge = () => {
-    // if (socket) {
-    //   console.log("wwwwwaaaaaaa")
-    //   socket.emit('connect01');
-    // }
-    // console.log(storedSocket);
     type modeType = {
       pColor: string;
       bColor: string;
@@ -199,6 +195,7 @@ function OtherProfileUser(): JSX.Element {
           };
 
           setUserData(fetchedUser);
+          console.log(otherUser);
           setFriendData(friendData);
         } else {
           throw new Error('Request failed');
@@ -312,23 +309,23 @@ function OtherProfileUser(): JSX.Element {
           <div className="profile">
             <h3 id="profileScore"> score :  {otherUser.id}</h3>
             <div className="ProfilePictureUsername">
-              <img src={otherUser.image} alt="" />
+              <img id="profile_img" src={otherUser.image} alt="" />
               <p>{otherUser.username}</p>
             </div>
             <div className='WinLoss'>
               <div className='Win'>
-                <p>Win : {otherUser.gameWon}</p>
+                <p>{`Win : ${otherUser.gameWon > 0 ? otherUser.gameWon : "0"}`}</p>
               </div>
               <div className='Loss'>
-                <p>Loss : {otherUser.gameLost}</p>
+                <p>{`Lose : ${otherUser.gameWon > 0 ? otherUser.gameWon : "0"}`}</p>
               </div>
             </div>
             <div className='achievement'>
               <p>Achievement</p>
               <div className='achievementIcons'>
-                <img src={bronze} alt="" />
-                <img src={silver} alt="" />
-                <img src={gold} alt="" />
+              {/* {/* {otherUser?.achievements[0] == "1" && <img src={bronze} alt="" />} */}
+              {/* {otherUser?.achievements[1] == 1 && <img src={silver} alt="" />} */}
+              {/* {otherUser?.achievements[2] == 1 && <img src={gold} alt="" />}  */}
               </div>
               <div className='fourButtons'>
                 {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}

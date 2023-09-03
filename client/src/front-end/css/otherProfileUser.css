@@ -29,9 +29,9 @@
 
 #profileScore
 {
-    top : 5px;
+    top: 5px;
     position: relative;
-    left: 620px;
+    left: 595px;
     bottom: 16px;
 }
 
@@ -41,7 +41,7 @@
     margin: auto;
 }
 
-.ProfilePictureUsername img{
+.ProfilePictureUsername #profile_img{
     width: 100px;
     height: 100px;
     margin: auto;
