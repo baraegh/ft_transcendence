@@ -106,7 +106,7 @@ function App() {
           <Route path="/" element={<DSTeam />} />
           <Route
             path="/loginPage"
-            element={!isLoggedIn ? <LoginPage setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/home" replace />}
+            element={!isLoggedIn ? <LoginPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/home" replace />}
           />
           <Route
             path="/FA"

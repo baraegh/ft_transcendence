@@ -35,23 +35,33 @@ import axios from 'axios'
 
 
 
-function LoginPage({ setIsLoggedIn }: { setIsLoggedIn: Dispatch<boolean> }): JSX.Element {
-    const handleLogin = () => {
+function LoginPage({ isLoggedIn, setIsLoggedIn }: { isLoggedIn: boolean, setIsLoggedIn: Dispatch<boolean> }): JSX.Element {
+    const handleLogin = async () => {
         window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/`; // fix this a khay simo 
-
+        // localStorage.setItem('isLoggedIn', "true");
     }
     useEffect(() => {
         const checkLoggedInStatus = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
+                // if ((localStorage.getItem('isLoggedIn')) == "true") {
+                await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
                     withCredentials: true,
+                }).then((response) => {
+                    if (response.status === 200) {
+                        setIsLoggedIn(true);
+                    }
+                    else if (response.status === 401)
+                        console.log("hiii")
+                }).catch((err) => {
+                    if (err.code == "ERR_BAD_REQUEST")
+                        localStorage.setItem('isLoggedIn', "false");
+                    console.clear();
+
                 });
-                if (response.status === 200) {
-                    setIsLoggedIn(true);
-                }
+                // }
             } catch (error) {
                 // Handle error
-                console.error(error);
+                // console.error(error);
                 setIsLoggedIn(false);
             }
         };
