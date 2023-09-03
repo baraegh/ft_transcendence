@@ -41,7 +41,7 @@
     margin: auto;
 }
 
-.ProfilePictureUsername img{
+.ProfilePictureUsername #profile_img{
     width: 100px;
     height: 100px;
     margin: auto;

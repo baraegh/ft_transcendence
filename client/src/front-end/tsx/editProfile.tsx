@@ -39,19 +39,16 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
 
   }
   
+  const [userUnique, setUserUnique] = useState(false);  
   const OnEdit = (event: FormEvent) => {
     event.preventDefault();
-    
 
     const formData = new FormData();
 
     formData.append('name', profileData.name);
     if (profileData.image !== null)
       formData.append('image', profileData.image);    // formData.append('name', GroupData.name);
-    // formData.append('hash', GroupData.hash)
-    // formData.append('members', JSON.stringify(GroupData.members));
-    // if (GroupData.image !== null)
-    //     formData.append('image', GroupData.image);
+
 
     axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/profile/edite`,
@@ -63,11 +60,12 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
         },
       }
     ).then(res => {
-
-      console.log(res.data);
+      console.log(res);
       onHide();
     }).catch(error => {
-      console.error(error);
+      if(error.code === "ERR_BAD_REQUEST")
+        setUserUnique(true);
+      // console.error(error);
     });
   
   }
@@ -97,6 +95,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
                     onChange={handleOnChange}
                     accept='.png, .jpg, .jpeg'/>
             <label htmlFor="editModalPicInput" className='browse-image-label1'>Browse</label>
+            {userUnique === true && <p style={{position: "relative", bottom : "25px", left:"10px"}}>Error : Check Username If It's Unique Or The Image</p>}
+              
           </div>
           
         </div>

@@ -167,6 +167,7 @@ function MyProfileUser(): JSX.Element {
       .catch((error) => {
         console.log(error);
       });
+      console.log(userData);
   }, []);
 
 
@@ -193,9 +194,9 @@ function MyProfileUser(): JSX.Element {
           <div className="achievement">
             <p>Achievement</p>
             <div className="achievementIcons">
-              <img src={bronze} alt="" />
-              <img src={silver} alt="" />
-              <img src={gold} alt="" />
+              {userData?.achievements[0] == "1" && <img src={bronze} alt="" />}
+              {<img src={silver} alt="" />}
+              {<img src={gold} alt="" />}
             </div>
           </div>
         </div>

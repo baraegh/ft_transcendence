@@ -96,11 +96,6 @@ function OtherProfileUser(): JSX.Element {
   });
 
   const challenge = () => {
-    // if (socket) {
-    //   console.log("wwwwwaaaaaaa")
-    //   socket.emit('connect01');
-    // }
-    // console.log(storedSocket);
     type modeType = {
       pColor: string;
       bColor: string;
@@ -312,7 +307,7 @@ function OtherProfileUser(): JSX.Element {
           <div className="profile">
             <h3 id="profileScore"> score :  {otherUser.id}</h3>
             <div className="ProfilePictureUsername">
-              <img src={otherUser.image} alt="" />
+              <img id="profile_img" src={otherUser.image} alt="" />
               <p>{otherUser.username}</p>
             </div>
             <div className='WinLoss'>
