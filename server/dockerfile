@@ -6,7 +6,7 @@ COPY package*.json ./
 
 COPY in.sh ./
 
-RUN npm install --force
+# RUN npm install --force
 
 COPY . .
 
@@ -14,4 +14,5 @@ EXPOSE 3000
 
 ENTRYPOINT ["sh", "in.sh"]
 
-CMD ["npm", "run", "start"]
+# CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:dev"]

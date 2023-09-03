@@ -74,9 +74,36 @@ export class FetchChatService {
       return;
     if (findinparticepents.blocked === true)
        return;
-      const messages = await this.prisma.messages.findMany({
+
+       const messages = await this.prisma.messages.findMany({
         where: {
           channelID: dto.channelId,
+          NOT: {
+            user: {
+              OR: [
+                {
+                  friendshipUser2: {
+                    some: {
+                      AND: [
+                        { blocked: true },
+                        { user: { id: userid } }
+                      ]
+                    }
+                  }
+                },
+                {
+                  friendshipUser1: {
+                    some: {
+                      AND: [
+                        { blocked: true },
+                        { friend: { id: userid } }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
         },
         select: {
           userId: true,
@@ -90,6 +117,7 @@ export class FetchChatService {
           },
         },
       });
+      
       const fetchMessages: FETCHMSG[] = messages.map((message) => ({
         userId: message.userId,
         content: message.content,
@@ -511,9 +539,37 @@ export class FetchChatService {
     }
 
     const fetchUsers = await this.prisma.user.findMany({
-      where: {
-        NOT: [{ id: userId }, { friendshipUser2: { some: { blocked: true } } }],
+       where: {
+    NOT: [
+      {
+        id: userId
       },
+      {
+        OR: [
+          {
+            friendshipUser2: {
+              some: {
+                AND: [
+                  { blocked: true },
+                  { user: { id: userId } }
+                ]
+              }
+            }
+          },
+          {
+            friendshipUser1: {
+              some: {
+                AND: [
+                  { blocked: true },
+                  { friend: { id: userId } }
+                ]
+              }
+            }
+          },
+        ]
+      }
+    ]
+  },
       select: {
         id: true,
         username: true,
