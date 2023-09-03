@@ -78,7 +78,7 @@ interface OtherUser {
         <div className="mainDisplay">
           <a onClick={() => { navigate('/home') }} id="X">X</a>
           <div className='search-input-container'>
-            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery}></Search>
           </div>
           <div className='friendList'>
             {filteredNames.map((item) => (

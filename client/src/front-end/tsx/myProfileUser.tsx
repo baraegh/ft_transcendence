@@ -195,8 +195,8 @@ function MyProfileUser(): JSX.Element {
             <p>Achievement</p>
             <div className="achievementIcons">
               {userData?.achievements[0] == "1" && <img src={bronze} alt="" />}
-              {<img src={silver} alt="" />}
-              {<img src={gold} alt="" />}
+              {userData?.achievements[1] == "1" && <img src={silver} alt="" />}
+              {userData?.achievements[2] == "1" &&<img src={gold} alt="" />}
             </div>
           </div>
         </div>

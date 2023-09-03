@@ -11,7 +11,9 @@
     background-color: black;
 }
 
-
+.search-icon {
+    display: none;
+}
 #X
 {
     text-decoration: none;

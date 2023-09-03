@@ -91,8 +91,9 @@ input[type="checkbox"]:checked + .slider:before {
 
 #profileScore
 {
+    top: 5px;
     position: relative;
-    left: 620px;
+    left: 595px;
     bottom: 16px;
 }
 
