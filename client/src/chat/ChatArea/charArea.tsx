@@ -242,9 +242,10 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
     const [name, setName] = useState('');
 
     useEffect(() => {
-        if (chatInfo === undefined || !chatInfo.chatUserId)
+        if (msg === undefined || !msg.userId)
             return;
-        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/aboutfriend/${chatInfo.chatUserId}`,
+
+        Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/aboutfriend/${msg.userId}`,
             { withCredentials: true })
             .then((response) => {
                 setName(response.data.username);
@@ -261,7 +262,7 @@ const MsgCardOther = ({chatInfo, msg} : msgCardProps) =>
                 <p className="chat-area-message">{msg.content}</p>
             </div>
             <div className="msg-of-other-time-img">
-                <img src={chatInfo?.chatImage} alt="description..."/>
+                <img src={msg.image} alt="description..."/>
                 <p className="chat-time">{formatDate(msg.timeSend)}</p>
             </div>
         </div>

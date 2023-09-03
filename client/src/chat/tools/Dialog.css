@@ -85,6 +85,7 @@
 }
 
 .dialog-label {
+  width: 100%;
   margin-top: 10px;
 }
 
@@ -132,7 +133,7 @@
 .browse-image-label
 {
   border: 1px solid var(--secondary-color);
-  box-shadow: 2px 2px 0px var(--secondary-color);
+  box-shadow: 2px 2px 0px var(--secondarey-color);
   border-radius: 5px;
   margin: 10px 0;
   padding: 4px;
@@ -144,11 +145,29 @@
   position: relative;
   left: 30px;
   text-indent: -67px;
-
 }
 
 
 .browse-image-label:hover
+{
+  box-shadow: none;
+}
+
+.browse-image-label-btn
+{
+  border: 1px solid var(--secondary-color);
+  box-shadow: 2px 2px 0px var(--secondarey-color);
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 4px;
+
+  font-family: 'Mouse Memoirs';
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.browse-image-label-btn:hover
 {
   box-shadow: none;
 }

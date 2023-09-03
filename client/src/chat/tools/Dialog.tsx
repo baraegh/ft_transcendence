@@ -127,6 +127,7 @@ const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
         Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/show-all-users`,
             { withCredentials: true })
         .then((response) => {
+            console.log('response.data from new chat: ', response.data);
             setUsersList(response.data);
         })
         .catch((error) => {
@@ -236,7 +237,7 @@ export const CreateGroupFirstDialog = ({GroupData, nameExist, nameWarn,
                             accept='.png, .jpg, .jpeg'
                             id='profilePicture'
                             onChange={handleOnChange}/>
-                    <label htmlFor="profilePicture" className='browse-image-label'>Browse</label>
+                    <label htmlFor="profilePicture" className='browse-image-label-btn'>Browse</label>
                 </div>
             </div>
             <label className='dialog-label' key="group-privacy" >

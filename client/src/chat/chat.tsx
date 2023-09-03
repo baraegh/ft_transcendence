@@ -95,8 +95,6 @@ export function Chat() {
   const setChat = (Id: string, Image: string, Name: string,
                     Type: string, userId: number | null,
                     blocked?: boolean, whoblock?: number | null, muted?: string) => {
-
-    console.log("setChat called");
     setChatInfo({chatId: Id, chatImage: Image,
                 chatName: Name, chatType: Type,
                 chatUserId: userId,
