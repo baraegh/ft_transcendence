@@ -46,6 +46,7 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
     const fetchdata = async () => {
       try {
+
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {
           withCredentials: true,
         });
@@ -66,7 +67,6 @@ function MyHeader(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    // Use the socket instance here
 
     if (socket) {
       console.log("CREATED >> ");
@@ -113,6 +113,7 @@ function MyHeader(): JSX.Element {
       .post(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, null, { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
+          localStorage.setItem("isLoggedIn", "false");
           window.location.reload(); // Reload the page
         }
         else {
