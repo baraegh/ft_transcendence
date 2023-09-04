@@ -293,7 +293,7 @@ function OtherProfileUser(): JSX.Element {
         console.log(error);
       });
   }, []);
-
+  console.log(otherUser);
   return (
     <div>
       <MyHeader />
@@ -315,7 +315,7 @@ function OtherProfileUser(): JSX.Element {
                 <p>{`Win : ${otherUser.gameWon > 0 ? otherUser.gameWon : "0"}`}</p>
               </div>
               <div className='Loss'>
-                <p>{`Lose : ${otherUser.gameWon > 0 ? otherUser.gameWon : "0"}`}</p>
+                <p>{`Lose : ${otherUser.gameLost > 0 ? otherUser.gameLost : "0"}`}</p>
               </div>
             </div>
             <div className='achievement'>

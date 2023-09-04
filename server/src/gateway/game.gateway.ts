@@ -208,26 +208,28 @@ export class GameGateway implements OnGatewayDisconnect{
       }
       if (ball.x - ball.radius < 0 && (ball.y < player1.y || ball.y > player1.y + player1.height)) {
         player2.score++;
-        if (client.id == clientOb.player2Id) {
+        console.log("p2 :" + player2.score)
+        // if (client.id == clientOb.player2Id) {
           const dto = {
             GameId: gameIds.get(getMatchID(client)),
             user1P: player1.score,
             user2P: player2.score,
           }
           await editMatch(dto);
-        }
+        // }
         resetBall();
       }
       else if (ball.x + ball.radius > dim.W && (ball.y < player2.y || ball.y > player2.y + player2.height)) {
         player1.score++;
-        if (client.id == clientOb.player1Id) {
+        console.log("p1 :" + player1.score)
+        // if (client.id == clientOb.player1Id) {
           const dto = {
             GameId: gameIds.get(getMatchID(client)),
             user1P: player1.score,
             user2P: player2.score,
           }
           await editMatch(dto);
-        }
+        // }
         resetBall();
       }
       return ball;
@@ -235,10 +237,23 @@ export class GameGateway implements OnGatewayDisconnect{
     let clientOb: { player1Id: string, player2Id: string, mode: modeType } = this.getClientId(client)
     
     if (clientOb) {
+      if (client.id == clientOb.player2Id){
+        let score = message.player1.score;
+        message.player1.score = message.player2.score;
+        message.player2.score = score;  
+      }
       message.ball = await ballMovement(message.ball, message.player1, message.player2, message.dim);
       if (message.player1.score == 5 || message.player2.score == 5) {
         let win: number;
         let losser: number;
+        console.log("p1 : " + message.player1.score +" |  p2 : " + message.player2.score)
+        // if (client.id == clientOb.player1Id) {
+        //   const dtol = {
+        //     GameId: gameIds.get(getMatchID(client)),
+        //     user1P: message.player1.score,
+        //     user2P: message.player2.score,
+        //   }
+        // await editMatch(dtol);
         if (message.player1.score > message.player2.score) {
           win = this.games.get(this.getMatchID(client)).numplayer1Id;
           losser = this.games.get(this.getMatchID(client)).numplayer2Id;
@@ -261,6 +276,8 @@ export class GameGateway implements OnGatewayDisconnect{
           LosserId: losser
         }
        
+        console.log('end hi ***********');
+        console.log(client.id)
         if (client.id == clientOb.player1Id)
           await this.endMatch(win, dto);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
@@ -278,13 +295,13 @@ export class GameGateway implements OnGatewayDisconnect{
         this.server.to(clientOb.player1Id).emit('ballMoveCatch', message);
         this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);
         message.ball.x = message.dim.W - message.ball.x;
-        let scoreM = message.player1.score;
+        let score = message.player1.score;
         message.player1.score = message.player2.score;
-        message.player2.score = scoreM;
+        message.player2.score = score;
         this.server.to(clientOb.player2Id).emit('ballMoveCatch', message);
-        scoreM = message.player1.score;
-        message.player1.score = message.player2.score;
-        message.player2.score = scoreM;  
+        // score = message.player1.score;
+        // message.player1.score = message.player2.score;
+        // message.player2.score = score;  
       }
       }
     }
@@ -298,10 +315,10 @@ export class GameGateway implements OnGatewayDisconnect{
         id: dto.GameId,
       },
     });
-    if (!findmatch) throw new NotFoundException('Match not found');
+    if (!findmatch) return;
     if (findmatch.game_end == true)
       return;
-
+    console.log('p1 ' + dto.user1P + 'p2 ' + dto.user2P );
     const editGame = await this.prisma.match_History.update({
       where: {
         id: dto.GameId,
