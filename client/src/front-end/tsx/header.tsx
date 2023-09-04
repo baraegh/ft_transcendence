@@ -57,6 +57,8 @@ function MyHeader(): JSX.Element {
           throw new Error("Request failed");
         }
       } catch (error) {
+        localStorage.clear();
+        window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
       }
     };
 
@@ -92,6 +94,9 @@ function MyHeader(): JSX.Element {
         holder.push(res.data);
       })
       .catch((error) => {
+        localStorage.clear();
+        window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
+        
       });
     }
   }, []);
@@ -210,6 +215,8 @@ function MyHeader(): JSX.Element {
           holder.push(res.data);
         })
         .catch((error) => {
+          localStorage.clear();
+          window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
         });
     }, 5000);
 
@@ -223,7 +230,6 @@ function MyHeader(): JSX.Element {
         <Notification buttonText="" showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
         <h3 onClick={() => {
           navigate('/home');
-          document.location.reload();
         }} className="logo">
           Keep It Random !
         </h3>

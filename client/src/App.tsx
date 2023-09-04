@@ -86,8 +86,7 @@ function App() {
     // Update local storage whenever the isLoggedIn state changes
     localStorage.setItem("isLoggedIn", isLoggedIn);
   }, [isLoggedIn]);
-  const [me, setMe] = useState<meType | null>(null)
-
+  
   useEffect(() => {
     if(isLoggedIn)
     {
@@ -97,6 +96,7 @@ function App() {
       })
     }
   }, []);
+  const [me, setMe] = useState<meType | null>(null)
 
   
   return (

@@ -25,14 +25,12 @@ export class ProfileService {
     file: Express.Multer.File,
   ): Promise<USERINFODTO> {
     if (!file) {
-      throw new BadRequestException('No file uploaded');
+     return
     }
     const allowedExtensions = ['.jpg', '.jpeg', '.png']; 
     const fileExtension = path.extname(file.originalname).toLowerCase(); 
     if (!allowedExtensions.includes(fileExtension)) {
-      throw new BadRequestException(
-        'Invalid file type. Only images are allowed : jpg, jpeg ,png',
-      );
+      return
     }
     const imageName = `${userId}${fileExtension}`;
     let imagePath = `uploads/${imageName}`;
@@ -44,7 +42,7 @@ export class ProfileService {
     });
 
     if (finduniquename)
-      throw new BadRequestException('this name already exists');
+      return
     const stream = createWriteStream(imagePath);
     stream.write(file.buffer);
     stream.end();

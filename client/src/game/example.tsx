@@ -248,8 +248,8 @@ const Game = () => {
       socket.off("playerDisconnected");
       socket.off("GameEnd");
       // socket.disconnect();
-      navigate('/profile')
-      document.location.reload();
+      window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
+
     });
     socket.on("GameEnd", (message: string) => {
       player1.score = 0;
@@ -264,8 +264,8 @@ const Game = () => {
       socket.off("initStream");
       cancelAnimationFrame(animationFrameIdRef);
       // socket.disconnect();
-      navigate('/profile')
-      document.location.reload();
+      window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
+
     });
     socket.on("initStream", (eMode: modeType) => {
       player1.x = 0;

@@ -206,7 +206,6 @@ const ChatHistoryList = ( {setIsProfileOpen, setChat, chatInfo,
     const joinRoom = (channelId: string) =>{
         if (socket) {
             socket.emit('joinRoom', channelId);
-            console.log("join");
         }
     }
 
