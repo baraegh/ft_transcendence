@@ -87,6 +87,10 @@ function MyHeader(): JSX.Element {
 
   const holder: any = useState([]);
   useEffect(() => {
+    const storedLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(storedLoggedIn === "true")
+    {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/notification/all_friend_req`, { withCredentials: true })
       .then((res) => {
@@ -96,6 +100,7 @@ function MyHeader(): JSX.Element {
       })
       .catch((error) => {
       });
+    }
   }, []);
 
   const toggleBellDropdown = () => {
@@ -124,6 +129,10 @@ function MyHeader(): JSX.Element {
   };
 
   const fetchData = () => {
+  const storedLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(storedLoggedIn === "true")
+    {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true })
       .then((response) => {
@@ -148,6 +157,7 @@ function MyHeader(): JSX.Element {
       })
       .catch((error) => {
       });
+    }
   };
 
   useEffect(() => {
@@ -198,6 +208,11 @@ function MyHeader(): JSX.Element {
 
   // Poll notifications every 5 seconds
   useEffect(() => {
+  const storedLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(storedLoggedIn === "true")
+    {
+
     const interval = setInterval(() => {
       axios
         .get(`${import.meta.env.VITE_BACKEND_URL}/notification/all_friend_req`, { withCredentials: true })
@@ -209,9 +224,10 @@ function MyHeader(): JSX.Element {
         });
     }, 5000);
 
+    console.log(storedLoggedIn);
     return () => clearInterval(interval); // Clean up the interval on component unmount
+  }
   }, []);
-
   return (
     <div>
       <header>
