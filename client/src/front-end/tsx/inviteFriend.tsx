@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import '../css/inviteFriend.css'
@@ -11,6 +11,7 @@ import { MDBInputGroup, MDBInput, MDBIcon, MDBBtn } from 'mdb-react-ui-kit';
 import von from 'https://cdn.intra.42.fr/users/5cbcbf356b9d010e3be665d85bf62ce0/brmohamm.jpg'
 import axios from 'axios'
 import Maps from './maps'
+
 
 interface OtherUser {
     id: number;
@@ -39,12 +40,29 @@ interface OtherUser {
     isFriend: true,
     requestAccepted: true
   };
+  type meType = {
+    id:           number,
+    username:     string,
+    image:        string,
+    gameWon:      number,
+    gameLost:     number,
+    achievements: string[],
+  }
   
+  const userMe = React.createContext<meType | null>(null);
+
   function InviteFriend(): JSX.Element {
+    const [me, setMe] = useState<meType | null>(null)
+
     const [searchQuery, setSearchQuery] = useState('');
     const [names, setNames] = useState<OtherUser[]>([]); // Update to use OtherUser type
     const navigate = useNavigate();
-    let {userId} = useParams();
+    useEffect(() => {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, {withCredentials: true})
+        .then((response) => {
+          setMe(response.data);
+        })
+    }, []);
     useEffect(() => {
       const fetchData = async () => {
         try {
@@ -71,7 +89,7 @@ interface OtherUser {
       const lowercaseSearchQuery = searchQuery.toLowerCase();
       return lowercaseName.includes(lowercaseSearchQuery);
     });
-  
+    console.log(me?.id);
     return (
       <div>
         <Header />
@@ -79,12 +97,12 @@ interface OtherUser {
           <a onClick={() => { navigate('/home') }} id="X">X</a>
           <div className='search-input-container'>
             <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery}></Search>
-          </div>
+          </div>item
           <div className='friendList'>
             {filteredNames.map((item) => (
               <div className='friendsSearch' key={item.id} onClick={() => { console.log(item.id) }}>
                 <img className='friendsSearchImg' src={item.image} alt="" />
-                <p onClick={() => {userId = item.id}}><Maps buttonText={item.username}/> </p>
+                <p onClick={() => {}}><Maps buttonText={item.username} id={item.id.toString()}/> </p>
               </div>
             ))}
           </div>

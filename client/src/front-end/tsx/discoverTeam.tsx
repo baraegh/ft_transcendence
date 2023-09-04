@@ -13,7 +13,7 @@ import ping from '../img/ping.png'
 
 function DSTeam(): JSX.Element {
   const navigate = useNavigate();
-  // localStorage.clear();
+  localStorage.clear();
 
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
 

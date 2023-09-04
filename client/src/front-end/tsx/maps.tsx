@@ -181,20 +181,17 @@ const BlankModal: React.FC<BlankModalProps> = ({
     </Modal>
   );
 };
-const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
+const Maps: React.FC<{ buttonText: string, id : string }> = ({ buttonText, id }) => {
   const [showModal, setShowModal] = useState(false);
   const { socket } = useContext<any | undefined>(SocketContext);
   let { userId } = useParams();
-  if (userId === undefined) userId = "0";
+  // if (userId === undefined) userId = "0";
   const handleImageClick = () => {
     setShowModal(true);
   };
-
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  console.log(userId);
-
   return (
     <>
       <span onClick={handleImageClick}>{buttonText}</span>
@@ -202,7 +199,7 @@ const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
       {showModal && (
         <BlankModal
           socket={socket}
-          userId={userId}
+          userId={id}
           show={showModal}
           onHide={handleCloseModal}
         />
