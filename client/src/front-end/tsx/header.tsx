@@ -229,7 +229,7 @@ function MyHeader(): JSX.Element {
       <header>
         <Notification buttonText="" showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
         <h3 onClick={() => {
-          navigate('/home');
+          window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
         }} className="logo">
           Keep It Random !
         </h3>

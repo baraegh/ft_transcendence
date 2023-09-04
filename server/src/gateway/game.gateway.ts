@@ -72,7 +72,7 @@ export class GameGateway implements OnGatewayDisconnect{
   async handleDisconnect(client: Socket) {
     let winerid: number;
     let losserid: number;
-    if (this.games.get(this.getMatchID(client)) && this.games.get(this.getMatchID(client)) !== undefined && this.getMatchID(client) != null) {
+    if (this.getMatchID(client) != 0 && this.games.get(this.getMatchID(client))) {
       if (this.games.get(this.getMatchID(client)).player1Id == client.id) {
         const dto = {
           GameId: this.gameIds.get(this.getMatchID(client)),
