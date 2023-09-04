@@ -40,11 +40,6 @@ type meType = {
 const userMe = React.createContext<meType | null>(null);
 // const backendUrl = import.meta.env.VITE_BACKEND_URL;
 function App() {
-  console.log = function () {};
-  console.warn = function () {};
-  console.error = function () {};
-  console.info = function () {};
-  console.debug = function () {};
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   // const [getid, setid] = useState<number>();

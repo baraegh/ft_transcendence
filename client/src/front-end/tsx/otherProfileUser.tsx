@@ -16,6 +16,7 @@ import { SocketContext } from '../../socket/socketContext';
 import bronze from '../img/bronze.png'
 import silver from '../img/silver.png'
 import gold from '../img/gold.png'
+import { userMe } from '../../App';
 
 interface User {
   id: number;
@@ -235,9 +236,10 @@ function OtherProfileUser(): JSX.Element {
       .catch((error) => {
         console.log(error);
       });
-  }
+  } 
 
   function unblockFriend() {
+    
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
         setButtons({ ...bbuttons, isBlocked: false });
@@ -247,7 +249,6 @@ function OtherProfileUser(): JSX.Element {
         console.log(error);
       });
   }
-
   const [block, setBlock] = useState(false);
   const [bbuttons, setButtons] = useState(Buttons);
   const navigate = useNavigate();
@@ -257,8 +258,17 @@ function OtherProfileUser(): JSX.Element {
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${userId}`, { withCredentials: true })
       .then(res => {
+        const fetchUserData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true }).then(
+          (res) => {
+            if(res.data.id === userData.id)
+            window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/profile`;
+
+          }
+        )
         const userData = res.data;
         setOtherUser(userData);
+        // if(userData?.id === fetchUserData.data.id)
+        //   console.log("dddd");
         if (userData.hosblocked === userData.id) {
           setBlock(true);
         }
@@ -268,7 +278,7 @@ function OtherProfileUser(): JSX.Element {
       .catch(error => {
         if(error.code === "ERR_BAD_REQUEST")
         {
-        document.location.reload();
+        // document.location.reload();
           navigate('/home');
         }
       });
@@ -293,7 +303,6 @@ function OtherProfileUser(): JSX.Element {
         console.log(error);
       });
   }, []);
-  console.log(otherUser);
   return (
     <div>
       <MyHeader />

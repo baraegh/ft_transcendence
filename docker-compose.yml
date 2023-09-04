@@ -33,8 +33,8 @@ services:
       context: ./client
     ports:
       - 5173:5173
-    # volumes:
-    #   - clientV:/app
+    volumes:
+      - clientV:/app
     depends_on:
       - nestjs
     networks:
