@@ -155,7 +155,6 @@ export class ChatFriendService {
   }
 
   async unblock_user(userId: number, FriendId: number) {
-    console.log("hi");
     const finduser = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -176,7 +175,6 @@ export class ChatFriendService {
         friendID: FriendId,
       },
     });
-    console.log(fetchUsers,userId);
     if (fetchUsers && fetchUsers.blocked === false) return;
 
     const finde_same_channel = await this.prisma.channel.findFirst({

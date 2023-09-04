@@ -66,7 +66,6 @@ const BlankModal: React.FC<BlankModalProps> = ({
     };
 
     if (socket && Number(userId) > 0) {
-      console.log(">>>>>>send from:" + dataToSend.mode.fColor);
       socket.emit("sendGameRequest", dataToSend);
       navigate("/loadingPage");
     } else if (socket && Number(userId) === 0) {

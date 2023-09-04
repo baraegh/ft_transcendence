@@ -248,7 +248,7 @@ const Game = () => {
       socket.off("playerDisconnected");
       socket.off("GameEnd");
       // socket.disconnect();
-      navigate('/home')
+      navigate('/profile')
       document.location.reload();
     });
     socket.on("GameEnd", (message: string) => {
@@ -264,7 +264,7 @@ const Game = () => {
       socket.off("initStream");
       cancelAnimationFrame(animationFrameIdRef);
       // socket.disconnect();
-      navigate('/home')
+      navigate('/profile')
       document.location.reload();
     });
     socket.on("initStream", (eMode: modeType) => {

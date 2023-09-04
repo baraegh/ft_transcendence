@@ -261,8 +261,6 @@ export class GameGateway implements OnGatewayDisconnect{
           LosserId: losser
         }
        
-        console.log('end hi ***********');
-        console.log(client.id)
         if (client.id == clientOb.player1Id)
           await this.endMatch(win, dto);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
@@ -280,13 +278,13 @@ export class GameGateway implements OnGatewayDisconnect{
         this.server.to(clientOb.player1Id).emit('ballMoveCatch', message);
         this.server.to(this.streaming.get(this.getMatchID(client)).roomName).emit('streaming', message);
         message.ball.x = message.dim.W - message.ball.x;
-        let score = message.player1.score;
+        let scoreM = message.player1.score;
         message.player1.score = message.player2.score;
-        message.player2.score = score;
+        message.player2.score = scoreM;
         this.server.to(clientOb.player2Id).emit('ballMoveCatch', message);
-        score = message.player1.score;
+        scoreM = message.player1.score;
         message.player1.score = message.player2.score;
-        message.player2.score = score;  
+        message.player2.score = scoreM;  
       }
       }
     }
@@ -340,7 +338,6 @@ export class GameGateway implements OnGatewayDisconnect{
       },
     });
     if (!findmatch) return;
-    console.log('  end gaaame : ' + findmatch.game_end +  dto.GameId);
     if (findmatch.game_end === true)
       return;
 
@@ -352,7 +349,6 @@ export class GameGateway implements OnGatewayDisconnect{
         game_end: true,
       },
     });
-    console.log('  ennnnnnd gaaame : ' + editGame.game_end + ' ' +  dto.GameId);
     let otherplayer: number;
     let userplayer: number;
     let winuser: boolean;
@@ -432,7 +428,6 @@ export class GameGateway implements OnGatewayDisconnect{
         where: { id: dto.WinnerId },
         data: { gameWon: { increment: 1 } },
       });
-      console.log('winnnnnner ' + wi.gameWon );
       await this.prisma.user.update({
         where: { id: dto.LosserId },
         data: { gameLost: { increment: 1 } },

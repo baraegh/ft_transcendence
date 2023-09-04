@@ -64,7 +64,6 @@ interface OtherUser {
 function MyProfileUser(): JSX.Element {
   const switchScrollFlag = () => {
     setScrollFlag(!scrollFlag);
-    console.log(!scrollFlag + ' < switched');
   };
 
   const generateRandomUser = (index: number): OtherUser => {
@@ -167,7 +166,6 @@ function MyProfileUser(): JSX.Element {
       .catch((error) => {
         console.log(error);
       });
-      console.log(userData);
   }, []);
 
 
@@ -194,9 +192,9 @@ function MyProfileUser(): JSX.Element {
           <div className="achievement">
             <p>Achievement</p>
             <div className="achievementIcons">
-              {userData?.achievements[0] == "1" && <img src={bronze} alt="" />}
-              {userData?.achievements[1] == "1" && <img src={silver} alt="" />}
-              {userData?.achievements[2] == "1" &&<img src={gold} alt="" />}
+            {(userData?.achievements[0] == "1" || userData?.achievements[0] == "2" || userData?.achievements[0] == "3" )&& <img src={bronze} alt="" />}
+              {(userData?.achievements[0] == "2" || userData?.achievements[0] == "3") && <img src={silver} alt="" />}
+              {userData?.achievements[0] == "3" &&<img src={gold} alt="" />}
             </div>
           </div>
         </div>

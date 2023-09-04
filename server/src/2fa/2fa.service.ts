@@ -11,7 +11,6 @@ export class _2faService {
   constructor(private prisma: PrismaService) {}
 
   async generateTwoFactorAuthenticationSecret(user: User) {
-    console.log("here");
     const secret = authenticator.generateSecret();
     const finduser =   await this.prisma.user.findUnique({
       where: { id: user.id },

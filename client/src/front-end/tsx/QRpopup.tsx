@@ -31,24 +31,20 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified`, { secret: QRvalue }, { withCredentials: true })
       .then((res) => {
-        console.log(res);
         setQRisEnabled(true); // Update the QRisEnabled value using the callback
         axios
           .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified_first_time`, { secret: QRvalue }, { withCredentials: true })
           .then((res) => {
-            console.log(res);
             setError("");
             onHide();
           })
           .catch((err) => {
-            console.log(err);
             if (err.code === "ERR_BAD_REQUEST") {
               setError("Wrong Auth Code !");
             }
           });
       })
       .catch((err) => {
-        console.log(err);
         if (err.code === "ERR_BAD_REQUEST") {
           setError("Wrong Auth Code !");
         }
@@ -59,10 +55,8 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide, QRisEnabled, setQ
   useEffect(() => {
     if(QRisEnabled == false)
     {
-    console.log(QRisEnabled)
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/2fa/enable`, null, { withCredentials: true })
     .then(res => {
-          console.log("CLEAN");
           fetchQR = res;
           setSource(res.data);
         });
@@ -98,7 +92,6 @@ const QRpopup: React.FC = () => {
     // Fetch data when the component mounts
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/2fa/isenable`, { withCredentials: true })
       .then((res) => {
-        console.log(res.data);
         setIsEnables(res.data); // Update the state here
       })
       .catch((error) => {

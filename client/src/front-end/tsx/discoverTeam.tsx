@@ -13,7 +13,6 @@ import ping from '../img/ping.png'
 
 function DSTeam(): JSX.Element {
   const navigate = useNavigate();
-  localStorage.clear();
 
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -61,7 +60,7 @@ function DSTeam(): JSX.Element {
             Meet Pong-enthusiasts, make new friends and hit the leaderboard!</p>
           {/* <button className={playButton} className="PlayButton">Try It</button> */}
         <img id="ping" src={ping} alt="" />
-          <a onClick={() => {navigate('/home')}} id="tryIt">Try It!</a>
+          <a onClick={() => {navigate('/profile')}} id="tryIt">Try It!</a>
         </div>
       </div>
       <br />

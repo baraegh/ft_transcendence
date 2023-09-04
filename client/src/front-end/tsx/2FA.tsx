@@ -21,8 +21,6 @@ const TwoFactorAuth: React.FC = () => {
 
 
   const submitForm = () => {
-    console.log("@2222222");
-    console.log(input);
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified`, {secret: input}, {
         withCredentials: true,
@@ -35,7 +33,6 @@ const TwoFactorAuth: React.FC = () => {
             })
             .then((response) => {
               if (response.status === 200) {
-                console.log("PASSED");
                 navigate('/profile');
                 document.location.reload();
               } else {
@@ -51,10 +48,8 @@ const TwoFactorAuth: React.FC = () => {
       })
       .catch((error) => {
         console.log(error);
-        // navigate("/");
 
       });
-      console.log("eEEEEEEEEEEEEEE");
   };
 
   return (

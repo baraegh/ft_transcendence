@@ -516,7 +516,6 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
     const joinRoom = (channelId: string) =>{
         if (socket) {
             socket.emit('joinRoom', channelId);
-            console.log("join");
         }
     }
 
@@ -699,7 +698,6 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                 console.log(error);
             });
 
-        console.log('data: ', groupData);
     }
 
     useEffect(() => {
@@ -1007,7 +1005,6 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
         if (socket) 
         {
             socket.emit('chatToServer', { sender: me?.id, room: chatInfo.chatId, message: msg });
-            console.log("send");
         }
     }
 

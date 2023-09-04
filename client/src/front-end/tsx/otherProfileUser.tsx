@@ -53,12 +53,12 @@ interface Match {
 }
 
 interface OtherUser {
-  achievements: any;
   id: number;
   image: string;
   username: string;
   gameWon: number;
   gameLost: number;
+  achievements : string[];
   updatedAt: string;
   blocked: boolean;
   hosblocked: number;
@@ -78,6 +78,7 @@ const otherUserTemplate: OtherUser = {
   image: "string",
   gameWon: 0,
   gameLost: 0,
+  achievements : ["string"],
   updatedAt: "2023-07-13T03:31:40.829Z",
   blocked: true,
   hosblocked: 0,
@@ -115,8 +116,6 @@ function OtherProfileUser(): JSX.Element {
       image: "image"
     };
     if (socket) {
-      console.log(">>>>>>send from:" + socket);
-      console.log(socket.id);
       socket.emit("sendGameRequest", dataToSend);
     }
   };
@@ -195,7 +194,6 @@ function OtherProfileUser(): JSX.Element {
           };
 
           setUserData(fetchedUser);
-          console.log(otherUser);
           setFriendData(friendData);
         } else {
           throw new Error('Request failed');
@@ -219,7 +217,6 @@ function OtherProfileUser(): JSX.Element {
   const sendFriendRequest = () => {
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then(() => {
-        console.log("Friend Request Sent");
         setOtherUser(prevUser => ({
           ...prevUser,
           isRequested: true
@@ -232,7 +229,6 @@ function OtherProfileUser(): JSX.Element {
   function blockFriend() {
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
-        console.log("blocked");
         setButtons({ ...bbuttons, isBlocked: true });
         document.location.reload();
       })
@@ -244,7 +240,6 @@ function OtherProfileUser(): JSX.Element {
   function unblockFriend() {
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
-        console.log("unblocked");
         setButtons({ ...bbuttons, isBlocked: false });
         document.location.reload();
       })
@@ -264,7 +259,6 @@ function OtherProfileUser(): JSX.Element {
       .then(res => {
         const userData = res.data;
         setOtherUser(userData);
-
         if (userData.hosblocked === userData.id) {
           setBlock(true);
         }
@@ -272,7 +266,11 @@ function OtherProfileUser(): JSX.Element {
           setBlock(false);
       })
       .catch(error => {
-        console.log(error);
+        if(error.code === "ERR_BAD_REQUEST")
+        {
+        document.location.reload();
+          navigate('/home');
+        }
       });
   }, [userId]);
 
@@ -323,12 +321,12 @@ function OtherProfileUser(): JSX.Element {
             <div className='achievement'>
               <p>Achievement</p>
               <div className='achievementIcons'>
-              {/* {/* {otherUser?.achievements[0] == "1" && <img src={bronze} alt="" />} */}
-              {/* {otherUser?.achievements[1] == 1 && <img src={silver} alt="" />} */}
-              {/* {otherUser?.achievements[2] == 1 && <img src={gold} alt="" />}  */}
+              {(otherUser?.achievements[0] == "1" || otherUser?.achievements[0] == "2" || otherUser?.achievements[0] == "3" )&& <img src={bronze} alt="" />}
+              {(otherUser?.achievements[0] == "2" || otherUser?.achievements[0] == "3") && <img src={silver} alt="" />}
+              {otherUser?.achievements[0] == "3" &&<img src={gold} alt="" />}
               </div>
               <div className='fourButtons'>
-                {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' id={userId?.toString()} /></a>}
                 {otherUser.isFriend && !otherUser.blocked && <a onClick={
                   () => { handleSendMessage() }
                 } className="message2"><span>Message</span></a>}

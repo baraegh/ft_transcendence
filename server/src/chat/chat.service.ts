@@ -294,9 +294,7 @@ export class ChatService {
     file: Express.Multer.File,
     localhostUrl: string,
   ): Promise<RETUR_OF_CHANNEL_DTO> {
-    console.log(typeof dto.members);
     if (dto.hash) {
-      console.log(dto.hash + "<<< hash");
       const hash = await argon.hash(dto.hash);
       dto.hash = hash;
     }

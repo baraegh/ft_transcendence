@@ -71,7 +71,6 @@ interface OtherUser {
           const namePromises = onlineUsers.map(async (element: string) => {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${element}`, { withCredentials: true });
             const userData: OtherUser = res.data; // Use the OtherUser type
-            console.log(res.data);
             return userData;
           });
           const nameResults: OtherUser[] = await Promise.all(namePromises);
@@ -80,7 +79,6 @@ interface OtherUser {
           console.log(error);
         }
       };
-      console.log(names);
       fetchData();
     }, []);
   
@@ -89,7 +87,6 @@ interface OtherUser {
       const lowercaseSearchQuery = searchQuery.toLowerCase();
       return lowercaseName.includes(lowercaseSearchQuery);
     });
-    console.log(me?.id);
     return (
       <div>
         <Header />
@@ -100,7 +97,7 @@ interface OtherUser {
           </div>item
           <div className='friendList'>
             {filteredNames.map((item) => (
-              <div className='friendsSearch' key={item.id} onClick={() => { console.log(item.id) }}>
+              <div className='friendsSearch' key={item.id} onClick={() => {  }}>
                 <img className='friendsSearchImg' src={item.image} alt="" />
                 <p onClick={() => {}}><Maps buttonText={item.username} id={item.id.toString()}/> </p>
               </div>

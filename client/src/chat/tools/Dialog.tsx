@@ -127,7 +127,6 @@ const NewChat = ({setChat, closeDialog, joinRoom} : NewChatProps) => {
         Axios.get(`${import.meta.env.VITE_BACKEND_URL}/chat/show-all-users`,
             { withCredentials: true })
         .then((response) => {
-            console.log('response.data from new chat: ', response.data);
             setUsersList(response.data);
         })
         .catch((error) => {
@@ -1225,7 +1224,6 @@ const UnBlock = ({closeDialog, chatInfo, setMsgSend,
     const joinRoom = (channelId: string) =>{
         if (socket) {
             socket.emit('joinRoom', channelId);
-            console.log("join");
         }
     }
 
@@ -1272,7 +1270,6 @@ const JoinGroup = ({chatInfo, closeDialog, setChat} : DialogProps) => {
     const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setPrivateKey(value);
-        console.log('privateKey: ', privateKey);
         setNameWarn(false);
     }
 

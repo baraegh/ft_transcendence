@@ -39,7 +39,6 @@ type meType = {
 }
 const userMe = React.createContext<meType | null>(null);
 // const backendUrl = import.meta.env.VITE_BACKEND_URL;
-// console.log(import.meta.env.VITE_BACKEND_URL);
 function App() {
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
@@ -108,7 +107,7 @@ function App() {
           <Route path="/" element={<DSTeam />} />
           <Route
             path="/loginPage"
-            element={!isLoggedIn ? <LoginPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/home" replace />}
+            element={!isLoggedIn ? <LoginPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/profile" replace />}
           />
           <Route
             path="/FA"

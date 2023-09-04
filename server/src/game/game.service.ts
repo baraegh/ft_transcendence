@@ -147,7 +147,6 @@ export class GameService {
       return true;
     else 
     {
-      console.log("true"+matchHistory[0].user1Id);
       return false;
     }
   }
