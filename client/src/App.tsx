@@ -44,6 +44,8 @@ function App() {
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   // const [getid, setid] = useState<number>();
+
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     // Check if the user is logged in based on the value in local storage
     const storedLoggedIn = localStorage.getItem("isLoggedIn");

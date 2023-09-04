@@ -9,33 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ping from '../img/ping.png'
 
-function getActualWindowDientions() {
-  const [windowDimensions, setWindowDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  return (windowDimensions);
-}
 
 
 function DSTeam(): JSX.Element {
   const navigate = useNavigate();
+  // localStorage.clear();
+
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 

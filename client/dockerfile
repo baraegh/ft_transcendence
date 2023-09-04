@@ -5,5 +5,5 @@ COPY . .
 # RUN npm install --force
 EXPOSE 5173
 ENTRYPOINT ["sh", "run.sh"]
-CMD ["serve","-s", "dist","-l","5173"]
-# CMD ["npm","run", "dev"]
+# CMD ["serve","-s", "dist","-l","5173"]
+CMD ["npm","run", "dev"]

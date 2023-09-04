@@ -1,5 +1,5 @@
 #!/bin/bash
 npm i
-npm install -g serve
-npm run build
+# npm install -g serve
+# npm run build
 exec "$@"

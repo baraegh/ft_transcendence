@@ -285,7 +285,7 @@ const Game = () => {
       ball.x = canvas.width / 2 - canvas.width / 380;
       ball.y = canvas.height / 2;
       ball.radius = canvas.width / 60;
-      ball.speed = ((3 * canvas.width) / 4) / 300;
+      ball.speed = ((3 * canvas.width) / 4)/50;
       ball.velocityX = 5;
       ball.velocityY = 5;
       ball.color = modeControl.bColor;
@@ -321,7 +321,7 @@ const Game = () => {
       ball.x = canvas.width / 2 - canvas.width / 380;
       ball.y = canvas.height / 2;
       ball.radius = canvas.width / 60;
-      ball.speed = ((3 * canvas.width) / 4) / 200;
+      ball.speed = ((3 * canvas.width) / 4)/ 50;
       ball.velocityX = 5;
       ball.velocityY = 5;
       ball.color = modeControl.bColor;

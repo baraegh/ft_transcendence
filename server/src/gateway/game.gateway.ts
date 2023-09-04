@@ -166,7 +166,7 @@ export class GameGateway implements OnGatewayDisconnect{
         ball.y = message.dim.H / 2;
         ball.velocityY = 5;
         ball.velocityX = -ball.velocityX;
-        ball.speed = ((3 * dim.W) / 4) / 200;
+        ball.speed = ((3 * dim.W) / 4)/50;
       }
       function collision(b, p): boolean {
         // players
@@ -193,7 +193,7 @@ export class GameGateway implements OnGatewayDisconnect{
           let angleRad = (Math.PI / 4) * collidePoint;
           ball.velocityX = ball.speed * Math.cos(angleRad);
           ball.velocityY = ball.speed * Math.sin(angleRad);
-          ball.speed += dim.W / 2000;
+          ball.speed += dim.W / 1000;
         }
       }
       else if (ball.x >= dim.W / 2) {
@@ -203,7 +203,7 @@ export class GameGateway implements OnGatewayDisconnect{
           let angleRad = (Math.PI / 4) * collidePoint;
           ball.velocityX = (ball.speed * Math.cos(angleRad)) * -1;
           ball.velocityY = ball.speed * Math.sin(angleRad);
-          ball.speed += dim.W / 2000;
+          ball.speed += dim.W / 1000;
         }
       }
       if (ball.x - ball.radius < 0 && (ball.y < player1.y || ball.y > player1.y + player1.height)) {

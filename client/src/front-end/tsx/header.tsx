@@ -59,7 +59,6 @@ function MyHeader(): JSX.Element {
           throw new Error("Request failed");
         }
       } catch (error) {
-        console.log(error);
       }
     };
 
@@ -96,7 +95,6 @@ function MyHeader(): JSX.Element {
         console.log(res.data[0]?.username); // Log the username of the first notification (optional)
       })
       .catch((error) => {
-        console.log(error);
       });
   }, []);
 
@@ -121,7 +119,6 @@ function MyHeader(): JSX.Element {
         }
       })
       .catch((error) => {
-        console.log(error);
         // Handle the error
       });
   };
@@ -150,7 +147,6 @@ function MyHeader(): JSX.Element {
         }
       })
       .catch((error) => {
-        console.log(error);
       });
   };
 
@@ -210,7 +206,6 @@ function MyHeader(): JSX.Element {
           holder.push(res.data);
         })
         .catch((error) => {
-          console.log(error);
         });
     }, 5000);
 
