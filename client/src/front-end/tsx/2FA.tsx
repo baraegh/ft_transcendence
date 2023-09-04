@@ -36,6 +36,7 @@ const TwoFactorAuth: React.FC = () => {
             .then((response) => {
               if (response.status === 200) {
                 console.log("PASSED");
+                navigate('/profile');
                 document.location.reload();
               } else {
                 throw new Error("Request failed");

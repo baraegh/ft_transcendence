@@ -142,7 +142,7 @@ function App() {
           />
           <Route
             path="/TwoFactorAuth"
-            element={isLoggedIn ? <Navigate to="/home" replace /> : <FA />}
+            element={<FA />}
           />
           <Route
             path="/chat"
