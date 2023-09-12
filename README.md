@@ -22,8 +22,7 @@ To ensure the security of our application, we've implemented the following measu
 - **Server-side Validation:**  Forms and user inputs are validated on the server-side to prevent malicious input.
 
 **Note:**
-
-Please note that sensitive information such as credentials and API keys are stored locally in a .env file and are not committed to the Git repository for security reasons.
+  Please note that sensitive information such as credentials and API keys are stored locally in a .env file and are not committed to the Git repository for       security reasons.
 
 ## User Account
 
@@ -52,7 +51,7 @@ The core feature of the website is playing Pong:
 - Customization options are available, including power-ups and different maps.
 - The game is responsive and faithful to the original Pong (1972).
 
-## ScreeShot:
+## ScreeShots:
 **Landing Page:**
 ![localhost_5173_](https://github.com/baraegh/ft_transcendence/assets/46541419/808c7837-7ad3-4145-b41a-1c08d710606e)
 **Home:**
