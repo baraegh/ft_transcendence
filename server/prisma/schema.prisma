@@ -14,6 +14,7 @@ model User {
   email                            String   @unique
   image                            String?
   hashedRT                         String?
+  firstenter                       Boolean  @default(false)
   gameWon                          Int?
   gameLost                         Int?
   createdAt                        DateTime @default(now())
@@ -23,6 +24,8 @@ model User {
   ingame                        Boolean  @default(false)   
   twoFactorAuthenticationSecret    String?
   isTwoFactorAuthenticationEnabled Boolean  @default(false)
+
+
 
   matchHistoriesUser1 Match_History[] @relation("Match_History_User1")
   matchHistoriesUser2 Match_History[] @relation("Match_History_User2")

@@ -72,7 +72,7 @@ export class GameGateway implements OnGatewayDisconnect{
   async handleDisconnect(client: Socket) {
     let winerid: number;
     let losserid: number;
-    if (this.games.get(this.getMatchID(client)) && this.games.get(this.getMatchID(client)) !== undefined && this.getMatchID(client) != null) {
+    if (this.getMatchID(client) != 0 && this.games.get(this.getMatchID(client))) {
       if (this.games.get(this.getMatchID(client)).player1Id == client.id) {
         const dto = {
           GameId: this.gameIds.get(this.getMatchID(client)),
@@ -108,7 +108,7 @@ export class GameGateway implements OnGatewayDisconnect{
       this.gameIds.delete(i);
       this.games.delete(i);
       this.gamesIDs.delete(i);
-      this.logger.log(this.gameId +" | "+ i); 
+      // this.logger.log(this.gameId +" | "+ i); 
       // if (this.gameId -1 == i)
       //   this.gameId--;
     }
@@ -166,7 +166,7 @@ export class GameGateway implements OnGatewayDisconnect{
         ball.y = message.dim.H / 2;
         ball.velocityY = 5;
         ball.velocityX = -ball.velocityX;
-        ball.speed = ((3 * dim.W) / 4) / 200;
+        ball.speed = ((3 * dim.W) / 4)/50;
       }
       function collision(b, p): boolean {
         // players
@@ -193,7 +193,7 @@ export class GameGateway implements OnGatewayDisconnect{
           let angleRad = (Math.PI / 4) * collidePoint;
           ball.velocityX = ball.speed * Math.cos(angleRad);
           ball.velocityY = ball.speed * Math.sin(angleRad);
-          ball.speed += dim.W / 2000;
+          ball.speed += dim.W / 1000;
         }
       }
       else if (ball.x >= dim.W / 2) {
@@ -203,31 +203,33 @@ export class GameGateway implements OnGatewayDisconnect{
           let angleRad = (Math.PI / 4) * collidePoint;
           ball.velocityX = (ball.speed * Math.cos(angleRad)) * -1;
           ball.velocityY = ball.speed * Math.sin(angleRad);
-          ball.speed += dim.W / 2000;
+          ball.speed += dim.W / 1000;
         }
       }
       if (ball.x - ball.radius < 0 && (ball.y < player1.y || ball.y > player1.y + player1.height)) {
         player2.score++;
-        if (client.id == clientOb.player2Id) {
+        // console.log("p2 :" + player2.score)
+        // if (client.id == clientOb.player2Id) {
           const dto = {
             GameId: gameIds.get(getMatchID(client)),
             user1P: player1.score,
             user2P: player2.score,
           }
           await editMatch(dto);
-        }
+        // }
         resetBall();
       }
       else if (ball.x + ball.radius > dim.W && (ball.y < player2.y || ball.y > player2.y + player2.height)) {
         player1.score++;
-        if (client.id == clientOb.player1Id) {
+        // console.log("p1 :" + player1.score)
+        // if (client.id == clientOb.player1Id) {
           const dto = {
             GameId: gameIds.get(getMatchID(client)),
             user1P: player1.score,
             user2P: player2.score,
           }
           await editMatch(dto);
-        }
+        // }
         resetBall();
       }
       return ball;
@@ -235,10 +237,23 @@ export class GameGateway implements OnGatewayDisconnect{
     let clientOb: { player1Id: string, player2Id: string, mode: modeType } = this.getClientId(client)
     
     if (clientOb) {
+      if (client.id == clientOb.player2Id){
+        let score = message.player1.score;
+        message.player1.score = message.player2.score;
+        message.player2.score = score;  
+      }
       message.ball = await ballMovement(message.ball, message.player1, message.player2, message.dim);
       if (message.player1.score == 5 || message.player2.score == 5) {
         let win: number;
         let losser: number;
+        // console.log("p1 : " + message.player1.score +" |  p2 : " + message.player2.score)
+        // if (client.id == clientOb.player1Id) {
+        //   const dtol = {
+        //     GameId: gameIds.get(getMatchID(client)),
+        //     user1P: message.player1.score,
+        //     user2P: message.player2.score,
+        //   }
+        // await editMatch(dtol);
         if (message.player1.score > message.player2.score) {
           win = this.games.get(this.getMatchID(client)).numplayer1Id;
           losser = this.games.get(this.getMatchID(client)).numplayer2Id;
@@ -261,8 +276,8 @@ export class GameGateway implements OnGatewayDisconnect{
           LosserId: losser
         }
        
-        console.log('end hi ***********');
-        console.log(client.id)
+        // console.log('end hi ***********');
+        // console.log(client.id)
         if (client.id == clientOb.player1Id)
           await this.endMatch(win, dto);
         this.server.to(this.getRoom(this.getMatchID(client))).emit('playerDisconnected', "");
@@ -284,9 +299,9 @@ export class GameGateway implements OnGatewayDisconnect{
         message.player1.score = message.player2.score;
         message.player2.score = score;
         this.server.to(clientOb.player2Id).emit('ballMoveCatch', message);
-        score = message.player1.score;
-        message.player1.score = message.player2.score;
-        message.player2.score = score;  
+        // score = message.player1.score;
+        // message.player1.score = message.player2.score;
+        // message.player2.score = score;  
       }
       }
     }
@@ -300,10 +315,10 @@ export class GameGateway implements OnGatewayDisconnect{
         id: dto.GameId,
       },
     });
-    if (!findmatch) throw new NotFoundException('Match not found');
+    if (!findmatch) return;
     if (findmatch.game_end == true)
       return;
-
+    // console.log('p1 ' + dto.user1P + 'p2 ' + dto.user2P );
     const editGame = await this.prisma.match_History.update({
       where: {
         id: dto.GameId,
@@ -340,7 +355,6 @@ export class GameGateway implements OnGatewayDisconnect{
       },
     });
     if (!findmatch) return;
-    console.log('  end gaaame : ' + findmatch.game_end +  dto.GameId);
     if (findmatch.game_end === true)
       return;
 
@@ -352,7 +366,6 @@ export class GameGateway implements OnGatewayDisconnect{
         game_end: true,
       },
     });
-    console.log('  ennnnnnd gaaame : ' + editGame.game_end + ' ' +  dto.GameId);
     let otherplayer: number;
     let userplayer: number;
     let winuser: boolean;
@@ -432,7 +445,6 @@ export class GameGateway implements OnGatewayDisconnect{
         where: { id: dto.WinnerId },
         data: { gameWon: { increment: 1 } },
       });
-      console.log('winnnnnner ' + wi.gameWon );
       await this.prisma.user.update({
         where: { id: dto.LosserId },
         data: { gameLost: { increment: 1 } },

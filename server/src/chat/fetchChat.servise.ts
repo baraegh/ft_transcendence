@@ -628,10 +628,19 @@ export class FetchChatService {
         userID: userId,
       },
     };
-    const updateParticipant = await this.prisma.participants.delete({
+    const findpartisepent = await this.prisma.participants.findUnique({
       where: participantUniqueInput,
     });
-    if (!updateParticipant) throw new NotFoundException('Entity not found');
+    if(findpartisepent) 
+    {
+      const updateParticipant = await this.prisma.participants.delete({
+        where: participantUniqueInput,
+      });
+      if (!updateParticipant) throw new NotFoundException('Entity not found');
+    }
+    else
+      return;
+    
   }
 
   async isBlocked(userid:number,dto:IS_BLOCKED_DTO)

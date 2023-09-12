@@ -42,9 +42,8 @@ export class ABOUOTHERTDTO {
     @IsNumber()
     gameLost?: number;
   
-    @ApiProperty({ nullable: true })
-    @IsOptional()
-    achievements?: string[];
+    @ApiProperty( )
+    achievements: string[];
   
     @ApiProperty()
     @IsDate()

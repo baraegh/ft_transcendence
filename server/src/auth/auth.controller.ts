@@ -69,7 +69,7 @@ export class AuthController {
         `${process.env.FRONTEND_URL}/TwoFactorAuth/?image=` +
           encodeURIComponent(image.image),
       );
-    } else res.redirect(`${process.env.FRONTEND_URL}/home/`);
+    } else res.redirect(`${process.env.FRONTEND_URL}/profile/`);
   }
 
   @Public()

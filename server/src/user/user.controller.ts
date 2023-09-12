@@ -128,4 +128,38 @@ export class UserController {
   return is_online_ids;
   }
 
+  @ApiOperation({
+    summary: 'check if first enter, if first return false',
+  })
+  @Get('first_check')
+  async firtsEnter(@Req() req: Request) {
+    const userId = req.user['id'];
+    const user = await this.prisma.user.findUnique({
+      where:{
+        id:userId,
+      },
+      select:{
+        firstenter:true,
+      }
+    });
+    return user.firstenter;
+  }
+
+  @ApiOperation({
+    summary: 'when shek if false call this to set true',
+  })
+  @Get('first_post_true')
+  async firstpost(@Req() req: Request) {
+    const userId = req.user['id'];
+    const user = await this.prisma.user.update({
+      where:{
+        id:userId,
+      },
+      data:{
+        firstenter:true
+      }
+    });
+  }
+
+
 }

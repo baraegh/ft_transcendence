@@ -42,7 +42,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = Array.isArray(client.handshake.query.user)
       ? client.handshake.query.user[0]
       : client.handshake.query.user;
-    console.log(decodeURIComponent(user));
 
     if (decodeURIComponent(user) !== "undefined") {
       const decodedUser = JSON.parse(decodeURIComponent(user));
@@ -50,8 +49,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!userSocket) {
         client.data.userId = decodedUser.id;
         const token = this.auth.generateToken(client.data.userId);
-        console.log('New client connected:', client.data.userId);
-        console.log('New client connected:', client.data.userId);
         client.data.token = token;
         this.connectedUsers.set(client.data.userId, client);
       }
@@ -73,7 +70,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
       })
 
     }
-    console.log("client: ", client.data.userId, " just left");
     this.connectedUsers.delete(client.data.userId);
     this.clientidtouseris.delete(client.id);
   }
@@ -91,7 +87,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.data.userId = cdata.userId;
     if (this.connectedUsers.get(cdata.userId) == undefined) {
       this.connectedUsers.set(client.data.userId, client);
-      console.log(' client connected:', cdata.userId);
     }
   }
 
@@ -99,7 +94,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
   send_status(client: Socket, userid: number) {
     const userSocket = this.connectedUsers.get(userid);
 
-    console.log(`${userid} : `, userSocket ? 'online' : 'offline');
 
     let st: string;
     if (userSocket)
@@ -127,7 +121,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.auth.verifyToken(client.data.token, client);
     const userSocket = this.connectedUsers.get(data.player2Id);
     if (!userSocket) {
-      console.log("faild sendGameRequest");
       return;
     }
     const dataTogame = {
@@ -139,50 +132,47 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     };
     if (userSocket) {
       this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame);
-      console.log(`User ${client.data.userId} sent:`, dataTogame);
     }
   }
   
   @SubscribeMessage('quick_game')
- async quick_game(
-    client: Socket,
-    data: { player2Id: number; mode: modeType; name: string; image: string },
-  ) {
-    data.player2Id = this.clientidtouseris.get(client.id);
-    this.auth.verifyToken(client.data.token, client);
-    const all_online: number[] = Array.from(this.connectedUsers.keys());
-    const the_not_one = await this.prisma.match_History.findMany({
-      where: {
-        OR: [
-          { user1Id: { in: all_online }  },
-          { user2Id: { in: all_online } },
-        ],
-      },
-    });
-
-    const not_playing = all_online.filter((user) => {
-      return the_not_one.some(
-        (match) => (match.user1Id === user  && match.user1Id != data.player2Id) 
-        || (match.user2Id === user && match.user2Id != data.player2Id)
-      );
-    });
-    console.log("hi server "+ " ",not_playing.length);
-
-    if (not_playing.length > 0) {
-      const randomIndex = Math.floor(Math.random() * not_playing.length);
-      const randomUserId = not_playing[randomIndex];
-      const userSocket = this.connectedUsers.get(randomUserId);
-      const dataTogame = {
-        player1Id: client.id,
-        player2Id: userSocket.id,
-        mode: data.mode,
-        numplayer1Id: client.data.userId,
-        numplayer2Id: randomUserId,
-      };
-      this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame);
-      console.log(`User ${client.data.userId} sent:`, dataTogame);
-    }
-  }
+  async quick_game(
+     client: Socket,
+     data: { mode: modeType; name: string; image: string },
+   ) {
+     this.auth.verifyToken(client.data.token, client);
+     const p2id = this.clientidtouseris.get(client.id);
+     const all_online: number[] = Array.from(this.connectedUsers.keys());
+     const the_not_one = await this.prisma.match_History.findMany({
+       where: {
+         OR: [
+           { user1Id: { in: all_online }, game_end: false },
+           { user2Id: { in: all_online }, game_end: false },
+         ],
+       },
+     });
+     
+     let not_playing = all_online.filter((user) => {
+       return !the_not_one.some(
+         (match) => match.user1Id === user || match.user2Id === user
+       );
+     });
+      not_playing = not_playing.filter((num) => num !== p2id);
+     if (not_playing.length > 0) {
+       const randomIndex = Math.floor(Math.random() * not_playing.length);
+       const randomUserId = not_playing[randomIndex];
+       const userSocket = this.connectedUsers.get(randomUserId);
+       const dataTogame = {
+         player1Id: client.id,
+         player2Id: userSocket.id,
+         mode: data.mode,
+         numplayer1Id: client.data.userId,
+         numplayer2Id: randomUserId,
+       };
+       this.server.to(userSocket.id).emit('gameRequestResponse', dataTogame);
+       console.log(`User ${client.data.userId} sent:`, dataTogame);
+     }
+   }
 
   @SubscribeMessage('sendFriendRequest')
   sendFriendRequest(
@@ -193,7 +183,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userSocket = this.connectedUsers.get(data.userId);
     if (userSocket) {
       this.server.to(userSocket.id).emit('FriendRequestResponse', data);
-      console.log(`User ${data.userId} sent:`, data);
     }
   }
 
@@ -209,11 +198,8 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.auth.verifyToken(client.data.token, client);
     if (client.rooms.has(message.room)) {
       this.server.to(message.room).emit('chatToClient', message);
-      console.log(client.data.userId + ' sent ' + message);
     } else {
-      console.log(
-        client.data.userId + ' is not a member of room ' + message.room,
-      );
+ 
     }
   }
 
@@ -222,7 +208,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.auth.verifyToken(client.data.token, client);
     if (!this.rooms.has(room)) {
       this.rooms.add(room);
-      console.log(client.data.userId + ' just arrived');
     }
     client.join(room);
     client.emit('joinedRoom', room);
@@ -232,7 +217,6 @@ export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.auth.verifyToken(client.data.token, client);
     client.leave(room);
     client.emit('leftRoom', room);
-    console.log(client.data.userId + ' just left');
     const clientsInRoom = this.rooms.size;
     if (!clientsInRoom || clientsInRoom === 0) {
       this.rooms.delete(room);
