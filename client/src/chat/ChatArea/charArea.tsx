@@ -18,7 +18,7 @@ import Bronze from '../../front-end/img/bronze.png';
 import Silver from '../../front-end/img/silver.png';
 import Gold from '../../front-end/img/gold.png';
 import Maps from "../../front-end/tsx/maps";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type msgCard = {userId: number, content: string, timeSend: string, image: string}
 export type msgListType = msgCard[];
@@ -42,6 +42,8 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
                             leaveRoom, updateChatInfo} : chatAreaHeaderProps) => {
     const [isOnline, setIsOnline] = useState(false);
     const me = useContext(userMe);
+    let {userId} = useParams();
+
     const navigate = useNavigate();
     const settingsList = chatInfo.blocked?(
             me?.id === chatInfo.whoblock?
@@ -73,7 +75,7 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
         };
     }, [chatInfo.chatId]);
 
-
+    
     return (
         <div className='chat-area-header'>
             <div className="user-card" onClick={() => {navigate(`/user/${chatInfo.chatUserId}`)}}>
@@ -95,7 +97,7 @@ const ChatAreaHeader = ({setIsProfileOpen, chatInfo, setMsgSend,
                             {
                                 !chatInfo.blocked?
                                     <div className="challenge-btn">
-                                        <Maps buttonText='Challenge' />
+                                        <Maps buttonText='Challenge' id={chatInfo.chatUserId} />
                                         {/* <p>Challenge</p> */}
                                         <FontAwesomeIcon icon={faKhanda} style={{color: "#000205",}} />
                                     </div>
@@ -514,7 +516,6 @@ const MemberCardPopOverContent = ({role, img, username, id, setChat,
     const joinRoom = (channelId: string) =>{
         if (socket) {
             socket.emit('joinRoom', channelId);
-            console.log("join");
         }
     }
 
@@ -697,7 +698,6 @@ export const ChatGroupSettings = (props : ChatGroupSettingsProps) =>
                 console.log(error);
             });
 
-        console.log('data: ', groupData);
     }
 
     useEffect(() => {
@@ -1005,7 +1005,6 @@ export const ChatArea = ({chatInfo, setIsProfileOpen, setUpdateChatInfo,
         if (socket) 
         {
             socket.emit('chatToServer', { sender: me?.id, room: chatInfo.chatId, message: msg });
-            console.log("send");
         }
     }
 

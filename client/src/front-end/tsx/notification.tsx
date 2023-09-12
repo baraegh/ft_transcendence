@@ -23,8 +23,6 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
       (res) => {
         setImg(res.data.image);
         setName(res.data.username);
-        console.log(name);
-        console.log(img);
       }
     )
 
@@ -53,8 +51,6 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
     };
     if (socket) {
       
-      console.log(">>>>>>send from:" + socket);
-      console.log(socket.id);
       socket.emit("sendGameRequest", dataToSend);
       
     }
@@ -71,7 +67,8 @@ const Notification: React.FC<{ buttonText: string, showNotification:boolean, set
             <img id="profileImgNotif" src={img} alt="" />
           </div>
           <div className='notifButons'>
-          <a onClick={() => {socket?.emit('gameStart', data);console.log("accept")}}>Accept</a>
+          <a onClick={() => {socket?.emit('gameStart', data);
+          }}>Accept</a>
           <a onClick={() => {setShowNotification(false)}}>Reject</a>
         </div>
         </div>

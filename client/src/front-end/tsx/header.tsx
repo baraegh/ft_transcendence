@@ -51,15 +51,14 @@ function MyHeader(): JSX.Element {
           withCredentials: true,
         });
         if (response.status === 200) {
-          console.log(response.data.id);
           const cdata = { userId: response.data.id };
           socket.emit('connect01', cdata);
-          console.log("connect01");
         } else {
           throw new Error("Request failed");
         }
       } catch (error) {
-        console.log(error);
+        localStorage.clear();
+        window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
       }
     };
 
@@ -69,18 +68,14 @@ function MyHeader(): JSX.Element {
   useEffect(() => {
 
     if (socket) {
-      console.log("CREATED >> ");
       socket.on("startGame", (msg: modeType) => {
         socket.emit('initGameToStart', msg)
         navigate('/gamePlay');
-        console.log('connected to Game');
       });
     }
     if (socket) {
       socket.on("gameRequestResponse", (data: { player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number }) => {
-        console.log("gameRequestResponse" + data);
         setShowNotification(true);
-        console.log(showNotification);
         setData(data);
       });
     }
@@ -88,16 +83,22 @@ function MyHeader(): JSX.Element {
 
   const holder: any = useState([]);
   useEffect(() => {
+    const storedLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(storedLoggedIn === "true")
+    {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/notification/all_friend_req`, { withCredentials: true })
       .then((res) => {
         setNotificationData(res.data);
         holder.push(res.data);
-        console.log(res.data[0]?.username); // Log the username of the first notification (optional)
       })
       .catch((error) => {
-        console.log(error);
+        localStorage.clear();
+        window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
+        
       });
+    }
   }, []);
 
   const toggleBellDropdown = () => {
@@ -121,12 +122,15 @@ function MyHeader(): JSX.Element {
         }
       })
       .catch((error) => {
-        console.log(error);
         // Handle the error
       });
   };
 
   const fetchData = () => {
+  const storedLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(storedLoggedIn === "true")
+    {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true })
       .then((response) => {
@@ -150,8 +154,8 @@ function MyHeader(): JSX.Element {
         }
       })
       .catch((error) => {
-        console.log(error);
       });
+    }
   };
 
   useEffect(() => {
@@ -178,10 +182,8 @@ function MyHeader(): JSX.Element {
   };
 
   function acceptFriendRequest(userId: string) {
-    console.log("Accept ! << " + userId);
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/friends/accept-friend-request`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then((res) => {
-        console.log(res)
         if (res.status === 200)
           console.log("Accepted successfully!");
         document.location.reload();
@@ -189,10 +191,8 @@ function MyHeader(): JSX.Element {
   }
 
   function declineFriendRequest(userId: string) {
-    console.log("Decline !" + userId);
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/notification/delet-friend-request`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then((res) => {
-        console.log(res)
         if (res.status === 200)
           console.log("Rejected successfully!");
         document.location.reload();
@@ -202,6 +202,11 @@ function MyHeader(): JSX.Element {
 
   // Poll notifications every 5 seconds
   useEffect(() => {
+  const storedLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if(storedLoggedIn === "true")
+    {
+
     const interval = setInterval(() => {
       axios
         .get(`${import.meta.env.VITE_BACKEND_URL}/notification/all_friend_req`, { withCredentials: true })
@@ -210,11 +215,13 @@ function MyHeader(): JSX.Element {
           holder.push(res.data);
         })
         .catch((error) => {
-          console.log(error);
+          localStorage.clear();
+          window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
         });
     }, 5000);
 
     return () => clearInterval(interval); // Clean up the interval on component unmount
+  }
   }, []);
 
   return (
@@ -222,8 +229,7 @@ function MyHeader(): JSX.Element {
       <header>
         <Notification buttonText="" showNotification={showNotification} setShowNotification={setShowNotification} data={data} setData={setData} />
         <h3 onClick={() => {
-          navigate('/home');
-          document.location.reload();
+          window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/home`;
         }} className="logo">
           Keep It Random !
         </h3>

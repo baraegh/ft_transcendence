@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import '../css/style.css'
 import '../css/2FA.css'
 import me from '../img/rimney.jpeg'
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import { userMe } from '../../App';
 
 const TwoFactorAuth: React.FC = () => {
@@ -21,8 +21,6 @@ const TwoFactorAuth: React.FC = () => {
 
 
   const submitForm = () => {
-    console.log("@2222222");
-    console.log(input);
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified`, {secret: input}, {
         withCredentials: true,
@@ -35,8 +33,7 @@ const TwoFactorAuth: React.FC = () => {
             })
             .then((response) => {
               if (response.status === 200) {
-                console.log("PASSED");
-                document.location.reload();
+                window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/profile`;
               } else {
                 throw new Error("Request failed");
               }
@@ -50,7 +47,6 @@ const TwoFactorAuth: React.FC = () => {
       })
       .catch((error) => {
         console.log(error);
-        // navigate("/");
 
       });
   };

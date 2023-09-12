@@ -14,8 +14,6 @@ const TwoFactorAuth: React.FC = () => {
 
 
   const submitForm = () => {
-    console.log("@2222222");
-    console.log(input);
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/2fa/verified`, {secret: input}, {
         withCredentials: true,
@@ -29,7 +27,6 @@ const TwoFactorAuth: React.FC = () => {
             .then((response) => {
               if (response.status === 200) {
                 // navigate("/home");
-                console.log("EEEEE");
               } else {
                 throw new Error("Request failed");
               }

@@ -39,11 +39,12 @@ type meType = {
 }
 const userMe = React.createContext<meType | null>(null);
 // const backendUrl = import.meta.env.VITE_BACKEND_URL;
-// console.log(import.meta.env.VITE_BACKEND_URL);
 function App() {
   // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   // const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   // const [getid, setid] = useState<number>();
+
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     // Check if the user is logged in based on the value in local storage
     const storedLoggedIn = localStorage.getItem("isLoggedIn");
@@ -85,8 +86,7 @@ function App() {
     // Update local storage whenever the isLoggedIn state changes
     localStorage.setItem("isLoggedIn", isLoggedIn);
   }, [isLoggedIn]);
-  const [me, setMe] = useState<meType | null>(null)
-
+  
   useEffect(() => {
     if(isLoggedIn)
     {
@@ -96,6 +96,7 @@ function App() {
       })
     }
   }, []);
+  const [me, setMe] = useState<meType | null>(null)
 
   
   return (
@@ -106,7 +107,7 @@ function App() {
           <Route path="/" element={<DSTeam />} />
           <Route
             path="/loginPage"
-            element={!isLoggedIn ? <LoginPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/home" replace />}
+            element={!isLoggedIn ? <LoginPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/> : <Navigate to="/profile" replace />}
           />
           <Route
             path="/FA"
@@ -140,7 +141,7 @@ function App() {
           />
           <Route
             path="/TwoFactorAuth"
-            element={isLoggedIn ? <Navigate to="/home" replace /> : <FA />}
+            element={<FA />}
           />
           <Route
             path="/chat"

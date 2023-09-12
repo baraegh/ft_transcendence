@@ -105,11 +105,7 @@ function Stream(): JSX.Element {
       });
   };
 
-  console.log('fStreaming: ', fStreaming);
-  console.log('userData1: ', userData1?.username);
-  console.log('userData1: ', userData1?.image);
-  console.log('userData2: ', userData2?.username);
-  console.log('userData2: ', userData2?.image);
+
 
   let renderedItems: JSX.Element[] = [];
   if (fStreaming !== null) {

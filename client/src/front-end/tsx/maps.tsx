@@ -18,13 +18,15 @@ import square from "../img/square.png";
 interface BlankModalProps {
   show: boolean;
   onHide: () => void;
+  socket : number;
+  id : string;
 }
 
 const BlankModal: React.FC<BlankModalProps> = ({
   show,
   onHide,
   socket,
-  userId,
+  id,
 }) => {
   const navigate = useNavigate();
   const [map, setMap] = useState<any[]>([                {
@@ -40,7 +42,7 @@ const BlankModal: React.FC<BlankModalProps> = ({
     // Perform any additional actions when map changes
   }, [map, ball]);
 
-  const challenge = (socket: any, userId: string) => {
+  const challenge = (socket: any, id: string) => {
     type modeType = {
       pColor: string;
       bColor: string;
@@ -54,7 +56,7 @@ const BlankModal: React.FC<BlankModalProps> = ({
       name: string;
       image: string;
     } = {
-      player2Id: Number(userId),
+      player2Id: Number(id),
       mode: {
         pColor: map[0].pColor,
         bColor: map[0].bColor,
@@ -64,14 +66,15 @@ const BlankModal: React.FC<BlankModalProps> = ({
       name: "von",
       image: "image",
     };
-
-    if (socket && Number(userId) > 0) {
-      console.log(">>>>>>send from:" + dataToSend.mode.fColor);
+    console.log(id);
+    if (socket && Number(id) > 0) {
       socket.emit("sendGameRequest", dataToSend);
       navigate("/loadingPage");
-    } else if (socket && Number(userId) === 0) {
+    } else if (socket && Number(id) === 0) {
+      console.log(dataToSend.player2Id)
       socket.emit("quick_game", dataToSend);
       navigate("/loadingPage");
+      console.log("eee");
     }
   };
 
@@ -176,25 +179,21 @@ const BlankModal: React.FC<BlankModalProps> = ({
         </div>
 
         {/* Add your custom content here */}
-        <a onClick={() => challenge(socket, userId)}>Launch Game</a>
+        <a onClick={() => challenge(socket, id)}>Launch Game</a>
       </Modal.Body>
     </Modal>
   );
 };
-const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
+const Maps: React.FC<{ buttonText: string, id : string }> = ({ buttonText, id }) => {
   const [showModal, setShowModal] = useState(false);
   const { socket } = useContext<any | undefined>(SocketContext);
-  let { userId } = useParams();
-  if (userId === undefined) userId = "0";
+  // if (userId === undefined) userId = "0";
   const handleImageClick = () => {
     setShowModal(true);
   };
-
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  console.log(userId);
-
   return (
     <>
       <span onClick={handleImageClick}>{buttonText}</span>
@@ -202,7 +201,7 @@ const Maps: React.FC<{ buttonText: string }> = ({ buttonText }) => {
       {showModal && (
         <BlankModal
           socket={socket}
-          userId={userId}
+          id={id}
           show={showModal}
           onHide={handleCloseModal}
         />

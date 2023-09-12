@@ -6,7 +6,6 @@ import tvGif from '../img/giphy.gif'
 import MyHeader from './header'
 import { useNavigate } from 'react-router-dom';
 import Game from '../../game/example'
-import { getSocket, initializeSocket, socketInstance } from '../../socket/socket'
 import axios from 'axios'
 
 function gamePlay() : JSX.Element
@@ -15,7 +14,6 @@ function gamePlay() : JSX.Element
     const [logo, setLogo] = useState<string>(
       " https://imglarger.com/Images/before-after/ai-image-enlarger-1-after-2.jpg"
     );
-    const socket = socketInstance;
     const [getid, setid] = useState<number | null>(null);
     const [login, setLogin] = useState<string>("Welcome to the Home Page!");
   
@@ -45,16 +43,7 @@ function gamePlay() : JSX.Element
   
   
     useEffect(() => {
-      if (getid !== null) {
-        console.log(getid);
-        initializeSocket(getid);
-      }
       let socket:any;
-      if(getid !== null) 
-      {
-         socket = getSocket();
-  
-      }
   
       if (socket) {
         socket.on("connect", () => {
@@ -65,17 +54,17 @@ function gamePlay() : JSX.Element
           socket.emit("requestData", requestData);
         });
         type modeType = {pColor: string, bColor: string, fColor:string, bMode:string};
+        
         socket.on("gameRequestResponse",  (data: {player1Id: string, player2Id: string, mode: modeType, numplayer1Id: number, numplayer2Id: number}) =>{
+          console.log(data.player1Id, " | " , data.player2Id)
           socket.emit('gameStart', data);
         });
   
         socket.on("FriendRequestResponse", (data: any) => {
-          console.log("Received data from server:", data);
           // Perform actions with the received data
         });
   
         socket.on("chatToClient", (msg: any) => {
-          console.log(msg);
         });
       }
   

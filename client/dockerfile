@@ -2,8 +2,8 @@ FROM node
 
 WORKDIR /app
 COPY . .
-# RUN npm install --force
+RUN npm install && npm install -g serve
 EXPOSE 5173
 ENTRYPOINT ["sh", "run.sh"]
-CMD ["serve","-s", "dist","-l","5173"]
+CMD ["serve","-s","-L", "dist","-l","5173"]
 # CMD ["npm","run", "dev"]

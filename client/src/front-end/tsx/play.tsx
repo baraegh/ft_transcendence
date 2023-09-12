@@ -23,7 +23,7 @@ function Play(): JSX.Element {
                 </div>
                 <div className="quickGameContainer">
 
-                     <Maps buttonText='Quick Game'/>
+                     <Maps buttonText='Quick Game' id={0}/>
                     <img id="triangleImg" src={triangle} alt="" />
                 </div>
             </div>

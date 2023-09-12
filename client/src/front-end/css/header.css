@@ -22,23 +22,11 @@ header h3{
   font-family: 'Mouse Memoirs', sans-serif;
 }
 
-.logo-line
-{
-  /* display: flex; */
-  /* flex-direction: column; */
-
-}
 
 .bellImg {
   
-  /* position: absolute; */
-  /* /* width: 27px; */
-  /* height: 27px; */ */
-  /* left: 500px; */
   background-color: white;
   margin-right: 5px;
-  /* top: 5px; */
-  /* z-index: 999; */
 }
 
 .imgBell

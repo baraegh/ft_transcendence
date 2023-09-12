@@ -105,7 +105,6 @@ export function Chat() {
   }
 
   const leaveRoom = () => {
-    console.log('leave');
     if (socket)
         socket.emit('leaveRoom', chatInfo.chatId);
   }

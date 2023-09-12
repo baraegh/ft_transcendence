@@ -16,6 +16,7 @@ import { SocketContext } from '../../socket/socketContext';
 import bronze from '../img/bronze.png'
 import silver from '../img/silver.png'
 import gold from '../img/gold.png'
+import { userMe } from '../../App';
 
 interface User {
   id: number;
@@ -53,12 +54,12 @@ interface Match {
 }
 
 interface OtherUser {
-  achievements: any;
   id: number;
   image: string;
   username: string;
   gameWon: number;
   gameLost: number;
+  achievements : string[];
   updatedAt: string;
   blocked: boolean;
   hosblocked: number;
@@ -78,6 +79,7 @@ const otherUserTemplate: OtherUser = {
   image: "string",
   gameWon: 0,
   gameLost: 0,
+  achievements : ["string"],
   updatedAt: "2023-07-13T03:31:40.829Z",
   blocked: true,
   hosblocked: 0,
@@ -115,8 +117,6 @@ function OtherProfileUser(): JSX.Element {
       image: "image"
     };
     if (socket) {
-      console.log(">>>>>>send from:" + socket);
-      console.log(socket.id);
       socket.emit("sendGameRequest", dataToSend);
     }
   };
@@ -195,7 +195,6 @@ function OtherProfileUser(): JSX.Element {
           };
 
           setUserData(fetchedUser);
-          console.log(otherUser);
           setFriendData(friendData);
         } else {
           throw new Error('Request failed');
@@ -219,7 +218,6 @@ function OtherProfileUser(): JSX.Element {
   const sendFriendRequest = () => {
     axios.post(`${import.meta.env.VITE_BACKEND_URL}/friends/send-friend-request/`, { "receiverId": Number(userId) }, { withCredentials: true })
       .then(() => {
-        console.log("Friend Request Sent");
         setOtherUser(prevUser => ({
           ...prevUser,
           isRequested: true
@@ -232,19 +230,18 @@ function OtherProfileUser(): JSX.Element {
   function blockFriend() {
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/block_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
-        console.log("blocked");
         setButtons({ ...bbuttons, isBlocked: true });
         document.location.reload();
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  } 
 
   function unblockFriend() {
+    
     axios.patch(`${import.meta.env.VITE_BACKEND_URL}/chat/friend/unblock_friend`, { "FriendId": Number(userId) }, { withCredentials: true })
       .then(() => {
-        console.log("unblocked");
         setButtons({ ...bbuttons, isBlocked: false });
         document.location.reload();
       })
@@ -252,7 +249,6 @@ function OtherProfileUser(): JSX.Element {
         console.log(error);
       });
   }
-
   const [block, setBlock] = useState(false);
   const [bbuttons, setButtons] = useState(Buttons);
   const navigate = useNavigate();
@@ -262,9 +258,17 @@ function OtherProfileUser(): JSX.Element {
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/other-profile/about/${userId}`, { withCredentials: true })
       .then(res => {
+        const fetchUserData = axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me`, { withCredentials: true }).then(
+          (res) => {
+            if(res.data.id === userData.id)
+            window.location.href = `${import.meta.env.VITE_FRONTEND_URL}/profile`;
+
+          }
+        )
         const userData = res.data;
         setOtherUser(userData);
-
+        // if(userData?.id === fetchUserData.data.id)
+        //   console.log("dddd");
         if (userData.hosblocked === userData.id) {
           setBlock(true);
         }
@@ -272,7 +276,11 @@ function OtherProfileUser(): JSX.Element {
           setBlock(false);
       })
       .catch(error => {
-        console.log(error);
+        if(error.code === "ERR_BAD_REQUEST")
+        {
+        // document.location.reload();
+          navigate('/home');
+        }
       });
   }, [userId]);
 
@@ -295,7 +303,6 @@ function OtherProfileUser(): JSX.Element {
         console.log(error);
       });
   }, []);
-
   return (
     <div>
       <MyHeader />
@@ -317,18 +324,18 @@ function OtherProfileUser(): JSX.Element {
                 <p>{`Win : ${otherUser.gameWon > 0 ? otherUser.gameWon : "0"}`}</p>
               </div>
               <div className='Loss'>
-                <p>{`Lose : ${otherUser.gameWon > 0 ? otherUser.gameWon : "0"}`}</p>
+                <p>{`Lose : ${otherUser.gameLost > 0 ? otherUser.gameLost : "0"}`}</p>
               </div>
             </div>
             <div className='achievement'>
               <p>Achievement</p>
               <div className='achievementIcons'>
-              {/* {/* {otherUser?.achievements[0] == "1" && <img src={bronze} alt="" />} */}
-              {/* {otherUser?.achievements[1] == 1 && <img src={silver} alt="" />} */}
-              {/* {otherUser?.achievements[2] == 1 && <img src={gold} alt="" />}  */}
+              {(otherUser?.achievements[0] == "1" || otherUser?.achievements[0] == "2" || otherUser?.achievements[0] == "3" )&& <img src={bronze} alt="" />}
+              {(otherUser?.achievements[0] == "2" || otherUser?.achievements[0] == "3") && <img src={silver} alt="" />}
+              {otherUser?.achievements[0] == "3" &&<img src={gold} alt="" />}
               </div>
               <div className='fourButtons'>
-                {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' /></a>}
+                {otherUser.isFriend && !otherUser.blocked && <a className="challenge"><Maps buttonText='Challenge' id={userId?.toString()} /></a>}
                 {otherUser.isFriend && !otherUser.blocked && <a onClick={
                   () => { handleSendMessage() }
                 } className="message2"><span>Message</span></a>}

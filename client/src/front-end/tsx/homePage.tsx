@@ -65,7 +65,6 @@ const BlankModal: React.FC<BlankModalProps> = ({ show, onHide }) => {
       }
     ).then(res => {
 
-      console.log(res.data);
       onHide();
     }).catch(error => {
       console.error(error);

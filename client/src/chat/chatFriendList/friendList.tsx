@@ -112,7 +112,6 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
     const joinRoom = (channelId: string) =>{
         if (socket) {
             socket.emit('joinRoom', channelId);
-            console.log("join");
         }
     }
 
@@ -127,7 +126,6 @@ const GroupCardPopOverContent = ({ group, setChat, chatInfo, setUpdate, update} 
                 },
                 {withCredentials: true})
             .then((response) => {
-                console.log('response: ', response);
                 if (setChat)
                     setChat(group.id, group.image, 
                             group.name, group.type, null);
@@ -186,7 +184,6 @@ export const FriendList = ({setChat, chatInfo, update, setUpdate} : friendListPr
             url = 'user/friends';
         else if (filter === 'All Groups')
         {
-            console.log('all groups')
             url = 'chat/show-all-groups';
         }
         else if (filter === 'All Users')

@@ -8,6 +8,7 @@ import gif from '../img/intro.gif'
 import logo42 from '../img/42_logo.png'
 import logo42White from '../img/42_logo_white.png'
 import axios from 'axios'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 // function getActualWindowDientions() {
 //     const [windowDimensions, setWindowDimensions] = useState({
@@ -36,14 +37,15 @@ import axios from 'axios'
 
 
 function LoginPage({ isLoggedIn, setIsLoggedIn }: { isLoggedIn: boolean, setIsLoggedIn: Dispatch<boolean> }): JSX.Element {
+    const Navigate = useNavigate();
     const handleLogin = async () => {
         window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/`; // fix this a khay simo 
-        // localStorage.setItem('isLoggedIn', "true");
+        localStorage.setItem('isLoggedIn', "true");
     }
     useEffect(() => {
         const checkLoggedInStatus = async () => {
             try {
-                // if ((localStorage.getItem('isLoggedIn')) == "true") {
+                if ((localStorage.getItem('isLoggedIn')) == "true") {
                 await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
                     withCredentials: true,
                 }).then((response) => {
@@ -51,14 +53,14 @@ function LoginPage({ isLoggedIn, setIsLoggedIn }: { isLoggedIn: boolean, setIsLo
                         setIsLoggedIn(true);
                     }
                     else if (response.status === 401)
-                        console.log("hiii")
+                    {}
                 }).catch((err) => {
                     if (err.code == "ERR_BAD_REQUEST")
                         localStorage.setItem('isLoggedIn', "false");
-                    console.clear();
+                    // console.clear();
 
                 });
-                // }
+                }
             } catch (error) {
                 // Handle error
                 // console.error(error);

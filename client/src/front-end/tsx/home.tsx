@@ -14,15 +14,7 @@ function Home() : JSX.Element
     const [isHeaderLoaded, setIsHeaderLoaded] = useState(false);
     const { socket } = useContext<any | undefined>(SocketContext);
 
-    useEffect(() => {
-      // Use the socket instance here
-        if (socket) {
-        {
-          console.log("CREATED AT Home >> ");
-        }
-      }
 
-    }, [socket]);
     // useEffect(() => {
     //   document.location.reload();
     // }, [])
