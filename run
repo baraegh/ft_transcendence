@@ -1,6 +1,0 @@
-server :
-	- docker command
-	= npx prisma emigrate dev
-	- npn run start:dev
-client :
-	- npm run dev
