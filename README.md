@@ -53,24 +53,17 @@ The core feature of the website is playing Pong:
 
 ## ScreeShots:
 **Landing Page:**
-![localhost_5173_](https://github.com/baraegh/ft_transcendence/assets/46541419/808c7837-7ad3-4145-b41a-1c08d710606e)
+![localhost_5173_](https://github.com/baraegh/ft_transcendence/assets/46541419/6f0f163d-4602-4737-8775-9d01d3ef4a71)
 **Home:**
-![localhost_5173_home (11)](https://github.com/baraegh/ft_transcendence/assets/46541419/931e2f10-475d-433f-b736-4ddd0e63f380)
+![localhost_5173_home (11)](https://github.com/baraegh/ft_transcendence/assets/46541419/d77cbb1f-5b51-4dd0-8658-4df215accf0f)
 **Chat:**
-![localhost_5173_home (5) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/5d9d7efe-b44c-4c6c-8ce3-de6d32771419)
-![localhost_5173_home (4) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/465815f4-3430-4edd-84ba-335bdc0f6da2)
+![localhost_5173_home (5) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/7c7e1e9e-4b3a-41b0-a025-fc1de3d315c4)
+![localhost_5173_home (4) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/30a86028-1b0a-49d3-b945-0eaf85312b7e)
 **Profile:**
-![localhost_5173_home (3) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/76852264-1e91-4c38-b0f6-a027258a3af2)
+![localhost_5173_home (3) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/e0e7a4a7-bcaf-4c57-a163-1fe0f614b1ee)
 **LeaderBoard:**
-![localhost_5173_home (10)](https://github.com/baraegh/ft_transcendence/assets/46541419/8e28b925-7799-4e9d-baa7-4b77120cc393)
+![localhost_5173_home (10)](https://github.com/baraegh/ft_transcendence/assets/46541419/134657ea-b003-401b-8e08-3bc1dd5d5ef6)
 **Game:**
-![localhost_5173_home (7) (2)](https://github.com/baraegh/ft_transcendence/assets/46541419/ebe30135-c072-4da8-ba1c-707a83dc4435)
-![localhost_5173_home (8) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/c229546f-dadb-4312-bb41-3a66983e4670)
-![localhost_5173_home (9) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/657e0f9e-323a-4d1e-8a7b-90610b3b9512)
-
-
-
-
-
-
-
+![localhost_5173_home (7) (2)](https://github.com/baraegh/ft_transcendence/assets/46541419/df2033d9-3f40-409a-8ae4-fc5ea3c51f89)
+![localhost_5173_home (8) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/0424fc69-26ef-43dc-bc47-93b2688bba1e)
+![localhost_5173_home (9) (1)](https://github.com/baraegh/ft_transcendence/assets/46541419/e90ed8db-a88e-47b1-9e6b-5d6a44fae67e)
